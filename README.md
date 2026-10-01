@@ -72,6 +72,17 @@ cloudarchie serve                                      # http://127.0.0.1:8000
   "Lambda" or "BigQuery", to find its equivalents. Filters live in the URL, so a view can
   be shared as a link.
 
+### Static demo (no server)
+
+```bash
+cloudarchie export-site -o site/        # one self-contained site/index.html
+```
+
+The exported page embeds every pattern on every provider and the full service catalog,
+so it can be hosted anywhere (for example GitHub Pages). Specs are read-only there; live
+editing needs `cloudarchie serve`. Official provider icons are never embedded in the
+export.
+
 ### Use the official AWS icons
 
 CloudArchie does not redistribute provider icons. Download the
@@ -133,6 +144,7 @@ idea ─► requirements ─► NEUTRAL SPEC ─► provider mapping ─► diag
   integration → data, shared services below), crossing reduction, optional official icons
 - `explain.py`: Markdown explanation of choices, alternatives and sizing
 - `web.py` + `static/`: FastAPI app and a no-build vanilla JS front end
+- `payloads.py`: JSON shared by the API and the static export (`export.py`)
 - `data/`: capabilities, regions, mappings and patterns as reviewable YAML
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).

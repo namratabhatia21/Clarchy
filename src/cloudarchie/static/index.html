@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CloudArchie</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ED7100'/%3E%3Cpath d='M9 21a5 5 0 0 1 1-9.9A7 7 0 0 1 23.5 12 4.5 4.5 0 0 1 23 21z' fill='white'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
@@ -29,7 +32,7 @@
       <h2 class="section-title">Or bring your own</h2>
       <button class="pattern-card custom" id="custom-spec" type="button">
         <strong>Edit a spec</strong>
-        <span>Change any pattern in the Spec tab, or paste your own YAML.</span>
+        <span id="custom-spec-text">Change any pattern in the Spec tab, or paste your own YAML.</span>
       </button>
 
       <section class="trust" aria-label="How to read this">
@@ -51,9 +54,11 @@
           <p id="design-summary" class="muted"></p>
         </div>
         <div class="downloads" aria-label="Downloads">
+          <span class="dl-label" id="dl-label">Download</span>
           <button type="button" class="btn" id="dl-svg" disabled>SVG</button>
           <button type="button" class="btn" id="dl-md" disabled>Explanation</button>
           <button type="button" class="btn" id="dl-yaml">Spec YAML</button>
+          <span class="dl-status" id="dl-status" role="status"></span>
         </div>
       </section>
       <ul class="chips" id="requirements" aria-label="Requirements"></ul>
@@ -84,7 +89,8 @@
 
       <section class="view" data-view="spec" hidden>
         <div class="editor-bar">
-          <span class="muted">Edits re-validate and redraw as you type.</span>
+          <span class="muted" id="editor-hint">Edits re-validate and redraw as you type.</span>
+          <p class="notice" id="spec-readonly" hidden><b>Read-only in this hosted demo.</b> Install CloudArchie and run <code>cloudarchie serve</code> to edit specs and see them re-validate live.</p>
           <button type="button" class="btn" id="reset-spec">Reset to pattern</button>
         </div>
         <textarea id="spec-editor" spellcheck="false" aria-label="Spec YAML"></textarea>

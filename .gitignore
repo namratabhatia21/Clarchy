@@ -9,3 +9,4 @@ dist/
 # Provider icon packages are downloaded by each user, never committed.
 icons/
 Asset-Package*/
+site/

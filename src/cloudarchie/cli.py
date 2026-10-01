@@ -95,6 +95,14 @@ def cmd_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_export_site(args: argparse.Namespace) -> int:
+    from cloudarchie.export import export_site
+
+    path = export_site(args.output, fragment=args.fragment)
+    print(f"wrote {path} ({path.stat().st_size // 1024} KB)", file=sys.stderr)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cloudarchie", description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -128,6 +136,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8000)
     p.set_defaults(func=cmd_serve)
+
+    p = sub.add_parser("export-site", help="export the web UI as one static HTML file")
+    p.add_argument("-o", "--output", default="site", help="output folder (default: site)")
+    p.add_argument(
+        "--fragment",
+        action="store_true",
+        help="omit <html>/<head>/<body> for hosts that wrap pages in their own skeleton",
+    )
+    p.set_defaults(func=cmd_export_site)
     return parser
 
 

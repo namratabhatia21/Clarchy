@@ -14,6 +14,52 @@ const TIER_NAMES = {
 };
 const DRAFT_KEY = "cloudarchie.draft";
 
+// The exported static site (cloudarchie export-site) embeds every payload here; the live
+// server leaves it undefined and the UI calls the API instead.
+const STATIC_DATA = window.CLOUDARCHIE_DATA || null;
+
+async function getJSON(path) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`${path}: ${res.status}`);
+  return res.json();
+}
+
+const api = {
+  meta: () => (STATIC_DATA ? STATIC_DATA.meta : getJSON("/api/meta")),
+  patterns: () => (STATIC_DATA ? STATIC_DATA.patterns : getJSON("/api/patterns")),
+  catalog: () => (STATIC_DATA ? STATIC_DATA.catalog : getJSON("/api/catalog")),
+  async pattern(id) {
+    if (STATIC_DATA) {
+      const yaml = STATIC_DATA.pattern_yaml[id];
+      return yaml === undefined ? null : { id, spec_yaml: yaml };
+    }
+    try { return await getJSON(`/api/patterns/${encodeURIComponent(id)}`); } catch { return null; }
+  },
+  async design(specYaml, provider) {
+    if (STATIC_DATA) {
+      const id = Object.keys(STATIC_DATA.pattern_yaml).find((k) => STATIC_DATA.pattern_yaml[k] === specYaml);
+      const body = id && STATIC_DATA.designs[`${id}.${provider}`];
+      return body
+        ? { ok: true, body }
+        : { ok: false, body: { errors: [{ where: "demo", message: "This hosted demo shows the built-in patterns. Run cloudarchie serve to edit specs live." }] } };
+    }
+    try {
+      const res = await fetch("/api/design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ spec_yaml: specYaml, provider }),
+      });
+      return { ok: res.ok, body: await res.json() };
+    } catch (err) {
+      return { ok: false, body: { errors: [{ where: "network", message: String(err) }] } };
+    }
+  },
+};
+
+function setHash(hash) {
+  try { history.replaceState(null, "", hash); } catch { /* some embedded frames refuse; the URL is a convenience */ }
+}
+
 const state = {
   meta: null,
   patterns: [],
@@ -56,6 +102,19 @@ function recall(key) {
 
 function formatNumber(value) {
   return typeof value === "number" ? value.toLocaleString("en-US") : String(value);
+}
+
+// Hosted pages can't start downloads, so the static site copies to the clipboard instead.
+async function deliver(filename, text, type, label) {
+  if (!STATIC_DATA) { download(filename, text, type); return; }
+  const status = $("dl-status");
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = `${label} copied`;
+  } catch {
+    status.textContent = "Copying is blocked here";
+  }
+  setTimeout(() => { status.textContent = ""; }, 2500);
 }
 
 function download(filename, text, type) {
@@ -249,22 +308,11 @@ function select(id) {
 
 async function runDesign() {
   const seq = ++state.requestSeq;
-  let response, body;
-  try {
-    response = await fetch("/api/design", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spec_yaml: $("spec-editor").value, provider: state.provider }),
-    });
-    body = await response.json();
-  } catch (err) {
-    if (seq === state.requestSeq) renderErrors([{ where: "network", message: String(err) }]);
-    return;
-  }
+  const { ok, body } = await api.design($("spec-editor").value, state.provider);
   if (seq !== state.requestSeq) return; // a newer edit superseded this response
 
-  if (!response.ok) {
-    renderErrors(body.errors || [{ where: "server", message: body.detail || response.statusText }]);
+  if (!ok) {
+    renderErrors(body.errors || [{ where: "server", message: body.detail || "Request failed" }]);
     if (!state.design) renderHeader(null);
     return;
   }
@@ -282,16 +330,16 @@ async function runDesign() {
 }
 
 async function loadPattern(id) {
-  const res = await fetch(`/api/patterns/${encodeURIComponent(id)}`);
-  if (!res.ok) return;
-  const { spec_yaml } = await res.json();
+  const found = await api.pattern(id);
+  if (!found) return;
+  const { spec_yaml } = found;
   state.patternId = id;
   state.patternYaml = spec_yaml;
   state.selectedId = null;
   state.design = null;
   $("spec-editor").value = spec_yaml;
   store(DRAFT_KEY, null);
-  if (currentPage() === "designer") history.replaceState(null, "", `#/designer?pattern=${id}`);
+  if (currentPage() === "designer") setHash(`#/designer?pattern=${id}`);
   renderPatternList();
   await runDesign();
 }
@@ -300,16 +348,13 @@ let debounce;
 function onEdit() {
   clearTimeout(debounce);
   debounce = setTimeout(() => {
-    store(DRAFT_KEY, { patternId: state.patternId, yaml: $("spec-editor").value });
+    if (!STATIC_DATA) store(DRAFT_KEY, { patternId: state.patternId, yaml: $("spec-editor").value });
     runDesign();
   }, 350);
 }
 
 async function init() {
-  const [meta, patterns] = await Promise.all([
-    fetch("/api/meta").then((r) => r.json()),
-    fetch("/api/patterns").then((r) => r.json()),
-  ]);
+  const [meta, patterns] = await Promise.all([api.meta(), api.patterns()]);
   state.meta = meta;
   state.patterns = patterns;
   $("version").textContent = `CloudArchie ${meta.version}`;
@@ -331,22 +376,27 @@ async function init() {
   $("custom-spec").addEventListener("click", () => setView("spec"));
   $("inspector-close").addEventListener("click", () => select(null));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.selectedId) select(null); });
-  $("dl-svg").addEventListener("click", () => download(`${slug()}.${state.provider}.svg`, state.design.svg, "image/svg+xml"));
-  $("dl-md").addEventListener("click", () => download(`${slug()}.${state.provider}.md`, state.design.explanation_md, "text/markdown"));
-  $("dl-yaml").addEventListener("click", () => download(`${slug()}.yaml`, $("spec-editor").value, "application/yaml"));
+  $("dl-svg").addEventListener("click", () => deliver(`${slug()}.${state.provider}.svg`, state.design.svg, "image/svg+xml", "SVG"));
+  $("dl-md").addEventListener("click", () => deliver(`${slug()}.${state.provider}.md`, state.design.explanation_md, "text/markdown", "Explanation"));
+  $("dl-yaml").addEventListener("click", () => deliver(`${slug()}.yaml`, $("spec-editor").value, "application/yaml", "Spec YAML"));
+  if (STATIC_DATA) {
+    $("spec-editor").readOnly = true;
+    $("spec-readonly").hidden = false;
+    $("reset-spec").hidden = true;
+    $("editor-hint").hidden = true;
+    $("dl-label").textContent = "Copy";
+    $("custom-spec-text").textContent = "Read any pattern's YAML in the Spec tab. Editing runs in the local app.";
+  }
 
   window.addEventListener("hashchange", route);
   initCatalogControls();
   route();
   const fromHash = hashParams().get("pattern");
-  const draft = recall(DRAFT_KEY);
+  const draft = STATIC_DATA ? null : recall(DRAFT_KEY);
   const known = (id) => patterns.some((p) => p.id === id);
   if (draft?.yaml && (!fromHash || fromHash === draft.patternId)) {
     state.patternId = known(draft.patternId) ? draft.patternId : null;
-    if (state.patternId) {
-      const res = await fetch(`/api/patterns/${encodeURIComponent(state.patternId)}`);
-      state.patternYaml = (await res.json()).spec_yaml;
-    }
+    if (state.patternId) state.patternYaml = (await api.pattern(state.patternId))?.spec_yaml ?? "";
     $("spec-editor").value = draft.yaml;
     renderPatternList();
     await runDesign();
@@ -364,7 +414,8 @@ function hashParams() {
 }
 
 function currentPage() {
-  return location.hash.startsWith("#/catalog") ? "catalog" : "designer";
+  // "#catalog" is the shareable form: hosted pages pass only plain anchors through links.
+  return /^#\/?catalog\b/.test(location.hash) ? "catalog" : "designer";
 }
 
 function route() {
@@ -461,7 +512,7 @@ function syncCatalogUrl() {
   if (cat.match !== "all") params.set("match", cat.match);
   if (cat.sort !== "category") params.set("sort", cat.sort);
   const qs = params.toString();
-  history.replaceState(null, "", `#/catalog${qs ? `?${qs}` : ""}`);
+  setHash(`#/catalog${qs ? `?${qs}` : ""}`);
 }
 
 function readCatalogUrl() {
@@ -540,7 +591,7 @@ function renderResults() {
       },
       el("div", { class: "cap-title" },
         el("h3", {}, highlight(cap.id)),
-        el("span", { class: "badge tier", style: `color:${TIER_COLOURS[cap.tier]}`, text: TIER_NAMES[cap.tier] })),
+        el("span", { class: "tier-tag" }, el("span", { class: "dot", style: `background:${TIER_COLOURS[cap.tier]}` }), TIER_NAMES[cap.tier])),
       el("p", { class: "cap-desc" }, highlight(cap.description)),
       el("div", { class: "svc-rows" }, visibleProviders().flatMap((p) => serviceRow(p, cap.services[p.id])))),
       open && capDetail(cap));
@@ -570,7 +621,7 @@ function initCatalogControls() {
 
 async function showCatalog() {
   if (!cat.data) {
-    cat.loading ||= fetch("/api/catalog").then((r) => r.json());
+    cat.loading ||= Promise.resolve(api.catalog());
     cat.data = await cat.loading;
   }
   readCatalogUrl();

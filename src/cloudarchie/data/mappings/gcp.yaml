@@ -6,6 +6,26 @@ provider:
   cloud_label: Google Cloud
   kind: cloud
   reviewed: false
+  # Diagram styling that follows Google Cloud architecture-diagram conventions: a grey
+  # project boundary and Google's four core colours. Colours only, no logos.
+  theme:
+    font: "Roboto, 'Helvetica Neue', Arial, sans-serif"
+    frame: { stroke: "#5F6368", fill: "#F8F9FA", label: "#3C4043", dash: "" }
+    band: { stroke: "#9AA0A6", label: "#5F6368" }
+    edge: "#5F6368"
+    categories:
+      external: "#5F6368"
+      networking: "#1A73E8"
+      security: "#D93025"
+      compute: "#1967D2"
+      containers: "#185ABC"
+      ai: "#9334E6"
+      integration: "#C5221F"
+      analytics: "#188038"
+      database: "#1A73E8"
+      storage: "#E37400"
+      devtools: "#137333"
+      management: "#B06000"
 
 services:
   dns:
@@ -135,3 +155,45 @@ services:
     short: MON
     fidelity: exact
     docs: https://cloud.google.com/monitoring/docs
+  kubernetes:
+    service: Google Kubernetes Engine (GKE)
+    short: GKE
+    fidelity: exact
+    alternatives: [GKE Autopilot]
+    docs: https://cloud.google.com/kubernetes-engine/docs
+  event-autoscaling:
+    service: KEDA on GKE
+    short: KEDA
+    fidelity: close
+    note: >-
+      KEDA is an open-source add-on you install on GKE. Cloud Run already scales on
+      requests and events without it.
+    docs: https://keda.sh/docs/
+  source-control:
+    service: Secure Source Manager
+    short: SSM
+    fidelity: exact
+    alternatives: [GitHub or GitLab via Developer Connect]
+    docs: https://cloud.google.com/secure-source-manager/docs
+  ci-build:
+    service: Cloud Build
+    short: CB
+    fidelity: exact
+    docs: https://cloud.google.com/build/docs
+  container-registry:
+    service: Artifact Registry
+    short: AR
+    fidelity: exact
+    docs: https://cloud.google.com/artifact-registry/docs
+  cd-deploy:
+    service: Cloud Deploy
+    short: CD
+    fidelity: exact
+    docs: https://cloud.google.com/deploy/docs
+  iac:
+    service: Infrastructure Manager (Terraform)
+    short: IM
+    fidelity: exact
+    alternatives: [Terraform or OpenTofu]
+    note: A managed service that runs Terraform configurations.
+    docs: https://cloud.google.com/infrastructure-manager/docs

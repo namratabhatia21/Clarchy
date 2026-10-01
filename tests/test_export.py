@@ -3,7 +3,9 @@ import re
 
 from cloudarchie import catalog
 from cloudarchie.cli import main
-from cloudarchie.export import build_site, site_data
+from cloudarchie.export import SCRIPT_TAG, build_site, site_data
+
+SAMPLE_IDS = [sample_id for sample_id, _title, _text in catalog.samples()]
 
 
 def embedded_data(page: str) -> dict:
@@ -12,24 +14,49 @@ def embedded_data(page: str) -> dict:
     return json.loads(match.group(1))
 
 
-def test_site_data_covers_every_pattern_and_provider():
+def test_site_data_covers_patterns_samples_and_providers():
     data = site_data()
-    expected = {f"{n}.{p}" for n in catalog.pattern_names() for p in catalog.providers()}
-    assert set(data["designs"]) == expected
+    keys = [*catalog.pattern_names(), *(f"sample:{s}" for s in SAMPLE_IDS)]
+    assert set(data["designs"]) == {f"{k}.{p}" for k in keys for p in catalog.providers()}
+    assert set(data["spec_index"].values()) == set(keys)
     assert set(data["pattern_yaml"]) == set(catalog.pattern_names())
-    assert len(data["catalog"]["capabilities"]) == 22
+    services = [c for c in catalog.capabilities().values() if c["tier"] != "external"]
+    assert len(data["catalog"]["capabilities"]) == len(services)
+    assert [s["id"] for s in data["samples"]] == SAMPLE_IDS
+
+
+def test_recorded_runs_replay_the_whole_pipeline():
+    data = site_data()
+    for sample_id in SAMPLE_IDS:
+        events = data["runs"][sample_id]["events"]
+        done = [e["stage"] for e in events if e["type"] == "stage" and e["status"] == "done"]
+        assert done == ["read", "understand", "design", "toolchain", "workflows", "map"]
+        result = events[-1]
+        assert result["type"] == "result" and result["mode"] == "rules"
+        # The front end finds the rendered design by the exact spec text of the run.
+        assert data["spec_index"][result["spec_yaml"]] == f"sample:{sample_id}"
 
 
 def test_full_page_is_self_contained():
     page = build_site()
     assert page.startswith("<!doctype html>")
     assert "/static/" not in page
-    # Embedded SVG must not end the data script early.
-    assert page.count("</script>") == 2
+    # One data script plus every app script, and embedded SVG never ends a script early.
+    assert page.count("<script>") == page.count("</script>") == 7
     data = embedded_data(page)
     assert data["designs"]["rag-chatbot.aws"]["svg"].startswith("<svg")
     assert "official_icons" in data["meta"]
     assert data["clipboard_only"] is False  # GitHub Pages and similar allow downloads
+    # Scripts keep their order: the data first, then core, workspace, pages and boot.
+    order = [
+        "window.CLOUDARCHIE_DATA",
+        "const CA = ",
+        "class Workspace",
+        "const Plan = ",
+        "(async function main()",
+    ]
+    positions = [page.index(marker) for marker in order]
+    assert positions == sorted(positions)
 
 
 def test_fragment_has_no_document_skeleton():
@@ -38,6 +65,27 @@ def test_fragment_has_no_document_skeleton():
     for tag in ("<!doctype", "<html", "<head>", "<body>"):
         assert tag not in page.lower()
     assert embedded_data(page)["clipboard_only"] is True  # sandboxed hosts block downloads
+
+
+def test_api_base_build_embeds_no_demo_data():
+    page = build_site(api_base="https://api.example.org/")
+    assert 'window.CLOUDARCHIE_API_BASE = "https://api.example.org";' in page
+    assert "CLOUDARCHIE_DATA" not in page.split("<script>", 2)[1].split("</script>")[0]
+    assert len(page) < 400_000
+
+
+def test_index_scripts_are_all_found():
+    from importlib import resources
+
+    index = resources.files("cloudarchie").joinpath("static", "index.html").read_text()
+    assert SCRIPT_TAG.findall(index) == [
+        "core.js",
+        "workspace.js",
+        "plan.js",
+        "examples.js",
+        "services.js",
+        "app.js",
+    ]
 
 
 def test_export_site_cli(tmp_path):

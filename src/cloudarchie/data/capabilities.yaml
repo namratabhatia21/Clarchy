@@ -1,83 +1,174 @@
 # Cloud-neutral capabilities. A spec is written in these terms; each provider maps them
 # to concrete services in data/mappings/<provider>.yaml.
 #
-# tier decides the diagram column (left to right):
-#   external -> edge -> entry -> compute -> integration -> data
-# "platform" capabilities (identity, secrets, monitoring) are drawn in a shared-services
-# band under the main flow.
+# tier: where the capability is drawn in a diagram
+#   external                      - outside the cloud, left edge
+#   delivery                      - "Build and deploy" lane above the runtime flow
+#   edge -> entry -> compute -> integration -> data   - runtime columns, left to right
+#   platform                      - "Shared services" band under the runtime flow
+# category: design family, used for colours in each provider's theme
+# stage: lifecycle stage, used to group the bill of services
+#   code -> build -> ship -> serve -> run -> integrate -> store -> operate
 
 client:
   tier: external
+  category: external
+  stage: users
   description: People or systems outside the cloud that use the application.
 
+# --- Build and deploy -------------------------------------------------------------
+source-control:
+  tier: delivery
+  category: devtools
+  stage: code
+  description: Git repositories, code review and branch protection.
+iac:
+  tier: delivery
+  category: management
+  stage: code
+  description: Infrastructure defined as code, so every environment is reproducible.
+ci-build:
+  tier: delivery
+  category: devtools
+  stage: build
+  description: Builds, tests and packages every change.
+container-registry:
+  tier: delivery
+  category: containers
+  stage: ship
+  description: Stores, versions and scans container images.
+cd-deploy:
+  tier: delivery
+  category: devtools
+  stage: ship
+  description: Releases builds to environments with approvals and rollback.
+
+# --- Serve ------------------------------------------------------------------------
 dns:
   tier: edge
+  category: networking
+  stage: serve
   description: Domain name resolution and routing.
 cdn:
   tier: edge
+  category: networking
+  stage: serve
   description: Content delivery network that caches content close to users.
 waf:
   tier: edge
+  category: security
+  stage: serve
   description: Web application firewall that filters malicious HTTP traffic.
-
 load-balancer:
   tier: entry
+  category: networking
+  stage: serve
   description: Distributes HTTP traffic across healthy compute instances.
 api-gateway:
   tier: entry
+  category: integration
+  stage: serve
   description: Managed HTTP API front door with auth, throttling and routing.
 
+# --- Run --------------------------------------------------------------------------
 container-service:
   tier: compute
+  category: containers
+  stage: run
   description: Runs containers without managing servers.
+kubernetes:
+  tier: compute
+  category: containers
+  stage: run
+  description: Managed Kubernetes cluster for containerised workloads.
+event-autoscaling:
+  tier: compute
+  category: containers
+  stage: run
+  description: Scales workloads on events such as queue length or stream lag (KEDA).
 serverless-function:
   tier: compute
+  category: compute
+  stage: run
   description: Event-driven functions billed per invocation and duration.
 llm-inference:
   tier: compute
+  category: ai
+  stage: run
   description: Managed access to large language models and embedding models.
 
+# --- Integrate --------------------------------------------------------------------
 message-queue:
   tier: integration
+  category: integration
+  stage: integrate
   description: Point-to-point queue that decouples producers and consumers.
 event-bus:
   tier: integration
+  category: integration
+  stage: integrate
   description: Routes events between services by rules.
 stream:
   tier: integration
+  category: analytics
+  stage: integrate
   description: Ordered, replayable high-throughput event stream.
 workflow:
   tier: integration
+  category: integration
+  stage: integrate
   description: Orchestrates multi-step processes with retries and state.
 batch-etl:
   tier: integration
+  category: analytics
+  stage: integrate
   description: Managed extract-transform-load jobs.
 
+# --- Store ------------------------------------------------------------------------
 object-storage:
   tier: data
+  category: storage
+  stage: store
   description: Durable storage for files and blobs.
 relational-db:
   tier: data
+  category: database
+  stage: store
   description: Managed SQL database.
 key-value-db:
   tier: data
+  category: database
+  stage: store
   description: Serverless key-value / document database with single-digit ms reads.
 cache:
   tier: data
+  category: database
+  stage: store
   description: In-memory cache (Redis-compatible).
 vector-search:
   tier: data
+  category: ai
+  stage: store
   description: Similarity search over embeddings.
 data-warehouse:
   tier: data
+  category: analytics
+  stage: store
   description: Analytical SQL over large datasets.
 
+# --- Operate ----------------------------------------------------------------------
 identity:
   tier: platform
+  category: security
+  stage: operate
   description: User sign-up, sign-in and tokens.
 secrets:
   tier: platform
+  category: security
+  stage: operate
   description: Stores and rotates credentials.
 monitoring:
   tier: platform
+  category: management
+  stage: operate
   description: Metrics, logs, dashboards and alarms.

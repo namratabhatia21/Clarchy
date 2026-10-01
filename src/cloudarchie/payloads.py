@@ -32,17 +32,35 @@ def provider_info(provider: str) -> dict[str, Any]:
     }
 
 
-def meta_payload(icons: dict[str, IconLibrary]) -> dict[str, Any]:
+def meta_payload(
+    icons: dict[str, IconLibrary], engine: dict[str, Any] | None = None
+) -> dict[str, Any]:
     return {
         "version": __version__,
         "providers": [provider_info(p) for p in catalog.providers_in_display_order()],
         "official_icons": {p: lib.root is not None for p, lib in icons.items()},
         "capabilities": {
-            name: {"tier": cap["tier"], "description": cap["description"]}
+            name: {
+                "tier": cap["tier"],
+                "stage": cap.get("stage"),
+                "category": cap["category"],
+                "description": cap["description"],
+            }
             for name, cap in catalog.capabilities().items()
         },
+        "stages": catalog.STAGES,
         "regions": {k: v["label"] for k, v in catalog.regions().items()},
+        # How /api/plan works on this server: "ai" (Claude), "rules" or "none" (static site).
+        "engine": engine or {"mode": "none"},
     }
+
+
+def samples_payload() -> list[dict[str, str]]:
+    """Example requirements documents for the "try a sample" buttons."""
+    return [
+        {"id": sample_id, "title": title, "text": text}
+        for sample_id, title, text in catalog.samples()
+    ]
 
 
 def catalog_payload() -> dict[str, Any]:
@@ -67,6 +85,8 @@ def catalog_payload() -> dict[str, Any]:
             {
                 "id": name,
                 "tier": cap["tier"],
+                "stage": cap.get("stage"),
+                "category": cap["category"],
                 "description": cap["description"],
                 "services": services,
             }
@@ -78,7 +98,16 @@ def patterns_payload() -> list[dict[str, Any]]:
     out = []
     for name in catalog.pattern_names():
         spec = load_pattern(name)
-        out.append({"id": name, "name": spec.name, "summary": spec.summary})
+        caps = sorted({c.capability for c in spec.components if c.tier != "external"})
+        out.append(
+            {
+                "id": name,
+                "name": spec.name,
+                "summary": spec.summary,
+                "capabilities": caps,
+                "components": len(spec.components),
+            }
+        )
     return out
 
 
@@ -133,7 +162,10 @@ def design_payload(
                 "capability": comp.capability,
                 "capability_description": cap["description"],
                 "tier": comp.tier,
+                "stage": comp.stage,
+                "category": comp.category,
                 "rationale": comp.rationale,
+                "evidence": comp.evidence,
                 "sizing": comp.sizing,
                 "service": choice.service if choice else None,
                 "fidelity": choice.fidelity if choice else None,
@@ -153,6 +185,10 @@ def design_payload(
         "provider_name": arch.provider_name,
         "region": {"code": arch.region_code, "label": arch.region_label},
         "requirements": spec.requirements.model_dump(),
+        "assumptions": spec.assumptions,
+        "open_questions": spec.open_questions,
+        "provenance": spec.provenance.model_dump() if spec.provenance else None,
+        "workflows": [w.model_dump() for w in spec.workflows],
         "components": components,
         "svg": render_svg(arch, icons),
         "explanation_md": explain_markdown(arch),

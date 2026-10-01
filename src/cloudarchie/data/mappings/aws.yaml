@@ -15,6 +15,26 @@ provider:
   kind: cloud
   # Set to true once an AWS specialist has reviewed every entry.
   reviewed: false
+  # Diagram styling that follows AWS architecture-diagram conventions: a dark
+  # "AWS Cloud" boundary and AWS's colour per service category. Colours only, no logos.
+  theme:
+    font: "'Open Sans', 'Helvetica Neue', Arial, sans-serif"
+    frame: { stroke: "#232F3E", fill: "#FFFFFF", label: "#232F3E", dash: "" }
+    band: { stroke: "#879196", label: "#545B64" }
+    edge: "#545B64"
+    categories:
+      external: "#545B64"
+      networking: "#8C4FFF"
+      security: "#DD344C"
+      compute: "#ED7100"
+      containers: "#ED7100"
+      ai: "#01A88D"
+      integration: "#E7157B"
+      analytics: "#8C4FFF"
+      database: "#C925D1"
+      storage: "#7AA116"
+      devtools: "#3B48CC"
+      management: "#E7157B"
 
 services:
   dns:
@@ -157,3 +177,55 @@ services:
     fidelity: exact
     icon: Amazon-CloudWatch
     docs: https://docs.aws.amazon.com/cloudwatch/
+  kubernetes:
+    service: Amazon EKS
+    short: EKS
+    fidelity: exact
+    icon: Elastic-Kubernetes-Service
+    alternatives: [EKS Auto Mode]
+    docs: https://docs.aws.amazon.com/eks/
+  event-autoscaling:
+    service: KEDA on Amazon EKS
+    short: KEDA
+    fidelity: close
+    alternatives: [Application Auto Scaling (ECS)]
+    note: >-
+      KEDA is an open-source CNCF project you install on EKS. For ECS services,
+      Application Auto Scaling with queue-based target tracking does a similar job.
+    docs: https://keda.sh/docs/
+  source-control:
+    service: GitHub or GitLab via AWS CodeConnections
+    short: GIT
+    fidelity: partial
+    alternatives: [AWS CodeCommit]
+    note: >-
+      Most teams host code on GitHub or GitLab and connect it to AWS pipelines with
+      CodeConnections. Check AWS CodeCommit's current availability before choosing it.
+    docs: https://docs.aws.amazon.com/dtconsole/latest/userguide/welcome-connections.html
+  ci-build:
+    service: AWS CodeBuild
+    short: CB
+    fidelity: exact
+    icon: CodeBuild
+    alternatives: [GitHub Actions]
+    docs: https://docs.aws.amazon.com/codebuild/
+  container-registry:
+    service: Amazon ECR
+    short: ECR
+    fidelity: exact
+    icon: Elastic-Container-Registry
+    docs: https://docs.aws.amazon.com/ecr/
+  cd-deploy:
+    service: AWS CodePipeline
+    short: CP
+    fidelity: exact
+    icon: CodePipeline
+    alternatives: [AWS CodeDeploy, GitHub Actions]
+    docs: https://docs.aws.amazon.com/codepipeline/
+  iac:
+    service: AWS CloudFormation
+    short: CFN
+    fidelity: exact
+    icon: CloudFormation
+    alternatives: [AWS CDK, Terraform or OpenTofu]
+    docs: https://docs.aws.amazon.com/cloudformation/

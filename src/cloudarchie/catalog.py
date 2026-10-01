@@ -9,7 +9,35 @@ from typing import Any
 
 import yaml
 
-TIERS = ("external", "edge", "entry", "compute", "integration", "data", "platform")
+TIERS = ("external", "delivery", "edge", "entry", "compute", "integration", "data", "platform")
+
+# Lifecycle stages, in order, with the label shown in the bill of services.
+STAGES = {
+    "code": "Code",
+    "build": "Build",
+    "ship": "Ship",
+    "serve": "Serve",
+    "run": "Run",
+    "integrate": "Integrate",
+    "store": "Store",
+    "operate": "Operate",
+}
+
+# Design families; each provider theme assigns them colours.
+CATEGORIES = (
+    "external",
+    "networking",
+    "security",
+    "compute",
+    "containers",
+    "ai",
+    "integration",
+    "analytics",
+    "database",
+    "storage",
+    "devtools",
+    "management",
+)
 
 
 def _data_file(*parts: str):
@@ -26,6 +54,10 @@ def capabilities() -> dict[str, dict[str, Any]]:
     for name, cap in caps.items():
         if cap.get("tier") not in TIERS:
             raise ValueError(f"capability {name!r} has unknown tier {cap.get('tier')!r}")
+        if cap.get("category") not in CATEGORIES:
+            raise ValueError(f"capability {name!r} has unknown category {cap.get('category')!r}")
+        if cap["tier"] != "external" and cap.get("stage") not in STAGES:
+            raise ValueError(f"capability {name!r} has unknown stage {cap.get('stage')!r}")
     return caps
 
 
@@ -66,6 +98,18 @@ def providers_in_display_order() -> list[str]:
             provider_mapping(p)["provider"]["name"],
         ),
     )
+
+
+def samples() -> list[tuple[str, str, str]]:
+    """(id, title, text) of the example requirements documents."""
+    out = []
+    folder = _data_file("samples")
+    for entry in sorted(folder.iterdir(), key=lambda p: p.name):
+        if entry.name.endswith(".md"):
+            text = entry.read_text(encoding="utf-8")
+            title = text.splitlines()[0].lstrip("#").strip() if text else entry.name
+            out.append((entry.name.removesuffix(".md"), title, text))
+    return out
 
 
 def pattern_names() -> list[str]:

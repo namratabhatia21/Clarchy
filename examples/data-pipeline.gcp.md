@@ -16,21 +16,49 @@ Streams application events into a data lake, transforms them on a schedule and s
 
 ## Services
 
-| Component | Capability | Service | Fidelity | Why |
-|---|---|---|---|---|
-| Product apps | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
-| Event collector | `api-gateway` | API Gateway | close | _Generic: Managed HTTP API front door with auth, throttling and routing._ |
-| Event stream | `stream` | Pub/Sub | close | Ordered, replayable ingestion that absorbs peaks and lets several consumers read the same data. |
-| Nightly transforms | `batch-etl` | Dataflow | close | Managed Spark jobs to clean and partition data without running a cluster. |
-| Data lake (raw + curated) | `object-storage` | Cloud Storage | exact | Cheapest durable storage for large, growing data; lifecycle rules move old data to colder tiers. |
-| Reporting warehouse | `data-warehouse` | BigQuery | exact | Fast SQL for dashboards; serverless billing suits a few analysts working office hours. |
-| Pipeline monitoring | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+| Stage | Component | Capability | Service | Fidelity | Why |
+|---|---|---|---|---|---|
+| Users | Product apps | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
+| Code | App and infrastructure code | `source-control` | Secure Source Manager | exact | Every change starts as a reviewed commit; the same repository holds the application and its infrastructure code. |
+| Code | Infrastructure as code | `iac` | Infrastructure Manager (Terraform) | exact | Creates and updates the cloud resources from versioned templates, so every environment is reproducible. |
+| Build | Build and test | `ci-build` | Cloud Build | exact | Builds and tests each commit, then packages the release. |
+| Ship | Release pipeline | `cd-deploy` | Cloud Deploy | exact | Promotes each build through test and production with approvals and rollback. |
+| Serve | Event collector | `api-gateway` | API Gateway | close | _Generic: Managed HTTP API front door with auth, throttling and routing._ |
+| Integrate | Event stream | `stream` | Pub/Sub | close | Ordered, replayable ingestion that absorbs peaks and lets several consumers read the same data. |
+| Integrate | Nightly transforms | `batch-etl` | Dataflow | close | Managed Spark jobs to clean and partition data without running a cluster. |
+| Store | Data lake (raw + curated) | `object-storage` | Cloud Storage | exact | Cheapest durable storage for large, growing data; lifecycle rules move old data to colder tiers. |
+| Store | Reporting warehouse | `data-warehouse` | BigQuery | exact | Fast SQL for dashboards; serverless billing suits a few analysts working office hours. |
+| Operate | Pipeline monitoring | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+
+## Workflows
+
+### Serving a request
+
+1. Product apps → Event collector: send events
+2. Event collector → Event stream: append to the event stream
+3. Every component → Pipeline monitoring: send logs and metrics
+
+### Data pipeline
+
+1. Event stream → Data lake (raw + curated): land the raw events
+2. Data lake (raw + curated) → Reporting warehouse: load curated data
+3. Nightly transforms → Data lake (raw + curated): read and write curated data
+
+### Shipping a change
+
+1. A developer → App and infrastructure code: push a reviewed change
+2. App and infrastructure code → Build and test: start a build on every push
+3. Build and test → Release pipeline: hand over the tested package
+4. Release pipeline → Infrastructure as code: apply infrastructure changes
+5. Release pipeline → Nightly transforms: roll out the new version
 
 ## Trade-offs and alternatives
 
 - **API Gateway** (Event collector): alternatives: Apigee; Lighter than Amazon API Gateway or Azure API Management; Apigee is the full-featured option.
 - **Pub/Sub** (Event stream): alternatives: Google Cloud Managed Service for Apache Kafka; Supports ordering keys and replay by seeking, but is not a partitioned log like Kinesis or Kafka.
 - **Dataflow** (Nightly transforms): alternatives: Dataproc Serverless, Cloud Data Fusion; Dataflow runs Apache Beam pipelines; Spark jobs fit Dataproc Serverless better.
+- **Secure Source Manager** (App and infrastructure code): alternatives: GitHub or GitLab via Developer Connect
+- **Infrastructure Manager (Terraform)** (Infrastructure as code): alternatives: Terraform or OpenTofu; A managed service that runs Terraform configurations.
 
 ## Sizing assumptions
 

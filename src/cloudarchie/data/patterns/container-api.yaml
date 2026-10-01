@@ -52,6 +52,27 @@ components:
     capability: monitoring
     label: Logs, metrics, alarms
     sizing: { log_ingest_gb_per_month: 30 }
+  - id: repo
+    capability: source-control
+    label: App and infrastructure code
+    rationale: Every change starts as a reviewed commit; the same repository holds the application and its
+      infrastructure code.
+  - id: build
+    capability: ci-build
+    label: Build and test
+    rationale: Builds and tests each commit, then packages the app as a container image.
+  - id: registry
+    capability: container-registry
+    label: Container images
+    rationale: Keeps versioned, scanned images so every environment runs exactly what was tested.
+  - id: deploy
+    capability: cd-deploy
+    label: Release pipeline
+    rationale: Promotes each build through test and production with approvals and rollback.
+  - id: infra-code
+    capability: iac
+    label: Infrastructure as code
+    rationale: Creates and updates the cloud resources from versioned templates, so every environment is reproducible.
 edges:
   - { from: users, to: dns }
   - { from: users, to: firewall, label: HTTPS }
@@ -61,3 +82,46 @@ edges:
   - { from: app, to: db }
   - { from: app, to: files }
   - { from: app, to: secrets }
+  - { from: repo, to: build, label: push }
+  - { from: build, to: registry, label: image }
+  - { from: registry, to: deploy }
+  - { from: deploy, to: infra-code, label: applies }
+workflows:
+  - id: request
+    name: Serving a request
+    kind: request
+    steps:
+    - text: 'Clients → Domain: look up the app''s address'
+      components: [users, dns]
+    - text: 'Clients → Web firewall: filter malicious traffic (HTTPS)'
+      components: [users, firewall]
+    - text: 'Web firewall → HTTPS load balancer: spread requests across healthy instances'
+      components: [firewall, lb]
+    - text: 'HTTPS load balancer → API containers: run the business logic'
+      components: [lb, app]
+    - text: 'API containers → Session + query cache: read and refresh cached results'
+      components: [app, cache]
+    - text: 'API containers → PostgreSQL: read and write records'
+      components: [app, db]
+    - text: 'API containers → Uploads: store or read files'
+      components: [app, files]
+    - text: 'API containers → DB credentials: fetch credentials'
+      components: [app, secrets]
+    - text: 'Every component → Logs, metrics, alarms: send logs and metrics'
+      components: [logs]
+  - id: delivery
+    name: Shipping a change
+    kind: delivery
+    steps:
+    - text: 'A developer → App and infrastructure code: push a reviewed change'
+      components: [repo]
+    - text: 'App and infrastructure code → Build and test: start a build on every push'
+      components: [repo, build]
+    - text: 'Build and test → Container images: publish the tested image'
+      components: [build, registry]
+    - text: 'Container images → Release pipeline: start the release'
+      components: [registry, deploy]
+    - text: 'Release pipeline → Infrastructure as code: apply infrastructure changes'
+      components: [deploy, infra-code]
+    - text: 'Release pipeline → API containers: roll out the new version'
+      components: [deploy, app]

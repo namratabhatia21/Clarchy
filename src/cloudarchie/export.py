@@ -1,13 +1,16 @@
 """Static site export: the web UI as one self-contained HTML file.
 
-    cloudarchie export-site -o site/              # site/index.html, host anywhere
-    cloudarchie export-site -o site/ --fragment   # body-only page for hosts that add
-                                                  # their own <html>/<head> skeleton
+    cloudarchie export-site -o site/                       # site/index.html, host anywhere
+    cloudarchie export-site -o site/ --fragment            # body-only page for hosts that add
+                                                           # their own <html>/<head> skeleton
+    cloudarchie export-site -o site/ --api-base URL        # front end for a hosted API
 
-The page embeds every built-in pattern rendered on every provider plus the service catalog,
-so it works without a server. Live spec editing needs the server (`cloudarchie serve`);
-the exported page shows specs read-only and says so. Fragment builds target sandboxed
-hosts that block downloads, so their download buttons copy to the clipboard instead.
+A static page has no server to run the planner, so it embeds everything the UI needs:
+every built-in pattern rendered on every provider, the service catalog, and a recorded
+rule-based run of each sample, which the Plan page replays stage by stage. Planning your
+own requirements needs `cloudarchie serve` (or --api-base pointing at one); the page says
+so. Fragment builds target sandboxed hosts that block downloads, so their download buttons
+copy to the clipboard instead.
 
 Official provider icons are never embedded: hosting them is a separate licensing question
 (see docs/decisions/0002-no-bundled-provider-icons.md).
@@ -15,6 +18,7 @@ Official provider icons are never embedded: hosting them is a separate licensing
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 from importlib import resources
@@ -24,24 +28,59 @@ from typing import Any
 from cloudarchie import catalog, payloads
 from cloudarchie.icons import IconLibrary
 
-APP_SCRIPT_TAG = '<script src="/static/app.js"></script>'
+SCRIPT_TAG = re.compile(r'<script src="/static/([\w-]+\.js)"></script>')
 STYLESHEET_TAG = '<link rel="stylesheet" href="/static/app.css">'
+
+
+def _designs_for(key: str, spec_yaml: str) -> dict[str, Any]:
+    designs = {}
+    for provider in catalog.providers():
+        status, body = payloads.design_payload(spec_yaml, provider)
+        if status != 200:
+            raise RuntimeError(f"{key} failed on {provider}: {body}")
+        designs[f"{key}.{provider}"] = body
+    return designs
+
+
+def recorded_runs() -> dict[str, dict[str, Any]]:
+    """Every pipeline event of a rule-based run of each sample, for the Plan page to replay."""
+    from cloudarchie.ingest import from_text
+    from cloudarchie.planner import PlanOptions, run_plan
+
+    runs = {}
+    for sample_id, _title, text in catalog.samples():
+        events: list[dict[str, Any]] = []
+        result = asyncio.run(
+            run_plan(from_text(text), PlanOptions(mode="rules"), None, events.append)
+        )
+        runs[sample_id] = {"events": events, "spec_yaml": result.spec_yaml}
+    return runs
 
 
 def site_data(clipboard_only: bool = False) -> dict[str, Any]:
     no_icons = {p: IconLibrary(None) for p in catalog.providers()}
-    designs = {}
-    for name in catalog.pattern_names():
-        for provider in catalog.providers():
-            status, body = payloads.design_payload(catalog.pattern_text(name), provider)
-            if status != 200:
-                raise RuntimeError(f"pattern {name} failed on {provider}: {body}")
-            designs[f"{name}.{provider}"] = body
+    pattern_yaml = {name: catalog.pattern_text(name) for name in catalog.pattern_names()}
+    runs = recorded_runs()
+
+    # The UI looks designs up by the exact spec text it holds.
+    spec_index: dict[str, str] = {}
+    designs: dict[str, Any] = {}
+    for name, text in pattern_yaml.items():
+        spec_index[text] = name
+        designs.update(_designs_for(name, text))
+    for sample_id, run in runs.items():
+        key = f"sample:{sample_id}"
+        spec_index[run["spec_yaml"]] = key
+        designs.update(_designs_for(key, run["spec_yaml"]))
+
     return {
         "meta": payloads.meta_payload(no_icons),
+        "samples": payloads.samples_payload(),
         "patterns": payloads.patterns_payload(),
-        "pattern_yaml": {name: catalog.pattern_text(name) for name in catalog.pattern_names()},
+        "pattern_yaml": pattern_yaml,
         "catalog": payloads.catalog_payload(),
+        "runs": {sample_id: {"events": run["events"]} for sample_id, run in runs.items()},
+        "spec_index": spec_index,
         "designs": designs,
         "clipboard_only": clipboard_only,
     }
@@ -52,28 +91,35 @@ def _between(text: str, start: str, end: str) -> str:
     return text[i:j]
 
 
-def build_site(fragment: bool = False) -> str:
+def _script_json(value: Any) -> str:
+    # "<" never appears outside JSON strings, so escaping it keeps "</script>" inside
+    # embedded SVG from ending the script element early.
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+
+
+def build_site(fragment: bool = False, api_base: str | None = None) -> str:
     static = resources.files("cloudarchie").joinpath("static")
     index = static.joinpath("index.html").read_text(encoding="utf-8")
     css = static.joinpath("app.css").read_text(encoding="utf-8")
-    js = static.joinpath("app.js").read_text(encoding="utf-8")
-    if "</script" in js.lower():
-        raise ValueError("app.js must not contain a closing script tag")
-
-    # "<" never appears outside JSON strings, so escaping it keeps "</script>" inside
-    # embedded SVG from ending the script element early.
-    data = json.dumps(
-        site_data(clipboard_only=fragment), ensure_ascii=False, separators=(",", ":")
-    ).replace("<", "\\u003c")
 
     head = _between(index, "<head>", "</head>")
     body = _between(index, "<body>", "</body>")
-    if APP_SCRIPT_TAG not in body or STYLESHEET_TAG not in head:
-        raise ValueError("index.html no longer references /static/app.js and /static/app.css")
-    body = body.replace(
-        APP_SCRIPT_TAG,
-        f"<script>window.CLOUDARCHIE_DATA = {data};</script>\n  <script>\n{js}</script>",
-    )
+    scripts = SCRIPT_TAG.findall(body)
+    if not scripts or STYLESHEET_TAG not in head:
+        raise ValueError("index.html no longer references its /static/ scripts and app.css")
+
+    if api_base:
+        config = f"window.CLOUDARCHIE_API_BASE = {_script_json(api_base.rstrip('/'))};"
+    else:
+        config = f"window.CLOUDARCHIE_DATA = {_script_json(site_data(clipboard_only=fragment))};"
+    inlined = [f"<script>{config}</script>"]
+    for name in scripts:
+        js = static.joinpath(name).read_text(encoding="utf-8")
+        if "</script" in js.lower():
+            raise ValueError(f"{name} must not contain a closing script tag")
+        inlined.append(f"<script>\n{js}</script>")
+    first = body.index(f'<script src="/static/{scripts[0]}"></script>')
+    body = body[:first] + "\n  ".join(inlined) + SCRIPT_TAG.sub("", body[first:]).rstrip() + "\n"
 
     title = re.search(r"<title>.*?</title>", head, re.S).group(0)
     links = [
@@ -107,9 +153,9 @@ def build_site(fragment: bool = False) -> str:
     return page
 
 
-def export_site(out_dir: str | Path, fragment: bool = False) -> Path:
+def export_site(out_dir: str | Path, fragment: bool = False, api_base: str | None = None) -> Path:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     path = out / "index.html"
-    path.write_text(build_site(fragment), encoding="utf-8")
+    path.write_text(build_site(fragment, api_base), encoding="utf-8")
     return path

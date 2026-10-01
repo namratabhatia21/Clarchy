@@ -22,6 +22,16 @@ def explain_markdown(arch: ProviderArchitecture) -> str:
     if spec.summary:
         lines += [spec.summary, ""]
 
+    if spec.provenance and spec.provenance.mode != "manual":
+        who = (
+            "the rule-based planner"
+            if spec.provenance.mode == "rules"
+            else (
+                f"an AI agent ({spec.provenance.model})" if spec.provenance.model else "an AI agent"
+            )
+        )
+        source = f" from {spec.provenance.source}" if spec.provenance.source else ""
+        lines += [f"_Drafted by {who}{source}. Review it before building._", ""]
     if not arch.reviewed:
         lines += [
             f"> {arch.provider_name} mappings have not yet been reviewed by a specialist. "
@@ -40,25 +50,43 @@ def explain_markdown(arch: ProviderArchitecture) -> str:
         ("Monthly budget (USD)", req.monthly_budget_usd),
     ]
     lines += [f"- **{k}:** {_num(v)}" for k, v in facts if v is not None]
+    if spec.assumptions:
+        lines += ["", "## Assumptions", ""] + [f"- {a}" for a in spec.assumptions]
+    if spec.open_questions:
+        lines += ["", "## Questions to confirm", ""] + [f"- {q}" for q in spec.open_questions]
 
     lines += [
         "",
         "## Services",
         "",
-        "| Component | Capability | Service | Fidelity | Why |",
-        "|---|---|---|---|---|",
+        "| Stage | Component | Capability | Service | Fidelity | Why |",
+        "|---|---|---|---|---|---|",
     ]
-    for m in arch.components:
+    stage_order = {key: n for n, key in enumerate(catalog.STAGES)}
+    ordered = sorted(
+        arch.components,
+        key=lambda m: stage_order.get(m.component.stage or "", -1),
+    )
+    for m in ordered:
         comp, choice = m.component, m.choice
         service = choice.service if choice else "(outside the cloud)"
         fidelity = choice.fidelity if choice else "-"
+        stage = catalog.STAGES.get(comp.stage or "", "Users")
         why = (
             comp.rationale or f"_Generic: {catalog.capabilities()[comp.capability]['description']}_"
         )
+        if comp.evidence:
+            why += " Evidence: " + "; ".join(f"“{q}”" for q in comp.evidence)
         lines.append(
-            f"| {_cell(comp.display_label)} | `{comp.capability}` | {_cell(service)} "
+            f"| {stage} | {_cell(comp.display_label)} | `{comp.capability}` | {_cell(service)} "
             f"| {fidelity} | {_cell(why)} |"
         )
+
+    if spec.workflows:
+        lines += ["", "## Workflows"]
+        for wf in spec.workflows:
+            lines += ["", f"### {wf.name}", ""]
+            lines += [f"{n}. {step.text}" for n, step in enumerate(wf.steps, start=1)]
 
     platform_links = [
         e

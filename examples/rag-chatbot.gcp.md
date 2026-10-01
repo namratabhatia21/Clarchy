@@ -16,19 +16,52 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Services
 
-| Component | Capability | Service | Fidelity | Why |
-|---|---|---|---|---|
-| Employees (browser) | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
-| Web front end | `cdn` | Cloud CDN | close | _Generic: Content delivery network that caches content close to users._ |
-| HTTPS load balancer | `load-balancer` | Cloud Load Balancing (Application LB) | exact | _Generic: Distributes HTTP traffic across healthy compute instances._ |
-| Chat API (streaming) | `container-service` | Cloud Run | exact | Streaming responses hold connections for many seconds, which suits containers better than short-lived functions. |
-| LLM + embeddings | `llm-inference` | Vertex AI | exact | Managed models avoid hosting GPUs; pay per token. |
-| Chunk + embed documents | `serverless-function` | Cloud Run functions | exact | Runs only when documents change. |
-| Source documents | `object-storage` | Cloud Storage | exact | _Generic: Durable storage for files and blobs._ |
-| Embeddings index | `vector-search` | Vertex AI Vector Search | exact | Similarity search over document chunks; hybrid keyword + vector improves recall. |
-| Chat history | `key-value-db` | Firestore | close | _Generic: Serverless key-value / document database with single-digit ms reads._ |
-| Single sign-on | `identity` | Identity Platform | exact | _Generic: User sign-up, sign-in and tokens._ |
-| Logs, traces, cost alarms | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+| Stage | Component | Capability | Service | Fidelity | Why |
+|---|---|---|---|---|---|
+| Users | Employees (browser) | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
+| Code | App and infrastructure code | `source-control` | Secure Source Manager | exact | Every change starts as a reviewed commit; the same repository holds the application and its infrastructure code. |
+| Code | Infrastructure as code | `iac` | Infrastructure Manager (Terraform) | exact | Creates and updates the cloud resources from versioned templates, so every environment is reproducible. |
+| Build | Build and test | `ci-build` | Cloud Build | exact | Builds and tests each commit, then packages the services as container images and the functions as bundles. |
+| Ship | Container images | `container-registry` | Artifact Registry | exact | Keeps versioned, scanned images so every environment runs exactly what was tested. |
+| Ship | Release pipeline | `cd-deploy` | Cloud Deploy | exact | Promotes each build through test and production with approvals and rollback. |
+| Serve | Web front end | `cdn` | Cloud CDN | close | _Generic: Content delivery network that caches content close to users._ |
+| Serve | HTTPS load balancer | `load-balancer` | Cloud Load Balancing (Application LB) | exact | _Generic: Distributes HTTP traffic across healthy compute instances._ |
+| Run | Chat API (streaming) | `container-service` | Cloud Run | exact | Streaming responses hold connections for many seconds, which suits containers better than short-lived functions. |
+| Run | LLM + embeddings | `llm-inference` | Vertex AI | exact | Managed models avoid hosting GPUs; pay per token. |
+| Run | Chunk + embed documents | `serverless-function` | Cloud Run functions | exact | Runs only when documents change. |
+| Store | Source documents | `object-storage` | Cloud Storage | exact | _Generic: Durable storage for files and blobs._ |
+| Store | Embeddings index | `vector-search` | Vertex AI Vector Search | exact | Similarity search over document chunks; hybrid keyword + vector improves recall. |
+| Store | Chat history | `key-value-db` | Firestore | close | _Generic: Serverless key-value / document database with single-digit ms reads._ |
+| Operate | Single sign-on | `identity` | Identity Platform | exact | _Generic: User sign-up, sign-in and tokens._ |
+| Operate | Logs, traces, cost alarms | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+
+## Workflows
+
+### Serving a request
+
+1. Employees (browser) → Web front end: load the app through the CDN (HTTPS)
+2. Web front end → HTTPS load balancer: forward API calls
+3. HTTPS load balancer → Chat API (streaming): run the business logic
+4. Chat API (streaming) → Embeddings index: retrieve relevant passages
+5. Chat API (streaming) → LLM + embeddings: generate the answer
+6. Chat API (streaming) → Chat history: read and write items
+7. Chat API (streaming) → Single sign-on: verify the user's sign-in token
+8. Every component → Logs, traces, cost alarms: send logs and metrics
+
+### Background processing
+
+1. Source documents → Chunk + embed documents: start when a document is uploaded
+2. Chunk + embed documents → LLM + embeddings: create embeddings
+3. Chunk + embed documents → Embeddings index: index the new chunks
+
+### Shipping a change
+
+1. A developer → App and infrastructure code: push a reviewed change
+2. App and infrastructure code → Build and test: start a build on every push
+3. Build and test → Container images: publish the tested image
+4. Container images → Release pipeline: start the release
+5. Release pipeline → Infrastructure as code: apply infrastructure changes
+6. Release pipeline → Chat API (streaming), Chunk + embed documents: roll out the new version
 
 ## Shared services used
 
@@ -41,6 +74,8 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 - **Vertex AI Vector Search** (Embeddings index): alternatives: AlloyDB or Cloud SQL with pgvector
 - **Firestore** (Chat history): alternatives: Bigtable; A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
 - **Identity Platform** (Single sign-on): alternatives: Firebase Authentication
+- **Secure Source Manager** (App and infrastructure code): alternatives: GitHub or GitLab via Developer Connect
+- **Infrastructure Manager (Terraform)** (Infrastructure as code): alternatives: Terraform or OpenTofu; A managed service that runs Terraform configurations.
 
 ## Sizing assumptions
 

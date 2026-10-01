@@ -39,9 +39,64 @@ components:
     capability: monitoring
     label: Pipeline monitoring
     sizing: { log_ingest_gb_per_month: 10 }
+  - id: repo
+    capability: source-control
+    label: App and infrastructure code
+    rationale: Every change starts as a reviewed commit; the same repository holds the application and its
+      infrastructure code.
+  - id: build
+    capability: ci-build
+    label: Build and test
+    rationale: Builds and tests each commit, then packages the release.
+  - id: deploy
+    capability: cd-deploy
+    label: Release pipeline
+    rationale: Promotes each build through test and production with approvals and rollback.
+  - id: infra-code
+    capability: iac
+    label: Infrastructure as code
+    rationale: Creates and updates the cloud resources from versioned templates, so every environment is reproducible.
 edges:
   - { from: apps, to: collector, label: events }
   - { from: collector, to: stream }
   - { from: stream, to: lake, label: raw }
   - { from: etl, to: lake, label: read + write }
   - { from: lake, to: warehouse, label: load }
+  - { from: repo, to: build, label: push }
+  - { from: build, to: deploy, label: artifact }
+  - { from: deploy, to: infra-code, label: applies }
+workflows:
+  - id: request
+    name: Serving a request
+    kind: request
+    steps:
+    - text: 'Product apps → Event collector: send events'
+      components: [apps, collector]
+    - text: 'Event collector → Event stream: append to the event stream'
+      components: [collector, stream]
+    - text: 'Every component → Pipeline monitoring: send logs and metrics'
+      components: [logs]
+  - id: data
+    name: Data pipeline
+    kind: data
+    steps:
+    - text: 'Event stream → Data lake (raw + curated): land the raw events'
+      components: [stream, lake]
+    - text: 'Data lake (raw + curated) → Reporting warehouse: load curated data'
+      components: [lake, warehouse]
+    - text: 'Nightly transforms → Data lake (raw + curated): read and write curated data'
+      components: [etl, lake]
+  - id: delivery
+    name: Shipping a change
+    kind: delivery
+    steps:
+    - text: 'A developer → App and infrastructure code: push a reviewed change'
+      components: [repo]
+    - text: 'App and infrastructure code → Build and test: start a build on every push'
+      components: [repo, build]
+    - text: 'Build and test → Release pipeline: hand over the tested package'
+      components: [build, deploy]
+    - text: 'Release pipeline → Infrastructure as code: apply infrastructure changes'
+      components: [deploy, infra-code]
+    - text: 'Release pipeline → Nightly transforms: roll out the new version'
+      components: [deploy, etl]

@@ -16,18 +16,46 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Services
 
-| Component | Capability | Service | Fidelity | Why |
-|---|---|---|---|---|
-| Clients | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
-| Domain | `dns` | Amazon Route 53 | exact | _Generic: Domain name resolution and routing._ |
-| Web firewall | `waf` | AWS WAF | exact | Blocks common attacks (SQL injection, bad bots) before they reach the app. |
-| HTTPS load balancer | `load-balancer` | Application Load Balancer | exact | Spreads traffic across containers in two availability zones and terminates TLS. |
-| API containers | `container-service` | Amazon ECS on AWS Fargate | exact | Steady traffic and long-lived connections favour always-on containers; reuses the existing Docker image. |
-| Session + query cache | `cache` | Amazon ElastiCache (Redis OSS / Valkey) | exact | Cuts database reads for hot data and keeps p95 latency low. |
-| PostgreSQL | `relational-db` | Amazon RDS for PostgreSQL | exact | Relational data with joins and transactions; Multi-AZ meets the 99.9% target. |
-| Uploads | `object-storage` | Amazon S3 | exact | _Generic: Durable storage for files and blobs._ |
-| DB credentials | `secrets` | AWS Secrets Manager | exact | Rotated credentials instead of passwords in environment files. |
-| Logs, metrics, alarms | `monitoring` | Amazon CloudWatch | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+| Stage | Component | Capability | Service | Fidelity | Why |
+|---|---|---|---|---|---|
+| Users | Clients | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
+| Code | App and infrastructure code | `source-control` | GitHub or GitLab via AWS CodeConnections | partial | Every change starts as a reviewed commit; the same repository holds the application and its infrastructure code. |
+| Code | Infrastructure as code | `iac` | AWS CloudFormation | exact | Creates and updates the cloud resources from versioned templates, so every environment is reproducible. |
+| Build | Build and test | `ci-build` | AWS CodeBuild | exact | Builds and tests each commit, then packages the app as a container image. |
+| Ship | Container images | `container-registry` | Amazon ECR | exact | Keeps versioned, scanned images so every environment runs exactly what was tested. |
+| Ship | Release pipeline | `cd-deploy` | AWS CodePipeline | exact | Promotes each build through test and production with approvals and rollback. |
+| Serve | Domain | `dns` | Amazon Route 53 | exact | _Generic: Domain name resolution and routing._ |
+| Serve | Web firewall | `waf` | AWS WAF | exact | Blocks common attacks (SQL injection, bad bots) before they reach the app. |
+| Serve | HTTPS load balancer | `load-balancer` | Application Load Balancer | exact | Spreads traffic across containers in two availability zones and terminates TLS. |
+| Run | API containers | `container-service` | Amazon ECS on AWS Fargate | exact | Steady traffic and long-lived connections favour always-on containers; reuses the existing Docker image. |
+| Store | Session + query cache | `cache` | Amazon ElastiCache (Redis OSS / Valkey) | exact | Cuts database reads for hot data and keeps p95 latency low. |
+| Store | PostgreSQL | `relational-db` | Amazon RDS for PostgreSQL | exact | Relational data with joins and transactions; Multi-AZ meets the 99.9% target. |
+| Store | Uploads | `object-storage` | Amazon S3 | exact | _Generic: Durable storage for files and blobs._ |
+| Operate | DB credentials | `secrets` | AWS Secrets Manager | exact | Rotated credentials instead of passwords in environment files. |
+| Operate | Logs, metrics, alarms | `monitoring` | Amazon CloudWatch | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+
+## Workflows
+
+### Serving a request
+
+1. Clients → Domain: look up the app's address
+2. Clients → Web firewall: filter malicious traffic (HTTPS)
+3. Web firewall → HTTPS load balancer: spread requests across healthy instances
+4. HTTPS load balancer → API containers: run the business logic
+5. API containers → Session + query cache: read and refresh cached results
+6. API containers → PostgreSQL: read and write records
+7. API containers → Uploads: store or read files
+8. API containers → DB credentials: fetch credentials
+9. Every component → Logs, metrics, alarms: send logs and metrics
+
+### Shipping a change
+
+1. A developer → App and infrastructure code: push a reviewed change
+2. App and infrastructure code → Build and test: start a build on every push
+3. Build and test → Container images: publish the tested image
+4. Container images → Release pipeline: start the release
+5. Release pipeline → Infrastructure as code: apply infrastructure changes
+6. Release pipeline → API containers: roll out the new version
 
 ## Shared services used
 
@@ -37,6 +65,10 @@ Always-on containerised web API with a relational database and cache, for steady
 
 - **Amazon ECS on AWS Fargate** (API containers): alternatives: Amazon EKS, AWS App Runner
 - **Amazon RDS for PostgreSQL** (PostgreSQL): alternatives: Amazon Aurora PostgreSQL
+- **GitHub or GitLab via AWS CodeConnections** (App and infrastructure code): alternatives: AWS CodeCommit; Most teams host code on GitHub or GitLab and connect it to AWS pipelines with CodeConnections. Check AWS CodeCommit's current availability before choosing it.
+- **AWS CodeBuild** (Build and test): alternatives: GitHub Actions
+- **AWS CodePipeline** (Release pipeline): alternatives: AWS CodeDeploy, GitHub Actions
+- **AWS CloudFormation** (Infrastructure as code): alternatives: AWS CDK, Terraform or OpenTofu
 
 ## Sizing assumptions
 

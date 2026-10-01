@@ -49,6 +49,23 @@ components:
     capability: monitoring
     label: Logs, metrics, alarms
     sizing: { log_ingest_gb_per_month: 5 }
+  - id: repo
+    capability: source-control
+    label: App and infrastructure code
+    rationale: Every change starts as a reviewed commit; the same repository holds the application and its
+      infrastructure code.
+  - id: build
+    capability: ci-build
+    label: Build and test
+    rationale: Builds and tests each commit, then packages the functions.
+  - id: deploy
+    capability: cd-deploy
+    label: Release pipeline
+    rationale: Promotes each build through test and production with approvals and rollback.
+  - id: infra-code
+    capability: iac
+    label: Infrastructure as code
+    rationale: Creates and updates the cloud resources from versioned templates, so every environment is reproducible.
 edges:
   - { from: users, to: dns }
   - { from: users, to: cdn, label: HTTPS }
@@ -57,3 +74,41 @@ edges:
   - { from: api, to: functions }
   - { from: functions, to: db }
   - { from: api, to: auth, label: verify token }
+  - { from: repo, to: build, label: push }
+  - { from: build, to: deploy, label: artifact }
+  - { from: deploy, to: infra-code, label: applies }
+workflows:
+  - id: request
+    name: Serving a request
+    kind: request
+    steps:
+    - text: 'Users (browser) → Domain: look up the app''s address'
+      components: [users, dns]
+    - text: 'Users (browser) → Static site + API edge: load the app through the CDN (HTTPS)'
+      components: [users, cdn]
+    - text: "Static site + API edge → Front-end assets: serve the site's files"
+      components: [cdn, site]
+    - text: 'Static site + API edge → REST API: forward API calls'
+      components: [cdn, api]
+    - text: 'REST API → Business logic: run the function'
+      components: [api, functions]
+    - text: 'REST API → Sign-up and sign-in: verify the user''s sign-in token'
+      components: [api, auth]
+    - text: 'Business logic → App data: read and write items'
+      components: [functions, db]
+    - text: 'Every component → Logs, metrics, alarms: send logs and metrics'
+      components: [logs]
+  - id: delivery
+    name: Shipping a change
+    kind: delivery
+    steps:
+    - text: 'A developer → App and infrastructure code: push a reviewed change'
+      components: [repo]
+    - text: 'App and infrastructure code → Build and test: start a build on every push'
+      components: [repo, build]
+    - text: 'Build and test → Release pipeline: hand over the tested package'
+      components: [build, deploy]
+    - text: 'Release pipeline → Infrastructure as code: apply infrastructure changes'
+      components: [deploy, infra-code]
+    - text: 'Release pipeline → Business logic: roll out the new version'
+      components: [deploy, functions]

@@ -16,18 +16,48 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 
 ## Services
 
-| Component | Capability | Service | Fidelity | Why |
-|---|---|---|---|---|
-| Apps and partners | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
-| Ingest API | `api-gateway` | API Gateway | close | _Generic: Managed HTTP API front door with auth, throttling and routing._ |
-| Validate + enqueue | `serverless-function` | Cloud Run functions | exact | Short validation work per request; returns immediately and lets the queue absorb bursts. |
-| Job queue | `message-queue` | Pub/Sub | close | Buffers bursts, retries failures and sends poison messages to a dead-letter queue. |
-| Domain events | `event-bus` | Eventarc | close | Lets new consumers subscribe later without changing producers. |
-| Processing steps | `workflow` | Workflows | exact | Multi-step jobs with retries and visible state instead of hand-written orchestration. |
-| Workers | `serverless-function` | Cloud Run functions | exact | _Generic: Event-driven functions billed per invocation and duration._ |
-| Raw + processed files | `object-storage` | Cloud Storage | exact | _Generic: Durable storage for files and blobs._ |
-| Job status | `key-value-db` | Firestore | close | _Generic: Serverless key-value / document database with single-digit ms reads._ |
-| Logs, metrics, alarms | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+| Stage | Component | Capability | Service | Fidelity | Why |
+|---|---|---|---|---|---|
+| Users | Apps and partners | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
+| Code | App and infrastructure code | `source-control` | Secure Source Manager | exact | Every change starts as a reviewed commit; the same repository holds the application and its infrastructure code. |
+| Code | Infrastructure as code | `iac` | Infrastructure Manager (Terraform) | exact | Creates and updates the cloud resources from versioned templates, so every environment is reproducible. |
+| Build | Build and test | `ci-build` | Cloud Build | exact | Builds and tests each commit, then packages the functions. |
+| Ship | Release pipeline | `cd-deploy` | Cloud Deploy | exact | Promotes each build through test and production with approvals and rollback. |
+| Serve | Ingest API | `api-gateway` | API Gateway | close | _Generic: Managed HTTP API front door with auth, throttling and routing._ |
+| Run | Validate + enqueue | `serverless-function` | Cloud Run functions | exact | Short validation work per request; returns immediately and lets the queue absorb bursts. |
+| Run | Workers | `serverless-function` | Cloud Run functions | exact | _Generic: Event-driven functions billed per invocation and duration._ |
+| Integrate | Job queue | `message-queue` | Pub/Sub | close | Buffers bursts, retries failures and sends poison messages to a dead-letter queue. |
+| Integrate | Domain events | `event-bus` | Eventarc | close | Lets new consumers subscribe later without changing producers. |
+| Integrate | Processing steps | `workflow` | Workflows | exact | Multi-step jobs with retries and visible state instead of hand-written orchestration. |
+| Store | Raw + processed files | `object-storage` | Cloud Storage | exact | _Generic: Durable storage for files and blobs._ |
+| Store | Job status | `key-value-db` | Firestore | close | _Generic: Serverless key-value / document database with single-digit ms reads._ |
+| Operate | Logs, metrics, alarms | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
+
+## Workflows
+
+### Serving a request
+
+1. Apps and partners → Ingest API: authenticate, throttle and route the call
+2. Ingest API → Validate + enqueue: run the function
+3. Validate + enqueue → Raw + processed files: store the upload
+4. Validate + enqueue → Job queue: queue the job
+5. Every component → Logs, metrics, alarms: send logs and metrics
+
+### Background processing
+
+1. Job queue → Processing steps: process the queued jobs
+2. Processing steps → Workers: run the function
+3. Workers → Raw + processed files: store or read files
+4. Workers → Job status: read and write items
+5. Workers → Domain events: announce that the job is done
+
+### Shipping a change
+
+1. A developer → App and infrastructure code: push a reviewed change
+2. App and infrastructure code → Build and test: start a build on every push
+3. Build and test → Release pipeline: hand over the tested package
+4. Release pipeline → Infrastructure as code: apply infrastructure changes
+5. Release pipeline → Validate + enqueue, Workers: roll out the new version
 
 ## Trade-offs and alternatives
 
@@ -35,6 +65,8 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 - **Pub/Sub** (Job queue): alternatives: Cloud Tasks; Pub/Sub is publish/subscribe; a single subscription behaves like a queue. Cloud Tasks suits explicit task dispatch with rate limits.
 - **Eventarc** (Domain events): Routes events to Cloud Run, functions and Workflows; filtering is simpler than EventBridge rules.
 - **Firestore** (Job status): alternatives: Bigtable; A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
+- **Secure Source Manager** (App and infrastructure code): alternatives: GitHub or GitLab via Developer Connect
+- **Infrastructure Manager (Terraform)** (Infrastructure as code): alternatives: Terraform or OpenTofu; A managed service that runs Terraform configurations.
 
 ## Sizing assumptions
 

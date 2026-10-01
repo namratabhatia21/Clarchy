@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -52,6 +52,8 @@ class Component(BaseModel):
     label: str | None = None
     sizing: dict[str, SizingValue] = Field(default_factory=dict)
     rationale: str | None = None
+    # Quotes from the requirements that led to this component (planner output).
+    evidence: list[str] = Field(default_factory=list)
 
     @field_validator("id")
     @classmethod
@@ -72,6 +74,14 @@ class Component(BaseModel):
         return catalog.capabilities()[self.capability]["tier"]
 
     @property
+    def stage(self) -> str | None:
+        return catalog.capabilities()[self.capability].get("stage")
+
+    @property
+    def category(self) -> str:
+        return catalog.capabilities()[self.capability]["category"]
+
+    @property
     def display_label(self) -> str:
         return self.label or self.id.replace("-", " ").capitalize()
 
@@ -84,14 +94,53 @@ class Edge(BaseModel):
     label: str | None = None
 
 
+class WorkflowStep(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    text: str
+    components: list[str] = Field(default_factory=list)
+
+
+class Workflow(BaseModel):
+    """An ordered walk through the architecture, e.g. how a request or a release flows."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    name: str
+    kind: Literal["request", "async", "data", "delivery", "other"] = "other"
+    steps: list[WorkflowStep] = Field(min_length=1)
+
+    @field_validator("id")
+    @classmethod
+    def _valid_id(cls, value: str) -> str:
+        if not _ID.match(value):
+            raise ValueError(f"workflow id {value!r} must be lowercase letters, digits, '-'")
+        return value
+
+
+class Provenance(BaseModel):
+    """Who or what produced the spec: a person, the rule-based planner or an AI model."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    mode: Literal["manual", "rules", "ai"] = "manual"
+    model: str | None = None
+    source: str | None = None
+
+
 class ArchitectureSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str
     summary: str | None = None
     requirements: Requirements = Field(default_factory=Requirements)
+    assumptions: list[str] = Field(default_factory=list)
+    open_questions: list[str] = Field(default_factory=list)
     components: list[Component]
     edges: list[Edge] = Field(default_factory=list)
+    workflows: list[Workflow] = Field(default_factory=list)
+    provenance: Provenance | None = None
 
     @model_validator(mode="after")
     def _check_graph(self) -> ArchitectureSpec:
@@ -106,10 +155,33 @@ class ArchitectureSpec(BaseModel):
                     raise ValueError(f"edge {edge.source} -> {edge.target}: unknown id {end!r}")
             if edge.source == edge.target:
                 raise ValueError(f"edge {edge.source} -> {edge.target} is a self-loop")
+        workflow_ids = [w.id for w in self.workflows]
+        dupes = sorted({i for i in workflow_ids if workflow_ids.count(i) > 1})
+        if dupes:
+            raise ValueError(f"duplicate workflow ids: {', '.join(dupes)}")
+        for wf in self.workflows:
+            for n, step in enumerate(wf.steps, start=1):
+                unknown = [c for c in step.components if c not in known]
+                if unknown:
+                    raise ValueError(
+                        f"workflow {wf.id} step {n} names unknown components: {', '.join(unknown)}"
+                    )
         return self
 
     def component(self, component_id: str) -> Component:
         return next(c for c in self.components if c.id == component_id)
+
+
+def spec_to_yaml(spec: ArchitectureSpec) -> str:
+    """Compact YAML: defaults are left out, except the region and availability target,
+    which a reader should always see."""
+    data = spec.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
+    requirements = data.setdefault("requirements", {})
+    requirements["region"] = spec.requirements.region
+    requirements["availability_target"] = spec.requirements.availability_target
+    ordered = {key: data[key] for key in ("name", "summary", "requirements") if key in data}
+    ordered.update({k: v for k, v in data.items() if k not in ordered})
+    return yaml.safe_dump(ordered, sort_keys=False, allow_unicode=True, width=100)
 
 
 def load_spec(data: dict[str, Any]) -> ArchitectureSpec:

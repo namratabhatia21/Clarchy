@@ -1,80 +1,122 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="932" height="644" viewBox="0 0 932 644" role="img" aria-label="Analytics data pipeline on Azure">
-<style>.bg{fill:#ffffff}
-.title{font:600 18px sans-serif;fill:#16191f}
-.subtitle{font:13px sans-serif;fill:#545b64}
-.cloud{fill:#f8f9fa;stroke:#232f3e;stroke-width:1.5}
-.cloud-label{font:600 13px sans-serif;fill:#232f3e}
-.band{fill:none;stroke:#aab7b8;stroke-dasharray:5 4}
-.band-label{font:600 12px sans-serif;fill:#545b64}
-.node-box{fill:#ffffff;stroke-width:1.5}
-.badge{font:700 14px sans-serif;fill:#ffffff}
-.service{font:600 12px sans-serif;fill:#16191f}
-.label{font:11px sans-serif;fill:#545b64}
-.fidelity{font:italic 10px sans-serif;fill:#b0084d}
-.edge{fill:none;stroke:#545b64;stroke-width:1.5}
-.edge-label{font:11px sans-serif;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.footer{font:10px sans-serif;fill:#879196}</style>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
-<rect class="bg" width="932" height="644"/>
-<text class="title" x="24" y="36">Analytics data pipeline · Azure</text>
-<text class="subtitle" x="24" y="56">Streams application events into a data lake, transforms them on a schedule and serves dashboards from a warehouse.</text>
-<rect class="cloud" x="252" y="104" width="656" height="488" rx="4"/>
-<text class="cloud-label" x="262" y="123">Microsoft Azure · Frankfurt (germanywestcentral)</text>
-<rect class="band" x="262" y="420" width="636" height="162" rx="4"/>
-<text class="band-label" x="272" y="440">Shared services</text>
-<path class="edge" d="M180,266 C227,266 227,266 274,266" marker-end="url(#arrow)"/>
-<text class="edge-label" x="227" y="260" text-anchor="middle">events</text>
-<path class="edge" d="M430,266 C466,266 466,340 502,340" marker-end="url(#arrow)"/>
-<path class="edge" d="M658,340 C694,340 694,192 730,192" marker-end="url(#arrow)"/>
-<text class="edge-label" x="694" y="260" text-anchor="middle">raw</text>
-<path class="edge" d="M658,192 C694,192 694,192 730,192" marker-end="url(#arrow)"/>
-<text class="edge-label" x="694" y="186" text-anchor="middle">read + write</text>
-<path class="edge" d="M808,250 C808,266 808,266 808,282" marker-end="url(#arrow)"/>
-<text class="edge-label" x="808" y="260" text-anchor="middle">load</text>
-<g class="node" data-id="apps" data-capability="client">
-<rect class="node-box" x="24" y="208" width="156" height="116" rx="8" style="stroke:#545B64"/>
-<g fill="#545B64"><circle cx="102" cy="232" r="10"/><path d="M84,264 Q84,246 102,246 Q120,246 120,264 Z"/></g>
-<text class="service" x="102" y="282" text-anchor="middle">Product apps</text>
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-azure" width="1136" height="830" viewBox="0 0 1136 830" role="img" aria-label="Analytics data pipeline on Azure">
+<style>.ca-azure{font-family:'Segoe UI', 'Helvetica Neue', Arial, sans-serif}
+.ca-azure .ca-bg{fill:#ffffff}
+.ca-azure .ca-title{font-size:18px;font-weight:600;fill:#16191f}
+.ca-azure .ca-subtitle{font-size:13px;fill:#545b64}
+.ca-azure .ca-cloud{fill:#FFFFFF;stroke:#0078D4;stroke-width:1.5;}
+.ca-azure .ca-cloud-label{font-size:13px;font-weight:600;fill:#0F548C}
+.ca-azure .ca-band{fill:none;stroke:#8A8886;stroke-dasharray:5 4}
+.ca-azure .ca-band-label{font-size:12px;font-weight:600;fill:#605E5C}
+.ca-azure .ca-node-box{fill:#ffffff;stroke-width:1.5}
+.ca-azure .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
+.ca-azure .ca-service{font-size:12px;font-weight:600;fill:#16191f}
+.ca-azure .ca-label{font-size:11px;fill:#545b64}
+.ca-azure .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
+.ca-azure .ca-edge{fill:none;stroke:#605E5C;stroke-width:1.5}
+.ca-azure .ca-arrow{fill:#605E5C}
+.ca-azure .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
+.ca-azure .ca-footer{font-size:10px;fill:#879196}</style>
+<rect class="ca-bg" width="1136" height="830"/>
+<text class="ca-title" x="24" y="36">Analytics data pipeline · Azure</text>
+<text class="ca-subtitle" x="24" y="56">Streams application events into a data lake, transforms them on a schedule and serves dashboards from a warehouse.</text>
+<rect class="ca-cloud" x="252" y="104" width="860" height="674" rx="4"/>
+<text class="ca-cloud-label" x="262" y="123">Microsoft Azure · Frankfurt (germanywestcentral)</text>
+<rect class="ca-band" x="262" y="134" width="840" height="164" rx="4"/>
+<text class="ca-band-label" x="272" y="154">Build and deploy</text>
+<rect class="ca-band" x="262" y="606" width="840" height="162" rx="4"/>
+<text class="ca-band-label" x="272" y="626">Shared services</text>
+<path class="ca-edge" data-from="apps" data-to="collector" d="M180,452 C227,452 227,452 274,452"/>
+<polygon class="ca-arrow" data-from="apps" data-to="collector" points="274,452 265,447.5 265,456.5"/>
+<text class="ca-edge-label" data-from="apps" data-to="collector" x="227" y="446" text-anchor="middle">events</text>
+<path class="ca-edge" data-from="collector" data-to="stream" d="M430,452 C466,452 466,526 502,526"/>
+<polygon class="ca-arrow" data-from="collector" data-to="stream" points="502,526 493,521.5 493,530.5"/>
+<path class="ca-edge" data-from="stream" data-to="lake" d="M658,526 C694,526 694,378 730,378"/>
+<polygon class="ca-arrow" data-from="stream" data-to="lake" points="730,378 721,373.5 721,382.5"/>
+<text class="ca-edge-label" data-from="stream" data-to="lake" x="694" y="446" text-anchor="middle">raw</text>
+<path class="ca-edge" data-from="etl" data-to="lake" d="M658,378 C694,378 694,378 730,378"/>
+<polygon class="ca-arrow" data-from="etl" data-to="lake" points="730,378 721,373.5 721,382.5"/>
+<text class="ca-edge-label" data-from="etl" data-to="lake" x="694" y="372" text-anchor="middle">read + write</text>
+<path class="ca-edge" data-from="lake" data-to="warehouse" d="M808,436 C808,452 808,452 808,468"/>
+<polygon class="ca-arrow" data-from="lake" data-to="warehouse" points="808,468 803.5,459 812.5,459"/>
+<text class="ca-edge-label" data-from="lake" data-to="warehouse" x="808" y="446" text-anchor="middle">load</text>
+<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="deploy" d="M650,226 C682,226 682,226 714,226"/>
+<polygon class="ca-arrow" data-from="build" data-to="deploy" points="714,226 705,221.5 705,230.5"/>
+<text class="ca-edge-label" data-from="build" data-to="deploy" x="682" y="220" text-anchor="middle">artifact</text>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M870,226 C902,226 902,226 934,226"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="934,226 925,221.5 925,230.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="902" y="220" text-anchor="middle">applies</text>
+<g class="node" data-id="apps" data-capability="client" data-stage="users">
+<rect class="ca-node-box" x="24" y="394" width="156" height="116" rx="8" style="stroke:#605E5C"/>
+<g fill="#605E5C"><circle cx="102" cy="418" r="10"/><path d="M84,450 Q84,432 102,432 Q120,432 120,450 Z"/></g>
+<text class="ca-service" x="102" y="468" text-anchor="middle">Product apps</text>
 </g>
-<g class="node" data-id="collector" data-capability="api-gateway">
-<rect class="node-box" x="274" y="208" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="328" y="218" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="352" y="247" text-anchor="middle">APIM</text>
-<text class="service" x="352" y="282" text-anchor="middle">Azure API Management</text>
-<text class="label" x="352" y="317" text-anchor="middle">Event collector</text>
+<g class="node" data-id="collector" data-capability="api-gateway" data-stage="serve">
+<rect class="ca-node-box" x="274" y="394" width="156" height="116" rx="8" style="stroke:#8764B8"/>
+<rect x="328" y="404" width="48" height="48" rx="6" fill="#8764B8"/><text class="ca-badge" x="352" y="433" text-anchor="middle">APIM</text>
+<text class="ca-service" x="352" y="468" text-anchor="middle">Azure API Management</text>
+<text class="ca-label" x="352" y="503" text-anchor="middle">Event collector</text>
 </g>
-<g class="node" data-id="stream" data-capability="stream">
-<rect class="node-box" x="502" y="282" width="156" height="116" rx="8" style="stroke:#B0084D"/>
-<rect x="556" y="292" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="321" text-anchor="middle">EH</text>
-<text class="service" x="580" y="356" text-anchor="middle">Azure Event Hubs</text>
-<text class="label" x="580" y="391" text-anchor="middle">Event stream</text>
+<g class="node" data-id="stream" data-capability="stream" data-stage="integrate">
+<rect class="ca-node-box" x="502" y="468" width="156" height="116" rx="8" style="stroke:#5C2D91"/>
+<rect x="556" y="478" width="48" height="48" rx="6" fill="#5C2D91"/><text class="ca-badge" x="580" y="507" text-anchor="middle">EH</text>
+<text class="ca-service" x="580" y="542" text-anchor="middle">Azure Event Hubs</text>
+<text class="ca-label" x="580" y="577" text-anchor="middle">Event stream</text>
 </g>
-<g class="node" data-id="etl" data-capability="batch-etl">
-<rect class="node-box" x="502" y="134" width="156" height="116" rx="8" style="stroke:#B0084D"/>
-<rect x="556" y="144" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="173" text-anchor="middle">ADF</text>
-<text class="service" x="580" y="208" text-anchor="middle">Azure Data Factory</text>
-<text class="label" x="580" y="243" text-anchor="middle">Nightly transforms</text>
-<text class="fidelity" x="652" y="148" text-anchor="end">close</text>
+<g class="node" data-id="etl" data-capability="batch-etl" data-stage="integrate">
+<rect class="ca-node-box" x="502" y="320" width="156" height="116" rx="8" style="stroke:#5C2D91"/>
+<rect x="556" y="330" width="48" height="48" rx="6" fill="#5C2D91"/><text class="ca-badge" x="580" y="359" text-anchor="middle">ADF</text>
+<text class="ca-service" x="580" y="394" text-anchor="middle">Azure Data Factory</text>
+<text class="ca-label" x="580" y="429" text-anchor="middle">Nightly transforms</text>
+<text class="ca-fidelity" x="652" y="334" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="lake" data-capability="object-storage">
-<rect class="node-box" x="730" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="784" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="173" text-anchor="middle">BLOB</text>
-<text class="service" x="808" y="208" text-anchor="middle">Azure Blob Storage</text>
-<text class="label" x="808" y="243" text-anchor="middle">Data lake (raw + curated)</text>
+<g class="node" data-id="lake" data-capability="object-storage" data-stage="store">
+<rect class="ca-node-box" x="730" y="320" width="156" height="116" rx="8" style="stroke:#107C10"/>
+<rect x="784" y="330" width="48" height="48" rx="6" fill="#107C10"/><text class="ca-badge" x="808" y="359" text-anchor="middle">BLOB</text>
+<text class="ca-service" x="808" y="394" text-anchor="middle">Azure Blob Storage</text>
+<text class="ca-label" x="808" y="429" text-anchor="middle">Data lake (raw + curated)</text>
 </g>
-<g class="node" data-id="warehouse" data-capability="data-warehouse">
-<rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="784" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="321" text-anchor="middle">FAB</text>
-<text class="service" x="808" y="356" text-anchor="middle">Microsoft Fabric Data</text>
-<text class="service" x="808" y="370" text-anchor="middle">Warehouse</text>
-<text class="label" x="808" y="391" text-anchor="middle">Reporting warehouse</text>
-<text class="fidelity" x="880" y="296" text-anchor="end">close</text>
+<g class="node" data-id="warehouse" data-capability="data-warehouse" data-stage="store">
+<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#5C2D91"/>
+<rect x="784" y="478" width="48" height="48" rx="6" fill="#5C2D91"/><text class="ca-badge" x="808" y="507" text-anchor="middle">FAB</text>
+<text class="ca-service" x="808" y="542" text-anchor="middle">Microsoft Fabric Data</text>
+<text class="ca-service" x="808" y="556" text-anchor="middle">Warehouse</text>
+<text class="ca-label" x="808" y="577" text-anchor="middle">Reporting warehouse</text>
+<text class="ca-fidelity" x="880" y="482" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="logs" data-capability="monitoring">
-<rect class="node-box" x="274" y="454" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="328" y="464" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="493" text-anchor="middle">MON</text>
-<text class="service" x="352" y="528" text-anchor="middle">Azure Monitor +</text>
-<text class="service" x="352" y="542" text-anchor="middle">Application Insights</text>
-<text class="label" x="352" y="563" text-anchor="middle">Pipeline monitoring</text>
+<g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
+<rect class="ca-node-box" x="274" y="640" width="156" height="116" rx="8" style="stroke:#486991"/>
+<rect x="328" y="650" width="48" height="48" rx="6" fill="#486991"/><text class="ca-badge" x="352" y="679" text-anchor="middle">MON</text>
+<text class="ca-service" x="352" y="714" text-anchor="middle">Azure Monitor +</text>
+<text class="ca-service" x="352" y="728" text-anchor="middle">Application Insights</text>
+<text class="ca-label" x="352" y="749" text-anchor="middle">Pipeline monitoring</text>
 </g>
-<text class="footer" x="24" y="632">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with Azure.</text>
+<g class="node" data-id="repo" data-capability="source-control" data-stage="code">
+<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
+<rect x="328" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="352" y="207" text-anchor="middle">REPO</text>
+<text class="ca-service" x="352" y="242" text-anchor="middle">Azure Repos</text>
+<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
+</g>
+<g class="node" data-id="build" data-capability="ci-build" data-stage="build">
+<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
+<rect x="548" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="572" y="207" text-anchor="middle">PIPE</text>
+<text class="ca-service" x="572" y="242" text-anchor="middle">Azure Pipelines</text>
+<text class="ca-label" x="572" y="277" text-anchor="middle">Build and test</text>
+</g>
+<g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
+<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
+<rect x="768" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="792" y="207" text-anchor="middle">REL</text>
+<text class="ca-service" x="792" y="242" text-anchor="middle">Azure Pipelines</text>
+<text class="ca-service" x="792" y="256" text-anchor="middle">(release stages)</text>
+<text class="ca-label" x="792" y="277" text-anchor="middle">Release pipeline</text>
+</g>
+<g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
+<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#486991"/>
+<rect x="988" y="178" width="48" height="48" rx="6" fill="#486991"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">BCP</text>
+<text class="ca-service" x="1012" y="242" text-anchor="middle">Bicep</text>
+<text class="ca-label" x="1012" y="277" text-anchor="middle">Infrastructure as code</text>
+</g>
+<text class="ca-footer" x="24" y="818">Generated by CloudArchie. Service names belong to their owners; CloudArchie is not affiliated with Azure.</text>
 </svg>

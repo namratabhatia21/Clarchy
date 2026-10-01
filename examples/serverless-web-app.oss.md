@@ -16,17 +16,42 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Services
 
-| Component | Capability | Service | Fidelity | Why |
-|---|---|---|---|---|
-| Users (browser) | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
-| Domain | `dns` | PowerDNS | partial | Managed DNS with health checks; also issues the custom domain for the CDN. |
-| Static site + API edge | `cdn` | Varnish Cache | partial | Serves the static front end from edge locations and keeps egress cheaper than serving from origin. |
-| Front-end assets | `object-storage` | Ceph Object Gateway | close | Static files need no servers; the CDN reads them privately. |
-| REST API | `api-gateway` | Kong Gateway (OSS) | close | Auth, throttling and routing without running a server; pay per request. |
-| Business logic | `serverless-function` | Knative Serving | close | Spiky traffic and scale-to-zero make per-invocation billing cheaper than always-on containers. |
-| App data | `key-value-db` | Apache Cassandra | close | Access patterns are simple key lookups; on-demand capacity scales with traffic and has no idle cost. |
-| Sign-up and sign-in | `identity` | Keycloak | exact | Managed user pool avoids building password storage and token handling yourself. |
-| Logs, metrics, alarms | `monitoring` | Prometheus + Grafana | close | _Generic: Metrics, logs, dashboards and alarms._ |
+| Stage | Component | Capability | Service | Fidelity | Why |
+|---|---|---|---|---|---|
+| Users | Users (browser) | `client` | (outside the cloud) | - | _Generic: People or systems outside the cloud that use the application._ |
+| Code | App and infrastructure code | `source-control` | GitLab Community Edition | exact | Every change starts as a reviewed commit; the same repository holds the application and its infrastructure code. |
+| Code | Infrastructure as code | `iac` | OpenTofu | exact | Creates and updates the cloud resources from versioned templates, so every environment is reproducible. |
+| Build | Build and test | `ci-build` | Jenkins | exact | Builds and tests each commit, then packages the functions. |
+| Ship | Release pipeline | `cd-deploy` | Argo CD | exact | Promotes each build through test and production with approvals and rollback. |
+| Serve | Domain | `dns` | PowerDNS | partial | Managed DNS with health checks; also issues the custom domain for the CDN. |
+| Serve | Static site + API edge | `cdn` | Varnish Cache | partial | Serves the static front end from edge locations and keeps egress cheaper than serving from origin. |
+| Serve | REST API | `api-gateway` | Kong Gateway (OSS) | close | Auth, throttling and routing without running a server; pay per request. |
+| Run | Business logic | `serverless-function` | Knative Serving | close | Spiky traffic and scale-to-zero make per-invocation billing cheaper than always-on containers. |
+| Store | Front-end assets | `object-storage` | Ceph Object Gateway | close | Static files need no servers; the CDN reads them privately. |
+| Store | App data | `key-value-db` | Apache Cassandra | close | Access patterns are simple key lookups; on-demand capacity scales with traffic and has no idle cost. |
+| Operate | Sign-up and sign-in | `identity` | Keycloak | exact | Managed user pool avoids building password storage and token handling yourself. |
+| Operate | Logs, metrics, alarms | `monitoring` | Prometheus + Grafana | close | _Generic: Metrics, logs, dashboards and alarms._ |
+
+## Workflows
+
+### Serving a request
+
+1. Users (browser) → Domain: look up the app's address
+2. Users (browser) → Static site + API edge: load the app through the CDN (HTTPS)
+3. Static site + API edge → Front-end assets: serve the site's files
+4. Static site + API edge → REST API: forward API calls
+5. REST API → Business logic: run the function
+6. REST API → Sign-up and sign-in: verify the user's sign-in token
+7. Business logic → App data: read and write items
+8. Every component → Logs, metrics, alarms: send logs and metrics
+
+### Shipping a change
+
+1. A developer → App and infrastructure code: push a reviewed change
+2. App and infrastructure code → Build and test: start a build on every push
+3. Build and test → Release pipeline: hand over the tested package
+4. Release pipeline → Infrastructure as code: apply infrastructure changes
+5. Release pipeline → Business logic: roll out the new version
 
 ## Shared services used
 
@@ -41,6 +66,10 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 - **Knative Serving** (Business logic): alternatives: OpenFaaS; Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
 - **Apache Cassandra** (App data): alternatives: FerretDB; Scales well but needs careful data modelling and cluster operations.
 - **Prometheus + Grafana** (Logs, metrics, alarms): alternatives: OpenTelemetry Collector, Grafana Loki; You store and retain metrics and logs yourself.
+- **GitLab Community Edition** (App and infrastructure code): alternatives: Forgejo, Gitea; You run, back up and upgrade the Git server yourself.
+- **Jenkins** (Build and test): alternatives: Tekton, GitLab CI/CD, Woodpecker CI; Build agents and plugins are yours to operate.
+- **Argo CD** (Release pipeline): alternatives: Flux; GitOps deployment to Kubernetes from the Git repository.
+- **OpenTofu** (Infrastructure as code): alternatives: Pulumi, Crossplane
 
 ## Sizing assumptions
 

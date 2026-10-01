@@ -4,176 +4,270 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CloudArchie</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ED7100'/%3E%3Cpath d='M9 21a5 5 0 0 1 1-9.9A7 7 0 0 1 23.5 12 4.5 4.5 0 0 1 23 21z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23E8710A'/%3E%3Cpath d='M9 21a5 5 0 0 1 1-9.9A7 7 0 0 1 23.5 12 4.5 4.5 0 0 1 23 21z' fill='white'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap">
   <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
-    <div class="brand">
+    <a class="brand" href="#plan" aria-label="CloudArchie home">
       <span class="logo" aria-hidden="true"></span>
-      <div>
-        <h1>CloudArchie</h1>
-        <p class="tagline">Explainable cloud architecture advisor</p>
-      </div>
-    </div>
+      <span>
+        <span class="brand-name">CloudArchie</span>
+        <span class="tagline">Explainable cloud architecture advisor</span>
+      </span>
+    </a>
     <nav class="main-nav" aria-label="Sections">
-      <a href="#/designer" class="main-link" data-page="designer">Designer</a>
-      <a href="#/catalog" class="main-link" data-page="catalog">Service catalog</a>
+      <a href="#plan" class="main-link" data-page="plan">Plan</a>
+      <a href="#examples" class="main-link" data-page="examples">Examples</a>
+      <a href="#services" class="main-link" data-page="services">Services</a>
     </nav>
+    <span class="engine-chip" id="engine-chip" hidden></span>
   </header>
 
-  <div class="layout" id="page-designer">
-    <aside class="sidebar" aria-label="Patterns">
-      <h2 class="section-title">Start from a pattern</h2>
-      <ul class="pattern-list" id="pattern-list"></ul>
-      <h2 class="section-title">Or bring your own</h2>
-      <button class="pattern-card custom" id="custom-spec" type="button">
-        <strong>Edit a spec</strong>
-        <span id="custom-spec-text">Change any pattern in the Spec tab, or paste your own YAML.</span>
-      </button>
-
-      <section class="trust" aria-label="How to read this">
-        <h2 class="section-title">How to read this</h2>
-        <ul>
-          <li><b>Deterministic.</b> The same spec always gives the same diagram and choices. No AI is involved yet.</li>
-          <li><b>Every choice is explained.</b> Click any box to see why, the alternatives, and how close the match is.</li>
-          <li><b>No made-up numbers.</b> Costs appear only once they come from official price data (phase 2).</li>
-          <li><b>Review status shown.</b> Each provider's mappings say whether a specialist has checked them yet.</li>
-        </ul>
-      </section>
-    </aside>
-
-    <main class="main">
-      <nav class="provider-tabs" id="provider-tabs" aria-label="Cloud provider"></nav>
-      <section class="design-head">
-        <div>
-          <h2 id="design-name">Loading…</h2>
-          <p id="design-summary" class="muted"></p>
+  <main id="main">
+    <!-- Plan: describe the app, watch the agent work, explore the result -->
+    <section class="page" id="page-plan" data-page="plan">
+      <div class="plan-start" id="plan-start">
+        <div class="hero">
+          <h1>Describe your app. Get the architecture.</h1>
+          <p class="hero-sub">Upload a requirements document or type what you need. An agent designs the services, the build-and-deploy workflow and how everything connects, on AWS, Azure, Google Cloud or open source.</p>
         </div>
-        <div class="downloads" aria-label="Downloads">
-          <span class="dl-label" id="dl-label">Download</span>
-          <button type="button" class="btn" id="dl-svg" disabled>SVG</button>
-          <button type="button" class="btn" id="dl-md" disabled>Explanation</button>
-          <button type="button" class="btn" id="dl-yaml">Spec YAML</button>
-          <span class="dl-status" id="dl-status" role="status"></span>
-        </div>
-      </section>
-      <ul class="chips" id="requirements" aria-label="Requirements"></ul>
 
-      <div class="view-tabs" role="tablist" aria-label="View">
-        <button role="tab" class="view-tab" data-view="diagram" aria-selected="true">Diagram</button>
-        <button role="tab" class="view-tab" data-view="services" aria-selected="false">Services</button>
-        <button role="tab" class="view-tab" data-view="spec" aria-selected="false">Spec <span class="status-dot" id="spec-status"></span></button>
-        <button role="tab" class="view-tab" data-view="cost" aria-selected="false">Cost</button>
-      </div>
-
-      <div id="banner" class="banner" hidden></div>
-      <div id="review-note" class="notice" hidden></div>
-
-      <section class="view" data-view="diagram">
-        <div class="canvas" id="diagram" aria-live="polite"></div>
-        <p class="hint">Click a box to inspect it. <span id="icon-note"></span></p>
-      </section>
-
-      <section class="view" data-view="services" hidden>
-        <div class="table-wrap">
-          <table class="services">
-            <thead><tr><th>Component</th><th>Service</th><th>Capability</th><th>Match</th><th>Why</th></tr></thead>
-            <tbody id="services-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="view" data-view="spec" hidden>
-        <div class="editor-bar">
-          <span class="muted" id="editor-hint">Edits re-validate and redraw as you type.</span>
-          <p class="notice" id="spec-readonly" hidden><b>Read-only in this hosted demo.</b> Install CloudArchie and run <code>cloudarchie serve</code> to edit specs and see them re-validate live.</p>
-          <button type="button" class="btn" id="reset-spec">Reset to pattern</button>
-        </div>
-        <textarea id="spec-editor" spellcheck="false" aria-label="Spec YAML"></textarea>
-        <ul class="errors" id="spec-errors" aria-live="polite"></ul>
-        <details class="reference">
-          <summary>Capabilities and regions you can use</summary>
-          <div class="reference-grid">
-            <div><h3>Capabilities</h3><dl id="ref-capabilities"></dl></div>
-            <div><h3>Regions</h3><dl id="ref-regions"></dl></div>
+        <form class="composer" id="composer" novalidate>
+          <div class="static-note notice" id="static-note" hidden>
+            <b>This public demo has no server, so it can't read new documents.</b>
+            Pick a sample below to replay a real planning run, or
+            <a href="https://github.com/namratabhatia21/CloudArchie#run-it-yourself" target="_blank" rel="noopener noreferrer">run CloudArchie yourself</a>
+            to plan your own app.
           </div>
-        </details>
-      </section>
+          <label class="sr-only" for="requirements">Requirements</label>
+          <textarea id="requirements" rows="7" placeholder="For example: A booking app for 40 clinics in the US. Patients sign in, book appointments and pay a deposit by card. HIPAA applies. About 120,000 patients and 99.95% uptime. The backend is already in Docker."></textarea>
+          <div class="attachment" id="attachment" hidden>
+            <span class="file-badge" id="file-badge"></span>
+            <span class="file-name" id="file-name"></span>
+            <span class="file-size muted" id="file-size"></span>
+            <button type="button" class="icon-btn" id="file-remove" aria-label="Remove the attached document">×</button>
+          </div>
+          <div class="composer-bar">
+            <div class="composer-tools">
+              <label class="btn btn-ghost attach-btn" for="file-input">
+                <span aria-hidden="true">📎</span> Attach a document
+              </label>
+              <input type="file" id="file-input" class="sr-only" accept=".docx,.pdf,.xlsx,.md,.markdown,.txt,.csv">
+              <span class="muted small">Word, PDF, Excel, Markdown or text · up to 10 MB</span>
+            </div>
+            <div class="composer-options">
+              <label class="option">
+                <span>Region</span>
+                <select id="region">
+                  <option value="">Detect from text</option>
+                </select>
+              </label>
+              <label class="option" id="mode-option">
+                <span>Planner</span>
+                <select id="mode">
+                  <option value="auto">Best available</option>
+                  <option value="ai">AI agent (Claude)</option>
+                  <option value="rules">Rule-based</option>
+                </select>
+              </label>
+              <button type="submit" class="btn btn-primary" id="plan-button">Design architecture</button>
+            </div>
+          </div>
+          <p class="composer-error" id="composer-error" role="alert" hidden></p>
+          <div class="drop-hint" aria-hidden="true">Drop your requirements document</div>
+        </form>
 
-      <section class="view" data-view="cost" hidden>
-        <div class="placeholder">
-          <h3>Cost estimates arrive in phase 2</h3>
-          <p>CloudArchie will not show a number until it can trace every line to an official price, a usage assumption you can edit, and a pricing date. Planned:</p>
+        <section class="samples" aria-labelledby="samples-title">
+          <h2 class="section-title" id="samples-title">Or try a sample</h2>
+          <ul class="sample-list" id="sample-list"></ul>
+        </section>
+
+        <section class="how" aria-labelledby="how-title">
+          <h2 class="section-title" id="how-title">What happens when you press the button</h2>
+          <ol class="how-steps">
+            <li><b>Read</b><span>Text comes out of your Word, PDF or Excel file.</span></li>
+            <li><b>Understand</b><span>Users, traffic, data, region, compliance and needs, each quoted from your words.</span></li>
+            <li><b>Design</b><span>An agent uses CloudArchie's MCP tools: it reads reference patterns, drafts a spec and fixes it until validation passes.</span></li>
+            <li><b>Build and deploy</b><span>Source control, CI, container registry, release pipeline, infrastructure as code and KEDA when it helps.</span></li>
+            <li><b>Explain</b><span>Step-by-step workflows, a reason for every service and the equivalent on every cloud.</span></li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="run" id="run" hidden>
+        <div class="run-bar">
+          <div class="run-input">
+            <span class="run-input-label muted small">Planning</span>
+            <span class="run-input-name" id="run-input-name"></span>
+          </div>
+          <span class="mode-chip" id="run-mode"></span>
+          <button type="button" class="btn" id="new-plan">New plan</button>
+        </div>
+        <div class="run-grid">
+          <aside class="timeline" aria-label="Planning progress">
+            <h2 class="section-title">Pipeline</h2>
+            <ol class="stages" id="stages" aria-live="polite"></ol>
+          </aside>
+          <div class="run-result">
+            <div class="result-placeholder" id="result-placeholder">
+              <div class="skeleton"></div>
+              <p>The design appears here as soon as the pipeline finishes.</p>
+            </div>
+            <div class="workspace" id="plan-workspace" hidden></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Examples: reviewed reference architectures -->
+    <section class="page" id="page-examples" data-page="examples" hidden>
+      <div class="examples-index" id="examples-index">
+        <div class="page-head">
+          <h1>Examples</h1>
+          <p class="muted">Reviewed reference architectures. Open one to see it on every cloud, read why each service is there and follow its workflows.</p>
+        </div>
+        <div class="pills" id="example-filters" role="group" aria-label="Filter examples"></div>
+        <ul class="example-grid" id="example-grid"></ul>
+      </div>
+      <div class="example-detail" id="example-detail" hidden>
+        <a class="back-link" href="#examples">← All examples</a>
+        <div class="workspace" id="example-workspace"></div>
+      </div>
+    </section>
+
+    <!-- Services: equivalent services across clouds -->
+    <section class="page catalog-layout" id="page-services" data-page="services" hidden>
+      <aside class="filters" aria-label="Filters">
+        <div class="filter-group">
+          <h2 class="section-title">Lifecycle stage</h2>
+          <div class="pills" id="filter-stages"></div>
+        </div>
+        <div class="filter-group">
+          <h2 class="section-title">Compare providers</h2>
+          <div class="pills" id="filter-providers"></div>
+        </div>
+        <div class="filter-group">
+          <h2 class="section-title">Match quality</h2>
+          <div class="pills" id="filter-match"></div>
+        </div>
+        <section class="aside-card">
+          <h2 class="section-title">About matches</h2>
           <ul>
-            <li>Monthly and yearly cost as <b>low / expected / high</b> ranges, not a single number</li>
-            <li>Commonly missed costs: data transfer, NAT gateways, logs, KMS, public IPv4</li>
-            <li>Savings Plans and Reserved Instances with <b>break-even</b> month and downside if usage drops</li>
-            <li>Accuracy published against the official AWS Pricing Calculator</li>
+            <li><span class="badge exact">exact</span> same concept, comparable features</li>
+            <li><span class="badge close">close</span> same job, differences worth knowing</li>
+            <li><span class="badge partial">partial</span> covers only part of the job</li>
+            <li>Open-source entries also count the work of running it yourself.</li>
           </ul>
-          <p class="muted">The sizing used for pricing is already in each component. Click a box to see it.</p>
+        </section>
+      </aside>
+      <div class="catalog-main">
+        <div class="catalog-head">
+          <h1>Services <span class="count" id="catalog-count"></span></h1>
+          <div class="catalog-controls">
+            <label class="sr-only" for="catalog-search">Search services</label>
+            <input type="search" id="catalog-search" placeholder="Search a service or job, e.g. Lambda, queue, KEDA, BigQuery" autocomplete="off">
+            <label class="sr-only" for="catalog-sort">Sort</label>
+            <select id="catalog-sort">
+              <option value="stage">Sort: lifecycle</option>
+              <option value="name">Sort: name A–Z</option>
+              <option value="differences">Sort: most differences</option>
+            </select>
+          </div>
         </div>
-      </section>
-    </main>
-
-    <aside class="inspector" id="inspector" aria-label="Component details" hidden>
-      <button type="button" class="inspector-close" id="inspector-close" aria-label="Close details">×</button>
-      <div id="inspector-body"></div>
-    </aside>
-  </div>
-
-
-  <div class="catalog-layout" id="page-catalog" hidden>
-    <aside class="filters" aria-label="Filters">
-      <div class="filter-group">
-        <h2 class="section-title">Category</h2>
-        <div class="pills" id="filter-tiers"></div>
+        <p class="muted catalog-sub">Each card is one job a system needs, with the service that does it on every provider. Open a card for notes, alternatives and documentation.</p>
+        <div class="notice" id="catalog-review" hidden></div>
+        <ul class="catalog-results" id="catalog-results"></ul>
+        <p class="empty" id="catalog-empty" hidden>No services match. Try another search or clear a filter.</p>
       </div>
-      <div class="filter-group">
-        <h2 class="section-title">Compare providers</h2>
-        <div class="pills" id="filter-providers"></div>
-      </div>
-      <div class="filter-group">
-        <h2 class="section-title">Match quality</h2>
-        <div class="pills" id="filter-match"></div>
-      </div>
-      <section class="trust">
-        <h2 class="section-title">About matches</h2>
-        <ul>
-          <li><span class="badge exact">exact</span> same concept, comparable features</li>
-          <li><span class="badge close">close</span> same job, differences worth knowing</li>
-          <li><span class="badge partial">partial</span> covers only part of the job</li>
-          <li>Open-source entries also count the work of running it yourself.</li>
-        </ul>
-      </section>
-    </aside>
-
-    <main class="catalog-main">
-      <div class="catalog-head">
-        <h2>Services <span class="count" id="catalog-count"></span></h2>
-        <div class="catalog-controls">
-          <input type="search" id="catalog-search" placeholder="Search a service or function, e.g. Lambda, queue, BigQuery" aria-label="Search services" autocomplete="off">
-          <select id="catalog-sort" aria-label="Sort">
-            <option value="category">Sort: category</option>
-            <option value="name">Sort: name A–Z</option>
-            <option value="differences">Sort: most differences</option>
-          </select>
-        </div>
-      </div>
-      <p class="muted catalog-sub">Each card is one function, with the equivalent service on every provider you compare. Click a card for notes, alternatives and documentation links.</p>
-      <div id="catalog-review" class="notice" hidden></div>
-      <ul class="catalog-results" id="catalog-results"></ul>
-      <p class="empty" id="catalog-empty" hidden>No services match. Try a different search or clear a filter.</p>
-    </main>
-  </div>
+    </section>
+  </main>
 
   <footer class="footer">
-    <span id="version"></span> · Service names and icons belong to their owners. CloudArchie is not affiliated with any cloud provider.
+    <span id="version"></span> · Built by Namrata Bhatia. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
   </footer>
 
+  <template id="workspace-template">
+    <div class="ws-head">
+      <div class="ws-title">
+        <h2 class="ws-name"></h2>
+        <p class="ws-summary"></p>
+        <p class="ws-provenance"></p>
+      </div>
+      <div class="ws-actions">
+        <span class="dl-label">Download</span>
+        <button type="button" class="btn btn-small" data-action="svg">Diagram</button>
+        <button type="button" class="btn btn-small" data-action="md">Explanation</button>
+        <button type="button" class="btn btn-small" data-action="yaml">Spec</button>
+        <span class="dl-status" role="status"></span>
+      </div>
+    </div>
+    <ul class="chips ws-reqs" aria-label="Requirements"></ul>
+    <div class="ws-notes"></div>
+    <div class="ws-frame">
+      <div class="ws-provider-bar" role="tablist" aria-label="Cloud provider"></div>
+      <div class="ws-body">
+        <div class="ws-views" role="tablist" aria-label="View">
+          <button type="button" role="tab" class="ws-view-tab" data-view="diagram" aria-selected="true">Diagram</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="bill" aria-selected="false">Services</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="workflows" aria-selected="false">Workflows</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="spec" aria-selected="false">Spec <span class="status-dot"></span></button>
+        </div>
+        <div class="notice ws-review" hidden></div>
+        <div class="banner ws-banner" hidden></div>
+        <section class="ws-view" data-view="diagram">
+          <div class="diagram-bar">
+            <p class="hint">Click a box to see why it is there. <span class="icon-note"></span></p>
+            <button type="button" class="btn btn-small zoom-toggle" aria-pressed="false">Actual size</button>
+          </div>
+          <div class="ws-diagram">
+            <div class="canvas ws-canvas" aria-live="polite"></div>
+            <aside class="inspector" hidden aria-label="Component details">
+              <button type="button" class="inspector-close" aria-label="Close details">×</button>
+              <div class="inspector-body"></div>
+            </aside>
+          </div>
+        </section>
+        <section class="ws-view" data-view="bill" hidden>
+          <p class="muted small">Every service in this design, in the order a change travels: from code to build, release, serving traffic, running, integrating, storing data and operating it.</p>
+          <div class="bill"></div>
+        </section>
+        <section class="ws-view" data-view="workflows" hidden>
+          <div class="wf-layout">
+            <div class="wf-side">
+              <div class="wf-tabs" role="tablist" aria-label="Workflow"></div>
+              <ol class="wf-steps"></ol>
+              <div class="wf-controls">
+                <button type="button" class="btn btn-small" data-wf="prev" aria-label="Previous step">←</button>
+                <button type="button" class="btn btn-small btn-accent" data-wf="play">Play</button>
+                <button type="button" class="btn btn-small" data-wf="next" aria-label="Next step">→</button>
+              </div>
+            </div>
+            <div class="canvas wf-canvas"></div>
+          </div>
+        </section>
+        <section class="ws-view" data-view="spec" hidden>
+          <div class="editor-bar">
+            <span class="muted small editor-hint">Edits re-validate and redraw as you type.</span>
+            <button type="button" class="btn btn-small editor-reset">Reset</button>
+          </div>
+          <p class="notice editor-readonly" hidden><b>Read-only here.</b> Run <code>cloudarchie serve</code> to edit specs and see them re-validate live.</p>
+          <textarea class="spec-editor" spellcheck="false" aria-label="Spec YAML"></textarea>
+          <ul class="errors"></ul>
+        </section>
+      </div>
+    </div>
+  </template>
+
+  <script src="/static/core.js"></script>
+  <script src="/static/workspace.js"></script>
+  <script src="/static/plan.js"></script>
+  <script src="/static/examples.js"></script>
+  <script src="/static/services.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

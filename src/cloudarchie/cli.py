@@ -1,10 +1,14 @@
 """Command-line interface.
 
+cloudarchie plan <file-or-text> [-o out/] [--rules]    requirements -> architecture
 cloudarchie patterns
 cloudarchie validate <pattern-or-spec.yaml>
 cloudarchie render   <pattern-or-spec.yaml> --provider aws -o diagram.svg
 cloudarchie explain  <pattern-or-spec.yaml> --provider aws [-o explain.md]
 cloudarchie icons    --provider aws [--icons DIR]
+cloudarchie serve    [--host 127.0.0.1] [--port 8000]   web UI (needs the "web" extra)
+cloudarchie mcp      [--transport stdio]                MCP server for AI clients
+cloudarchie export-site -o site/ [--fragment] [--api-base URL]   static site, no server needed
 """
 
 from __future__ import annotations
@@ -98,14 +102,93 @@ def cmd_serve(args: argparse.Namespace) -> int:
 def cmd_export_site(args: argparse.Namespace) -> int:
     from cloudarchie.export import export_site
 
-    path = export_site(args.output, fragment=args.fragment)
+    path = export_site(args.output, fragment=args.fragment, api_base=args.api_base)
     print(f"wrote {path} ({path.stat().st_size // 1024} KB)", file=sys.stderr)
+    return 0
+
+
+def cmd_plan(args: argparse.Namespace) -> int:
+    import asyncio
+    import re
+
+    from cloudarchie.explain import explain_markdown
+    from cloudarchie.ingest import IngestError, from_text, read_document
+    from cloudarchie.planner import PlanError, PlanOptions, run_plan
+    from cloudarchie.planner.llm import LLMError, llm_from_env
+
+    source = Path(args.input)
+    try:
+        is_file = source.is_file()
+    except OSError:  # long requirements text is not a valid path ("File name too long")
+        is_file = False
+    try:
+        doc = read_document(source.read_bytes(), source.name) if is_file else from_text(args.input)
+        llm = None if args.rules else llm_from_env()
+    except (IngestError, LLMError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    def show(event: dict) -> None:
+        kind = event["type"]
+        if kind == "stage" and event["status"] == "done":
+            print(f"✔ {event['title']}: {event.get('detail', '')}", file=sys.stderr)
+        elif kind == "tool_call":
+            print(f"    → {event['name']} {event['summary']}", file=sys.stderr)
+        elif kind == "tool_result" and not event["ok"]:
+            print(f"    ✗ {event['name']}: {event['summary']}", file=sys.stderr)
+        elif kind == "notice":
+            print(f"! {event['text']}", file=sys.stderr)
+
+    options = PlanOptions(
+        mode="rules" if args.rules else "auto", region=args.region, extra_mcp_servers=args.mcp
+    )
+    try:
+        result = asyncio.run(run_plan(doc, options, llm=llm, emit=show))
+    except PlanError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    slug = re.sub(r"[^a-z0-9]+", "-", result.spec.name.lower()).strip("-") or "plan"
+    out = Path(args.output or f"plan-{slug}")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "spec.yaml").write_text(result.spec_yaml, encoding="utf-8")
+    for provider in catalog.providers():
+        arch = map_to_provider(result.spec, provider)
+        svg = render_svg(arch, _icons(provider, None))
+        (out / f"{provider}.svg").write_text(svg, encoding="utf-8")
+        (out / f"{provider}.md").write_text(explain_markdown(arch), encoding="utf-8")
+    how = f"AI ({result.model})" if result.mode == "ai" else "rule-based planner"
+    print(f"wrote {out}/ (spec.yaml, diagrams and explanations; {how})", file=sys.stderr)
+    return 0
+
+
+def cmd_mcp(args: argparse.Namespace) -> int:
+    try:
+        from cloudarchie.mcp_server import main as run_mcp
+    except ImportError:
+        print('error: the MCP server needs: pip install "cloudarchie[agent]"', file=sys.stderr)
+        return 2
+
+    run_mcp(args.transport, args.port)
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cloudarchie", description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
+
+    p = sub.add_parser("plan", help="turn a requirements document into an architecture")
+    p.add_argument("input", help="a .docx, .xlsx, .pdf, .md or .txt file, or the requirements text")
+    p.add_argument("-o", "--output", help="output folder (default: plan-<name>)")
+    p.add_argument("--rules", action="store_true", help="use the rule-based planner, no AI")
+    p.add_argument("--region", choices=sorted(catalog.regions()), help="override the region")
+    p.add_argument(
+        "--mcp",
+        action="append",
+        default=[],
+        metavar="COMMAND",
+        help="extra MCP server for the agent, e.g. 'uvx some-mcp-server' (repeatable)",
+    )
+    p.set_defaults(func=cmd_plan)
 
     sub.add_parser("patterns", help="list built-in architecture patterns").set_defaults(
         func=cmd_patterns
@@ -144,7 +227,17 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="omit <html>/<head>/<body> for hosts that wrap pages in their own skeleton",
     )
+    p.add_argument(
+        "--api-base",
+        metavar="URL",
+        help="use a hosted CloudArchie API (cloudarchie serve) instead of embedded demo data",
+    )
     p.set_defaults(func=cmd_export_site)
+
+    p = sub.add_parser("mcp", help="run CloudArchie as an MCP server for AI clients")
+    p.add_argument("--transport", default="stdio", choices=["stdio", "streamable-http"])
+    p.add_argument("--port", type=int, default=8765, help="port for streamable-http")
+    p.set_defaults(func=cmd_mcp)
     return parser
 
 

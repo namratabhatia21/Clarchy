@@ -68,7 +68,7 @@ def test_nodes_do_not_overlap(provider):
         rects = [
             tuple(float(r.get(k)) for k in ("x", "y", "width", "height"))
             for r in root.iter(f"{SVG_NS}rect")
-            if r.get("class") == "node-box"
+            if r.get("class") == "ca-node-box"
         ]
         for i, (x1, y1, w1, h1) in enumerate(rects):
             for x2, y2, w2, h2 in rects[i + 1 :]:
@@ -102,3 +102,46 @@ def test_official_icons_are_embedded_when_available(tmp_path):
     assert svg.count("data:image/svg+xml;base64,") == len(buckets) == 1
     # Services without an installed icon fall back to lettered badges.
     assert ">CF</text>" in svg
+
+
+@pytest.mark.parametrize("provider", catalog.providers())
+def test_styles_are_scoped_so_diagrams_can_share_a_page(provider):
+    """Inline SVG <style> is global in HTML: every rule must be scoped to this provider's
+    diagram, and nothing may rely on document-wide ids such as arrow markers."""
+    svg = render_svg(arch("kubernetes-microservices", provider))
+    root = ET.fromstring(svg)
+    assert root.get("class") == f"ca-diagram ca-{provider}"
+    style = root.find(f"{SVG_NS}style").text
+    rules = [r.strip() for r in style.split("}") if r.strip()]
+    for rule in rules:
+        selectors = rule.split("{")[0].split(",")
+        assert all(sel.strip().startswith(f".ca-{provider}") for sel in selectors), rule
+    assert " id=" not in svg and "<marker" not in svg
+
+
+def test_every_drawn_edge_has_an_arrowhead():
+    root = ET.fromstring(render_svg(arch("kubernetes-microservices")))
+    edges = [
+        (e.get("data-from"), e.get("data-to"))
+        for e in root.iter(f"{SVG_NS}path")
+        if e.get("class") == "ca-edge"
+    ]
+    arrows = [
+        (a.get("data-from"), a.get("data-to"))
+        for a in root.iter(f"{SVG_NS}polygon")
+        if a.get("class") == "ca-arrow"
+    ]
+    assert edges and sorted(edges) == sorted(arrows)
+
+
+def test_build_and_deploy_lane_is_drawn_above_the_runtime():
+    a = arch("kubernetes-microservices")
+    root = ET.fromstring(render_svg(a))
+    y = {
+        g.get("data-id"): float(g.find(f"{SVG_NS}rect").get("y"))
+        for g in root.iter(f"{SVG_NS}g")
+        if g.get("class") == "node"
+    }
+    delivery = [m.component.id for m in a.components if m.component.tier == "delivery"]
+    runtime = [m.component.id for m in a.components if m.component.tier in ("compute", "data")]
+    assert max(y[d] for d in delivery) < min(y[r] for r in runtime)

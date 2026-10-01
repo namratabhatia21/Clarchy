@@ -54,6 +54,28 @@ components:
     capability: monitoring
     label: Logs, traces, cost alarms
     sizing: { log_ingest_gb_per_month: 15 }
+  - id: repo
+    capability: source-control
+    label: App and infrastructure code
+    rationale: Every change starts as a reviewed commit; the same repository holds the application and its
+      infrastructure code.
+  - id: build
+    capability: ci-build
+    label: Build and test
+    rationale: Builds and tests each commit, then packages the services as container images and the functions
+      as bundles.
+  - id: registry
+    capability: container-registry
+    label: Container images
+    rationale: Keeps versioned, scanned images so every environment runs exactly what was tested.
+  - id: deploy
+    capability: cd-deploy
+    label: Release pipeline
+    rationale: Promotes each build through test and production with approvals and rollback.
+  - id: infra-code
+    capability: iac
+    label: Infrastructure as code
+    rationale: Creates and updates the cloud resources from versioned templates, so every environment is reproducible.
 edges:
   - { from: users, to: cdn, label: HTTPS }
   - { from: cdn, to: lb, label: /api/* }
@@ -65,3 +87,54 @@ edges:
   - { from: ingest, to: llm, label: embed }
   - { from: ingest, to: vectors, label: index }
   - { from: app, to: auth, label: verify token }
+  - { from: repo, to: build, label: push }
+  - { from: build, to: registry, label: image }
+  - { from: registry, to: deploy }
+  - { from: deploy, to: infra-code, label: applies }
+workflows:
+  - id: request
+    name: Serving a request
+    kind: request
+    steps:
+    - text: 'Employees (browser) → Web front end: load the app through the CDN (HTTPS)'
+      components: [users, cdn]
+    - text: 'Web front end → HTTPS load balancer: forward API calls'
+      components: [cdn, lb]
+    - text: 'HTTPS load balancer → Chat API (streaming): run the business logic'
+      components: [lb, app]
+    - text: 'Chat API (streaming) → Embeddings index: retrieve relevant passages'
+      components: [app, vectors]
+    - text: 'Chat API (streaming) → LLM + embeddings: generate the answer'
+      components: [app, llm]
+    - text: 'Chat API (streaming) → Chat history: read and write items'
+      components: [app, history]
+    - text: 'Chat API (streaming) → Single sign-on: verify the user''s sign-in token'
+      components: [app, auth]
+    - text: 'Every component → Logs, traces, cost alarms: send logs and metrics'
+      components: [logs]
+  - id: background
+    name: Background processing
+    kind: async
+    steps:
+    - text: 'Source documents → Chunk + embed documents: start when a document is uploaded'
+      components: [docs, ingest]
+    - text: 'Chunk + embed documents → LLM + embeddings: create embeddings'
+      components: [ingest, llm]
+    - text: 'Chunk + embed documents → Embeddings index: index the new chunks'
+      components: [ingest, vectors]
+  - id: delivery
+    name: Shipping a change
+    kind: delivery
+    steps:
+    - text: 'A developer → App and infrastructure code: push a reviewed change'
+      components: [repo]
+    - text: 'App and infrastructure code → Build and test: start a build on every push'
+      components: [repo, build]
+    - text: 'Build and test → Container images: publish the tested image'
+      components: [build, registry]
+    - text: 'Container images → Release pipeline: start the release'
+      components: [registry, deploy]
+    - text: 'Release pipeline → Infrastructure as code: apply infrastructure changes'
+      components: [deploy, infra-code]
+    - text: 'Release pipeline → Chat API (streaming), Chunk + embed documents: roll out the new version'
+      components: [deploy, app, ingest]

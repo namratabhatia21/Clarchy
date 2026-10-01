@@ -1,0 +1,169 @@
+name: Microservices on Kubernetes
+summary: Containerised microservices on a managed Kubernetes cluster, with queue-driven workers that scale on backlog and a GitOps release flow.
+requirements:
+  users: 200000
+  peak_rps: 400
+  data_gb: 300
+  data_growth_gb_per_month: 25
+  availability_target: "99.95"
+  region: eu-west
+assumptions:
+  - The team already builds Docker images and wants Kubernetes for portability across clouds.
+  - Order processing can finish within a few minutes, so it runs as background jobs.
+components:
+  - id: shoppers
+    capability: client
+    label: Web and mobile clients
+  - id: dns
+    capability: dns
+    label: Domain
+  - id: firewall
+    capability: waf
+    label: Web firewall
+    rationale: Blocks bots and common attacks before they reach the cluster.
+    sizing: { rules: 15, requests_per_month: 300000000 }
+  - id: ingress
+    capability: load-balancer
+    label: Cluster ingress
+    rationale: One HTTPS entry point that routes paths to the right microservice.
+    sizing: { lcu_hours_per_month: 2190 }
+  - id: services
+    capability: kubernetes
+    label: API microservices
+    rationale: Several independently deployed services share one cluster; Kubernetes gives rolling updates, autoscaling and the same deployment model on every cloud.
+    sizing: { node_vcpu: 4, node_memory_gb: 16, nodes_min: 3, nodes_max: 12 }
+  - id: orders
+    capability: message-queue
+    label: Order queue
+    rationale: Checkout returns immediately while order processing happens in the background; failed orders are retried.
+    sizing: { requests_per_month: 40000000 }
+  - id: workers
+    capability: kubernetes
+    label: Order workers
+    rationale: Long-running order jobs run as worker pods that scale independently of the API.
+    sizing: { pods_min: 0, pods_max: 50, vcpu_per_pod: 0.5, memory_gb_per_pod: 1 }
+  - id: db
+    capability: relational-db
+    label: Orders and catalogue
+    rationale: Orders, payments and inventory need transactions and joins; a multi-zone primary meets the 99.95% target.
+    sizing: { vcpu: 4, memory_gb: 32, storage_gb: 300, multi_az: true, backup_gb: 300 }
+  - id: cache
+    capability: cache
+    label: Sessions and hot catalogue
+    rationale: Keeps sessions and popular product pages in memory so the database handles fewer reads.
+    sizing: { node_memory_gb: 6, nodes: 2 }
+  - id: media
+    capability: object-storage
+    label: Product images
+    sizing: { storage_gb: 500, egress_gb_per_month: 1500 }
+  - id: auth
+    capability: identity
+    label: Customer accounts
+    sizing: { monthly_active_users: 200000 }
+  - id: secrets
+    capability: secrets
+    label: Service credentials
+    sizing: { secrets: 20 }
+  - id: logs
+    capability: monitoring
+    label: Logs, metrics, traces
+    sizing: { log_ingest_gb_per_month: 120 }
+  - id: repo
+    capability: source-control
+    label: App and infrastructure code
+    rationale: Every change starts as a reviewed commit; the same repository holds the application and its
+      infrastructure code.
+  - id: build
+    capability: ci-build
+    label: Build and test
+    rationale: Builds and tests each commit, then packages the app as a container image.
+  - id: registry
+    capability: container-registry
+    label: Container images
+    rationale: Keeps versioned, scanned images so every environment runs exactly what was tested.
+  - id: deploy
+    capability: cd-deploy
+    label: GitOps release
+    rationale: Rolls new versions out to the cluster from Git, with health checks and automatic rollback.
+  - id: infra-code
+    capability: iac
+    label: Infrastructure as code
+    rationale: Creates and updates the cloud resources from versioned templates, so every environment is reproducible.
+  - id: autoscaler
+    capability: event-autoscaling
+    label: Scale on backlog
+    rationale: Adds or removes workers as the backlog grows or shrinks, down to zero when idle.
+edges:
+  - { from: shoppers, to: dns }
+  - { from: shoppers, to: firewall, label: HTTPS }
+  - { from: firewall, to: ingress }
+  - { from: ingress, to: services }
+  - { from: services, to: db }
+  - { from: services, to: cache }
+  - { from: services, to: media }
+  - { from: services, to: orders, label: new order }
+  - { from: orders, to: workers }
+  - { from: workers, to: db }
+  - { from: services, to: auth, label: verify token }
+  - { from: services, to: secrets }
+  - { from: repo, to: build, label: push }
+  - { from: build, to: registry, label: image }
+  - { from: registry, to: deploy }
+  - { from: deploy, to: infra-code, label: applies }
+  - { from: orders, to: autoscaler, label: backlog }
+  - { from: autoscaler, to: workers, label: scales }
+workflows:
+  - id: request
+    name: Serving a request
+    kind: request
+    steps:
+    - text: 'Web and mobile clients → Domain: look up the app''s address'
+      components: [shoppers, dns]
+    - text: 'Web and mobile clients → Web firewall: filter malicious traffic (HTTPS)'
+      components: [shoppers, firewall]
+    - text: 'Web firewall → Cluster ingress: spread requests across healthy instances'
+      components: [firewall, ingress]
+    - text: 'Cluster ingress → API microservices: run the business logic'
+      components: [ingress, services]
+    - text: 'API microservices → Orders and catalogue: read and write records'
+      components: [services, db]
+    - text: 'API microservices → Sessions and hot catalogue: read and refresh cached results'
+      components: [services, cache]
+    - text: 'API microservices → Product images: store or read files'
+      components: [services, media]
+    - text: 'API microservices → Order queue: queue the job (new order)'
+      components: [services, orders]
+    - text: 'API microservices → Customer accounts: verify the user''s sign-in token'
+      components: [services, auth]
+    - text: 'API microservices → Service credentials: fetch credentials'
+      components: [services, secrets]
+    - text: 'Every component → Logs, metrics, traces: send logs and metrics'
+      components: [logs]
+  - id: background
+    name: Background processing
+    kind: async
+    steps:
+    - text: 'Order queue → Order workers: process the queued jobs'
+      components: [orders, workers]
+    - text: 'Order queue → Scale on backlog: report the backlog'
+      components: [orders, autoscaler]
+    - text: 'Order workers → Orders and catalogue: read and write records'
+      components: [workers, db]
+    - text: 'Scale on backlog → Order workers: scale the workers'
+      components: [autoscaler, workers]
+  - id: delivery
+    name: Shipping a change
+    kind: delivery
+    steps:
+    - text: 'A developer → App and infrastructure code: push a reviewed change'
+      components: [repo]
+    - text: 'App and infrastructure code → Build and test: start a build on every push'
+      components: [repo, build]
+    - text: 'Build and test → Container images: publish the tested image'
+      components: [build, registry]
+    - text: 'Container images → GitOps release: start the release'
+      components: [registry, deploy]
+    - text: 'GitOps release → Infrastructure as code: apply infrastructure changes'
+      components: [deploy, infra-code]
+    - text: 'GitOps release → API microservices, Order workers: roll out the new version'
+      components: [deploy, services, workers]

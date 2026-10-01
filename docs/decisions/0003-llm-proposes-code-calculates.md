@@ -1,6 +1,6 @@
 # 0003: The LLM proposes, code calculates
 
-**Status:** accepted · 2026-10-01
+**Status:** accepted · 2026-10-01 · refined by [0004](0004-agent-designs-with-mcp-tools.md)
 
 ## Context
 

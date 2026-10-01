@@ -45,3 +45,38 @@ def test_icons_without_directory(capsys, monkeypatch):
     monkeypatch.delenv("CLOUDARCHIE_ICONS_AWS", raising=False)
     assert main(["icons", "--provider", "aws"]) == 1
     assert "CLOUDARCHIE_ICONS_AWS" in capsys.readouterr().err
+
+
+def test_plan_from_long_text_writes_spec_diagrams_and_explanations(tmp_path, capsys):
+    text = (
+        "A booking app for 40 clinics in the UK where patients sign in, book appointments "
+        "and pay a deposit by card. The backend is already packaged in Docker. Reminders "
+        "go out by SMS the day before. About 120,000 patients and 99.95% uptime. " * 2
+    )
+    assert len(text) > 255  # longer than any file name
+    assert main(["plan", text, "--rules", "-o", str(tmp_path)]) == 0
+    names = sorted(p.name for p in tmp_path.iterdir())
+    assert names == sorted(
+        [
+            "spec.yaml",
+            *(f"{p}.{ext}" for p in ("aws", "azure", "gcp", "oss") for ext in ("svg", "md")),
+        ]
+    )
+    assert "Amazon ECR" in (tmp_path / "aws.md").read_text()
+    err = capsys.readouterr().err
+    assert "✔ Map to every cloud" in err and "rule-based planner" in err
+
+
+def test_plan_from_a_file_with_region_override(tmp_path):
+    brief = tmp_path / "brief.md"
+    brief.write_text("# Photo app\n\nUsers upload photos; spiky traffic.\n")
+    out = tmp_path / "out"
+    assert main(["plan", str(brief), "--rules", "--region", "singapore", "-o", str(out)]) == 0
+    assert "region: singapore" in (out / "spec.yaml").read_text()
+
+
+def test_plan_reports_unreadable_input(tmp_path, capsys):
+    bad = tmp_path / "brief.docx"
+    bad.write_bytes(b"not a zip")
+    assert main(["plan", str(bad), "--rules"]) == 2
+    assert "not a valid Office document" in capsys.readouterr().err

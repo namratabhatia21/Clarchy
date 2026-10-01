@@ -9,6 +9,25 @@ provider:
   cloud_label: Self-hosted (open source)
   kind: self-hosted
   reviewed: false
+  # Neutral styling for self-hosted stacks: a dashed boundary because you run it all.
+  theme:
+    font: "'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif"
+    frame: { stroke: "#334155", fill: "#FFFFFF", label: "#1E293B", dash: "7 5" }
+    band: { stroke: "#94A3B8", label: "#475569" }
+    edge: "#475569"
+    categories:
+      external: "#475569"
+      networking: "#2563EB"
+      security: "#B91C1C"
+      compute: "#C2410C"
+      containers: "#0E7490"
+      ai: "#7C3AED"
+      integration: "#BE185D"
+      analytics: "#6D28D9"
+      database: "#1D4ED8"
+      storage: "#15803D"
+      devtools: "#334155"
+      management: "#4D7C0F"
 
 services:
   dns:
@@ -157,3 +176,47 @@ services:
     alternatives: [OpenTelemetry Collector, Grafana Loki]
     note: You store and retain metrics and logs yourself.
     docs: https://prometheus.io/docs/
+  kubernetes:
+    service: Kubernetes
+    short: K8S
+    fidelity: exact
+    alternatives: [K3s]
+    note: You run the control plane, nodes and upgrades yourself.
+    docs: https://kubernetes.io/docs/
+  event-autoscaling:
+    service: KEDA
+    short: KEDA
+    fidelity: exact
+    docs: https://keda.sh/docs/
+  source-control:
+    service: GitLab Community Edition
+    short: GL
+    fidelity: exact
+    alternatives: [Forgejo, Gitea]
+    note: You run, back up and upgrade the Git server yourself.
+    docs: https://docs.gitlab.com/
+  ci-build:
+    service: Jenkins
+    short: JNK
+    fidelity: exact
+    alternatives: [Tekton, GitLab CI/CD, Woodpecker CI]
+    note: Build agents and plugins are yours to operate.
+    docs: https://www.jenkins.io/doc/
+  container-registry:
+    service: Harbor
+    short: HBR
+    fidelity: exact
+    docs: https://goharbor.io/docs/
+  cd-deploy:
+    service: Argo CD
+    short: ARGO
+    fidelity: exact
+    alternatives: [Flux]
+    note: GitOps deployment to Kubernetes from the Git repository.
+    docs: https://argo-cd.readthedocs.io/
+  iac:
+    service: OpenTofu
+    short: TOFU
+    fidelity: exact
+    alternatives: [Pulumi, Crossplane]
+    docs: https://opentofu.org/docs/

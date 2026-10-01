@@ -1,100 +1,152 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="792" viewBox="0 0 1160 792" role="img" aria-label="Containerised API on Open source">
-<style>.bg{fill:#ffffff}
-.title{font:600 18px sans-serif;fill:#16191f}
-.subtitle{font:13px sans-serif;fill:#545b64}
-.cloud{fill:#f8f9fa;stroke:#232f3e;stroke-width:1.5}
-.cloud-label{font:600 13px sans-serif;fill:#232f3e}
-.band{fill:none;stroke:#aab7b8;stroke-dasharray:5 4}
-.band-label{font:600 12px sans-serif;fill:#545b64}
-.node-box{fill:#ffffff;stroke-width:1.5}
-.badge{font:700 14px sans-serif;fill:#ffffff}
-.service{font:600 12px sans-serif;fill:#16191f}
-.label{font:11px sans-serif;fill:#545b64}
-.fidelity{font:italic 10px sans-serif;fill:#b0084d}
-.edge{fill:none;stroke:#545b64;stroke-width:1.5}
-.edge-label{font:11px sans-serif;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.footer{font:10px sans-serif;fill:#879196}</style>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
-<rect class="bg" width="1160" height="792"/>
-<text class="title" x="24" y="36">Containerised API · Open source</text>
-<text class="subtitle" x="24" y="56">Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.</text>
-<rect class="cloud" x="252" y="104" width="884" height="636" rx="4"/>
-<text class="cloud-label" x="262" y="123">Self-hosted (open source) · Western Europe</text>
-<rect class="band" x="262" y="568" width="864" height="162" rx="4"/>
-<text class="band-label" x="272" y="588">Shared services</text>
-<path class="edge" d="M180,340 C227,340 227,266 274,266" marker-end="url(#arrow)"/>
-<path class="edge" d="M180,340 C227,340 227,414 274,414" marker-end="url(#arrow)"/>
-<text class="edge-label" x="227" y="371" text-anchor="middle">HTTPS</text>
-<path class="edge" d="M430,414 C466,414 466,340 502,340" marker-end="url(#arrow)"/>
-<path class="edge" d="M658,340 C694,340 694,340 730,340" marker-end="url(#arrow)"/>
-<path class="edge" d="M886,340 C922,340 922,192 958,192" marker-end="url(#arrow)"/>
-<path class="edge" d="M886,340 C922,340 922,340 958,340" marker-end="url(#arrow)"/>
-<path class="edge" d="M886,340 C922,340 922,488 958,488" marker-end="url(#arrow)"/>
-<g class="node" data-id="users" data-capability="client">
-<rect class="node-box" x="24" y="282" width="156" height="116" rx="8" style="stroke:#545B64"/>
-<g fill="#545B64"><circle cx="102" cy="306" r="10"/><path d="M84,338 Q84,320 102,320 Q120,320 120,338 Z"/></g>
-<text class="service" x="102" y="356" text-anchor="middle">Clients</text>
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-oss" width="1356" height="978" viewBox="0 0 1356 978" role="img" aria-label="Containerised API on Open source">
+<style>.ca-oss{font-family:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif}
+.ca-oss .ca-bg{fill:#ffffff}
+.ca-oss .ca-title{font-size:18px;font-weight:600;fill:#16191f}
+.ca-oss .ca-subtitle{font-size:13px;fill:#545b64}
+.ca-oss .ca-cloud{fill:#FFFFFF;stroke:#334155;stroke-width:1.5;stroke-dasharray:7 5;}
+.ca-oss .ca-cloud-label{font-size:13px;font-weight:600;fill:#1E293B}
+.ca-oss .ca-band{fill:none;stroke:#94A3B8;stroke-dasharray:5 4}
+.ca-oss .ca-band-label{font-size:12px;font-weight:600;fill:#475569}
+.ca-oss .ca-node-box{fill:#ffffff;stroke-width:1.5}
+.ca-oss .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
+.ca-oss .ca-service{font-size:12px;font-weight:600;fill:#16191f}
+.ca-oss .ca-label{font-size:11px;fill:#545b64}
+.ca-oss .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
+.ca-oss .ca-edge{fill:none;stroke:#475569;stroke-width:1.5}
+.ca-oss .ca-arrow{fill:#475569}
+.ca-oss .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
+.ca-oss .ca-footer{font-size:10px;fill:#879196}</style>
+<rect class="ca-bg" width="1356" height="978"/>
+<text class="ca-title" x="24" y="36">Containerised API · Open source</text>
+<text class="ca-subtitle" x="24" y="56">Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.</text>
+<rect class="ca-cloud" x="252" y="104" width="1080" height="822" rx="4"/>
+<text class="ca-cloud-label" x="262" y="123">Self-hosted (open source) · Western Europe</text>
+<rect class="ca-band" x="262" y="134" width="1060" height="164" rx="4"/>
+<text class="ca-band-label" x="272" y="154">Build and deploy</text>
+<rect class="ca-band" x="262" y="754" width="1060" height="162" rx="4"/>
+<text class="ca-band-label" x="272" y="774">Shared services</text>
+<path class="ca-edge" data-from="users" data-to="dns" d="M180,526 C227,526 227,452 274,452"/>
+<polygon class="ca-arrow" data-from="users" data-to="dns" points="274,452 265,447.5 265,456.5"/>
+<path class="ca-edge" data-from="users" data-to="firewall" d="M180,526 C227,526 227,600 274,600"/>
+<polygon class="ca-arrow" data-from="users" data-to="firewall" points="274,600 265,595.5 265,604.5"/>
+<text class="ca-edge-label" data-from="users" data-to="firewall" x="227" y="557" text-anchor="middle">HTTPS</text>
+<path class="ca-edge" data-from="firewall" data-to="lb" d="M430,600 C466,600 466,526 502,526"/>
+<polygon class="ca-arrow" data-from="firewall" data-to="lb" points="502,526 493,521.5 493,530.5"/>
+<path class="ca-edge" data-from="lb" data-to="app" d="M658,526 C694,526 694,526 730,526"/>
+<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,526 721,521.5 721,530.5"/>
+<path class="ca-edge" data-from="app" data-to="cache" d="M886,526 C922,526 922,378 958,378"/>
+<polygon class="ca-arrow" data-from="app" data-to="cache" points="958,378 949,373.5 949,382.5"/>
+<path class="ca-edge" data-from="app" data-to="db" d="M886,526 C922,526 922,526 958,526"/>
+<polygon class="ca-arrow" data-from="app" data-to="db" points="958,526 949,521.5 949,530.5"/>
+<path class="ca-edge" data-from="app" data-to="files" d="M886,526 C922,526 922,674 958,674"/>
+<polygon class="ca-arrow" data-from="app" data-to="files" points="958,674 949,669.5 949,678.5"/>
+<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="registry" d="M650,226 C682,226 682,226 714,226"/>
+<polygon class="ca-arrow" data-from="build" data-to="registry" points="714,226 705,221.5 705,230.5"/>
+<text class="ca-edge-label" data-from="build" data-to="registry" x="682" y="220" text-anchor="middle">image</text>
+<path class="ca-edge" data-from="registry" data-to="deploy" d="M870,226 C902,226 902,226 934,226"/>
+<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="934,226 925,221.5 925,230.5"/>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1090,226 C1122,226 1122,226 1154,226"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1154,226 1145,221.5 1145,230.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1122" y="220" text-anchor="middle">applies</text>
+<g class="node" data-id="users" data-capability="client" data-stage="users">
+<rect class="ca-node-box" x="24" y="468" width="156" height="116" rx="8" style="stroke:#475569"/>
+<g fill="#475569"><circle cx="102" cy="492" r="10"/><path d="M84,524 Q84,506 102,506 Q120,506 120,524 Z"/></g>
+<text class="ca-service" x="102" y="542" text-anchor="middle">Clients</text>
 </g>
-<g class="node" data-id="dns" data-capability="dns">
-<rect class="node-box" x="274" y="208" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
-<rect x="328" y="218" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="247" text-anchor="middle">PDNS</text>
-<text class="service" x="352" y="282" text-anchor="middle">PowerDNS</text>
-<text class="label" x="352" y="317" text-anchor="middle">Domain</text>
-<text class="fidelity" x="424" y="222" text-anchor="end">partial</text>
+<g class="node" data-id="dns" data-capability="dns" data-stage="serve">
+<rect class="ca-node-box" x="274" y="394" width="156" height="116" rx="8" style="stroke:#2563EB"/>
+<rect x="328" y="404" width="48" height="48" rx="6" fill="#2563EB"/><text class="ca-badge" x="352" y="433" text-anchor="middle">PDNS</text>
+<text class="ca-service" x="352" y="468" text-anchor="middle">PowerDNS</text>
+<text class="ca-label" x="352" y="503" text-anchor="middle">Domain</text>
+<text class="ca-fidelity" x="424" y="408" text-anchor="end">partial</text>
 </g>
-<g class="node" data-id="firewall" data-capability="waf">
-<rect class="node-box" x="274" y="356" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
-<rect x="328" y="366" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="395" text-anchor="middle">CRZ</text>
-<text class="service" x="352" y="430" text-anchor="middle">Coraza WAF + OWASP</text>
-<text class="service" x="352" y="444" text-anchor="middle">Core Rule Set</text>
-<text class="label" x="352" y="465" text-anchor="middle">Web firewall</text>
-<text class="fidelity" x="424" y="370" text-anchor="end">close</text>
+<g class="node" data-id="firewall" data-capability="waf" data-stage="serve">
+<rect class="ca-node-box" x="274" y="542" width="156" height="116" rx="8" style="stroke:#B91C1C"/>
+<rect x="328" y="552" width="48" height="48" rx="6" fill="#B91C1C"/><text class="ca-badge" x="352" y="581" text-anchor="middle">CRZ</text>
+<text class="ca-service" x="352" y="616" text-anchor="middle">Coraza WAF + OWASP</text>
+<text class="ca-service" x="352" y="630" text-anchor="middle">Core Rule Set</text>
+<text class="ca-label" x="352" y="651" text-anchor="middle">Web firewall</text>
+<text class="ca-fidelity" x="424" y="556" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="lb" data-capability="load-balancer">
-<rect class="node-box" x="502" y="282" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="556" y="292" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="580" y="321" text-anchor="middle">HAP</text>
-<text class="service" x="580" y="356" text-anchor="middle">HAProxy</text>
-<text class="label" x="580" y="391" text-anchor="middle">HTTPS load balancer</text>
-<text class="fidelity" x="652" y="296" text-anchor="end">close</text>
+<g class="node" data-id="lb" data-capability="load-balancer" data-stage="serve">
+<rect class="ca-node-box" x="502" y="468" width="156" height="116" rx="8" style="stroke:#2563EB"/>
+<rect x="556" y="478" width="48" height="48" rx="6" fill="#2563EB"/><text class="ca-badge" x="580" y="507" text-anchor="middle">HAP</text>
+<text class="ca-service" x="580" y="542" text-anchor="middle">HAProxy</text>
+<text class="ca-label" x="580" y="577" text-anchor="middle">HTTPS load balancer</text>
+<text class="ca-fidelity" x="652" y="482" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="app" data-capability="container-service">
-<rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="292" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="808" y="321" text-anchor="middle">K8S</text>
-<text class="service" x="808" y="356" text-anchor="middle">Kubernetes</text>
-<text class="label" x="808" y="391" text-anchor="middle">API containers</text>
-<text class="fidelity" x="880" y="296" text-anchor="end">close</text>
+<g class="node" data-id="app" data-capability="container-service" data-stage="run">
+<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#0E7490"/>
+<rect x="784" y="478" width="48" height="48" rx="6" fill="#0E7490"/><text class="ca-badge" x="808" y="507" text-anchor="middle">K8S</text>
+<text class="ca-service" x="808" y="542" text-anchor="middle">Kubernetes</text>
+<text class="ca-label" x="808" y="577" text-anchor="middle">API containers</text>
+<text class="ca-fidelity" x="880" y="482" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="cache" data-capability="cache">
-<rect class="node-box" x="958" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="173" text-anchor="middle">VK</text>
-<text class="service" x="1036" y="208" text-anchor="middle">Valkey</text>
-<text class="label" x="1036" y="243" text-anchor="middle">Session + query cache</text>
+<g class="node" data-id="cache" data-capability="cache" data-stage="store">
+<rect class="ca-node-box" x="958" y="320" width="156" height="116" rx="8" style="stroke:#1D4ED8"/>
+<rect x="1012" y="330" width="48" height="48" rx="6" fill="#1D4ED8"/><text class="ca-badge" x="1036" y="359" text-anchor="middle">VK</text>
+<text class="ca-service" x="1036" y="394" text-anchor="middle">Valkey</text>
+<text class="ca-label" x="1036" y="429" text-anchor="middle">Session + query cache</text>
 </g>
-<g class="node" data-id="db" data-capability="relational-db">
-<rect class="node-box" x="958" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="321" text-anchor="middle">PG</text>
-<text class="service" x="1036" y="356" text-anchor="middle">PostgreSQL</text>
-<text class="label" x="1036" y="391" text-anchor="middle">PostgreSQL</text>
+<g class="node" data-id="db" data-capability="relational-db" data-stage="store">
+<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#1D4ED8"/>
+<rect x="1012" y="478" width="48" height="48" rx="6" fill="#1D4ED8"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">PG</text>
+<text class="ca-service" x="1036" y="542" text-anchor="middle">PostgreSQL</text>
+<text class="ca-label" x="1036" y="577" text-anchor="middle">PostgreSQL</text>
 </g>
-<g class="node" data-id="files" data-capability="object-storage">
-<rect class="node-box" x="958" y="430" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="440" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="469" text-anchor="middle">CEPH</text>
-<text class="service" x="1036" y="504" text-anchor="middle">Ceph Object Gateway</text>
-<text class="label" x="1036" y="539" text-anchor="middle">Uploads</text>
-<text class="fidelity" x="1108" y="444" text-anchor="end">close</text>
+<g class="node" data-id="files" data-capability="object-storage" data-stage="store">
+<rect class="ca-node-box" x="958" y="616" width="156" height="116" rx="8" style="stroke:#15803D"/>
+<rect x="1012" y="626" width="48" height="48" rx="6" fill="#15803D"/><text class="ca-badge" x="1036" y="655" text-anchor="middle">CEPH</text>
+<text class="ca-service" x="1036" y="690" text-anchor="middle">Ceph Object Gateway</text>
+<text class="ca-label" x="1036" y="725" text-anchor="middle">Uploads</text>
+<text class="ca-fidelity" x="1108" y="630" text-anchor="end">close</text>
 </g>
-<g class="node" data-id="secrets" data-capability="secrets">
-<rect class="node-box" x="274" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="328" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="641" text-anchor="middle">BAO</text>
-<text class="service" x="352" y="676" text-anchor="middle">OpenBao</text>
-<text class="label" x="352" y="711" text-anchor="middle">DB credentials</text>
+<g class="node" data-id="secrets" data-capability="secrets" data-stage="operate">
+<rect class="ca-node-box" x="274" y="788" width="156" height="116" rx="8" style="stroke:#B91C1C"/>
+<rect x="328" y="798" width="48" height="48" rx="6" fill="#B91C1C"/><text class="ca-badge" x="352" y="827" text-anchor="middle">BAO</text>
+<text class="ca-service" x="352" y="862" text-anchor="middle">OpenBao</text>
+<text class="ca-label" x="352" y="897" text-anchor="middle">DB credentials</text>
 </g>
-<g class="node" data-id="logs" data-capability="monitoring">
-<rect class="node-box" x="462" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="516" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="540" y="641" text-anchor="middle">PRO</text>
-<text class="service" x="540" y="676" text-anchor="middle">Prometheus + Grafana</text>
-<text class="label" x="540" y="711" text-anchor="middle">Logs, metrics, alarms</text>
-<text class="fidelity" x="612" y="616" text-anchor="end">close</text>
+<g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
+<rect class="ca-node-box" x="462" y="788" width="156" height="116" rx="8" style="stroke:#4D7C0F"/>
+<rect x="516" y="798" width="48" height="48" rx="6" fill="#4D7C0F"/><text class="ca-badge" x="540" y="827" text-anchor="middle">PRO</text>
+<text class="ca-service" x="540" y="862" text-anchor="middle">Prometheus + Grafana</text>
+<text class="ca-label" x="540" y="897" text-anchor="middle">Logs, metrics, alarms</text>
+<text class="ca-fidelity" x="612" y="802" text-anchor="end">close</text>
 </g>
-<text class="footer" x="24" y="780">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with Open source.</text>
+<g class="node" data-id="repo" data-capability="source-control" data-stage="code">
+<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#334155"/>
+<rect x="328" y="178" width="48" height="48" rx="6" fill="#334155"/><text class="ca-badge" x="352" y="207" text-anchor="middle">GL</text>
+<text class="ca-service" x="352" y="242" text-anchor="middle">GitLab Community</text>
+<text class="ca-service" x="352" y="256" text-anchor="middle">Edition</text>
+<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
+</g>
+<g class="node" data-id="build" data-capability="ci-build" data-stage="build">
+<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#334155"/>
+<rect x="548" y="178" width="48" height="48" rx="6" fill="#334155"/><text class="ca-badge" x="572" y="207" text-anchor="middle">JNK</text>
+<text class="ca-service" x="572" y="242" text-anchor="middle">Jenkins</text>
+<text class="ca-label" x="572" y="277" text-anchor="middle">Build and test</text>
+</g>
+<g class="node" data-id="registry" data-capability="container-registry" data-stage="ship">
+<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#0E7490"/>
+<rect x="768" y="178" width="48" height="48" rx="6" fill="#0E7490"/><text class="ca-badge" x="792" y="207" text-anchor="middle">HBR</text>
+<text class="ca-service" x="792" y="242" text-anchor="middle">Harbor</text>
+<text class="ca-label" x="792" y="277" text-anchor="middle">Container images</text>
+</g>
+<g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
+<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#334155"/>
+<rect x="988" y="178" width="48" height="48" rx="6" fill="#334155"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">ARGO</text>
+<text class="ca-service" x="1012" y="242" text-anchor="middle">Argo CD</text>
+<text class="ca-label" x="1012" y="277" text-anchor="middle">Release pipeline</text>
+</g>
+<g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
+<rect class="ca-node-box" x="1154" y="168" width="156" height="116" rx="8" style="stroke:#4D7C0F"/>
+<rect x="1208" y="178" width="48" height="48" rx="6" fill="#4D7C0F"/><text class="ca-badge" x="1232" y="207" text-anchor="middle">TOFU</text>
+<text class="ca-service" x="1232" y="242" text-anchor="middle">OpenTofu</text>
+<text class="ca-label" x="1232" y="277" text-anchor="middle">Infrastructure as code</text>
+</g>
+<text class="ca-footer" x="24" y="966">Generated by CloudArchie. Service names belong to their owners; CloudArchie is not affiliated with Open source.</text>
 </svg>

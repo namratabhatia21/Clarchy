@@ -6,6 +6,26 @@ provider:
   cloud_label: Microsoft Azure
   kind: cloud
   reviewed: false
+  # Diagram styling that follows Azure architecture-diagram conventions: a blue
+  # subscription boundary and Azure's blue-led palette. Colours only, no logos.
+  theme:
+    font: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    frame: { stroke: "#0078D4", fill: "#FFFFFF", label: "#0F548C", dash: "" }
+    band: { stroke: "#8A8886", label: "#605E5C" }
+    edge: "#605E5C"
+    categories:
+      external: "#605E5C"
+      networking: "#0078D4"
+      security: "#A4262C"
+      compute: "#0063B1"
+      containers: "#005B70"
+      ai: "#6B2FBA"
+      integration: "#8764B8"
+      analytics: "#5C2D91"
+      database: "#004E8C"
+      storage: "#107C10"
+      devtools: "#0F6CBD"
+      management: "#486991"
 
 services:
   dns:
@@ -132,3 +152,44 @@ services:
     short: MON
     fidelity: exact
     docs: https://learn.microsoft.com/azure/azure-monitor/
+  kubernetes:
+    service: Azure Kubernetes Service (AKS)
+    short: AKS
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/aks/
+  event-autoscaling:
+    service: KEDA add-on for AKS
+    short: KEDA
+    fidelity: exact
+    note: Azure Container Apps also scales with KEDA rules built in.
+    docs: https://learn.microsoft.com/azure/aks/keda-about
+  source-control:
+    service: Azure Repos
+    short: REPO
+    fidelity: exact
+    alternatives: [GitHub]
+    docs: https://learn.microsoft.com/azure/devops/repos/
+  ci-build:
+    service: Azure Pipelines
+    short: PIPE
+    fidelity: exact
+    alternatives: [GitHub Actions]
+    docs: https://learn.microsoft.com/azure/devops/pipelines/
+  container-registry:
+    service: Azure Container Registry
+    short: ACR
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/container-registry/
+  cd-deploy:
+    service: Azure Pipelines (release stages)
+    short: REL
+    fidelity: exact
+    alternatives: [GitHub Actions environments]
+    note: The same Azure Pipelines definition usually builds and deploys.
+    docs: https://learn.microsoft.com/azure/devops/pipelines/process/stages
+  iac:
+    service: Bicep
+    short: BCP
+    fidelity: exact
+    alternatives: [ARM templates, Terraform or OpenTofu]
+    docs: https://learn.microsoft.com/azure/azure-resource-manager/bicep/

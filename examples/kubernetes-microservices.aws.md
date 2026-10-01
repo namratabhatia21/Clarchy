@@ -105,5 +105,42 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 - **Service credentials:** secrets=20
 - **Logs, metrics, traces:** log_ingest_gb_per_month=120
 
+## Estimated cost
+
+About **$2,220 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $2,220 | – |
+| 6 months | $13,327 | – |
+| 1 year | $26,675 | $24,521 |
+| 3 years | $80,274 | $68,867 |
+
+| Service | Per month |
+|---|---:|
+| Amazon Cognito (Customer accounts) | $1,045 |
+| Amazon RDS for PostgreSQL (Orders and catalogue) | $315 |
+| Amazon EKS (API microservices) | $192 |
+| AWS WAF (Web firewall) | $190 |
+| Amazon ElastiCache (Redis OSS / Valkey) (Sessions and hot catalogue) | $185 |
+| Amazon EKS (Order workers) | $119 |
+| Amazon CloudWatch (Logs, metrics, traces) | $57.50 |
+| Amazon SQS (Order queue) | $47.60 |
+| Application Load Balancer (Cluster ingress) | $33.95 |
+| AWS Secrets Manager (Service credentials) | $17.77 |
+| Amazon S3 (Product images) | $11.72 |
+| Amazon Route 53 (Domain) | $2.90 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (GitOps release) | $1.00 |
+| Amazon ECR (Container images) | $0.50 |
+
+- Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+- RDS reserved instances: 1 year no upfront, or 3 years partial upfront with the upfront fee spread over the term.
+- ElastiCache reserved nodes: 1 or 3 years, no upfront payment.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for US East (N. Virginia); your region (Ireland (eu-west-1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

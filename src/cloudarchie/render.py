@@ -382,6 +382,8 @@ def render_svg(arch: ProviderArchitecture, icons: IconLibrary | None = None) -> 
         f'<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram {scope}" '
         f'width="{_n(w)}" height="{_n(height)}" '
         f'viewBox="0 0 {_n(w)} {_n(height)}" role="img" '
+        # Pages that already show the title and notice can crop to the diagram body.
+        f'data-body-top="{TITLE_H}" data-body-bottom="{_n(height - FOOTER_H)}" '
         f"aria-label={quoteattr(f'{spec.name} on {arch.provider_name}')}>",
         f"<style>{_style(theme, scope)}</style>",
         f'<rect class="ca-bg" width="{_n(w)}" height="{_n(height)}"/>',

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1160" height="830" viewBox="0 0 1160 830" role="img" aria-label="Serverless web app on AWS">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1160" height="830" viewBox="0 0 1160 830" role="img" data-body-top="80" data-body-bottom="802" aria-label="Serverless web app on AWS">
 <style>.ca-aws{font-family:'Open Sans', 'Helvetica Neue', Arial, sans-serif}
 .ca-aws .ca-bg{fill:#ffffff}
 .ca-aws .ca-title{font-size:18px;font-weight:600;fill:#16191f}

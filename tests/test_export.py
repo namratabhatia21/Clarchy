@@ -91,3 +91,46 @@ def test_index_scripts_are_all_found():
 def test_export_site_cli(tmp_path):
     assert main(["export-site", "-o", str(tmp_path)]) == 0
     assert (tmp_path / "index.html").read_text().startswith("<!doctype html>")
+
+
+def test_site_ships_the_in_browser_engine(tmp_path):
+    import subprocess
+    import sys
+    import zipfile
+
+    from cloudarchie.export import ENGINE_BUNDLE, PYODIDE_VERSION, export_site
+
+    export_site(tmp_path)
+    data = embedded_data((tmp_path / "index.html").read_text())
+    engine = data["engine"]
+    assert engine["bundle"] == ENGINE_BUNDLE
+    assert (
+        engine["pyodide"] == f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/pyodide.js"
+    )
+    names = zipfile.ZipFile(tmp_path / ENGINE_BUNDLE).namelist()
+    assert "cloudarchie/browser.py" in names and "cloudarchie/data/prices/aws.yaml" in names
+    assert not any("/static/" in n or "__pycache__" in n for n in names)
+
+    # The bundle alone is enough to run the engine (as Pyodide will).
+    unpacked = tmp_path / "engine"
+    zipfile.ZipFile(tmp_path / ENGINE_BUNDLE).extractall(unpacked)
+    code = (
+        "import sys, json; sys.path.insert(0, sys.argv[1]);"
+        "import cloudarchie, cloudarchie.browser as b;"
+        "assert cloudarchie.__file__.startswith(sys.argv[1]);"
+        "from cloudarchie import catalog;"
+        "r = json.loads(b.design(catalog.pattern_text('rag-chatbot'), 'gcp'));"
+        "print(r['ok'], r['body']['cost']['available'])"
+    )
+    out = subprocess.run(
+        [sys.executable, "-c", code, str(unpacked)], capture_output=True, text=True
+    )
+    assert out.stdout.strip() == "True True", out.stderr
+
+
+def test_replay_only_build(tmp_path):
+    from cloudarchie.export import ENGINE_BUNDLE, export_site
+
+    export_site(tmp_path, with_engine=False)
+    assert embedded_data((tmp_path / "index.html").read_text())["engine"] is None
+    assert not (tmp_path / ENGINE_BUNDLE).exists()

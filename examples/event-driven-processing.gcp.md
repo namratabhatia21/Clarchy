@@ -80,5 +80,35 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 - **Job status:** storage_gb=5, reads_per_month=10000000, writes_per_month=6000000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=20
 
+## Estimated cost
+
+About **$160 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $160 | – |
+| 6 months | $980 | – |
+| 1 year | $2,003 | – |
+| 3 years | $6,526 | – |
+
+| Service | Per month |
+|---|---:|
+| Cloud Run functions (Workers) | $102 |
+| Workflows (Processing steps) | $37.79 |
+| Cloud Storage (Raw + processed files) | $10.54 |
+| Firestore (Job status) | $9.00 |
+| Cloud Monitoring + Cloud Logging (Logs, metrics, alarms) | $1.00 |
+| Eventarc (Domain events) | $0.32 |
+| Pub/Sub (Job queue) | $0.06 |
+| API Gateway (Ingest API) | $0.00 |
+| Cloud Run functions (Validate + enqueue) | $0.00 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (Release pipeline) | $0.00 |
+
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (Mumbai (asia-south1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

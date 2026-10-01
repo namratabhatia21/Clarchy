@@ -9,7 +9,7 @@ const STAGE_HELP = {
   ship: "Stores and releases what was built",
   serve: "How traffic reaches the app",
   run: "Where the code runs",
-  integrate: "How parts work together asynchronously",
+  integrate: "How parts work together",
   store: "Where the data lives",
   operate: "Identity, secrets and visibility",
 };
@@ -24,11 +24,11 @@ class Workspace {
     root.replaceChildren(document.getElementById("workspace-template").content.cloneNode(true));
     this.q = (sel) => root.querySelector(sel);
     this.qa = (sel) => root.querySelectorAll(sel);
-    this.editable = editable && CA.MODE !== "static";
+    this.editable = editable && CA.canEdit();
     this.cache = new Map();
     this.state = {
       specYaml: "", originalYaml: "", provider: "aws", view: "diagram", design: null,
-      selectedId: null, workflow: 0, step: -1, playing: null, seq: 0, zoomed: false,
+      selectedId: null, workflow: 0, step: -1, playing: null, seq: 0, zoomed: false, term: 12,
     };
     root.dataset.provider = this.state.provider;
 
@@ -40,9 +40,13 @@ class Workspace {
     root.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && this.state.selectedId) this.select(null);
     });
-    for (const button of this.qa(".ws-actions [data-action]")) {
-      button.addEventListener("click", () => this.download(button.dataset.action));
+    const menu = this.q(".ws-actions .menu");
+    for (const button of this.qa(".menu-list [data-action]")) {
+      button.addEventListener("click", () => { menu.open = false; this.download(button.dataset.action); });
     }
+    document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    if (CA.CLIPBOARD_ONLY) this.q(".menu-label").textContent = "Copy";
+
     const editor = this.q(".spec-editor");
     editor.readOnly = !this.editable;
     this.q(".editor-readonly").hidden = this.editable;
@@ -51,7 +55,7 @@ class Workspace {
     let debounce;
     editor.addEventListener("input", () => {
       clearTimeout(debounce);
-      debounce = setTimeout(() => { this.state.specYaml = editor.value; this.refresh(); }, 350);
+      debounce = setTimeout(() => { this.state.specYaml = editor.value; this.refresh(); }, 400);
     });
     editor.addEventListener("keydown", (e) => {
       if (e.key !== "Tab" || editor.readOnly) return;
@@ -132,53 +136,53 @@ class Workspace {
     this.renderReview(d);
     this.renderDiagram(d);
     this.renderBill(d);
+    this.renderCost(d);
     this.renderWorkflows(d);
     this.renderInspector();
   }
 
   // ---------- header ----------
   renderHeader(d) {
-    const { el, fill, number } = CA;
+    const { el, fill, number, money } = CA;
     this.q(".ws-name").textContent = d.name;
-    this.q(".ws-summary").textContent = d.summary || "";
+    const summary = this.q(".ws-summary");
+    summary.textContent = d.summary || "";
+    summary.hidden = !d.summary;
     const p = d.provenance;
-    let provenance;
-    if (p && p.mode === "ai") {
-      provenance = ["Designed by the ", el("b", { text: "AI agent" }), ` (${p.model})`, p.source ? ` from ${p.source}` : "", ". Review it before building."];
-    } else if (p && p.mode === "rules") {
-      provenance = ["Drafted by the ", el("b", { text: "rule-based planner" }), p.source ? ` from ${p.source}` : "", ". Review it before building."];
-    } else {
-      provenance = ["Reference architecture from the CloudArchie library."];
-    }
-    fill(this.q(".ws-provenance"), provenance);
+    const origin = p && p.mode === "ai" ? `AI design (${p.model})`
+      : p && p.mode === "rules" ? "Rule-based draft" : "Reference architecture";
     const r = d.requirements || {};
-    const chips = [
-      ["Region", d.region.code ? `${d.region.label} (${d.region.code})` : `${d.region.label} (self-hosted)`],
-      r.users != null && ["Users", number(r.users)],
-      r.peak_rps != null && ["Peak", `${number(r.peak_rps)} req/s`],
-      r.data_gb != null && ["Data", `${number(r.data_gb)} GB`],
-      r.data_growth_gb_per_month != null && ["Growth", `${number(r.data_growth_gb_per_month)} GB/mo`],
-      ["Availability", `${r.availability_target}%`],
-      r.compliance && r.compliance.length && ["Compliance", r.compliance.join(", ")],
-      r.monthly_budget_usd != null && ["Budget", `$${number(r.monthly_budget_usd)}/mo`],
+    const cost = d.cost && d.cost.available ? d.cost : null;
+    const items = [
+      origin,
+      d.region.code ? `${d.region.label} (${d.region.code})` : d.region.label,
+      r.users != null && `${number(r.users)} users`,
+      r.peak_rps != null && `${number(r.peak_rps)} req/s peak`,
+      r.data_gb != null && `${number(r.data_gb)} GB data`,
+      `${r.availability_target}% availability`,
+      r.compliance && r.compliance.length && r.compliance.join(", "),
+      cost && el("b", { text: `≈ ${money(cost.monthly)} a month` }),
     ].filter(Boolean);
-    fill(this.q(".ws-reqs"), chips.map(([k, v]) => el("li", {}, el("b", { text: `${k}: ` }), v)));
-    this.q(".dl-label").textContent = CA.CLIPBOARD_ONLY ? "Copy" : "Download";
+    fill(this.q(".ws-meta"), items.map((item) => el("span", {}, item)));
   }
 
   renderNotes(d) {
-    const { el, fill } = CA;
-    const card = (title, items) => items && items.length
-      ? el("section", { class: "note-card" }, el("h3", { text: title }), el("ul", {}, items.map((t) => el("li", { text: t }))))
+    const { el, fill, plural } = CA;
+    const assumptions = d.assumptions || [];
+    const questions = d.open_questions || [];
+    const box = this.q(".ws-review-notes");
+    box.hidden = !assumptions.length && !questions.length;
+    const parts = [assumptions.length && plural(assumptions.length, "assumption"),
+      questions.length && plural(questions.length, "question") + " to confirm"].filter(Boolean);
+    this.q(".review-title").textContent = parts.join(" and ");
+    const list = (title, items) => items.length
+      ? el("section", {}, el("h3", { text: title }), el("ul", {}, items.map((t) => el("li", { text: t }))))
       : null;
-    fill(this.q(".ws-notes"), card("What was assumed", d.assumptions), card("Questions to confirm", d.open_questions));
+    fill(this.q(".ws-notes"), list("What was assumed", assumptions), list("Questions to confirm", questions));
   }
 
   renderReview(d) {
-    const note = this.q(".ws-review");
-    note.hidden = d.reviewed;
-    CA.fill(note, CA.el("b", { text: "Unreviewed mappings. " }),
-      `${d.provider_name} service choices have not yet been checked by a specialist. Treat them as a draft.`);
+    this.q(".ws-review").textContent = d.reviewed ? "" : `${d.provider_name} choices are an unreviewed draft.`;
   }
 
   renderProviders() {
@@ -188,7 +192,7 @@ class Workspace {
       type: "button", role: "tab", class: "ws-provider-tab", "data-id": p.id,
       "aria-selected": String(p.id === this.state.provider),
       onclick: () => this.setProvider(p.id),
-    }, p.name, p.reviewed ? null : el("span", { class: "unreviewed", title: "Not yet reviewed by a specialist", text: "●" }))));
+    }, p.name)));
   }
 
   // ---------- diagram + inspector ----------
@@ -207,13 +211,16 @@ class Workspace {
     }
   }
 
+  placeDiagram(canvas, svgText) {
+    canvas.innerHTML = svgText; // generated by CloudArchie; every text node in it is XML-escaped
+    CA.cropDiagram(canvas.querySelector("svg"));
+  }
+
   renderDiagram(d) {
     const canvas = this.q(".ws-canvas");
-    canvas.innerHTML = d.svg; // generated server-side; every text node in it is XML-escaped
+    this.placeDiagram(canvas, d.svg);
     this.wireNodes(canvas, (id) => this.select(this.state.selectedId === id ? null : id));
-    this.q(".icon-note").textContent = d.official_icons
-      ? "Icons come from the official package configured on the server."
-      : "Coloured badges mark each service by category.";
+    this.q(".icon-note").textContent = d.official_icons ? "Icons come from the official package configured on the server." : "";
   }
 
   select(id) {
@@ -221,8 +228,13 @@ class Workspace {
     this.renderInspector();
   }
 
+  costOf(id) {
+    const cost = this.state.design && this.state.design.cost;
+    return cost && cost.available ? cost.lines.find((l) => l.component === id) : null;
+  }
+
   renderInspector() {
-    const { el, fill, number, fidelityBadge, FIDELITY_HELP } = CA;
+    const { el, fill, number, money, fidelityBadge, FIDELITY_HELP } = CA;
     const d = this.state.design;
     const comp = d && d.components.find((c) => c.id === this.state.selectedId);
     const panel = this.q(".inspector");
@@ -234,54 +246,123 @@ class Workspace {
     const name = (id) => (byId[id].service ? `${byId[id].label} (${byId[id].service})` : byId[id].label);
     const sizing = Object.entries(comp.sizing || {});
     const stageName = comp.stage && CA.meta.stages[comp.stage];
+    const line = this.costOf(comp.id);
     fill(this.q(".inspector-body"),
       el("h3", { text: comp.service || comp.label }),
       el("p", { class: "sub", text: comp.service ? comp.label : "Outside the cloud" }),
       el("div", { class: "row" },
-        el("span", { class: "badge muted-badge", text: stageName || TIER_NAMES[comp.tier] }),
-        el("code", { text: comp.capability }),
-        fidelityBadge(comp.fidelity)),
+        el("span", { class: "tag neutral", text: stageName || TIER_NAMES[comp.tier] }),
+        fidelityBadge(comp.fidelity),
+        line && el("span", { class: "tag neutral", text: `≈ ${money(line.monthly)}/mo` })),
       el("h4", { text: "Why it is here" }),
-      comp.rationale ? el("p", { text: comp.rationale })
-        : el("p", { class: "note" }, el("b", { text: "Generic reason: " }), comp.capability_description),
-      comp.evidence && comp.evidence.length > 0 && el("h4", { text: "From the requirements" }),
+      el("p", { text: comp.rationale || comp.capability_description }),
+      comp.evidence && comp.evidence.length > 0 && el("h4", { text: "From your requirements" }),
       (comp.evidence || []).map((q) => el("blockquote", { class: "evidence", text: `“${q}”` })),
-      comp.fidelity && el("h4", { text: "How close is the match" }),
-      comp.fidelity && el("p", { text: FIDELITY_HELP[comp.fidelity] }),
+      comp.fidelity && comp.fidelity !== "exact" && el("h4", { text: "How close is the match" }),
+      comp.fidelity && comp.fidelity !== "exact" && el("p", { text: FIDELITY_HELP[comp.fidelity] }),
       comp.note && el("p", { class: "note", text: comp.note }),
       comp.alternatives.length > 0 && el("h4", { text: "Alternatives" }),
-      comp.alternatives.length > 0 && el("ul", {}, comp.alternatives.map((a) => el("li", { text: a }))),
+      comp.alternatives.length > 0 && el("p", { text: comp.alternatives.join(", ") }),
       comp.connections.length > 0 && el("h4", { text: "Connections" }),
       comp.connections.length > 0 && el("ul", {}, comp.connections.map((c) =>
         el("li", { text: (c.to ? `→ ${name(c.to)}` : `← ${name(c.from)}`) + (c.label ? `: ${c.label}` : "") }))),
-      sizing.length > 0 && el("h4", { text: "Sizing assumptions" }),
+      sizing.length > 0 && el("h4", { text: "Sizing" }),
       sizing.length > 0 && el("table", {}, el("tbody", {}, sizing.map(([k, v]) =>
         el("tr", {}, el("td", { text: k.replaceAll("_", " ") }), el("td", { text: number(v) }))))),
-      comp.docs && el("h4", { text: "Documentation" }),
-      comp.docs && el("p", {}, el("a", { href: comp.docs, target: "_blank", rel: "noopener noreferrer", text: comp.docs })),
+      comp.docs && el("p", { class: "docs-link" }, el("a", { href: comp.docs, target: "_blank", rel: "noopener noreferrer", text: "Documentation ↗" })),
     );
   }
 
-  // ---------- bill of services ----------
+  // ---------- services list ----------
   renderBill(d) {
-    const { el, fill, fidelityBadge } = CA;
-    const stages = Object.entries(CA.meta.stages);
-    const sections = stages.map(([key, label]) => {
+    const { el, fill, money, fidelityTag } = CA;
+    const sections = Object.entries(CA.meta.stages).map(([key, label]) => {
       const comps = d.components.filter((c) => c.stage === key);
       if (!comps.length) return null;
       return el("section", { class: "bill-stage" },
         el("div", { class: "bill-stage-name" }, label, el("small", { text: STAGE_HELP[key] || "" })),
-        el("div", { class: "bill-cards" }, comps.map((c) => el("button", {
-          type: "button", class: "bill-card",
-          onclick: () => { this.setView("diagram"); this.select(c.id); },
-        },
-        el("span", { class: "svc", text: c.service || c.label }),
-        el("span", { class: "meta" }, c.label, " · ", el("code", { text: c.capability }), fidelityBadge(c.fidelity),
-          c.evidence && c.evidence.length ? el("span", { class: "badge muted-badge", title: "Quoted from the requirements", text: "quoted" }) : null),
-        el("span", { class: "why", text: c.rationale || c.capability_description }),
-        ))));
+        el("div", { class: "bill-rows" }, comps.map((c) => {
+          const line = this.costOf(c.id);
+          return el("button", {
+            type: "button", class: "bill-row",
+            onclick: () => { this.setView("diagram"); this.select(c.id); },
+          },
+          el("span", { class: "svc" }, el("b", { text: c.service || c.label }), el("span", { text: c.label })),
+          el("span", { class: "why", text: c.rationale || c.capability_description }),
+          el("span", { class: "end" }, fidelityTag(c.fidelity), line ? el("span", { class: "row-cost", text: `${money(line.monthly)}/mo` }) : null));
+        })));
     });
     fill(this.q(".bill"), sections);
+  }
+
+  // ---------- cost ----------
+  renderCost(d) {
+    const { el, fill, money, plural } = CA;
+    const box = this.q(".cost");
+    const cost = d.cost;
+    if (!cost || !cost.available) {
+      fill(box, el("div", { class: "cost-empty" },
+        el("h3", { text: "No price estimate for this provider" }),
+        el("p", { text: (cost && cost.message) || "Prices are not available yet." })));
+      return;
+    }
+    const terms = cost.terms;
+    if (!terms.some((t) => t.months === this.state.term)) this.state.term = terms[0].months;
+    const term = terms.find((t) => t.months === this.state.term);
+    const save = term.committed != null ? term.on_demand - term.committed : null;
+
+    const termButtons = el("div", { class: "segmented", role: "group", "aria-label": "Period" }, terms.map((t) => el("button", {
+      type: "button", "aria-pressed": String(t.months === this.state.term),
+      onclick: () => { this.state.term = t.months; this.renderCost(this.state.design); },
+    }, t.label)));
+
+    const stats = el("div", { class: "cost-stats" },
+      el("div", { class: "stat" },
+        el("span", { class: "stat-label", text: `On demand, ${term.label}` }),
+        el("b", { class: "stat-value", text: money(term.on_demand) }),
+        el("span", { class: "stat-sub", text: `${money(cost.monthly)} in the first month` })),
+      el("div", { class: "stat" },
+        el("span", { class: "stat-label", text: term.commitment ? `With ${term.commitment} commitments` : "With commitments" }),
+        term.committed != null
+          ? [el("b", { class: "stat-value", text: money(term.committed) }),
+            el("span", { class: "stat-sub good", text: `Save ${money(save)} (${Math.round((save / term.on_demand) * 100)}%)` })]
+          : [el("b", { class: "stat-value muted", text: "–" }),
+            el("span", { class: "stat-sub", text: cost.break_even_months
+              ? `A 1-year commitment pays off after about ${plural(cost.break_even_months, "month")}`
+              : "Commitments start at 1 year" })]));
+
+    const table = el("table", { class: "cost-table" },
+      el("thead", {}, el("tr", {}, ["Period", "On demand", "With commitments", "You save"].map((h) => el("th", { text: h })))),
+      el("tbody", {}, terms.map((t) => el("tr", { class: t.months === this.state.term ? "current" : null },
+        el("td", { text: t.label }),
+        el("td", { text: money(t.on_demand) }),
+        el("td", { text: t.committed != null ? money(t.committed) : "–" }),
+        el("td", { class: "good", text: t.committed != null ? money(t.on_demand - t.committed) : "–" })))));
+
+    const lines = [...cost.lines].sort((a, b) => b.monthly - a.monthly);
+    const breakdown = el("div", { class: "cost-lines" }, lines.map((line) => el("details", { class: "cost-line" },
+      el("summary", {},
+        el("span", { class: "svc" }, el("b", { text: line.service }), el("span", { text: line.label })),
+        line.commitment ? el("span", { class: "tag neutral", title: line.commitment, text: "Commitment eligible" }) : el("span"),
+        el("span", { class: "amount", text: `${money(line.monthly)}/mo` })),
+      el("table", { class: "cost-items" }, el("tbody", {}, line.items.map((item) => el("tr", {},
+        el("td", {}, item.name, item.basis ? el("small", { text: item.basis }) : null),
+        el("td", { class: "num", text: `${CA.number(item.quantity)} × ${money(item.unit_price, { cents: true })} / ${item.unit}` }),
+        el("td", { class: "num", text: money(item.monthly, { cents: true }) }))))),
+      line.pricing_url && el("a", { class: "price-link", href: line.pricing_url, target: "_blank", rel: "noopener noreferrer", text: "Pricing page ↗" }))));
+
+    fill(box,
+      el("div", { class: "cost-head" }, termButtons,
+        el("span", { class: `cost-source ${cost.verified ? "verified" : ""}`, text: cost.verified ? "Prices from the provider's price list" : "Approximate list prices" })),
+      stats,
+      table,
+      el("h3", { class: "cost-subhead", text: "Monthly breakdown" }),
+      breakdown,
+      el("div", { class: "cost-notes" },
+        el("p", { text: `${cost.price_region} list prices in ${cost.currency}, as of ${cost.as_of} (${cost.source}).` }),
+        cost.commitment_notes.length > 0 && el("ul", {}, cost.commitment_notes.map((n) => el("li", { text: n }))),
+        el("ul", {}, cost.assumptions.map((n) => el("li", { text: n }))),
+        cost.calculator && el("p", {}, "Check with the ", el("a", { href: cost.calculator, target: "_blank", rel: "noopener noreferrer", text: "official calculator ↗" }))));
   }
 
   // ---------- workflows ----------
@@ -290,30 +371,42 @@ class Workspace {
     const wfs = d.workflows || [];
     if (this.state.workflow >= wfs.length) this.state.workflow = 0;
     fill(this.q(".wf-tabs"), wfs.map((w, i) => el("button", {
-      type: "button", role: "tab", class: "wf-tab", "aria-selected": String(i === this.state.workflow),
+      type: "button", role: "tab", class: "chip wf-tab", "aria-selected": String(i === this.state.workflow),
       onclick: () => { this.stopPlaying(); this.state.workflow = i; this.state.step = -1; this.renderWorkflows(this.state.design); },
     }, w.name)));
     const canvas = this.q(".wf-canvas");
-    canvas.innerHTML = d.svg;
+    this.placeDiagram(canvas, d.svg);
     this.wireNodes(canvas, (id) => { this.setView("diagram"); this.select(id); });
     const wf = wfs[this.state.workflow];
     const byId = Object.fromEntries(d.components.map((c) => [c.id, c]));
     if (!wf) {
-      fill(this.q(".wf-steps"), el("li", { class: "muted", text: "This design has no workflows yet." }));
+      fill(this.q(".wf-steps"), el("li", { class: "hint", text: "This design has no workflows yet." }));
       this.q(".wf-controls").hidden = true;
       return;
     }
     this.q(".wf-controls").hidden = false;
-    fill(this.q(".wf-steps"), wf.steps.map((step, i) => el("li", {
-      class: "wf-step", tabindex: "0",
-      "aria-current": i === this.state.step ? "step" : null,
-      onclick: () => { this.stopPlaying(); this.stepTo(i); },
-      onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.stopPlaying(); this.stepTo(i); } },
-    },
-    el("div", {}, el("span", { text: step.text }),
-      el("div", { class: "services" }, step.components.filter((id) => byId[id]).map((id) =>
-        el("span", { text: byId[id].service || byId[id].label })))))));
+    const service = (id) => (byId[id] ? byId[id].service || byId[id].label : id);
+    fill(this.q(".wf-steps"), wf.steps.map((step, i) => {
+      // Generated steps read "Source → Target: what happens"; lead with what happens.
+      const m = step.text.match(/^(.+?) → (.+?): (.+)$/);
+      const text = m ? m[3].charAt(0).toUpperCase() + m[3].slice(1) : step.text;
+      const path = step.components.filter((id) => byId[id]).map(service).join(" → ");
+      return el("li", {
+        class: "wf-step", tabindex: "0",
+        "aria-current": i === this.state.step ? "step" : null,
+        onclick: () => { this.stopPlaying(); this.stepTo(i); },
+        onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.stopPlaying(); this.stepTo(i); } },
+      }, el("div", {}, el("div", { class: "wf-text", text }), path && el("div", { class: "wf-path", text: path })));
+    }));
+    this.updatePosition();
     this.highlight(this.state.step >= 0 ? wf.steps[this.state.step] : null);
+  }
+
+  updatePosition() {
+    const wf = (this.state.design.workflows || [])[this.state.workflow];
+    this.q(".wf-position").textContent = wf
+      ? (this.state.step >= 0 ? `Step ${this.state.step + 1} of ${wf.steps.length}` : `${wf.steps.length} steps`)
+      : "";
   }
 
   stepTo(index) {
@@ -326,6 +419,7 @@ class Workspace {
       else item.removeAttribute("aria-current");
     });
     if (items[this.state.step]) items[this.state.step].scrollIntoView({ block: "nearest" });
+    this.updatePosition();
     this.highlight(wf.steps[this.state.step]);
   }
 

@@ -74,5 +74,34 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 - **Sign-up and sign-in:** monthly_active_users=20000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=5
 
+## Estimated cost
+
+About **$83.56 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $83.56 | – |
+| 6 months | $502 | – |
+| 1 year | $1,006 | – |
+| 3 years | $3,037 | – |
+
+| Service | Per month |
+|---|---:|
+| Amazon Cognito (Sign-up and sign-in) | $55.00 |
+| Amazon CloudFront (Static site + API edge) | $13.50 |
+| Amazon API Gateway (REST API) | $10.50 |
+| Amazon DynamoDB (App data) | $1.38 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (Release pipeline) | $1.00 |
+| Amazon Route 53 (Domain) | $0.74 |
+| AWS Lambda (Business logic) | $0.40 |
+| Amazon S3 (Front-end assets) | $0.04 |
+| Amazon CloudWatch (Logs, metrics, alarms) | $0.00 |
+
+- Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

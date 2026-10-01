@@ -6,8 +6,10 @@ transport this thin means the agent loop is the same whether Claude is reached t
 Anthropic API or Amazon Bedrock, and tests can script responses without a network.
 
 Configuration (environment):
-  CLOUDARCHIE_LLM    anthropic | bedrock | rules   (default: anthropic when ANTHROPIC_API_KEY
-                     or ANTHROPIC_AUTH_TOKEN is set, otherwise rules)
+  CLOUDARCHIE_LLM    anthropic | bedrock | huggingface | ollama | openai-compatible | rules
+                     (default: anthropic when ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN is set,
+                     huggingface when HF_TOKEN is set, otherwise rules)
+  CLOUDARCHIE_LLM_BASE_URL, CLOUDARCHIE_LLM_API_KEY   for ollama / openai-compatible endpoints
   CLOUDARCHIE_MODEL  model id (default: DEFAULT_MODEL below; on Bedrock, the same id with
                      the "anthropic." prefix)
   AWS_REGION         region for Bedrock
@@ -96,13 +98,37 @@ def llm_from_env() -> LLM | None:
     """The configured model, or None for rule-based planning."""
     choice = os.environ.get("CLOUDARCHIE_LLM", "").strip().lower()
     if not choice:
-        has_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-        choice = "anthropic" if has_key else "rules"
+        if os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"):
+            choice = "anthropic"
+        elif os.environ.get("HF_TOKEN"):
+            choice = "huggingface"
+        else:
+            choice = "rules"
     model = os.environ.get("CLOUDARCHIE_MODEL") or None
     if choice == "anthropic":
         return AnthropicLLM(model=model or DEFAULT_MODEL)
     if choice == "bedrock":
         return BedrockLLM(model=model)
+    if choice in ("huggingface", "ollama", "openai-compatible"):
+        from cloudarchie.planner import openai_compat as oc
+
+        if choice == "huggingface":
+            token = os.environ.get("HF_TOKEN") or os.environ.get("CLOUDARCHIE_LLM_API_KEY")
+            if not token:
+                raise LLMError("Set HF_TOKEN to use open-source models on Hugging Face.")
+            name = model or oc.HUGGING_FACE_MODEL
+            return oc.OpenAICompatLLM(name, oc.HUGGING_FACE_URL, token, f"{name} (Hugging Face)")
+        if choice == "ollama":
+            name = model or oc.OLLAMA_MODEL
+            url = os.environ.get("CLOUDARCHIE_LLM_BASE_URL") or oc.OLLAMA_URL
+            return oc.OpenAICompatLLM(name, url, None, f"{name} (Ollama)")
+        url = os.environ.get("CLOUDARCHIE_LLM_BASE_URL")
+        if not url or not model:
+            raise LLMError("Set CLOUDARCHIE_LLM_BASE_URL and CLOUDARCHIE_MODEL for this endpoint.")
+        return oc.OpenAICompatLLM(model, url, os.environ.get("CLOUDARCHIE_LLM_API_KEY"))
     if choice in ("rules", "none", "off"):
         return None
-    raise LLMError(f"Unknown CLOUDARCHIE_LLM value {choice!r}; use anthropic, bedrock or rules.")
+    raise LLMError(
+        f"Unknown CLOUDARCHIE_LLM value {choice!r}; use anthropic, bedrock, huggingface, "
+        "ollama, openai-compatible or rules."
+    )

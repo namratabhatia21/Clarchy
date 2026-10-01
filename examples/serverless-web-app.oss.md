@@ -81,5 +81,9 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 - **Sign-up and sign-in:** monthly_active_users=20000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=5
 
+## Estimated cost
+
+Open-source software has no licence fee: you pay for the machines it runs on and the people who operate it, which depends on where you host it. Open a cloud tab to see a managed-service estimate.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

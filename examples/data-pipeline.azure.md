@@ -70,5 +70,32 @@ Streams application events into a data lake, transforms them on a schedule and s
 - **Reporting warehouse:** rpu_hours_per_month=300, storage_gb=500
 - **Pipeline monitoring:** log_ingest_gb_per_month=10
 
+## Estimated cost
+
+About **$1,681 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $1,681 | – |
+| 6 months | $10,168 | – |
+| 1 year | $20,534 | $19,257 |
+| 3 years | $63,987 | $60,156 |
+
+| Service | Per month |
+|---|---:|
+| Azure API Management (Event collector) | $1,256 |
+| Microsoft Fabric Data Warehouse (Reporting warehouse) | $274 |
+| Azure Data Factory (Nightly transforms) | $65.79 |
+| Azure Blob Storage (Data lake (raw + curated)) | $39.50 |
+| Azure Event Hubs (Event stream) | $32.94 |
+| Azure Monitor + Application Insights (Pipeline monitoring) | $12.50 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Fabric capacity reservation: 1 year; renewed each year in the 3-year view.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for East US; your region (Frankfurt (germanywestcentral)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

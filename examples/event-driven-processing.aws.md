@@ -78,5 +78,36 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 - **Job status:** storage_gb=5, reads_per_month=10000000, writes_per_month=6000000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=20
 
+## Estimated cost
+
+About **$251 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $251 | – |
+| 6 months | $1,524 | – |
+| 1 year | $3,098 | $2,937 |
+| 3 years | $9,891 | $9,408 |
+
+| Service | Per month |
+|---|---:|
+| AWS Lambda (Workers) | $115 |
+| AWS Step Functions (Processing steps) | $94.51 |
+| Amazon S3 (Raw + processed files) | $12.04 |
+| Amazon CloudWatch (Logs, metrics, alarms) | $7.50 |
+| Amazon API Gateway (Ingest API) | $7.00 |
+| Amazon SQS (Job queue) | $6.80 |
+| Amazon DynamoDB (Job status) | $5.00 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (Release pipeline) | $1.00 |
+| Amazon EventBridge (Domain events) | $0.79 |
+| AWS Lambda (Validate + enqueue) | $0.20 |
+
+- Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for US East (N. Virginia); your region (Mumbai (ap-south-1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

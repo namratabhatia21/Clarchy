@@ -81,5 +81,39 @@ Always-on containerised web API with a relational database and cache, for steady
 - **DB credentials:** secrets=5
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=30
 
+## Estimated cost
+
+About **$568 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $568 | – |
+| 6 months | $3,414 | – |
+| 1 year | $6,841 | $5,608 |
+| 3 years | $20,672 | $13,632 |
+
+| Service | Per month |
+|---|---:|
+| Amazon RDS for PostgreSQL (PostgreSQL) | $292 |
+| Amazon ECS on AWS Fargate (API containers) | $108 |
+| Amazon ElastiCache (Redis OSS / Valkey) (Session + query cache) | $75.92 |
+| AWS WAF (Web firewall) | $40.00 |
+| Application Load Balancer (HTTPS load balancer) | $22.27 |
+| Amazon CloudWatch (Logs, metrics, alarms) | $12.50 |
+| Amazon S3 (Uploads) | $7.03 |
+| AWS Secrets Manager (DB credentials) | $6.73 |
+| Amazon Route 53 (Domain) | $1.10 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (Release pipeline) | $1.00 |
+| Amazon ECR (Container images) | $0.50 |
+
+- Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+- RDS reserved instances: 1 year no upfront, or 3 years partial upfront with the upfront fee spread over the term.
+- ElastiCache reserved nodes: 1 or 3 years, no upfront payment.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for US East (N. Virginia); your region (Ireland (eu-west-1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

@@ -79,5 +79,38 @@ Always-on containerised web API with a relational database and cache, for steady
 - **DB credentials:** secrets=5
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=30
 
+## Estimated cost
+
+About **$654 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $654 | – |
+| 6 months | $3,929 | – |
+| 1 year | $7,870 | $6,625 |
+| 3 years | $23,738 | $17,186 |
+
+| Service | Per month |
+|---|---:|
+| Cloud SQL for PostgreSQL (PostgreSQL) | $270 |
+| Cloud Run (API containers) | $173 |
+| Memorystore (Redis / Valkey) (Session + query cache) | $118 |
+| Google Cloud Armor (Web firewall) | $47.50 |
+| Cloud Load Balancing (Application LB) (HTTPS load balancer) | $33.39 |
+| Cloud Storage (Uploads) | $6.13 |
+| Secret Manager (DB credentials) | $2.81 |
+| Cloud Monitoring + Cloud Logging (Logs, metrics, alarms) | $1.00 |
+| Cloud DNS (Domain) | $0.80 |
+| Artifact Registry (Container images) | $0.45 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (Release pipeline) | $0.00 |
+
+- Committed use discounts: 1- or 3-year commitments; about 37% or 55% off GKE node VMs, 25% or 52% off Cloud SQL, 20% or 40% off Memorystore.
+- Cloud Run committed use discounts: 17% off for a 1- or 3-year spend commitment.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (Belgium (europe-west1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

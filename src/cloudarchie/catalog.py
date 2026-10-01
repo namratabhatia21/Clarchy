@@ -44,6 +44,9 @@ def _data_file(*parts: str):
     return resources.files("cloudarchie").joinpath("data", *parts)
 
 
+data_path = _data_file  # public: other modules read their own data files through this
+
+
 def _load_yaml(*parts: str) -> Any:
     return yaml.safe_load(_data_file(*parts).read_text(encoding="utf-8"))
 

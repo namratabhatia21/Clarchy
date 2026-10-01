@@ -81,5 +81,34 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 - **Job status:** storage_gb=5, reads_per_month=10000000, writes_per_month=6000000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=20
 
+## Estimated cost
+
+About **$658 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $658 | – |
+| 6 months | $3,967 | – |
+| 1 year | $7,974 | – |
+| 3 years | $24,398 | – |
+
+| Service | Per month |
+|---|---:|
+| Azure Logic Apps (Processing steps) | $473 |
+| Azure Functions (Workers) | $110 |
+| Azure Monitor + Application Insights (Logs, metrics, alarms) | $35.50 |
+| Azure Service Bus (queues) (Job queue) | $13.86 |
+| Azure Cosmos DB (Job status) | $11.25 |
+| Azure Blob Storage (Raw + processed files) | $9.74 |
+| Azure API Management (Ingest API) | $4.20 |
+| Azure Event Grid (Domain events) | $0.41 |
+| Azure Functions (Validate + enqueue) | $0.20 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for East US; your region (Pune (centralindia)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

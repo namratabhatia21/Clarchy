@@ -76,5 +76,34 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 - **Sign-up and sign-in:** monthly_active_users=20000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=5
 
+## Estimated cost
+
+About **$22.18 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $22.18 | – |
+| 6 months | $134 | – |
+| 1 year | $269 | – |
+| 3 years | $824 | – |
+
+| Service | Per month |
+|---|---:|
+| Cloud CDN (Static site + API edge) | $11.75 |
+| Firestore (App data) | $5.55 |
+| API Gateway (REST API) | $3.00 |
+| Cloud Monitoring + Cloud Logging (Logs, metrics, alarms) | $1.00 |
+| Cloud DNS (Domain) | $0.44 |
+| Cloud Run functions (Business logic) | $0.40 |
+| Cloud Storage (Front-end assets) | $0.04 |
+| Identity Platform (Sign-up and sign-in) | $0.00 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (Release pipeline) | $0.00 |
+
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (N. Virginia (us-east4)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

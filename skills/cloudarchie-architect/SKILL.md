@@ -31,6 +31,11 @@ write provider product names into the spec.
    hand-write these.
 7. **Show it.** Call `render_design` for the provider the user cares about (default
    `aws`); save the SVG and summarise the Markdown explanation. Offer the other providers.
+8. **Price it.** Call `estimate_cost` for each provider the user is weighing. It returns
+   the monthly cost per service and line item, totals for 1 month, 6 months, 1 year and
+   3 years on demand and with commitments, and the month a 1-year commitment pays off.
+   `aws_price_lookup` searches AWS's current list prices for any service when the user
+   asks about something the estimate does not cover.
 
 ## Explaining the result
 
@@ -38,7 +43,9 @@ write provider product names into the spec.
   their trade-offs.
 - Point out services marked `close` or `partial` on the chosen provider and what differs.
 - List the assumptions and the questions to confirm.
-- Do not quote prices; CloudArchie does not estimate costs yet.
+- Quote prices only from `estimate_cost` or `aws_price_lookup`, and say what usage they
+  assume. AWS prices come from the AWS Price List API; Azure and Google Cloud prices are
+  approximate. Estimates are list prices without data transfer, support or taxes.
 
 ## Quick draft
 

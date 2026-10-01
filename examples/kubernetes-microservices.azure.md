@@ -105,5 +105,40 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 - **Service credentials:** secrets=20
 - **Logs, metrics, traces:** log_ingest_gb_per_month=120
 
+## Estimated cost
+
+About **$6,103 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $6,103 | – |
+| 6 months | $36,625 | – |
+| 1 year | $73,267 | $70,931 |
+| 3 years | $219,999 | $208,851 |
+
+| Service | Per month |
+|---|---:|
+| Microsoft Entra External ID (Customer accounts) | $4,500 |
+| Azure Database for PostgreSQL (Flexible Server) (Orders and catalogue) | $329 |
+| Azure Monitor + Application Insights (Logs, metrics, traces) | $266 |
+| Azure Kubernetes Service (AKS) (API microservices) | $213 |
+| Azure Application Gateway (Cluster ingress) | $197 |
+| Azure Web Application Firewall (Web firewall) | $190 |
+| Azure Managed Redis (Sessions and hot catalogue) | $146 |
+| Azure Kubernetes Service (AKS) (Order workers) | $140 |
+| Azure Service Bus (queues) (Order queue) | $95.46 |
+| Azure Key Vault (Service credentials) | $9.46 |
+| Azure Blob Storage (Product images) | $9.42 |
+| Azure Container Registry (Container images) | $5.00 |
+| Azure DNS (Domain) | $2.90 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Reserved VM instances: 1 or 3 years; about 37% or 60% off the AKS node VMs.
+- Reserved capacity: 1 or 3 years for Azure Database for PostgreSQL (General Purpose); burstable servers are not eligible.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for East US; your region (Ireland (northeurope)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

@@ -90,5 +90,37 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 - **Single sign-on:** monthly_active_users=2000
 - **Logs, traces, cost alarms:** log_ingest_gb_per_month=15
 
+## Estimated cost
+
+About **$507 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $507 | – |
+| 6 months | $3,043 | – |
+| 1 year | $6,090 | $5,806 |
+| 3 years | $18,309 | $17,344 |
+
+| Service | Per month |
+|---|---:|
+| Azure Application Gateway (HTTPS load balancer) | $185 |
+| Azure Container Apps (Chat API (streaming)) | $158 |
+| Azure AI Search (Embeddings index) | $73.73 |
+| Azure Front Door (Web front end) | $37.20 |
+| Azure Monitor + Application Insights (Logs, traces, cost alarms) | $24.00 |
+| Azure AI Foundry (incl. Azure OpenAI) (LLM + embeddings) | $18.72 |
+| Azure Container Registry (Container images) | $5.00 |
+| Azure Cosmos DB (Chat history) | $4.25 |
+| Azure Blob Storage (Source documents) | $0.96 |
+| Azure Functions (Chunk + embed documents) | $0.00 |
+| Microsoft Entra External ID (Single sign-on) | $0.00 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Azure savings plan for compute: 1- or 3-year hourly spend commitment; about 15% (1 year) or 17% (3 years) off Container Apps.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for East US; your region (Washington (westus2)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

@@ -1,0 +1,63 @@
+# Google Cloud list prices, compiled by hand from the public pricing pages (us-central1, Iowa).
+# Not machine-checked: verify with the Google Cloud pricing calculator before relying on them.
+# commit_1yr / commit_3yr apply the published committed use discounts.
+provider: gcp
+currency: USD
+price_region: Iowa (us-central1)
+region_code: us-central1
+as_of: '2026-10-01'
+source: Google Cloud pricing pages, compiled manually
+verified: false
+calculator: https://cloud.google.com/products/calculator
+prices:
+  run.requests: {price: 0.40, unit: 1M requests, source: https://cloud.google.com/run/pricing}
+  run.vcpu_seconds: {price: 0.000024, unit: vCPU-second (request-based), source: https://cloud.google.com/run/pricing}
+  run.gib_seconds: {price: 0.0000025, unit: GiB-second (request-based), source: https://cloud.google.com/run/pricing}
+  run.vcpu_hours: {price: 0.0648, unit: vCPU-hour (instance-based), commit_1yr: 0.053784, commit_3yr: 0.053784, source: https://cloud.google.com/run/pricing}
+  run.gib_hours: {price: 0.0072, unit: GiB-hour (instance-based), commit_1yr: 0.005976, commit_3yr: 0.005976, source: https://cloud.google.com/run/pricing}
+  apigw.calls: {price: 3.00, unit: 1M calls, source: https://cloud.google.com/api-gateway/pricing}
+  cdn.egress_gb: {price: 0.08, unit: GB, source: https://cloud.google.com/cdn/pricing}
+  cdn.lookups: {price: 0.0075, unit: 10K lookups, source: https://cloud.google.com/cdn/pricing}
+  dns.zones: {price: 0.20, unit: managed zone, source: https://cloud.google.com/dns/pricing}
+  dns.queries: {price: 0.40, unit: 1M queries, source: https://cloud.google.com/dns/pricing}
+  armor.policies: {price: 5.0, unit: policy, source: https://cloud.google.com/armor/pricing}
+  armor.rules: {price: 1.0, unit: rule, source: https://cloud.google.com/armor/pricing}
+  armor.requests: {price: 0.75, unit: 1M requests, source: https://cloud.google.com/armor/pricing}
+  lb.rule_hours: {price: 0.025, unit: forwarding rule-hour, source: https://cloud.google.com/vpc/network-pricing}
+  lb.data_gb: {price: 0.008, unit: GB processed, source: https://cloud.google.com/vpc/network-pricing}
+  gke.cluster_hours: {price: 0.10, unit: cluster-hour, source: https://cloud.google.com/kubernetes-engine/pricing}
+  gce.node_hours: {price: 0.067, unit: e2-standard-2 node-hour, commit_1yr: 0.0422, commit_3yr: 0.0302, source: https://cloud.google.com/compute/vm-instance-pricing}
+  vertex.input_tokens: {price: 0.10, unit: 1M tokens (Gemini Flash-Lite), source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
+  vertex.output_tokens: {price: 0.40, unit: 1M tokens (Gemini Flash-Lite), source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
+  vertex.embedding_tokens: {price: 0.10, unit: 1M tokens, source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
+  pubsub.tib: {price: 40.0, unit: TiB of messages, source: https://cloud.google.com/pubsub/pricing}
+  eventarc.events: {price: 0.40, unit: 1M events, source: https://cloud.google.com/eventarc/pricing}
+  workflows.steps: {price: 0.01, unit: 1K steps, source: https://cloud.google.com/workflows/pricing}
+  dataflow.vcpu_hours: {price: 0.056, unit: vCPU-hour (batch), source: https://cloud.google.com/dataflow/pricing}
+  dataflow.gb_hours: {price: 0.003557, unit: GB-hour (batch), source: https://cloud.google.com/dataflow/pricing}
+  gcs.storage_gb: {price: 0.020, unit: GB-month (Standard), source: https://cloud.google.com/storage/pricing}
+  gcs.class_a: {price: 0.005, unit: 1K Class A operations, source: https://cloud.google.com/storage/pricing}
+  gcs.class_b: {price: 0.0004, unit: 1K Class B operations, source: https://cloud.google.com/storage/pricing}
+  cloudsql.small.single: {price: 0.1106, unit: 2 vCPU 4 GB instance-hour, commit_1yr: 0.08295, commit_3yr: 0.053088, source: https://cloud.google.com/sql/pricing}
+  cloudsql.small.multi: {price: 0.2212, unit: 2 vCPU 4 GB HA instance-hour, commit_1yr: 0.1659, commit_3yr: 0.106176, source: https://cloud.google.com/sql/pricing}
+  cloudsql.medium.single: {price: 0.1386, unit: 2 vCPU 8 GB instance-hour, commit_1yr: 0.10395, commit_3yr: 0.066528, source: https://cloud.google.com/sql/pricing}
+  cloudsql.medium.multi: {price: 0.2772, unit: 2 vCPU 8 GB HA instance-hour, commit_1yr: 0.2079, commit_3yr: 0.133056, source: https://cloud.google.com/sql/pricing}
+  cloudsql.large.single: {price: 0.2772, unit: 4 vCPU 16 GB instance-hour, commit_1yr: 0.2079, commit_3yr: 0.133056, source: https://cloud.google.com/sql/pricing}
+  cloudsql.large.multi: {price: 0.5544, unit: 4 vCPU 16 GB HA instance-hour, commit_1yr: 0.4158, commit_3yr: 0.266112, source: https://cloud.google.com/sql/pricing}
+  cloudsql.storage_gb.single: {price: 0.17, unit: GB-month (SSD), source: https://cloud.google.com/sql/pricing}
+  cloudsql.storage_gb.multi: {price: 0.34, unit: "GB-month (SSD, HA)", source: https://cloud.google.com/sql/pricing}
+  firestore.reads: {price: 0.30, unit: 1M document reads, source: https://cloud.google.com/firestore/pricing}
+  firestore.writes: {price: 0.90, unit: 1M document writes, source: https://cloud.google.com/firestore/pricing}
+  firestore.storage_gb: {price: 0.15, unit: GiB-month, source: https://cloud.google.com/firestore/pricing}
+  memorystore.gb_hours: {price: 0.054, unit: GB-hour (Standard tier), commit_1yr: 0.0432, commit_3yr: 0.0324, source: https://cloud.google.com/memorystore/docs/redis/pricing}
+  vectorsearch.node_hours: {price: 0.0938, unit: serving node-hour (e2-standard-2), source: https://cloud.google.com/vertex-ai/pricing#vectorsearch}
+  bigquery.tib_scanned: {price: 6.25, unit: TiB scanned (on demand), source: https://cloud.google.com/bigquery/pricing}
+  bigquery.storage_gb: {price: 0.02, unit: GiB-month (active), source: https://cloud.google.com/bigquery/pricing}
+  identity.mau: {price: 0.0055, unit: monthly active user, source: https://cloud.google.com/identity-platform/pricing}
+  secrets.versions: {price: 0.06, unit: secret version-month, source: https://cloud.google.com/secret-manager/pricing}
+  secrets.access: {price: 0.03, unit: 10K accesses, source: https://cloud.google.com/secret-manager/pricing}
+  logging.gb: {price: 0.50, unit: GiB ingested, source: https://cloud.google.com/stackdriver/pricing}
+  monitoring.alerts: {price: 0.10, unit: alert condition, source: https://cloud.google.com/stackdriver/pricing}
+  artifacts.storage_gb: {price: 0.10, unit: GB-month, source: https://cloud.google.com/artifact-registry/pricing}
+  build.minutes: {price: 0.006, unit: build minute (e2-standard-2), source: https://cloud.google.com/build/pricing}
+  deploy.pipelines: {price: 5.0, unit: delivery pipeline-month, source: https://cloud.google.com/deploy/pricing}

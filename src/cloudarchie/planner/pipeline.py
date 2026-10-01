@@ -40,6 +40,21 @@ class PlanOptions:
     mode: Mode = "auto"
     region: str | None = None
     extra_mcp_servers: list[str] = field(default_factory=list)
+    # "mcp": the agent is an MCP client of CloudArchie's server; "local": the same tools are
+    # called in-process (the browser engine, or when the MCP SDK is not installed).
+    toolbox: Literal["mcp", "local"] = "mcp"
+
+
+def _toolbox(options: PlanOptions):
+    from cloudarchie.planner.local_toolbox import LocalToolbox
+
+    if options.toolbox == "local":
+        return LocalToolbox()
+    try:
+        from cloudarchie.planner.toolbox import MCPToolbox  # needs the "agent" extra
+    except ImportError:
+        return LocalToolbox()
+    return MCPToolbox(options.extra_mcp_servers)
 
 
 @dataclass
@@ -107,10 +122,10 @@ async def _ai_design(
         f"{len(understood.features)} needs, {len(understood.open_questions)} open questions",
         items=facts + [f"{f['need']}: “{f['quote']}”" for f in understood.features],
     )
-    await emitter.stage("design", "running", "The agent is designing with CloudArchie's MCP tools")
-    from cloudarchie.planner.toolbox import MCPToolbox  # needs the "agent" extra
-
-    async with MCPToolbox(options.extra_mcp_servers) as toolbox:
+    toolbox = _toolbox(options)
+    how = "MCP tools" if type(toolbox).__name__ == "MCPToolbox" else "tools"
+    await emitter.stage("design", "running", f"The agent is designing with CloudArchie's {how}")
+    async with toolbox:
         spec = await agent.design(llm, toolbox, doc.text, understood, emitter, options.region)
     spec = spec.model_copy(
         update={"provenance": Provenance(mode="ai", model=llm.model, source=doc.name)}

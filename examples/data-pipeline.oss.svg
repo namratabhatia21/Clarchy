@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-oss" width="1136" height="830" viewBox="0 0 1136 830" role="img" aria-label="Analytics data pipeline on Open source">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-oss" width="1136" height="830" viewBox="0 0 1136 830" role="img" data-body-top="80" data-body-bottom="802" aria-label="Analytics data pipeline on Open source">
 <style>.ca-oss{font-family:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif}
 .ca-oss .ca-bg{fill:#ffffff}
 .ca-oss .ca-title{font-size:18px;font-weight:600;fill:#16191f}

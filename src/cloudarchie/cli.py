@@ -8,6 +8,7 @@ cloudarchie explain  <pattern-or-spec.yaml> --provider aws [-o explain.md]
 cloudarchie icons    --provider aws [--icons DIR]
 cloudarchie serve    [--host 127.0.0.1] [--port 8000]   web UI (needs the "web" extra)
 cloudarchie mcp      [--transport stdio]                MCP server for AI clients
+cloudarchie prices   update | lookup <Service> <words>  latest AWS prices (Price List API)
 cloudarchie export-site -o site/ [--fragment] [--api-base URL]   static site, no server needed
 """
 
@@ -100,9 +101,15 @@ def cmd_serve(args: argparse.Namespace) -> int:
 
 
 def cmd_export_site(args: argparse.Namespace) -> int:
-    from cloudarchie.export import export_site
+    from cloudarchie.export import PYODIDE_BASE, export_site
 
-    path = export_site(args.output, fragment=args.fragment, api_base=args.api_base)
+    path = export_site(
+        args.output,
+        fragment=args.fragment,
+        api_base=args.api_base,
+        with_engine=not args.no_engine,
+        pyodide_base=args.pyodide_base or PYODIDE_BASE,
+    )
     print(f"wrote {path} ({path.stat().st_size // 1024} KB)", file=sys.stderr)
     return 0
 
@@ -158,6 +165,28 @@ def cmd_plan(args: argparse.Namespace) -> int:
         (out / f"{provider}.md").write_text(explain_markdown(arch), encoding="utf-8")
     how = f"AI ({result.model})" if result.mode == "ai" else "rule-based planner"
     print(f"wrote {out}/ (spec.yaml, diagrams and explanations; {how})", file=sys.stderr)
+    return 0
+
+
+def cmd_prices(args: argparse.Namespace) -> int:
+    from cloudarchie import aws_prices
+
+    if args.action == "update":
+        argv = (["--output", args.output] if args.output else []) + (
+            ["--cache", args.cache] if args.cache else []
+        )
+        return aws_prices.main(argv)
+    if not args.service:
+        print("error: prices lookup needs an AWS service code, e.g. AWSLambda", file=sys.stderr)
+        return 2
+    try:
+        rows = aws_prices.lookup(args.service, " ".join(args.search))
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    for row in rows:
+        price = f"{row['price_usd']:.10f}".rstrip("0").rstrip(".")
+        print(f"${price:>14} / {row['unit']:<16} {row['description']}")
     return 0
 
 
@@ -232,7 +261,21 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="URL",
         help="use a hosted CloudArchie API (cloudarchie serve) instead of embedded demo data",
     )
+    p.add_argument(
+        "--no-engine", action="store_true", help="replay-only page, no in-browser engine"
+    )
+    p.add_argument(
+        "--pyodide-base", metavar="URL", help="where to load Pyodide from (default: its CDN)"
+    )
     p.set_defaults(func=cmd_export_site)
+
+    p = sub.add_parser("prices", help="refresh or search the latest AWS prices")
+    p.add_argument("action", choices=["update", "lookup"])
+    p.add_argument("service", nargs="?", help="lookup: AWS service code, e.g. AmazonS3")
+    p.add_argument("search", nargs="*", help="lookup: words to find, e.g. storage")
+    p.add_argument("--output", help="update: price book to write (default: your user cache)")
+    p.add_argument("--cache", help="update: folder to keep downloaded offer files")
+    p.set_defaults(func=cmd_prices)
 
     p = sub.add_parser("mcp", help="run CloudArchie as an MCP server for AI clients")
     p.add_argument("--transport", default="stdio", choices=["stdio", "streamable-http"])

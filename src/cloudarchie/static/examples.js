@@ -33,13 +33,13 @@ const Examples = (() => {
       })();
     }
     const svg = await thumbs[pattern.id];
-    if (svg) img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    if (svg) img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CA.croppedSvgText(svg))}`;
   }
 
   function renderFilters() {
     const tags = ["All", ...TAG_RULES.map(([t]) => t).filter((t) => patterns.some((p) => tagsFor(p).includes(t)))];
     fill($("example-filters"), tags.map((t) => el("button", {
-      type: "button", class: "pill", "aria-pressed": String(t === filter),
+      type: "button", class: "chip", "aria-pressed": String(t === filter),
       onclick: () => { filter = t; renderFilters(); renderGrid(); },
     }, t)));
   }
@@ -54,9 +54,7 @@ const Examples = (() => {
         el("div", { class: "example-body" },
           el("h2", { text: p.name }),
           el("p", { text: p.summary || "" }),
-          el("div", { class: "example-tags" },
-            tagsFor(p).map((t) => el("span", { text: t })),
-            el("span", { text: CA.plural(p.components || 0, "component") })))));
+          el("span", { class: "example-meta", text: [...tagsFor(p).slice(0, 2), CA.plural(p.components || 0, "service")].join(" · ") }))));
     }));
   }
 

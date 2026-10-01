@@ -5,12 +5,13 @@
                                                            # their own <html>/<head> skeleton
     cloudarchie export-site -o site/ --api-base URL        # front end for a hosted API
 
-A static page has no server to run the planner, so it embeds everything the UI needs:
-every built-in pattern rendered on every provider, the service catalog, and a recorded
-rule-based run of each sample, which the Plan page replays stage by stage. Planning your
-own requirements needs `cloudarchie serve` (or --api-base pointing at one); the page says
-so. Fragment builds target sandboxed hosts that block downloads, so their download buttons
-copy to the clipboard instead.
+The page plans in the visitor's browser: next to index.html goes cloudarchie-engine.zip,
+this package, which the page runs with Pyodide (Python compiled to WebAssembly, loaded
+from its CDN on first use). It also embeds every built-in pattern rendered on every
+provider, the service catalog and a recorded rule-based run of each sample, so the
+examples and samples appear instantly without loading the engine. --no-engine builds a
+replay-only page. Fragment builds target sandboxed hosts that block downloads, so their
+download buttons copy to the clipboard instead.
 
 Official provider icons are never embedded: hosting them is a separate licensing question
 (see docs/decisions/0002-no-bundled-provider-icons.md).
@@ -19,8 +20,10 @@ Official provider icons are never embedded: hosting them is a separate licensing
 from __future__ import annotations
 
 import asyncio
+import io
 import json
 import re
+import zipfile
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -29,6 +32,36 @@ from cloudarchie import catalog, payloads
 from cloudarchie.icons import IconLibrary
 
 SCRIPT_TAG = re.compile(r'<script src="/static/([\w-]+\.js)"></script>')
+PYODIDE_VERSION = "314.0.7"
+PYODIDE_BASE = f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/"
+ENGINE_BUNDLE = "cloudarchie-engine.zip"
+
+
+def engine_bundle() -> bytes:
+    """This package as a zip for Pyodide: the Python modules and their data files."""
+    root = Path(__file__).resolve().parent
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(root.rglob("*")):
+            rel = path.relative_to(root)
+            if path.is_dir() or rel.parts[0] == "static" or "__pycache__" in rel.parts:
+                continue
+            if path.suffix not in (".py", ".yaml", ".md"):
+                continue
+            archive.write(path, f"cloudarchie/{rel.as_posix()}")
+    return buffer.getvalue()
+
+
+def engine_config(base: str = PYODIDE_BASE) -> dict[str, Any]:
+    base = base if base.endswith("/") else base + "/"
+    return {
+        "pyodide": f"{base}pyodide.js",
+        "index_url": base,
+        "bundle": ENGINE_BUNDLE,
+        "packages": ["pydantic", "pyyaml"],
+    }
+
+
 STYLESHEET_TAG = '<link rel="stylesheet" href="/static/app.css">'
 
 
@@ -57,7 +90,7 @@ def recorded_runs() -> dict[str, dict[str, Any]]:
     return runs
 
 
-def site_data(clipboard_only: bool = False) -> dict[str, Any]:
+def site_data(clipboard_only: bool = False, engine: dict[str, Any] | None = None) -> dict[str, Any]:
     no_icons = {p: IconLibrary(None) for p in catalog.providers()}
     pattern_yaml = {name: catalog.pattern_text(name) for name in catalog.pattern_names()}
     runs = recorded_runs()
@@ -83,6 +116,7 @@ def site_data(clipboard_only: bool = False) -> dict[str, Any]:
         "spec_index": spec_index,
         "designs": designs,
         "clipboard_only": clipboard_only,
+        "engine": engine,
     }
 
 
@@ -97,7 +131,9 @@ def _script_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 
 
-def build_site(fragment: bool = False, api_base: str | None = None) -> str:
+def build_site(
+    fragment: bool = False, api_base: str | None = None, engine: dict[str, Any] | None = None
+) -> str:
     static = resources.files("cloudarchie").joinpath("static")
     index = static.joinpath("index.html").read_text(encoding="utf-8")
     css = static.joinpath("app.css").read_text(encoding="utf-8")
@@ -111,7 +147,8 @@ def build_site(fragment: bool = False, api_base: str | None = None) -> str:
     if api_base:
         config = f"window.CLOUDARCHIE_API_BASE = {_script_json(api_base.rstrip('/'))};"
     else:
-        config = f"window.CLOUDARCHIE_DATA = {_script_json(site_data(clipboard_only=fragment))};"
+        data = site_data(clipboard_only=fragment, engine=engine)
+        config = f"window.CLOUDARCHIE_DATA = {_script_json(data)};"
     inlined = [f"<script>{config}</script>"]
     for name in scripts:
         js = static.joinpath(name).read_text(encoding="utf-8")
@@ -153,9 +190,18 @@ def build_site(fragment: bool = False, api_base: str | None = None) -> str:
     return page
 
 
-def export_site(out_dir: str | Path, fragment: bool = False, api_base: str | None = None) -> Path:
+def export_site(
+    out_dir: str | Path,
+    fragment: bool = False,
+    api_base: str | None = None,
+    with_engine: bool = True,
+    pyodide_base: str = PYODIDE_BASE,
+) -> Path:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
+    engine = engine_config(pyodide_base) if with_engine and not api_base else None
     path = out / "index.html"
-    path.write_text(build_site(fragment, api_base), encoding="utf-8")
+    path.write_text(build_site(fragment, api_base, engine), encoding="utf-8")
+    if engine:
+        (out / ENGINE_BUNDLE).write_bytes(engine_bundle())
     return path

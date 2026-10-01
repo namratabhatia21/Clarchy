@@ -36,6 +36,7 @@ cloudarchie = [
     "data/*.yaml",
     "data/mappings/*.yaml",
     "data/patterns/*.yaml",
+    "data/prices/*.yaml",
     "data/samples/*.md",
     "static/*",
 ]

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="1356" height="978" viewBox="0 0 1356 978" role="img" aria-label="Containerised API on Google Cloud">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="1356" height="978" viewBox="0 0 1356 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="Containerised API on Google Cloud">
 <style>.ca-gcp{font-family:Roboto, 'Helvetica Neue', Arial, sans-serif}
 .ca-gcp .ca-bg{fill:#ffffff}
 .ca-gcp .ca-title{font-size:18px;font-weight:600;fill:#16191f}

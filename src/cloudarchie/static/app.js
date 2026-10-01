@@ -36,7 +36,8 @@
   const chip = $("engine-chip");
   chip.hidden = false;
   if (CA.MODE === "static") {
-    chip.textContent = "Demo · recorded runs";
+    chip.textContent = CA.DATA.engine ? "Runs in your browser" : "Demo · recorded runs";
+    chip.title = CA.DATA.engine ? "Plans run on this device with CloudArchie's Python engine (Pyodide)" : "";
     chip.classList.add("demo");
   } else if (meta.engine && meta.engine.mode === "ai") {
     chip.textContent = `AI · ${meta.engine.model}`;

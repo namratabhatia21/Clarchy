@@ -88,5 +88,38 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 - **Single sign-on:** monthly_active_users=2000
 - **Logs, traces, cost alarms:** log_ingest_gb_per_month=15
 
+## Estimated cost
+
+About **$464 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $464 | – |
+| 6 months | $2,787 | – |
+| 1 year | $5,578 | $5,405 |
+| 3 years | $16,783 | $15,615 |
+
+| Service | Per month |
+|---|---:|
+| Amazon OpenSearch Serverless (vector) (Embeddings index) | $350 |
+| Amazon ECS on AWS Fargate (Chat API (streaming)) | $72.08 |
+| Application Load Balancer (HTTPS load balancer) | $22.27 |
+| Amazon Bedrock (LLM + embeddings) | $7.56 |
+| Amazon CloudWatch (Logs, traces, cost alarms) | $5.00 |
+| Amazon CloudFront (Web front end) | $2.30 |
+| Amazon S3 (Source documents) | $1.19 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (Release pipeline) | $1.00 |
+| Amazon DynamoDB (Chat history) | $0.88 |
+| Amazon ECR (Container images) | $0.50 |
+| AWS Lambda (Chunk + embed documents) | $0.00 |
+| Amazon Cognito (Single sign-on) | $0.00 |
+
+- Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for US East (N. Virginia); your region (Oregon (us-west-2)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

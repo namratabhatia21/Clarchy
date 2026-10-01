@@ -11,7 +11,7 @@ from typing import Any
 import yaml
 from pydantic import ValidationError
 
-from cloudarchie import __version__, catalog
+from cloudarchie import __version__, catalog, pricing
 from cloudarchie.explain import explain_markdown
 from cloudarchie.icons import IconLibrary
 from cloudarchie.mapping import MappingError, map_to_provider, service_choice
@@ -192,6 +192,7 @@ def design_payload(
         "components": components,
         "svg": render_svg(arch, icons),
         "explanation_md": explain_markdown(arch),
+        "cost": pricing.estimate(arch),
         "official_icons": icons.root is not None,
         "reviewed": arch.reviewed,
         "kind": arch.kind,

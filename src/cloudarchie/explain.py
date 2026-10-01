@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cloudarchie import catalog
+from cloudarchie import catalog, pricing
 from cloudarchie.mapping import ProviderArchitecture
 
 
@@ -122,10 +122,11 @@ def explain_markdown(arch: ProviderArchitecture) -> str:
             pairs = ", ".join(f"{k}={_num(v)}" for k, v in m.component.sizing.items())
             lines.append(f"- **{m.component.display_label}:** {pairs}")
 
+    lines += ["", *pricing.summary_markdown(pricing.estimate(arch))]
     lines += [
-        "",
         "---",
-        "Cost estimates arrive in a later phase. Service names belong to their owners; "
-        "CloudArchie is not affiliated with any cloud provider.",
+        "Estimates use list prices and the usage stated above; check them with the provider's "
+        "calculator. Service names belong to their owners; CloudArchie is not affiliated with "
+        "any cloud provider.",
     ]
     return "\n".join(lines) + "\n"

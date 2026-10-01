@@ -70,5 +70,33 @@ Streams application events into a data lake, transforms them on a schedule and s
 - **Reporting warehouse:** rpu_hours_per_month=300, storage_gb=500
 - **Pipeline monitoring:** log_ingest_gb_per_month=10
 
+## Estimated cost
+
+About **$1,364 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $1,364 | – |
+| 6 months | $8,290 | – |
+| 1 year | $16,829 | $16,357 |
+| 3 years | $53,468 | $52,051 |
+
+| Service | Per month |
+|---|---:|
+| Amazon API Gateway (Event collector) | $1,050 |
+| Amazon Redshift Serverless (Reporting warehouse) | $192 |
+| AWS Glue (Nightly transforms) | $52.80 |
+| Amazon S3 (Data lake (raw + curated)) | $48.70 |
+| Amazon Kinesis Data Streams (Event stream) | $16.47 |
+| Amazon CloudWatch (Pipeline monitoring) | $2.50 |
+| AWS CodeBuild (Build and test) | $1.00 |
+| AWS CodePipeline (Release pipeline) | $1.00 |
+
+- Redshift Serverless reservations: 1 year, no upfront; renewed each year in the 3-year view.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for US East (N. Virginia); your region (Frankfurt (eu-central-1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

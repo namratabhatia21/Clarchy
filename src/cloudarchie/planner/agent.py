@@ -72,6 +72,19 @@ def _text(response: dict[str, Any]) -> str:
     return "".join(b.get("text", "") for b in response["content"] if b.get("type") == "text")
 
 
+def _json(response: dict[str, Any]) -> Any:
+    """The JSON object in a reply. Claude returns it bare; some open models wrap it in a
+    code fence or add a sentence around it."""
+    text = _text(response).strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    fenced = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.S)
+    candidate = fenced.group(1) if fenced else text[text.find("{") : text.rfind("}") + 1]
+    return json.loads(candidate)
+
+
 def _thinking_notes(response: dict[str, Any]) -> list[str]:
     notes = []
     for block in response["content"]:
@@ -97,7 +110,7 @@ async def understand(llm: LLM, text: str, emitter: Emitter) -> Understanding:
     )
     _check_stop(response)
     try:
-        data = json.loads(_text(response))
+        data = _json(response)
     except json.JSONDecodeError as exc:
         raise AgentError("The requirements came back in an unexpected format.") from exc
     fields = {
@@ -358,7 +371,7 @@ async def describe_workflows(llm: LLM, spec: ArchitectureSpec) -> list[Workflow]
     )
     _check_stop(response)
     try:
-        data = json.loads(_text(response))
+        data = _json(response)
     except json.JSONDecodeError as exc:
         raise AgentError("The workflows came back in an unexpected format.") from exc
     workflows, taken, known = [], set(), set(ids)

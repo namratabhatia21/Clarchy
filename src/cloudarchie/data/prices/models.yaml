@@ -1,0 +1,423 @@
+# How each capability is billed on each provider.
+#
+# Each item multiplies a usage quantity (worked out from the design's sizing and
+# requirements in pricing.py; the key in `quantity`) by a price from the provider's price
+# book (`price`; {placeholders} pick a size class). `scale` converts the quantity (for
+# example 4 DPUs per ETL hour), `free` is an always-free monthly allowance in quantity
+# units. Capabilities listed under `included` cost nothing extra (the note says why);
+# anything missing is reported as "not priced".
+aws:
+  commitments:
+    Compute Savings Plans: 1- or 3-year commitment to an hourly compute spend, no upfront payment; covers Fargate, Lambda and EC2 nodes.
+    RDS reserved instances: 1 year no upfront, or 3 years partial upfront with the upfront fee spread over the term.
+    ElastiCache reserved nodes: 1 or 3 years, no upfront payment.
+    Redshift Serverless reservations: 1 year, no upfront; renewed each year in the 3-year view.
+  included:
+    source-control: Repository hosting (GitHub, GitLab) depends on your plan; AWS CodeConnections itself is free.
+    iac: CloudFormation is free for AWS resources.
+    event-autoscaling: KEDA is open source and runs on the cluster's nodes.
+  capabilities:
+    dns:
+      pricing_url: https://aws.amazon.com/route53/pricing/
+      items:
+        - {name: Hosted zone, quantity: zones, price: route53.zones}
+        - {name: DNS queries, quantity: dns_queries_m, price: route53.queries}
+    cdn:
+      pricing_url: https://aws.amazon.com/cloudfront/pricing/
+      items:
+        - {name: Data transfer out, quantity: egress_gb, price: cloudfront.egress_gb}
+        - {name: HTTPS requests, quantity: cdn_requests_10k, price: cloudfront.requests}
+    waf:
+      pricing_url: https://aws.amazon.com/waf/pricing/
+      items:
+        - {name: Web ACL, quantity: waf_acls, price: waf.acls}
+        - {name: Rules and managed rule groups, quantity: waf_rules, price: waf.rules}
+        - {name: Requests inspected, quantity: waf_requests_m, price: waf.requests}
+    load-balancer:
+      pricing_url: https://aws.amazon.com/elasticloadbalancing/pricing/
+      items:
+        - {name: Load balancer hours, quantity: lb_hours, price: alb.hours}
+        - {name: Capacity units, quantity: lcu_hours, price: alb.lcu_hours}
+    api-gateway:
+      pricing_url: https://aws.amazon.com/api-gateway/pricing/
+      items:
+        - {name: REST API requests, quantity: api_requests_m, price: apigw.requests}
+    container-service:
+      pricing_url: https://aws.amazon.com/fargate/pricing/
+      commitment: Compute Savings Plans
+      items:
+        - {name: vCPU, quantity: vcpu_hours, price: fargate.vcpu_hours}
+        - {name: Memory, quantity: gb_hours, price: fargate.gb_hours}
+    kubernetes:
+      pricing_url: https://aws.amazon.com/eks/pricing/
+      commitment: Compute Savings Plans
+      items:
+        - {name: EKS cluster, quantity: cluster_hours, price: eks.cluster_hours}
+        - {name: Worker nodes (m7g.large), quantity: node_hours, price: ec2.node_hours}
+    serverless-function:
+      pricing_url: https://aws.amazon.com/lambda/pricing/
+      commitment: Compute Savings Plans
+      items:
+        - {name: Requests, quantity: requests_m, price: lambda.requests, free: 1}
+        - {name: Compute, quantity: gb_seconds, price: lambda.gb_seconds, free: 400000}
+    llm-inference:
+      pricing_url: https://aws.amazon.com/bedrock/pricing/
+      items:
+        - {name: Input tokens (Amazon Nova Lite), quantity: input_tokens_m, price: bedrock.input_tokens}
+        - {name: Output tokens (Amazon Nova Lite), quantity: output_tokens_m, price: bedrock.output_tokens}
+        - {name: Embeddings (Titan Text Embeddings V2), quantity: embedding_tokens_m, price: bedrock.embedding_tokens}
+    message-queue:
+      pricing_url: https://aws.amazon.com/sqs/pricing/
+      items:
+        - {name: "Requests (send, receive, delete)", quantity: queue_requests_m, price: sqs.requests, free: 1}
+    event-bus:
+      pricing_url: https://aws.amazon.com/eventbridge/pricing/
+      items:
+        - {name: Custom events, quantity: events_m, price: eventbridge.events}
+    stream:
+      pricing_url: https://aws.amazon.com/kinesis/data-streams/pricing/
+      items:
+        - {name: Shards, quantity: shard_hours, price: kinesis.shard_hours}
+        - {name: PUT payload units, quantity: put_units_m, price: kinesis.put_units}
+    workflow:
+      pricing_url: https://aws.amazon.com/step-functions/pricing/
+      items:
+        - {name: State transitions, quantity: transitions_k, price: stepfunctions.transitions, free: 4}
+    batch-etl:
+      pricing_url: https://aws.amazon.com/glue/pricing/
+      items:
+        - {name: Glue job DPU-hours (4 DPUs), quantity: etl_hours, price: glue.dpu_hours, scale: 4}
+    object-storage:
+      pricing_url: https://aws.amazon.com/s3/pricing/
+      items:
+        - {name: Storage (Standard), quantity: storage_gb, price: s3.storage_gb}
+        - {name: PUT and LIST requests, quantity: writes_k, price: s3.put_requests}
+        - {name: GET requests, quantity: reads_k, price: s3.get_requests}
+    relational-db:
+      pricing_url: https://aws.amazon.com/rds/postgresql/pricing/
+      commitment: RDS reserved instances
+      items:
+        - {name: Database instance, quantity: db_hours, price: "rds.{db_size}.{db_az}"}
+        - {name: Storage (gp3), quantity: storage_gb, price: "rds.storage_gb.{db_az}"}
+    key-value-db:
+      pricing_url: https://aws.amazon.com/dynamodb/pricing/on-demand/
+      items:
+        - {name: Write request units, quantity: write_units_m, price: dynamodb.write_units}
+        - {name: Read request units, quantity: read_units_m, price: dynamodb.read_units}
+        - {name: Storage, quantity: storage_gb, price: dynamodb.storage_gb, free: 25}
+    cache:
+      pricing_url: https://aws.amazon.com/elasticache/pricing/
+      commitment: ElastiCache reserved nodes
+      items:
+        - {name: Cache nodes (Valkey), quantity: cache_node_hours, price: "elasticache.{cache_size}"}
+    vector-search:
+      pricing_url: https://aws.amazon.com/opensearch-service/pricing/
+      items:
+        - {name: Indexing and search compute (2 OCUs minimum), quantity: vector_hours, price: opensearch.ocu_hours, scale: 2}
+    data-warehouse:
+      pricing_url: https://aws.amazon.com/redshift/pricing/
+      commitment: Redshift Serverless reservations
+      items:
+        - {name: Compute (8 RPUs while queries run), quantity: query_hours, price: redshift.rpu_hours, scale: 8}
+        - {name: Managed storage, quantity: storage_gb, price: redshift.storage_gb}
+    identity:
+      pricing_url: https://aws.amazon.com/cognito/pricing/
+      items:
+        - {name: Monthly active users (Lite tier), quantity: mau, price: cognito.mau, free: 10000}
+    secrets:
+      pricing_url: https://aws.amazon.com/secrets-manager/pricing/
+      items:
+        - {name: Secrets, quantity: secrets, price: secrets.secrets}
+        - {name: API calls, quantity: secret_calls_10k, price: secrets.api_calls}
+    monitoring:
+      pricing_url: https://aws.amazon.com/cloudwatch/pricing/
+      items:
+        - {name: Log ingestion, quantity: logs_gb, price: cloudwatch.logs_gb, free: 5}
+        - {name: Alarms, quantity: alarms, price: cloudwatch.alarms, free: 10}
+    container-registry:
+      pricing_url: https://aws.amazon.com/ecr/pricing/
+      items:
+        - {name: Image storage, quantity: registry_gb, price: ecr.storage_gb}
+    ci-build:
+      pricing_url: https://aws.amazon.com/codebuild/pricing/
+      items:
+        - {name: Build minutes (general1.small), quantity: build_minutes, price: codebuild.minutes, free: 100}
+    cd-deploy:
+      pricing_url: https://aws.amazon.com/codepipeline/pricing/
+      items:
+        - {name: Action execution minutes (V2), quantity: pipeline_minutes, price: codepipeline.action_minutes, free: 100}
+
+azure:
+  commitments:
+    Azure savings plan for compute: 1- or 3-year hourly spend commitment; about 15% (1 year) or 17% (3 years) off Container Apps.
+    Reserved VM instances: 1 or 3 years; about 37% or 60% off the AKS node VMs.
+    Reserved capacity: 1 or 3 years for Azure Database for PostgreSQL (General Purpose); burstable servers are not eligible.
+    Fabric capacity reservation: 1 year; renewed each year in the 3-year view.
+  included:
+    source-control: Azure Repos is free for up to 5 users; larger teams pay per user.
+    iac: Bicep is free.
+    event-autoscaling: The KEDA add-on for AKS has no extra charge.
+    cd-deploy: Release stages run in Azure Pipelines (counted with CI).
+  capabilities:
+    dns:
+      pricing_url: https://azure.microsoft.com/pricing/details/dns/
+      items:
+        - {name: DNS zone, quantity: zones, price: dns.zones}
+        - {name: DNS queries, quantity: dns_queries_m, price: dns.queries}
+    cdn:
+      pricing_url: https://azure.microsoft.com/pricing/details/frontdoor/
+      items:
+        - {name: Front Door Standard base fee, quantity: months, price: frontdoor.base}
+        - {name: Data transfer out, quantity: egress_gb, price: frontdoor.egress_gb}
+        - {name: Requests, quantity: cdn_requests_10k, price: frontdoor.requests}
+    waf:
+      pricing_url: https://azure.microsoft.com/pricing/details/web-application-firewall/
+      items:
+        - {name: WAF policy, quantity: waf_acls, price: waf.policies}
+        - {name: Custom rules, quantity: waf_rules, price: waf.rules}
+        - {name: Requests inspected, quantity: waf_requests_m, price: waf.requests}
+    load-balancer:
+      pricing_url: https://azure.microsoft.com/pricing/details/application-gateway/
+      items:
+        - {name: Application Gateway v2 (fixed), quantity: lb_hours, price: appgw.hours}
+        - {name: Capacity units, quantity: lcu_hours, price: appgw.capacity_units}
+    api-gateway:
+      pricing_url: https://azure.microsoft.com/pricing/details/api-management/
+      items:
+        - {name: API calls (Consumption tier), quantity: api_requests_m, price: apim.calls, free: 1}
+    container-service:
+      pricing_url: https://azure.microsoft.com/pricing/details/container-apps/
+      commitment: Azure savings plan for compute
+      items:
+        - {name: vCPU (active), quantity: vcpu_hours, price: containerapps.vcpu_hours}
+        - {name: Memory (active), quantity: gb_hours, price: containerapps.gb_hours}
+    kubernetes:
+      pricing_url: https://azure.microsoft.com/pricing/details/kubernetes-service/
+      commitment: Reserved VM instances
+      items:
+        - {name: AKS Standard tier cluster, quantity: cluster_hours, price: aks.cluster_hours}
+        - {name: Worker nodes (D2s v5), quantity: node_hours, price: vm.node_hours}
+    serverless-function:
+      pricing_url: https://azure.microsoft.com/pricing/details/functions/
+      items:
+        - {name: Executions, quantity: requests_m, price: functions.executions, free: 1}
+        - {name: Execution time, quantity: gb_seconds, price: functions.gb_seconds, free: 400000}
+    llm-inference:
+      pricing_url: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/
+      items:
+        - {name: Input tokens (gpt-4o-mini), quantity: input_tokens_m, price: openai.input_tokens}
+        - {name: Output tokens (gpt-4o-mini), quantity: output_tokens_m, price: openai.output_tokens}
+        - {name: Embeddings, quantity: embedding_tokens_m, price: openai.embedding_tokens}
+    message-queue:
+      pricing_url: https://azure.microsoft.com/pricing/details/service-bus/
+      items:
+        - {name: Service Bus Standard namespace, quantity: months, price: servicebus.base}
+        - {name: Operations beyond the included 13 million, quantity: queue_requests_m, price: servicebus.operations, free: 13}
+    event-bus:
+      pricing_url: https://azure.microsoft.com/pricing/details/event-grid/
+      items:
+        - {name: Operations, quantity: events_m, price: eventgrid.operations, free: 0.1}
+    stream:
+      pricing_url: https://azure.microsoft.com/pricing/details/event-hubs/
+      items:
+        - {name: Throughput units, quantity: shard_hours, price: eventhubs.tu_hours}
+        - {name: Ingress events, quantity: put_units_m, price: eventhubs.events}
+    workflow:
+      pricing_url: https://azure.microsoft.com/pricing/details/logic-apps/
+      items:
+        - {name: Actions, quantity: transitions_k, price: logicapps.actions}
+    batch-etl:
+      pricing_url: https://azure.microsoft.com/pricing/details/data-factory/data-pipeline/
+      items:
+        - {name: Data flow compute (8 vCores), quantity: etl_hours, price: datafactory.vcore_hours, scale: 8}
+        - {name: Pipeline activity runs, quantity: etl_runs_k, price: datafactory.runs}
+    object-storage:
+      pricing_url: https://azure.microsoft.com/pricing/details/storage/blobs/
+      items:
+        - {name: "Storage (Hot, LRS)", quantity: storage_gb, price: blob.storage_gb}
+        - {name: Write operations, quantity: writes_k, price: blob.writes}
+        - {name: Read operations, quantity: reads_k, price: blob.reads}
+    relational-db:
+      pricing_url: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/
+      commitment: Reserved capacity
+      items:
+        - {name: Server compute, quantity: db_hours, price: "postgres.{db_size}.{db_az}"}
+        - {name: Storage, quantity: storage_gb, price: "postgres.storage_gb.{db_az}"}
+    key-value-db:
+      pricing_url: https://azure.microsoft.com/pricing/details/cosmos-db/serverless/
+      items:
+        - {name: Request units (serverless), quantity: request_units_m, price: cosmos.request_units}
+        - {name: Storage, quantity: storage_gb, price: cosmos.storage_gb}
+    cache:
+      pricing_url: https://azure.microsoft.com/pricing/details/managed-redis/
+      items:
+        - {name: Managed Redis cache (replicated), quantity: cache_hours, price: "redis.{cache_size}"}
+    vector-search:
+      pricing_url: https://azure.microsoft.com/pricing/details/search/
+      items:
+        - {name: Search unit (Basic), quantity: vector_hours, price: search.unit_hours}
+    data-warehouse:
+      pricing_url: https://azure.microsoft.com/pricing/details/microsoft-fabric/
+      commitment: Fabric capacity reservation
+      items:
+        - {name: Fabric F2 capacity (always on), quantity: hours, price: fabric.capacity_hours}
+        - {name: OneLake storage, quantity: storage_gb, price: fabric.storage_gb}
+    identity:
+      pricing_url: https://azure.microsoft.com/pricing/details/active-directory-external-identities/
+      items:
+        - {name: Monthly active users, quantity: mau, price: entra.mau, free: 50000}
+    secrets:
+      pricing_url: https://azure.microsoft.com/pricing/details/key-vault/
+      items:
+        - {name: Secret operations, quantity: secret_calls_10k, price: keyvault.operations}
+    monitoring:
+      pricing_url: https://azure.microsoft.com/pricing/details/monitor/
+      items:
+        - {name: Log ingestion, quantity: logs_gb, price: monitor.logs_gb, free: 5}
+        - {name: Alert rules, quantity: alarms, price: monitor.alerts}
+    container-registry:
+      pricing_url: https://azure.microsoft.com/pricing/details/container-registry/
+      items:
+        - {name: "Registry (Basic, 10 GB included)", quantity: months, price: acr.registry}
+    ci-build:
+      pricing_url: https://azure.microsoft.com/pricing/details/devops/azure-devops-services/
+      items:
+        - {name: Extra Microsoft-hosted parallel jobs (one is free), quantity: extra_parallel_jobs, price: pipelines.parallel_jobs}
+
+gcp:
+  commitments:
+    Committed use discounts: 1- or 3-year commitments; about 37% or 55% off GKE node VMs, 25% or 52% off Cloud SQL, 20% or 40% off Memorystore.
+    Cloud Run committed use discounts: 17% off for a 1- or 3-year spend commitment.
+  included:
+    source-control: Repository hosting depends on your plan (Secure Source Manager, GitHub or GitLab).
+    iac: Infrastructure Manager charges only for the Cloud Build minutes of each run.
+    event-autoscaling: KEDA is open source and runs on the cluster's nodes.
+  capabilities:
+    dns:
+      pricing_url: https://cloud.google.com/dns/pricing
+      items:
+        - {name: Managed zone, quantity: zones, price: dns.zones}
+        - {name: DNS queries, quantity: dns_queries_m, price: dns.queries}
+    cdn:
+      pricing_url: https://cloud.google.com/cdn/pricing
+      items:
+        - {name: Cache egress, quantity: egress_gb, price: cdn.egress_gb}
+        - {name: Cache lookups, quantity: cdn_requests_10k, price: cdn.lookups}
+    waf:
+      pricing_url: https://cloud.google.com/armor/pricing
+      items:
+        - {name: Security policy, quantity: waf_acls, price: armor.policies}
+        - {name: Rules, quantity: waf_rules, price: armor.rules}
+        - {name: Requests evaluated, quantity: waf_requests_m, price: armor.requests}
+    load-balancer:
+      pricing_url: https://cloud.google.com/vpc/network-pricing
+      items:
+        - {name: Forwarding rule, quantity: lb_hours, price: lb.rule_hours}
+        - {name: Data processed, quantity: lb_data_gb, price: lb.data_gb}
+    api-gateway:
+      pricing_url: https://cloud.google.com/api-gateway/pricing
+      items:
+        - {name: API calls, quantity: api_requests_m, price: apigw.calls, free: 2}
+    container-service:
+      pricing_url: https://cloud.google.com/run/pricing
+      commitment: Cloud Run committed use discounts
+      items:
+        - {name: vCPU (instance-based billing), quantity: vcpu_hours, price: run.vcpu_hours}
+        - {name: Memory (instance-based billing), quantity: gb_hours, price: run.gib_hours}
+    kubernetes:
+      pricing_url: https://cloud.google.com/kubernetes-engine/pricing
+      commitment: Committed use discounts
+      items:
+        - {name: GKE cluster management, quantity: cluster_hours, price: gke.cluster_hours}
+        - {name: Worker nodes (e2-standard-2), quantity: node_hours, price: gce.node_hours}
+    serverless-function:
+      pricing_url: https://cloud.google.com/run/pricing
+      items:
+        - {name: Requests, quantity: requests_m, price: run.requests, free: 2}
+        - {name: vCPU time, quantity: vcpu_seconds, price: run.vcpu_seconds, free: 180000}
+        - {name: Memory time, quantity: gb_seconds, price: run.gib_seconds, free: 360000}
+    llm-inference:
+      pricing_url: https://cloud.google.com/vertex-ai/generative-ai/pricing
+      items:
+        - {name: Input tokens (Gemini Flash-Lite), quantity: input_tokens_m, price: vertex.input_tokens}
+        - {name: Output tokens (Gemini Flash-Lite), quantity: output_tokens_m, price: vertex.output_tokens}
+        - {name: Embeddings, quantity: embedding_tokens_m, price: vertex.embedding_tokens}
+    message-queue:
+      pricing_url: https://cloud.google.com/pubsub/pricing
+      items:
+        - {name: Message throughput, quantity: queue_tib, price: pubsub.tib, free: 0.0098}
+    event-bus:
+      pricing_url: https://cloud.google.com/eventarc/pricing
+      items:
+        - {name: Events, quantity: events_m, price: eventarc.events}
+    stream:
+      pricing_url: https://cloud.google.com/pubsub/pricing
+      items:
+        - {name: Message throughput, quantity: stream_tib, price: pubsub.tib, free: 0.0098}
+    workflow:
+      pricing_url: https://cloud.google.com/workflows/pricing
+      items:
+        - {name: Internal steps, quantity: transitions_k, price: workflows.steps, free: 5}
+    batch-etl:
+      pricing_url: https://cloud.google.com/dataflow/pricing
+      items:
+        - {name: Worker vCPU (4 vCPUs), quantity: etl_hours, price: dataflow.vcpu_hours, scale: 4}
+        - {name: Worker memory (15 GB), quantity: etl_hours, price: dataflow.gb_hours, scale: 15}
+    object-storage:
+      pricing_url: https://cloud.google.com/storage/pricing
+      items:
+        - {name: Storage (Standard), quantity: storage_gb, price: gcs.storage_gb}
+        - {name: Class A operations, quantity: writes_k, price: gcs.class_a}
+        - {name: Class B operations, quantity: reads_k, price: gcs.class_b}
+    relational-db:
+      pricing_url: https://cloud.google.com/sql/pricing
+      commitment: Committed use discounts
+      items:
+        - {name: Instance (Enterprise edition), quantity: db_hours, price: "cloudsql.{db_size}.{db_az}"}
+        - {name: Storage (SSD), quantity: storage_gb, price: "cloudsql.storage_gb.{db_az}"}
+    key-value-db:
+      pricing_url: https://cloud.google.com/firestore/pricing
+      items:
+        - {name: Document writes, quantity: write_units_m, price: firestore.writes}
+        - {name: Document reads, quantity: read_units_m, price: firestore.reads}
+        - {name: Storage, quantity: storage_gb, price: firestore.storage_gb, free: 1}
+    cache:
+      pricing_url: https://cloud.google.com/memorystore/docs/redis/pricing
+      commitment: Committed use discounts
+      items:
+        - {name: Memorystore capacity (Standard tier), quantity: cache_gb_hours, price: memorystore.gb_hours}
+    vector-search:
+      pricing_url: https://cloud.google.com/vertex-ai/pricing
+      items:
+        - {name: Index serving node, quantity: vector_hours, price: vectorsearch.node_hours}
+    data-warehouse:
+      pricing_url: https://cloud.google.com/bigquery/pricing
+      items:
+        - {name: Queries (on demand), quantity: tib_scanned, price: bigquery.tib_scanned, free: 1}
+        - {name: Storage (active), quantity: storage_gb, price: bigquery.storage_gb, free: 10}
+    identity:
+      pricing_url: https://cloud.google.com/identity-platform/pricing
+      items:
+        - {name: Monthly active users, quantity: mau, price: identity.mau, free: 50000}
+    secrets:
+      pricing_url: https://cloud.google.com/secret-manager/pricing
+      items:
+        - {name: Secret versions, quantity: secrets, price: secrets.versions, free: 6}
+        - {name: Access operations, quantity: secret_calls_10k, price: secrets.access, free: 1}
+    monitoring:
+      pricing_url: https://cloud.google.com/stackdriver/pricing
+      items:
+        - {name: Log ingestion, quantity: logs_gb, price: logging.gb, free: 50}
+        - {name: Alert conditions, quantity: alarms, price: monitoring.alerts}
+    container-registry:
+      pricing_url: https://cloud.google.com/artifact-registry/pricing
+      items:
+        - {name: Image storage, quantity: registry_gb, price: artifacts.storage_gb, free: 0.5}
+    ci-build:
+      pricing_url: https://cloud.google.com/build/pricing
+      items:
+        - {name: Build minutes (e2-standard-2), quantity: build_minutes, price: build.minutes, free: 2500}
+    cd-deploy:
+      pricing_url: https://cloud.google.com/deploy/pricing
+      items:
+        - {name: Delivery pipelines (first one free), quantity: pipelines, price: deploy.pipelines, free: 1}

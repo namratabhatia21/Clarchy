@@ -6,6 +6,7 @@
 const Plan = (() => {
   const { $, el, fill, api } = CA;
   const DRAFT_KEY = "cloudarchie.plan-draft";
+  const HF_KEY = "cloudarchie.hf";
   const STAGE_ORDER = ["read", "understand", "design", "toolchain", "workflows", "map"];
   const STAGE_TITLES = {
     read: "Read the requirements",
@@ -15,12 +16,24 @@ const Plan = (() => {
     workflows: "Describe the workflows",
     map: "Map to every cloud",
   };
+  const STAGE_SHORT = {
+    read: "Read", understand: "Understand", design: "Design",
+    toolchain: "Build & deploy", workflows: "Workflows", map: "Every cloud",
+  };
+  const STAGE_DOING = {
+    read: "Reading the requirements…",
+    understand: "Understanding what's needed…",
+    design: "Designing the architecture…",
+    toolchain: "Adding build and deploy…",
+    workflows: "Describing the workflows…",
+    map: "Mapping to every cloud…",
+  };
   const ACCEPTED = [".docx", ".pdf", ".xlsx", ".md", ".markdown", ".txt", ".csv"];
   const MAX_BYTES = 10 * 1024 * 1024;
 
   let samples = [];
   let workspace = null;
-  const run = { file: null, active: false, started: {}, stageEls: {} };
+  const run = { file: null, active: false, replay: false, started: {}, stageEls: {}, stepEls: {} };
 
   function formatBytes(n) {
     return n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(0)} KB` : `${(n / 1048576).toFixed(1)} MB`;
@@ -47,7 +60,7 @@ const Plan = (() => {
     showError("");
     run.file = file || null;
     $("attachment").hidden = !run.file;
-    $("requirements").disabled = Boolean(run.file) || CA.MODE === "static";
+    $("requirements").disabled = Boolean(run.file) || !CA.canPlan();
     if (run.file) {
       $("file-badge").textContent = (run.file.name.split(".").pop() || "doc").slice(0, 4);
       $("file-name").textContent = run.file.name;
@@ -60,6 +73,7 @@ const Plan = (() => {
   // ---------- pipeline view ----------
   function resetStages() {
     run.stageEls = {};
+    run.stepEls = {};
     run.started = {};
     fill($("stages"), STAGE_ORDER.map((stage) => {
       const item = el("li", { class: "stage", "data-status": "pending", "data-stage": stage },
@@ -69,6 +83,19 @@ const Plan = (() => {
       run.stageEls[stage] = item;
       return item;
     }));
+    fill($("stepper"), STAGE_ORDER.map((stage) => {
+      const step = el("li", { "data-status": "pending", text: STAGE_SHORT[stage] });
+      run.stepEls[stage] = step;
+      return step;
+    }));
+    const pipeline = $("pipeline");
+    pipeline.classList.remove("done", "failed");
+    pipeline.open = true;
+    setStatus("Planning…");
+  }
+
+  function setStatus(text) {
+    $("pipeline-status").textContent = text;
   }
 
   function stageDetails(stage) {
@@ -85,11 +112,14 @@ const Plan = (() => {
     const item = run.stageEls[e.stage];
     if (!item) return;
     item.dataset.status = e.status;
-    const icon = item.querySelector(".stage-icon");
-    icon.textContent = e.status === "done" ? "✓" : e.status === "error" ? "!" : "";
+    run.stepEls[e.stage].dataset.status = e.status;
+    item.querySelector(".stage-icon").textContent = e.status === "done" ? "✓" : e.status === "error" ? "!" : "";
     if (e.detail) item.querySelector(".stage-detail").textContent = e.detail;
-    if (e.status === "running") run.started[e.stage] = performance.now();
-    if (e.status === "done" && run.started[e.stage] && CA.MODE !== "static") {
+    if (e.status === "running") {
+      run.started[e.stage] = performance.now();
+      setStatus(STAGE_DOING[e.stage] || "Planning…");
+    }
+    if (e.status === "done" && run.started[e.stage] && !run.replay) {
       const seconds = (performance.now() - run.started[e.stage]) / 1000;
       item.querySelector(".stage-time").textContent = seconds < 0.1 ? "" : `${seconds.toFixed(1)}s`;
     }
@@ -122,19 +152,19 @@ const Plan = (() => {
   }
 
   function notice(text, kind = "notice") {
-    $("stages").before(el("div", { class: `${kind} run-notice`, text }));
-  }
-
-  function setModeChip(text) {
-    $("run-mode").textContent = text;
+    $("run-notices").append(el("div", { class: kind, text }));
   }
 
   async function onResult(e) {
-    setModeChip(e.mode === "ai" ? `AI agent · ${e.model}` : CA.MODE === "static" ? "Recorded rule-based run" : "Rule-based planner");
+    const how = e.mode === "ai" ? `by ${e.model}` : run.replay ? "(recorded rule-based run)" : "with the rule-based planner";
     // Render while hidden so the previous result never flashes up.
     const root = $("plan-workspace");
     if (!workspace) workspace = new Workspace(root, { editable: true });
     await workspace.load(e.spec_yaml);
+    const pipeline = $("pipeline");
+    pipeline.classList.add("done");
+    pipeline.open = false;
+    setStatus(`Planned ${how}`);
     $("result-placeholder").hidden = true;
     root.hidden = false;
     // On narrow screens the pipeline sits above the result, so bring the result into view.
@@ -146,9 +176,16 @@ const Plan = (() => {
       case "stage": onStage(e); break;
       case "tool_call": case "tool_result": case "note": onTrace(e); break;
       case "notice": notice(e.text); break;
+      case "progress": setStatus(e.text); break;
       case "error": {
         const running = Object.values(run.stageEls).find((item) => item.dataset.status === "running");
-        if (running) { running.dataset.status = "error"; running.querySelector(".stage-icon").textContent = "!"; }
+        if (running) {
+          running.dataset.status = "error";
+          run.stepEls[running.dataset.stage].dataset.status = "error";
+          running.querySelector(".stage-icon").textContent = "!";
+        }
+        $("pipeline").classList.add("failed");
+        setStatus("Planning stopped");
         notice(e.message, "banner");
         $("result-placeholder").hidden = true;
         break;
@@ -158,28 +195,49 @@ const Plan = (() => {
     }
   }
 
+  function hfSettings() {
+    return {
+      token: $("hf-token").value.trim(),
+      model: $("hf-model").value.trim() || CA.HF_DEFAULT_MODEL,
+      base_url: $("hf-endpoint").value.trim() || null,
+    };
+  }
+
   async function start({ text, file, sampleId, label }) {
     if (run.active) return;
-    if (!file && !sampleId && (!text || text.trim().length < 20)) {
-      showError("Describe your app in a sentence or two, or attach a requirements document.");
-      $("requirements").focus();
-      return;
+    const mode = $("mode").value;
+    const replay = Boolean(sampleId) && CA.hasRecordedRun(sampleId) && mode !== "hf";
+    if (!replay) {
+      if (!file && (!text || text.trim().length < 20)) {
+        showError("Describe your app in a sentence or two, or attach a requirements document.");
+        $("requirements").focus();
+        return;
+      }
+      if (mode === "hf" && !hfSettings().token && !hfSettings().base_url) {
+        showError("Paste a Hugging Face access token to use an open-source model, or choose the rule-based planner.");
+        $("hf-token").focus();
+        return;
+      }
     }
     showError("");
     run.active = true;
+    run.replay = replay;
     $("plan-start").hidden = true;
     $("run").hidden = false;
-    for (const old of document.querySelectorAll(".run-notice")) old.remove();
+    $("run-notices").replaceChildren();
     $("run-input-name").textContent = label
-      || (file ? `${file.name} · ${formatBytes(file.size)}` : text.trim().replace(/\s+/g, " ").slice(0, 300));
-    const engine = CA.meta.engine || {};
-    setModeChip(CA.MODE === "static" ? "Recorded run" : engine.mode === "ai" && $("mode").value !== "rules" ? `AI agent · ${engine.model}` : "Rule-based planner");
+      || (file ? `${file.name} · ${formatBytes(file.size)}` : `“${text.trim().replace(/\s+/g, " ").slice(0, 160)}”`);
+    $("run-mode").textContent = "";
     resetStages();
     $("result-placeholder").hidden = false;
     $("plan-workspace").hidden = true;
     window.scrollTo({ top: 0 });
     try {
-      await api.plan({ text, file, sampleId, mode: $("mode").value, region: $("region").value }, onEvent);
+      await api.plan({
+        text, file, mode, region: $("region").value,
+        sampleId: replay ? sampleId : null,
+        hf: mode === "hf" ? hfSettings() : null,
+      }, onEvent);
     } finally {
       run.active = false;
     }
@@ -191,39 +249,68 @@ const Plan = (() => {
     $("requirements").focus();
   }
 
+  function setupPlanners(engine) {
+    const select = $("mode");
+    if (CA.MODE !== "static") {
+      if (engine.mode !== "ai") {
+        const ai = select.querySelector('option[value="ai"]');
+        ai.disabled = true;
+        ai.textContent = "AI agent (not configured)";
+      }
+      return;
+    }
+    // In the browser: the rule-based planner always, or an open-source model through
+    // Hugging Face with the visitor's own token.
+    fill(select,
+      el("option", { value: "rules", text: "Rule-based, in your browser" }),
+      el("option", { value: "hf", text: "Open-source model (Hugging Face)" }));
+    let token = "";
+    try { token = sessionStorage.getItem(HF_KEY) || ""; } catch { /* optional */ }
+    const saved = CA.recall(HF_KEY) || {};
+    $("hf-token").value = token;
+    $("hf-model").value = saved.model || CA.HF_DEFAULT_MODEL;
+    const toggle = () => { $("hf-settings").hidden = select.value !== "hf"; };
+    select.addEventListener("change", () => { toggle(); CA.store(HF_KEY, { ...saved, mode: select.value }); });
+    $("hf-token").addEventListener("change", () => { try { sessionStorage.setItem(HF_KEY, $("hf-token").value.trim()); } catch { /* optional */ } });
+    $("hf-model").addEventListener("change", () => { saved.model = $("hf-model").value.trim(); CA.store(HF_KEY, saved); });
+    $("hf-endpoint").value = saved.base_url || "";
+    $("hf-endpoint").addEventListener("change", () => { saved.base_url = $("hf-endpoint").value.trim(); CA.store(HF_KEY, saved); });
+    if (saved.mode === "hf") select.value = "hf";
+    toggle();
+  }
+
   // ---------- setup ----------
   function init(meta, sampleList) {
     samples = sampleList;
     const regionSelect = $("region");
     for (const [key, label] of Object.entries(meta.regions)) regionSelect.append(el("option", { value: key, text: label }));
+    setupPlanners(meta.engine || { mode: "none" });
 
-    const engine = meta.engine || { mode: "none" };
-    const aiOption = $("mode").querySelector('option[value="ai"]');
-    if (engine.mode !== "ai") {
-      aiOption.disabled = true;
-      aiOption.textContent = "AI agent (needs an API key on the server)";
-    }
-    if (CA.MODE === "static") {
+    if (!CA.canPlan()) {
+      // A replay-only build (no planning engine): the samples still work.
       $("static-note").hidden = false;
       $("requirements").disabled = true;
       $("plan-button").disabled = true;
       $("mode-option").hidden = true;
-      regionSelect.closest(".option").hidden = true;
+      $("region-option").hidden = true;
       document.querySelector(".attach-btn").hidden = true;
-      document.querySelector(".composer-tools .muted").hidden = true;
+      $("composer-foot").hidden = true;
     } else {
       const draft = CA.recall(DRAFT_KEY);
       if (typeof draft === "string") $("requirements").value = draft;
+      if (CA.MODE === "static") {
+        $("composer-foot").textContent = "Runs in your browser. The first plan downloads the planning engine (about 15 MB). Word, PDF, Excel, Markdown or text, up to 10 MB.";
+      }
     }
 
     fill($("sample-list"), samples.map((s) => el("li", {}, el("button", {
-      type: "button", class: "sample",
+      type: "button", class: "chip sample", title: s.text.split("\n").slice(1).join(" ").trim().slice(0, 220),
       onclick: () => {
-        if (CA.MODE !== "static") $("requirements").value = s.text;
+        if (CA.canPlan()) $("requirements").value = s.text;
         setFile(null);
-        start({ text: s.text, sampleId: s.id, label: `Sample: ${s.title}` });
+        start({ text: s.text, sampleId: s.id, label: `Sample · ${s.title}` });
       },
-    }, el("b", { text: s.title }), el("span", { text: s.text.split("\n").slice(1).join(" ").trim() })))));
+    }, s.title))));
 
     $("composer").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -240,7 +327,7 @@ const Plan = (() => {
     $("file-remove").addEventListener("click", () => setFile(null));
     $("new-plan").addEventListener("click", backToComposer);
 
-    if (CA.MODE !== "static") {
+    if (CA.canPlan()) {
       const composer = $("composer");
       let depth = 0;
       composer.addEventListener("dragenter", (e) => { e.preventDefault(); depth += 1; composer.classList.add("dragging"); });

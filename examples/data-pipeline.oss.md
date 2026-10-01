@@ -74,5 +74,9 @@ Streams application events into a data lake, transforms them on a schedule and s
 - **Reporting warehouse:** rpu_hours_per_month=300, storage_gb=500
 - **Pipeline monitoring:** log_ingest_gb_per_month=10
 
+## Estimated cost
+
+Open-source software has no licence fee: you pay for the machines it runs on and the people who operate it, which depends on where you host it. Open a cloud tab to see a managed-service estimate.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

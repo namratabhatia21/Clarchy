@@ -14,6 +14,12 @@ const CA = (() => {
 
   const $ = (id) => document.getElementById(id);
 
+  // What this page can do. A static build plans in the browser when it carries the engine.
+  const HF_DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct";
+  const canPlan = () => MODE !== "static" || Boolean(DATA.engine);
+  const canEdit = canPlan;
+  const hasRecordedRun = (id) => MODE === "static" && Boolean(DATA.runs && DATA.runs[id]);
+
   function el(tag, attrs = {}, ...children) {
     const node = document.createElement(tag);
     for (const [key, value] of Object.entries(attrs)) {
@@ -87,6 +93,66 @@ const CA = (() => {
     }
   }
 
+  // ---------- the in-browser engine (static site) ----------
+  // Pyodide runs CloudArchie's own Python package in the page, so a static site can plan
+  // any text or document. It loads on first use (about 15 MB, cached by the browser).
+  const engine = { loading: null, py: null, module: null };
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`could not load ${src}`));
+      document.head.append(script);
+    });
+  }
+
+  function startEngine(progress = () => {}) {
+    if (!engine.loading) {
+      engine.loading = (async () => {
+        const cfg = DATA.engine;
+        progress("Downloading the planning engine…");
+        if (!window.loadPyodide) await loadScript(cfg.pyodide);
+        const py = await window.loadPyodide({ indexURL: cfg.index_url });
+        progress("Loading Python packages…");
+        await py.loadPackage(cfg.packages);
+        const res = await fetch(cfg.bundle);
+        if (!res.ok) throw new Error(`could not load ${cfg.bundle} (${res.status})`);
+        py.unpackArchive(await res.arrayBuffer(), "zip", { extractDir: "/home/pyodide/engine" });
+        py.runPython("import sys; sys.path.insert(0, '/home/pyodide/engine')");
+        engine.py = py;
+        engine.module = py.pyimport("cloudarchie.browser");
+        return engine;
+      })();
+      engine.loading.catch(() => { engine.loading = null; });
+    }
+    return engine.loading;
+  }
+
+  async function planInBrowser({ text, file, mode, region, hf }, onEvent) {
+    const progress = (t) => onEvent({ type: "progress", text: t });
+    try {
+      const eng = await startEngine(progress);
+      const request = { text, mode: mode === "hf" ? "hf" : "rules", region: region || null, hf: hf || null };
+      if (file) {
+        const path = `/tmp/upload-${Date.now()}`;
+        eng.py.FS.writeFile(path, new Uint8Array(await file.arrayBuffer()));
+        request.file_path = path;
+        request.file_name = file.name;
+        if (/\.pdf$/i.test(file.name)) {
+          progress("Loading the PDF reader…");
+          await eng.py.loadPackage("micropip");
+          await eng.py.runPythonAsync("import micropip\nawait micropip.install('pypdf')");
+        }
+      }
+      progress("Planning…");
+      await eng.module.plan(JSON.stringify(request), (json) => onEvent(JSON.parse(json)));
+    } catch (err) {
+      onEvent({ type: "error", message: `The in-browser engine failed: ${err.message || err}` });
+    }
+  }
+
   const api = {
     mode: MODE,
     meta: () => (MODE === "static" ? DATA.meta : getJSON("/api/meta")),
@@ -104,9 +170,16 @@ const CA = (() => {
       if (MODE === "static") {
         const key = staticSpecKey(specYaml);
         const body = key && DATA.designs[`${key}.${provider}`];
-        return body
-          ? { ok: true, body }
-          : { ok: false, body: { errors: [{ where: "demo", message: "This public demo shows the built-in examples and samples. Run cloudarchie serve to edit specs." }] } };
+        if (body) return { ok: true, body };
+        if (!DATA.engine) {
+          return { ok: false, body: { errors: [{ where: "demo", message: "This build shows the built-in examples and samples only. Run cloudarchie serve to edit specs." }] } };
+        }
+        try {
+          const eng = await startEngine();
+          return JSON.parse(eng.module.design(specYaml, provider));
+        } catch (err) {
+          return { ok: false, body: { errors: [{ where: "engine", message: String(err.message || err) }] } };
+        }
       }
       try {
         const res = await fetch(API_BASE + "/api/design", {
@@ -120,17 +193,21 @@ const CA = (() => {
       }
     },
     // Runs a plan; onEvent receives every pipeline event. Resolves when the stream ends.
-    async plan({ text, file, mode, region, sampleId }, onEvent) {
+    async plan({ text, file, mode, region, sampleId, hf }, onEvent) {
       if (MODE === "static") {
         const run = sampleId && DATA.runs[sampleId];
-        if (!run) {
-          onEvent({ type: "error", message: "This public demo can only replay the samples. Run CloudArchie yourself to plan your own app." });
+        if (run) {
+          for (const event of run.events) {
+            await sleep(event.type === "stage" && event.status === "running" ? 380 : 140);
+            onEvent(event);
+          }
           return;
         }
-        for (const event of run.events) {
-          await sleep(event.type === "stage" && event.status === "running" ? 420 : 160);
-          onEvent(event);
+        if (!DATA.engine) {
+          onEvent({ type: "error", message: "This build can only replay the samples. Run CloudArchie yourself to plan your own app." });
+          return;
         }
+        await planInBrowser({ text, file, mode, region, hf }, onEvent);
         return;
       }
       const form = new FormData();
@@ -181,8 +258,40 @@ const CA = (() => {
     close: "Does the same job, with differences worth knowing (see note).",
     partial: "Covers part of the capability; something else is needed for the rest.",
   };
+  const FIDELITY_LABEL = { exact: "Exact match", close: "Close match", partial: "Partial match" };
+  // Every match level, for detail panels.
   function fidelityBadge(f) {
-    return f ? el("span", { class: `badge ${f}`, title: FIDELITY_HELP[f], text: f }) : null;
+    return f ? el("span", { class: `tag ${f}`, title: FIDELITY_HELP[f], text: FIDELITY_LABEL[f] }) : null;
+  }
+  // Only the matches worth a second look, for lists: "exact" is the quiet default.
+  function fidelityTag(f) {
+    return f && f !== "exact" ? el("span", { class: `tag ${f}`, title: FIDELITY_HELP[f], text: f === "close" ? "Close" : "Partial" }) : null;
+  }
+
+  // Diagrams carry their own title and notice for downloads; on the page those repeat what
+  // is already shown, so crop the view to the diagram body.
+  function cropDiagram(svg) {
+    if (!svg || !svg.dataset || !svg.dataset.bodyTop) return svg;
+    const top = Number(svg.dataset.bodyTop);
+    const bottom = Number(svg.dataset.bodyBottom);
+    const width = Number(svg.getAttribute("width"));
+    if (!(bottom > top) || !width) return svg;
+    svg.setAttribute("viewBox", `0 ${top} ${width} ${bottom - top}`);
+    svg.setAttribute("height", String(bottom - top));
+    return svg;
+  }
+  function croppedSvgText(text) {
+    const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+    const svg = doc.documentElement;
+    if (svg.nodeName !== "svg") return text;
+    cropDiagram(svg);
+    return new XMLSerializer().serializeToString(svg);
+  }
+
+  function money(value, { cents = false } = {}) {
+    if (value === null || value === undefined) return "–";
+    const digits = cents || Math.abs(value) < 10 ? 2 : 0;
+    return value.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: digits, maximumFractionDigits: digits });
   }
 
   // Colours that identify each provider in pills and labels (not their logos).
@@ -193,8 +302,10 @@ const CA = (() => {
   };
 
   return {
-    DATA, MODE, CLIPBOARD_ONLY, $, el, fill, store, recall, setHash, number, plural, sleep,
-    api, deliver, fidelityBadge, FIDELITY_HELP, PROVIDER_COLOURS, STAGE_COLOURS,
+    DATA, MODE, CLIPBOARD_ONLY, HF_DEFAULT_MODEL, canPlan, canEdit, hasRecordedRun,
+    $, el, fill, store, recall, setHash, number, plural, sleep,
+    api, deliver, fidelityBadge, fidelityTag, FIDELITY_HELP, FIDELITY_LABEL, cropDiagram, croppedSvgText, money,
+    PROVIDER_COLOURS, STAGE_COLOURS,
     meta: null, // filled in by app.js
   };
 })();

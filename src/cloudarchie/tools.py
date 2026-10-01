@@ -15,7 +15,7 @@ from typing import Any
 import yaml
 from pydantic import ValidationError
 
-from cloudarchie import catalog
+from cloudarchie import catalog, pricing
 from cloudarchie.delivery import add_delivery
 from cloudarchie.explain import explain_markdown
 from cloudarchie.mapping import MappingError, map_to_provider, service_choice
@@ -193,6 +193,46 @@ def render_design(spec_yaml: str, provider: str) -> dict[str, str]:
     return {"svg": render_svg(arch), "explanation_md": explain_markdown(arch)}
 
 
+def estimate_cost(spec_yaml: str, provider: str) -> dict[str, Any]:
+    """Monthly cost of a spec on one provider, with totals for 1 month, 6 months, 1 year and
+    3 years on demand and with 1- or 3-year commitments, and the cost of each service."""
+    spec = _parse_spec(spec_yaml)
+    try:
+        arch = map_to_provider(spec, provider)
+    except (MappingError, KeyError) as exc:
+        raise ToolError(str(exc)) from exc
+    cost = pricing.estimate(arch)
+    if not cost["available"]:
+        return {"available": False, "message": cost["message"]}
+    return {
+        "available": True,
+        "monthly_usd": cost["monthly"],
+        "prices": f"{cost['price_region']} list prices as of {cost['as_of']} ({cost['source']})",
+        "terms": cost["terms"],
+        "services": [
+            {
+                "component": line["component"],
+                "service": line["service"],
+                "monthly_usd": line["monthly"],
+            }
+            for line in sorted(cost["lines"], key=lambda line: -line["monthly"])
+        ],
+    }
+
+
+def aws_price_lookup(service: str, search: str) -> list[dict[str, Any]]:
+    """Search the latest AWS prices, live from the AWS Price List API, for one service in
+    US East (N. Virginia). `service` is an AWS service code such as AWSLambda, AmazonS3,
+    AmazonRDS or AmazonDynamoDB; `search` holds words to find in the usage type or
+    description, e.g. "gp3 storage" or "requests"."""
+    from cloudarchie import aws_prices
+
+    try:
+        return aws_prices.lookup(service, search)
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
+
 def draft_architecture(requirements: str) -> dict[str, Any]:
     """Draft a complete design from plain-text requirements with the rule-based planner
     (no AI). Returns the spec YAML and the evidence for each component."""
@@ -248,6 +288,12 @@ TOOLS: dict[str, Tool] = {
             render_design,
             _schema(spec_yaml=_STRING, provider={"type": "string", "enum": catalog.providers()}),
         ),
+        Tool(
+            "estimate_cost",
+            estimate_cost,
+            _schema(spec_yaml=_STRING, provider={"type": "string", "enum": catalog.providers()}),
+        ),
+        Tool("aws_price_lookup", aws_price_lookup, _schema(service=_STRING, search=_STRING)),
         Tool("draft_architecture", draft_architecture, _schema(requirements=_STRING)),
     )
 }
@@ -260,4 +306,5 @@ AGENT_TOOL_NAMES = (
     "get_pattern",
     "search_services",
     "validate_spec",
+    "estimate_cost",
 )

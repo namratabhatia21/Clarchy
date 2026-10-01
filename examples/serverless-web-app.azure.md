@@ -76,5 +76,32 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 - **Sign-up and sign-in:** monthly_active_users=20000
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=5
 
+## Estimated cost
+
+About **$66.13 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $66.13 | – |
+| 6 months | $397 | – |
+| 1 year | $796 | – |
+| 3 years | $2,404 | – |
+
+| Service | Per month |
+|---|---:|
+| Azure Front Door (Static site + API edge) | $47.80 |
+| Azure API Management (REST API) | $8.40 |
+| Azure Cosmos DB (App data) | $7.75 |
+| Azure Monitor + Application Insights (Logs, metrics, alarms) | $1.00 |
+| Azure DNS (Domain) | $0.74 |
+| Azure Functions (Business logic) | $0.40 |
+| Azure Blob Storage (Front-end assets) | $0.04 |
+| Microsoft Entra External ID (Sign-up and sign-in) | $0.00 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

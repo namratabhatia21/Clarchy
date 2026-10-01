@@ -6,8 +6,8 @@ const Services = (() => {
   const { $, el, fill, api } = CA;
   const MATCH_FILTERS = {
     all: { label: "All", test: () => true },
-    differences: { label: "Has differences", test: (fids) => fids.some((f) => f !== "exact") },
-    exact: { label: "Exact everywhere", test: (fids) => fids.every((f) => f === "exact") },
+    differences: { label: "Differences", test: (fids) => fids.some((f) => f !== "exact") },
+    exact: { label: "Exact", test: (fids) => fids.every((f) => f === "exact") },
   };
   const cat = {
     data: null, loading: null, q: "", stages: new Set(), providers: new Set(),
@@ -79,26 +79,32 @@ const Services = (() => {
     $("catalog-sort").value = cat.sort;
   }
 
-  const pill = (label, pressed, onclick) => el("button", { class: "pill", type: "button", "aria-pressed": String(pressed), onclick }, label);
+  const item = (children, pressed, onclick) => el("button", { class: "filter-item", type: "button", "aria-pressed": String(pressed), onclick }, children);
+  const ACRONYMS = { iac: "IaC", ci: "CI", cd: "CD", dns: "DNS", cdn: "CDN", waf: "WAF", api: "API", llm: "LLM", etl: "ETL", db: "DB" };
+  const humanize = (id) => {
+    const words = id.replace("key-value", "key‑value").split("-").map((w) => ACRONYMS[w] || w);
+    return words[0].charAt(0).toUpperCase() + words[0].slice(1) + (words.length > 1 ? ` ${words.slice(1).join(" ")}` : "");
+  };
 
   function renderFilters() {
     const counts = Object.fromEntries(stageOrder().map((s) => [s, 0]));
     for (const cap of cat.data.capabilities) if (matches(cap, { ignoreStage: true })) counts[cap.stage] += 1;
-    fill($("filter-stages"), stageOrder().map((s) => pill(
+    fill($("filter-stages"), stageOrder().map((s) => item(
       [el("span", { class: "dot", style: `background:${CA.STAGE_COLOURS[s]}` }), CA.meta.stages[s], el("span", { class: "n", text: counts[s] })],
       cat.stages.has(s),
       () => { cat.stages.has(s) ? cat.stages.delete(s) : cat.stages.add(s); update(); },
     )));
-    fill($("filter-providers"), cat.data.providers.map((p) => pill(
-      [el("span", { class: "dot", style: `background:${CA.PROVIDER_COLOURS[p.id] || "#64748b"}` }), p.name,
-        p.reviewed ? null : el("span", { class: "n", title: "Not yet reviewed by a specialist", text: "unreviewed" })],
+    fill($("filter-providers"), cat.data.providers.map((p) => item(
+      [el("span", { class: "check", "aria-hidden": "true" }), p.name],
       cat.providers.has(p.id),
       () => {
         if (cat.providers.has(p.id)) { if (cat.providers.size > 1) cat.providers.delete(p.id); } else cat.providers.add(p.id);
         update();
       },
     )));
-    fill($("filter-match"), Object.entries(MATCH_FILTERS).map(([key, f]) => pill(f.label, cat.match === key, () => { cat.match = key; update(); })));
+    fill($("filter-match"), Object.entries(MATCH_FILTERS).map(([key, f]) => el("button", {
+      type: "button", "aria-pressed": String(cat.match === key), onclick: () => { cat.match = key; update(); },
+    }, f.label)));
   }
 
   function serviceRow(p, svc) {
@@ -106,7 +112,7 @@ const Services = (() => {
     return [
       el("span", { class: "svc-prov" }, el("span", { class: "dot", style: `background:${CA.PROVIDER_COLOURS[p.id] || "#64748b"}` }), p.name),
       el("span", { class: `svc-name${hit ? " hit" : ""}`, title: svc.service }, highlight(svc.service)),
-      CA.fidelityBadge(svc.fidelity),
+      CA.fidelityTag(svc.fidelity) || el("span"),
     ];
   }
 
@@ -136,8 +142,8 @@ const Services = (() => {
       return el("li", { class: "cap-card" },
         el("button", { type: "button", "aria-expanded": String(open), onclick: () => { open ? cat.open.delete(cap.id) : cat.open.add(cap.id); renderResults(); } },
           el("div", { class: "cap-title" },
-            el("h3", {}, highlight(cap.id)),
-            el("span", { class: "tag" }, el("span", { class: "dot", style: `background:${CA.STAGE_COLOURS[cap.stage]}` }), CA.meta.stages[cap.stage])),
+            el("h3", { title: cap.id }, highlight(humanize(cap.id))),
+            el("span", { class: "cap-stage" }, el("span", { class: "dot", style: `background:${CA.STAGE_COLOURS[cap.stage]}` }), CA.meta.stages[cap.stage])),
           el("p", { class: "cap-desc" }, highlight(cap.description)),
           el("div", { class: "svc-rows" }, visibleProviders().flatMap((p) => serviceRow(p, cap.services[p.id])))),
         open && capDetail(cap));
@@ -145,7 +151,7 @@ const Services = (() => {
     const unreviewed = visibleProviders().filter((p) => !p.reviewed).map((p) => p.name);
     const note = $("catalog-review");
     note.hidden = unreviewed.length === 0;
-    fill(note, el("b", { text: "Unreviewed: " }), `${unreviewed.join(", ")} mappings have not yet been checked by a specialist. Use the documentation links to verify.`);
+    note.textContent = `The ${unreviewed.join(", ")} mappings are a draft that a specialist has not reviewed yet; each card links to the documentation.`;
   }
 
   function update() {

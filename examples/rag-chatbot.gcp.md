@@ -89,5 +89,38 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 - **Single sign-on:** monthly_active_users=2000
 - **Logs, traces, cost alarms:** log_ingest_gb_per_month=15
 
+## Estimated cost
+
+About **$223 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $223 | – |
+| 6 months | $1,342 | – |
+| 1 year | $2,687 | $2,452 |
+| 3 years | $8,105 | $7,398 |
+
+| Service | Per month |
+|---|---:|
+| Cloud Run (Chat API (streaming)) | $116 |
+| Vertex AI Vector Search (Embeddings index) | $68.47 |
+| Cloud Load Balancing (Application LB) (HTTPS load balancer) | $18.88 |
+| Vertex AI (LLM + embeddings) | $13.02 |
+| Firestore (Chat history) | $2.85 |
+| Cloud CDN (Web front end) | $2.05 |
+| Cloud Storage (Source documents) | $1.04 |
+| Cloud Monitoring + Cloud Logging (Logs, traces, cost alarms) | $1.00 |
+| Artifact Registry (Container images) | $0.45 |
+| Cloud Run functions (Chunk + embed documents) | $0.00 |
+| Identity Platform (Single sign-on) | $0.00 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (Release pipeline) | $0.00 |
+
+- Cloud Run committed use discounts: 17% off for a 1- or 3-year spend commitment.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (Oregon (us-west1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

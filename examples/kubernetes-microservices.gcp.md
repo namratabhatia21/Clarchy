@@ -105,5 +105,40 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 - **Service credentials:** secrets=20
 - **Logs, metrics, traces:** log_ingest_gb_per_month=120
 
+## Estimated cost
+
+About **$2,000 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $2,000 | – |
+| 6 months | $12,005 | – |
+| 1 year | $24,027 | $21,984 |
+| 3 years | $72,298 | $61,235 |
+
+| Service | Per month |
+|---|---:|
+| Identity Platform (Customer accounts) | $825 |
+| Cloud SQL for PostgreSQL (Orders and catalogue) | $304 |
+| Memorystore (Redis / Valkey) (Sessions and hot catalogue) | $237 |
+| Google Cloud Armor (Web firewall) | $235 |
+| Google Kubernetes Engine (GKE) (API microservices) | $171 |
+| Google Kubernetes Engine (GKE) (Order workers) | $97.82 |
+| Cloud Load Balancing (Application LB) (Cluster ingress) | $68.71 |
+| Cloud Monitoring + Cloud Logging (Logs, metrics, traces) | $36.00 |
+| Cloud Storage (Product images) | $10.22 |
+| Secret Manager (Service credentials) | $9.43 |
+| Cloud DNS (Domain) | $2.60 |
+| Pub/Sub (Order queue) | $2.59 |
+| Artifact Registry (Container images) | $0.45 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (GitOps release) | $0.00 |
+
+- Committed use discounts: 1- or 3-year commitments; about 37% or 55% off GKE node VMs, 25% or 52% off Cloud SQL, 20% or 40% off Memorystore.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (Belgium (europe-west1)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

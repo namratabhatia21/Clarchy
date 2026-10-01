@@ -4,11 +4,15 @@
 or Excel document. An agent turns them into a cloud-neutral spec and designs everything
 the app needs, from source control, builds and container images to compute, autoscaling,
 databases, storage and monitoring. It then shows the design on **AWS, Azure, Google Cloud
-or open source**, each in its own look, and explains every choice.
+or open source**, each in its own look, explains every choice and estimates the **cost for
+1 month, 6 months, 1 year and 3 years**, on demand and with commitments.
 
-**Live demo:** https://namratabhatia21.github.io/CloudArchie/ replays recorded planning
-runs of four sample apps and includes every example and the full service catalog. To plan
-your own app, [run it yourself](#run-it-yourself).
+**Live site:** https://clarchy.com plans your own requirements
+right in your browser, with no server: the page runs CloudArchie's Python engine with
+[Pyodide](https://pyodide.org). Planning is rule-based by default; for the AI agent, use an
+open-source model on Hugging Face with your own free token, or a model on your machine
+through Ollama. AWS prices are refreshed from the AWS Price List API on every deploy and
+every week.
 
 ![Microservices on Kubernetes, on AWS](examples/kubernetes-microservices.aws.svg)
 
@@ -16,7 +20,7 @@ your own app, [run it yourself](#run-it-yourself).
 
 | Page | What it does |
 |---|---|
-| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt). Watch the pipeline work stage by stage, including the agent's tool calls, then explore the result: an architecture diagram per provider, every service grouped by lifecycle stage, step-by-step workflows that light up the diagram, and the editable YAML spec. |
+| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt). Watch the pipeline work stage by stage, including the agent's tool calls, then explore the result: an architecture diagram per provider, every service grouped by lifecycle stage, the cost over time, step-by-step workflows that light up the diagram, and the editable YAML spec. |
 | **Examples** | Six reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes) on every provider. |
 | **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "BigQuery", "Lambda"). |
 
@@ -55,13 +59,37 @@ document ─► read ─► understand ─► design ─────────
    flows and how a change is shipped. Each step is limited to the real component ids.
 6. **Map**: every capability becomes a concrete service on each provider.
 
-Without an API key the same pipeline runs with a **rule-based planner** that reads the
-text with patterns, so the app always works offline. If the AI path fails part-way, the
-run falls back to the rule-based draft and says so.
+The agent runs on **Claude** (Claude API or Amazon Bedrock) or on an **open-source model**
+through any OpenAI-compatible endpoint: Hugging Face Inference Providers, Ollama, vLLM or
+LM Studio. Requests and replies are translated, so the same loop and guardrails apply.
+
+Without a model the same pipeline runs with a **rule-based planner** that reads the text
+with patterns, so the app always works offline. If the AI path fails part-way, the run
+falls back to the rule-based draft and says so.
 
 The model never draws the diagram or invents services. Layout is deterministic code, and
 the model can only use capabilities from the catalog (see
 [ADR 0004](docs/decisions/0004-agent-designs-with-mcp-tools.md)).
+
+## Cost estimates
+
+Every design is priced on each cloud, per service and per line item (quantity × unit
+price), for **1 month, 6 months, 1 year and 3 years**, on demand and with **1- or 3-year
+commitments** (Savings Plans, reserved instances, committed use discounts), with the month
+when a 1-year commitment pays off. Storage grows with the stated data growth, so longer
+periods cost more than a multiple of the first month.
+
+- **AWS prices come from the [AWS Price List API](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html)**,
+  AWS's official machine-readable source behind its pricing pages, with the SKU and AWS's
+  description for every price, including Savings Plans and reserved-instance rates.
+  `cloudarchie prices update` refreshes them; the public site refreshes them on every
+  deploy and every Monday. `cloudarchie prices lookup AmazonS3 storage` searches any
+  service's current prices live.
+- Azure and Google Cloud prices are compiled by hand from their pricing pages and marked
+  **approximate** in the UI until they are read from those providers' price APIs too.
+- Usage comes from each component's `sizing` and the requirements, and every line says
+  what it assumed. Edit the spec to see the effect. See
+  [ADR 0007](docs/decisions/0007-cost-estimates-from-price-lists.md).
 
 ## Run it yourself
 
@@ -81,15 +109,24 @@ cloudarchie serve                        # the top bar now shows the AI agent
 
 # or Claude on Amazon Bedrock, with your usual AWS credentials
 export CLOUDARCHIE_LLM=bedrock AWS_REGION=us-east-1
-cloudarchie serve
+
+# or an open-source model on Hugging Face (free token: huggingface.co/settings/tokens)
+export HF_TOKEN=hf_...                   # default model: Qwen/Qwen2.5-72B-Instruct
+
+# or an open-source model on your own machine
+ollama pull qwen2.5:7b
+export CLOUDARCHIE_LLM=ollama CLOUDARCHIE_MODEL=qwen2.5:7b
 ```
 
 | Variable | Meaning |
 |---|---|
 | `ANTHROPIC_API_KEY` | Enables the AI agent through the Claude API. |
-| `CLOUDARCHIE_LLM` | `anthropic`, `bedrock` or `rules` (default: `anthropic` when an API key is set, otherwise `rules`). |
-| `CLOUDARCHIE_MODEL` | Override the Claude model id (the default is in `src/cloudarchie/planner/llm.py`). |
+| `HF_TOKEN` | Enables the AI agent on open-source models through Hugging Face Inference Providers. |
+| `CLOUDARCHIE_LLM` | `anthropic`, `bedrock`, `huggingface`, `ollama`, `openai-compatible` or `rules` (default: `anthropic` with an Anthropic key, `huggingface` with `HF_TOKEN`, otherwise `rules`). |
+| `CLOUDARCHIE_MODEL` | The model id (defaults are in `src/cloudarchie/planner/`). |
+| `CLOUDARCHIE_LLM_BASE_URL`, `CLOUDARCHIE_LLM_API_KEY` | Endpoint and key for `ollama` (optional) or `openai-compatible`. |
 | `AWS_REGION` | Region for Amazon Bedrock. |
+| `CLOUDARCHIE_PRICES_DIR` | Folder of refreshed price books (default: `~/.cache/cloudarchie/prices`, written by `cloudarchie prices update`). |
 | `CLOUDARCHIE_CORS_ORIGINS` | Comma-separated origins allowed to call the API, for a front end hosted elsewhere. |
 | `CLOUDARCHIE_ICONS_AWS` (and `_AZURE`, `_GCP`) | Folder of a provider's official icon package; see below. |
 
@@ -106,7 +143,8 @@ provider. `--mcp` attaches extra MCP servers (a pricing or documentation server,
 whose tools the agent may also use.
 
 Other commands: `patterns`, `validate <spec>`, `render <spec> --provider azure`,
-`explain <spec>`, `export-site`, `mcp`. Run `cloudarchie --help` for details.
+`explain <spec>`, `prices update`, `prices lookup <AWS service> <words>`, `export-site`,
+`mcp`. Run `cloudarchie --help` for details.
 
 ## Use CloudArchie from Claude
 
@@ -131,6 +169,8 @@ claude mcp add cloudarchie -- cloudarchie mcp                     # Claude Code
 | `validate_spec` | Errors to fix and warnings worth considering, against every provider. |
 | `add_delivery_toolchain` | Adds CI/CD, registry, infrastructure as code and KEDA where needed. |
 | `render_design` | SVG diagram and Markdown explanation on one provider. |
+| `estimate_cost` | Monthly cost and 1-month to 3-year totals, on demand and with commitments. |
+| `aws_price_lookup` | Search the latest AWS prices of one service, live from the AWS Price List API. |
 | `draft_architecture` | A rule-based first draft from requirements text. |
 
 The server also offers each pattern as a resource (`cloudarchie://patterns/{id}`) and a
@@ -173,28 +213,39 @@ services and diagram theme are in [`data/mappings/`](src/cloudarchie/data/mappin
 | Module | Role |
 |---|---|
 | `ingest.py` | Word, Excel, PDF and text to plain text, with limits |
-| `planner/` | `pipeline.py` (stages and events), `agent.py` (Claude: understand, design loop, workflows), `toolbox.py` (MCP client), `rules.py` (offline planner), `llm.py` (Claude API or Bedrock), `prompts.py` |
+| `planner/` | `pipeline.py` (stages and events), `agent.py` (understand, design loop, workflows), `toolbox.py` (MCP client) and `local_toolbox.py` (the same tools in-process), `rules.py` (offline planner), `llm.py` (Claude API or Bedrock), `openai_compat.py` (open-source models), `prompts.py` |
+| `pricing.py`, `aws_prices.py`, `data/prices/` | Usage model, price books and billing models; AWS prices from the Price List API |
+| `browser.py` | Entry points for the in-browser engine (Pyodide) |
 | `tools.py`, `mcp_server.py` | The tool functions and the MCP server that exposes them |
 | `delivery.py`, `workflows.py` | Deterministic build-and-deploy toolchain and generated workflows |
 | `spec.py`, `catalog.py`, `mapping.py` | The neutral spec, its data and the provider mapping |
 | `render.py`, `explain.py` | Themed SVG diagrams and Markdown explanations |
 | `web.py`, `payloads.py`, `static/` | FastAPI app (with a server-sent events `/api/plan` stream) and a no-build front end |
-| `export.py` | The static site for GitHub Pages |
+| `export.py` | The static site for GitHub Pages, with the in-browser engine bundle |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
 
 ## Static site
 
 ```bash
-cloudarchie export-site -o site/                          # one self-contained index.html
+cloudarchie export-site -o site/                          # index.html + cloudarchie-engine.zip
+cloudarchie export-site -o site/ --no-engine              # replay-only page
 cloudarchie export-site -o site/ --api-base https://...   # a front end for a hosted API
 ```
 
-A static page cannot run the planner, so it embeds recorded rule-based runs of the samples
-and replays them stage by stage, plus every example on every provider and the catalog
-([ADR 0005](docs/decisions/0005-static-demo-replays-recorded-runs.md)). The `Pages`
-workflow publishes it on every push to the default branch. With `--api-base` the page
-talks to a CloudArchie server instead, which needs `CLOUDARCHIE_CORS_ORIGINS` set.
+The page plans in the visitor's browser: it loads Pyodide from its CDN on first use (about
+15 MB, then cached) and runs this package from `cloudarchie-engine.zip` next to the page.
+Examples, the catalog and recorded runs of the samples are embedded, so they appear
+instantly ([ADR 0008](docs/decisions/0008-plans-run-in-the-browser.md)). The `Pages`
+workflow refreshes the AWS prices and publishes the site on every push to the default
+branch and every Monday. With `--api-base` the page talks to a CloudArchie server instead,
+which needs `CLOUDARCHIE_CORS_ORIGINS` set.
+
+The live site is served at **clarchy.com** from GitHub Pages: the domain's DNS points at
+GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` from
+`www` to `namratabhatia21.github.io`), and the custom domain is set in the repository's
+Settings → Pages. The page uses only relative links, so the same build works on a custom
+domain or under a `github.io` path.
 
 ## Official provider icons
 
@@ -226,19 +277,22 @@ make examples    # regenerate examples/, which double as golden test files
 |---|---|
 | ✅ 1 | Neutral spec, patterns, AWS/Azure/GCP/OSS mappings, SVG renderer, CLI, web UI and service catalog |
 | ✅ 2 | Requirements documents in, agentic planning with MCP tools, build-and-deploy toolchain, workflows, provider-themed results |
-| 3 | AWS cost engine: Price List data, usage model, low/expected/high ranges, checked against the AWS Pricing Calculator |
-| 4 | Savings Plans, Reserved Instances and Spot with break-even; Well-Architected checks; PDF report |
-| 5 | Hosted backend on AWS so the public site can plan new documents |
-| 6+ | Azure, Google Cloud and open-source pricing; specialist review of every mapping |
+| ✅ 3 | Cost estimates for 1 month to 3 years with commitments; AWS from the Price List API; plans in the browser; open-source models |
+| 4 | Azure and Google Cloud prices from their price APIs; prices for the design's own region; low/expected/high ranges checked against the official calculators |
+| 5 | Spot and data-transfer costs; Well-Architected checks; PDF report |
+| 6+ | Open-source cost model including operations effort; specialist review of every mapping |
 
 ## Known limitations
 
-- The AI agent has been tested with a scripted model; real-model quality depends on the
-  prompts in `planner/prompts.py` and is worth reviewing on your own documents.
+- The AI agent has been tested with scripted models (Claude-style and OpenAI-style), not
+  against live Claude or Hugging Face here; real-model quality depends on the model and
+  the prompts in `planner/prompts.py`. Smaller open models follow tool calls less
+  reliably; when they fail, the run falls back to the rule-based draft.
+- Prices are for one reference region per cloud (US East, East US, Iowa); the cost view
+  says so when your design is elsewhere. Azure and Google Cloud prices are approximate.
 - Scanned PDFs without a text layer cannot be read; paste the text instead.
 - Long edges in large diagrams can cross other lines; links to shared services
   (identity, secrets, monitoring) are listed in the explanation rather than drawn.
-- Costs are not estimated yet (phase 3).
 
 ## Licence
 

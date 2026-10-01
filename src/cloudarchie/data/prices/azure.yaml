@@ -1,0 +1,64 @@
+# Azure list prices, compiled by hand from the public pricing pages (East US, pay as you go).
+# Not machine-checked: verify with the Azure pricing calculator before relying on them.
+# commit_1yr / commit_3yr apply the published reservation or savings plan discounts.
+provider: azure
+currency: USD
+price_region: East US
+region_code: eastus
+as_of: '2026-10-01'
+source: Azure pricing pages, compiled manually
+verified: false
+calculator: https://azure.microsoft.com/pricing/calculator/
+prices:
+  functions.executions: {price: 0.20, unit: 1M executions, source: https://azure.microsoft.com/pricing/details/functions/}
+  functions.gb_seconds: {price: 0.000016, unit: GB-second, source: https://azure.microsoft.com/pricing/details/functions/}
+  apim.calls: {price: 4.20, unit: 1M calls, source: https://azure.microsoft.com/pricing/details/api-management/}
+  frontdoor.base: {price: 35.0, unit: profile-month, source: https://azure.microsoft.com/pricing/details/frontdoor/}
+  frontdoor.egress_gb: {price: 0.083, unit: GB, source: https://azure.microsoft.com/pricing/details/frontdoor/}
+  frontdoor.requests: {price: 0.009, unit: 10K requests, source: https://azure.microsoft.com/pricing/details/frontdoor/}
+  dns.zones: {price: 0.50, unit: zone, source: https://azure.microsoft.com/pricing/details/dns/}
+  dns.queries: {price: 0.40, unit: 1M queries, source: https://azure.microsoft.com/pricing/details/dns/}
+  waf.policies: {price: 5.0, unit: policy, source: https://azure.microsoft.com/pricing/details/web-application-firewall/}
+  waf.rules: {price: 1.0, unit: rule, source: https://azure.microsoft.com/pricing/details/web-application-firewall/}
+  waf.requests: {price: 0.60, unit: 1M requests, source: https://azure.microsoft.com/pricing/details/web-application-firewall/}
+  appgw.hours: {price: 0.246, unit: gateway-hour, source: https://azure.microsoft.com/pricing/details/application-gateway/}
+  appgw.capacity_units: {price: 0.008, unit: capacity unit-hour, source: https://azure.microsoft.com/pricing/details/application-gateway/}
+  containerapps.vcpu_hours: {price: 0.0864, unit: vCPU-hour, commit_1yr: 0.07344, commit_3yr: 0.071712, source: https://azure.microsoft.com/pricing/details/container-apps/}
+  containerapps.gb_hours: {price: 0.0108, unit: GiB-hour, commit_1yr: 0.00918, commit_3yr: 0.008964, source: https://azure.microsoft.com/pricing/details/container-apps/}
+  aks.cluster_hours: {price: 0.10, unit: cluster-hour (Standard tier), source: https://azure.microsoft.com/pricing/details/kubernetes-service/}
+  vm.node_hours: {price: 0.096, unit: D2s v5 node-hour, commit_1yr: 0.0605, commit_3yr: 0.0389, source: https://azure.microsoft.com/pricing/details/virtual-machines/linux/}
+  openai.input_tokens: {price: 0.15, unit: 1M tokens (gpt-4o-mini), source: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/}
+  openai.output_tokens: {price: 0.60, unit: 1M tokens (gpt-4o-mini), source: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/}
+  openai.embedding_tokens: {price: 0.02, unit: 1M tokens, source: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/}
+  servicebus.base: {price: 9.86, unit: namespace-month (Standard), source: https://azure.microsoft.com/pricing/details/service-bus/}
+  servicebus.operations: {price: 0.80, unit: 1M operations, source: https://azure.microsoft.com/pricing/details/service-bus/}
+  eventgrid.operations: {price: 0.60, unit: 1M operations, source: https://azure.microsoft.com/pricing/details/event-grid/}
+  eventhubs.tu_hours: {price: 0.03, unit: throughput unit-hour, source: https://azure.microsoft.com/pricing/details/event-hubs/}
+  eventhubs.events: {price: 0.028, unit: 1M events, source: https://azure.microsoft.com/pricing/details/event-hubs/}
+  logicapps.actions: {price: 0.125, unit: 1K actions, source: https://azure.microsoft.com/pricing/details/logic-apps/}
+  datafactory.vcore_hours: {price: 0.274, unit: vCore-hour (data flow), source: https://azure.microsoft.com/pricing/details/data-factory/data-pipeline/}
+  datafactory.runs: {price: 1.00, unit: 1K activity runs, source: https://azure.microsoft.com/pricing/details/data-factory/data-pipeline/}
+  blob.storage_gb: {price: 0.0184, unit: "GB-month (Hot, LRS)", source: https://azure.microsoft.com/pricing/details/storage/blobs/}
+  blob.writes: {price: 0.005, unit: 1K writes, source: https://azure.microsoft.com/pricing/details/storage/blobs/}
+  blob.reads: {price: 0.0004, unit: 1K reads, source: https://azure.microsoft.com/pricing/details/storage/blobs/}
+  postgres.small.single: {price: 0.0828, unit: B2s server-hour (burstable), source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.small.multi: {price: 0.1656, unit: B2s server-hour with standby, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.medium.single: {price: 0.178, unit: D2ds v5 server-hour, commit_1yr: 0.1157, commit_3yr: 0.0801, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.medium.multi: {price: 0.356, unit: D2ds v5 server-hour with standby, commit_1yr: 0.2314, commit_3yr: 0.1602, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.large.single: {price: 0.356, unit: D4ds v5 server-hour, commit_1yr: 0.2314, commit_3yr: 0.1602, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.large.multi: {price: 0.712, unit: D4ds v5 server-hour with standby, commit_1yr: 0.4628, commit_3yr: 0.3204, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.storage_gb.single: {price: 0.115, unit: GB-month, source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  postgres.storage_gb.multi: {price: 0.23, unit: GB-month (with standby), source: https://azure.microsoft.com/pricing/details/postgresql/flexible-server/}
+  cosmos.request_units: {price: 0.25, unit: 1M request units (serverless), source: https://azure.microsoft.com/pricing/details/cosmos-db/serverless/}
+  cosmos.storage_gb: {price: 0.25, unit: GB-month, source: https://azure.microsoft.com/pricing/details/cosmos-db/serverless/}
+  redis.small: {price: 0.10, unit: "cache-hour (about 1 GB, replicated)", source: https://azure.microsoft.com/pricing/details/managed-redis/}
+  redis.large: {price: 0.20, unit: "cache-hour (about 6 GB, replicated)", source: https://azure.microsoft.com/pricing/details/managed-redis/}
+  search.unit_hours: {price: 0.101, unit: search unit-hour (Basic), source: https://azure.microsoft.com/pricing/details/search/}
+  fabric.capacity_hours: {price: 0.36, unit: F2 capacity-hour, commit_1yr: 0.2142, source: https://azure.microsoft.com/pricing/details/microsoft-fabric/}
+  fabric.storage_gb: {price: 0.023, unit: GB-month (OneLake), source: https://azure.microsoft.com/pricing/details/microsoft-fabric/}
+  entra.mau: {price: 0.03, unit: monthly active user, source: https://azure.microsoft.com/pricing/details/active-directory-external-identities/}
+  keyvault.operations: {price: 0.03, unit: 10K operations, source: https://azure.microsoft.com/pricing/details/key-vault/}
+  monitor.logs_gb: {price: 2.30, unit: GB ingested, source: https://azure.microsoft.com/pricing/details/monitor/}
+  monitor.alerts: {price: 0.10, unit: alert rule, source: https://azure.microsoft.com/pricing/details/monitor/}
+  acr.registry: {price: 5.00, unit: registry-month (Basic), source: https://azure.microsoft.com/pricing/details/container-registry/}
+  pipelines.parallel_jobs: {price: 40.0, unit: extra parallel job-month, source: https://azure.microsoft.com/pricing/details/devops/azure-devops-services/}

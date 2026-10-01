@@ -82,5 +82,37 @@ Always-on containerised web API with a relational database and cache, for steady
 - **DB credentials:** secrets=5
 - **Logs, metrics, alarms:** log_ingest_gb_per_month=30
 
+## Estimated cost
+
+About **$914 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $914 | – |
+| 6 months | $5,488 | – |
+| 1 year | $10,985 | $9,468 |
+| 3 years | $33,075 | $26,482 |
+
+| Service | Per month |
+|---|---:|
+| Azure Database for PostgreSQL (Flexible Server) (PostgreSQL) | $306 |
+| Azure Container Apps (API containers) | $237 |
+| Azure Application Gateway (HTTPS load balancer) | $185 |
+| Azure Managed Redis (Session + query cache) | $73.00 |
+| Azure Monitor + Application Insights (Logs, metrics, alarms) | $58.50 |
+| Azure Web Application Firewall (Web firewall) | $40.00 |
+| Azure Blob Storage (Uploads) | $5.65 |
+| Azure Container Registry (Container images) | $5.00 |
+| Azure Key Vault (DB credentials) | $2.84 |
+| Azure DNS (Domain) | $1.10 |
+| Azure Pipelines (Build and test) | $0.00 |
+
+- Azure savings plan for compute: 1- or 3-year hourly spend commitment; about 15% (1 year) or 17% (3 years) off Container Apps.
+- Reserved capacity: 1 or 3 years for Azure Database for PostgreSQL (General Purpose); burstable servers are not eligible.
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for East US; your region (Ireland (northeurope)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

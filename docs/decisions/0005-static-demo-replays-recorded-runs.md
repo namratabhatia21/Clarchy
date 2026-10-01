@@ -1,6 +1,6 @@
 # 0005: The public demo replays recorded runs
 
-**Status:** accepted · 2026-10-01
+**Status:** superseded by [0008](0008-plans-run-in-the-browser.md) · 2026-10-01
 
 ## Context
 

@@ -69,5 +69,32 @@ Streams application events into a data lake, transforms them on a schedule and s
 - **Reporting warehouse:** rpu_hours_per_month=300, storage_gb=500
 - **Pipeline monitoring:** log_ingest_gb_per_month=10
 
+## Estimated cost
+
+About **$1,070 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+
+| Period | On demand | With commitments |
+|---|---:|---:|
+| 1 month | $1,070 | – |
+| 6 months | $6,511 | – |
+| 1 year | $13,237 | – |
+| 3 years | $42,304 | – |
+
+| Service | Per month |
+|---|---:|
+| API Gateway (Event collector) | $894 |
+| BigQuery (Reporting warehouse) | $95.10 |
+| Cloud Storage (Data lake (raw + curated)) | $42.70 |
+| Pub/Sub (Event stream) | $28.98 |
+| Dataflow (Nightly transforms) | $8.32 |
+| Cloud Monitoring + Cloud Logging (Pipeline monitoring) | $1.00 |
+| Cloud Build (Build and test) | $0.00 |
+| Cloud Deploy (Release pipeline) | $0.00 |
+
+- Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
+- 730 hours a month. Always-free allowances are deducted where shown; trials are not.
+- Excludes tax, support plans, and data transfer not listed.
+- Prices are for Iowa (us-central1); your region (Frankfurt (europe-west3)) may differ.
+
 ---
-Cost estimates arrive in a later phase. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.

@@ -1,6 +1,6 @@
 name: Pages
 
-# Publishes the site (cloudarchie export-site) to GitHub Pages, with AWS prices refreshed
+# Publishes the site (clarchy export-site) to GitHub Pages, with AWS prices refreshed
 # from the AWS Price List API on every deploy and every Monday.
 # Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
 # set in Settings → Pages too; workflow deployments ignore a CNAME file.
@@ -33,10 +33,10 @@ jobs:
       - name: Refresh AWS prices from the AWS Price List API
         run: |
           pip install pyyaml
-          PYTHONPATH=src python -m cloudarchie.aws_prices --output src/cloudarchie/data/prices/aws.yaml \
+          PYTHONPATH=src python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml \
             || echo "::warning::Could not refresh AWS prices; publishing the committed price book"
       - run: pip install .
-      - run: cloudarchie export-site -o site
+      - run: clarchy export-site -o site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

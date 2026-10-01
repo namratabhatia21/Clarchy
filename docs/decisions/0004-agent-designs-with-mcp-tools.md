@@ -15,7 +15,7 @@ unexplained choices, and no quotes the document never said.
   Only understand, design and workflows use the model; the rest is deterministic code.
 - **Understand** and **workflows** use structured outputs (JSON schemas). Workflow steps
   may only name real component ids.
-- **Design** is a tool-use loop. The agent is an MCP client of CloudArchie's own MCP
+- **Design** is a tool-use loop. The agent is an MCP client of Clarchy's own MCP
   server, connected in memory, using six research and validation tools with strict
   schemas. Extra MCP servers can be attached (`--mcp`). The loop ends only when the model
   calls `submit_design` with a spec that validates against the schema and maps to every

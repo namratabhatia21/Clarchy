@@ -6,13 +6,13 @@ import json
 import pytest
 from helpers import POLICY_SPEC, make_docx
 
-from cloudarchie import browser, catalog
-from cloudarchie.ingest import from_text
-from cloudarchie.planner import PlanOptions, run_plan
-from cloudarchie.planner.llm import LLMError, llm_from_env
-from cloudarchie.planner.local_toolbox import LocalToolbox
-from cloudarchie.planner.openai_compat import OpenAICompatLLM, from_chat, to_chat
-from cloudarchie.tools import AGENT_TOOL_NAMES
+from clarchy import browser, catalog
+from clarchy.ingest import from_text
+from clarchy.planner import PlanOptions, run_plan
+from clarchy.planner.llm import LLMError, llm_from_env
+from clarchy.planner.local_toolbox import LocalToolbox
+from clarchy.planner.openai_compat import OpenAICompatLLM, from_chat, to_chat
+from clarchy.tools import AGENT_TOOL_NAMES
 
 DOC = next(text for sid, _, text in catalog.samples() if sid == "policy-assistant")
 
@@ -212,8 +212,8 @@ def test_environment_picks_open_models(monkeypatch):
     for key in (
         "ANTHROPIC_API_KEY",
         "ANTHROPIC_AUTH_TOKEN",
-        "CLOUDARCHIE_LLM",
-        "CLOUDARCHIE_MODEL",
+        "CLARCHY_LLM",
+        "CLARCHY_MODEL",
     ):
         monkeypatch.delenv(key, raising=False)
     monkeypatch.setenv("HF_TOKEN", "hf_abc")
@@ -221,13 +221,13 @@ def test_environment_picks_open_models(monkeypatch):
     assert llm.base_url == "https://router.huggingface.co/v1" and llm.label.endswith(
         "(Hugging Face)"
     )
-    monkeypatch.setenv("CLOUDARCHIE_LLM", "ollama")
-    monkeypatch.setenv("CLOUDARCHIE_MODEL", "llama3.1:8b")
+    monkeypatch.setenv("CLARCHY_LLM", "ollama")
+    monkeypatch.setenv("CLARCHY_MODEL", "llama3.1:8b")
     llm = llm_from_env()
     assert llm.base_url == "http://localhost:11434/v1" and llm.model == "llama3.1:8b"
-    monkeypatch.setenv("CLOUDARCHIE_LLM", "openai-compatible")
-    monkeypatch.delenv("CLOUDARCHIE_MODEL")
-    with pytest.raises(LLMError, match="CLOUDARCHIE_LLM_BASE_URL"):
+    monkeypatch.setenv("CLARCHY_LLM", "openai-compatible")
+    monkeypatch.delenv("CLARCHY_MODEL")
+    with pytest.raises(LLMError, match="CLARCHY_LLM_BASE_URL"):
         llm_from_env()
 
 

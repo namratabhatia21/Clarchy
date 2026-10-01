@@ -3,8 +3,8 @@ import json
 import pytest
 import yaml
 
-from cloudarchie import catalog
-from cloudarchie.tools import AGENT_TOOL_NAMES, TOOLS, ToolError
+from clarchy import catalog
+from clarchy.tools import AGENT_TOOL_NAMES, TOOLS, ToolError
 
 
 def call(name, **args):

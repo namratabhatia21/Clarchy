@@ -1,15 +1,15 @@
 import json
 import re
 
-from cloudarchie import catalog
-from cloudarchie.cli import main
-from cloudarchie.export import SCRIPT_TAG, build_site, site_data
+from clarchy import catalog
+from clarchy.cli import main
+from clarchy.export import SCRIPT_TAG, build_site, site_data
 
 SAMPLE_IDS = [sample_id for sample_id, _title, _text in catalog.samples()]
 
 
 def embedded_data(page: str) -> dict:
-    match = re.search(r"window\.CLOUDARCHIE_DATA = (\{.*?\});</script>", page, re.S)
+    match = re.search(r"window\.CLARCHY_DATA = (\{.*?\});</script>", page, re.S)
     assert match, "data script missing"
     return json.loads(match.group(1))
 
@@ -49,7 +49,7 @@ def test_full_page_is_self_contained():
     assert data["clipboard_only"] is False  # GitHub Pages and similar allow downloads
     # Scripts keep their order: the data first, then core, workspace, pages and boot.
     order = [
-        "window.CLOUDARCHIE_DATA",
+        "window.CLARCHY_DATA",
         "const CA = ",
         "class Workspace",
         "const Plan = ",
@@ -69,15 +69,15 @@ def test_fragment_has_no_document_skeleton():
 
 def test_api_base_build_embeds_no_demo_data():
     page = build_site(api_base="https://api.example.org/")
-    assert 'window.CLOUDARCHIE_API_BASE = "https://api.example.org";' in page
-    assert "CLOUDARCHIE_DATA" not in page.split("<script>", 2)[1].split("</script>")[0]
+    assert 'window.CLARCHY_API_BASE = "https://api.example.org";' in page
+    assert "CLARCHY_DATA" not in page.split("<script>", 2)[1].split("</script>")[0]
     assert len(page) < 400_000
 
 
 def test_index_scripts_are_all_found():
     from importlib import resources
 
-    index = resources.files("cloudarchie").joinpath("static", "index.html").read_text()
+    index = resources.files("clarchy").joinpath("static", "index.html").read_text()
     assert SCRIPT_TAG.findall(index) == [
         "core.js",
         "workspace.js",
@@ -98,7 +98,7 @@ def test_site_ships_the_in_browser_engine(tmp_path):
     import sys
     import zipfile
 
-    from cloudarchie.export import ENGINE_BUNDLE, PYODIDE_VERSION, export_site
+    from clarchy.export import ENGINE_BUNDLE, PYODIDE_VERSION, export_site
 
     export_site(tmp_path)
     data = embedded_data((tmp_path / "index.html").read_text())
@@ -108,7 +108,7 @@ def test_site_ships_the_in_browser_engine(tmp_path):
         engine["pyodide"] == f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/pyodide.js"
     )
     names = zipfile.ZipFile(tmp_path / ENGINE_BUNDLE).namelist()
-    assert "cloudarchie/browser.py" in names and "cloudarchie/data/prices/aws.yaml" in names
+    assert "clarchy/browser.py" in names and "clarchy/data/prices/aws.yaml" in names
     assert not any("/static/" in n or "__pycache__" in n for n in names)
 
     # The bundle alone is enough to run the engine (as Pyodide will).
@@ -116,9 +116,9 @@ def test_site_ships_the_in_browser_engine(tmp_path):
     zipfile.ZipFile(tmp_path / ENGINE_BUNDLE).extractall(unpacked)
     code = (
         "import sys, json; sys.path.insert(0, sys.argv[1]);"
-        "import cloudarchie, cloudarchie.browser as b;"
-        "assert cloudarchie.__file__.startswith(sys.argv[1]);"
-        "from cloudarchie import catalog;"
+        "import clarchy, clarchy.browser as b;"
+        "assert clarchy.__file__.startswith(sys.argv[1]);"
+        "from clarchy import catalog;"
         "r = json.loads(b.design(catalog.pattern_text('rag-chatbot'), 'gcp'));"
         "print(r['ok'], r['body']['cost']['available'])"
     )
@@ -129,7 +129,7 @@ def test_site_ships_the_in_browser_engine(tmp_path):
 
 
 def test_replay_only_build(tmp_path):
-    from cloudarchie.export import ENGINE_BUNDLE, export_site
+    from clarchy.export import ENGINE_BUNDLE, export_site
 
     export_site(tmp_path, with_engine=False)
     assert embedded_data((tmp_path / "index.html").read_text())["engine"] is None

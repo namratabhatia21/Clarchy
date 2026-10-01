@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from cloudarchie import aws_prices, catalog, pricing
-from cloudarchie.mapping import map_to_provider
-from cloudarchie.spec import load_pattern, load_spec
+from clarchy import aws_prices, catalog, pricing
+from clarchy.mapping import map_to_provider
+from clarchy.spec import load_pattern, load_spec
 
 CLOUDS = ("aws", "azure", "gcp")
 
@@ -107,12 +107,12 @@ def test_refreshed_price_books_win(tmp_path, monkeypatch):
         "lambda.requests": {**book["prices"]["lambda.requests"], "price": 9.0},
     }
     (tmp_path / "aws.yaml").write_text(json.dumps(book))  # JSON is valid YAML
-    monkeypatch.setenv("CLOUDARCHIE_PRICES_DIR", str(tmp_path))
+    monkeypatch.setenv("CLARCHY_PRICES_DIR", str(tmp_path))
     assert pricing.price_book("aws")["prices"]["lambda.requests"]["price"] == 9.0
 
 
 def test_explanations_include_the_cost():
-    from cloudarchie.explain import explain_markdown
+    from clarchy.explain import explain_markdown
 
     text = explain_markdown(map_to_provider(load_pattern("serverless-web-app"), "aws"))
     assert "## Estimated cost" in text and "| 3 years |" in text

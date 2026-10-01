@@ -1,9 +1,9 @@
 import pytest
 
-from cloudarchie import catalog
-from cloudarchie.delivery import add_delivery
-from cloudarchie.spec import ArchitectureSpec, load_pattern
-from cloudarchie.workflows import generate_workflows, with_workflows
+from clarchy import catalog
+from clarchy.delivery import add_delivery
+from clarchy.spec import ArchitectureSpec, load_pattern
+from clarchy.workflows import generate_workflows, with_workflows
 
 
 def generated(name: str):

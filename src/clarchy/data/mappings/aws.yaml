@@ -1,0 +1,231 @@
+# Capability -> AWS service.
+#
+# fidelity: how well the service matches the neutral capability
+#   exact   - same concept, comparable features
+#   close   - same job, notable differences (see note)
+#   partial - covers part of the capability; something else is needed for the rest
+# short: 2-4 letter badge used when official icons are not installed.
+# icon: filename stem searched for inside the AWS Architecture Icons asset package
+#   (matched case-insensitively against files like Arch_<stem>_48.svg). Stems are
+#   best-effort; run `clarchy icons --provider aws` to check them against your copy.
+
+provider:
+  name: AWS
+  cloud_label: AWS Cloud
+  kind: cloud
+  # Set to true once an AWS specialist has reviewed every entry.
+  reviewed: false
+  # Diagram styling that follows AWS architecture-diagram conventions: a dark
+  # "AWS Cloud" boundary and AWS's colour per service category. Colours only, no logos.
+  theme:
+    font: "'Open Sans', 'Helvetica Neue', Arial, sans-serif"
+    frame: { stroke: "#232F3E", fill: "#FFFFFF", label: "#232F3E", dash: "" }
+    band: { stroke: "#879196", label: "#545B64" }
+    edge: "#545B64"
+    categories:
+      external: "#545B64"
+      networking: "#8C4FFF"
+      security: "#DD344C"
+      compute: "#ED7100"
+      containers: "#ED7100"
+      ai: "#01A88D"
+      integration: "#E7157B"
+      analytics: "#8C4FFF"
+      database: "#C925D1"
+      storage: "#7AA116"
+      devtools: "#3B48CC"
+      management: "#E7157B"
+
+services:
+  dns:
+    service: Amazon Route 53
+    short: R53
+    fidelity: exact
+    icon: Amazon-Route-53
+    docs: https://docs.aws.amazon.com/route53/
+  cdn:
+    service: Amazon CloudFront
+    short: CF
+    fidelity: exact
+    icon: Amazon-CloudFront
+    docs: https://docs.aws.amazon.com/cloudfront/
+  waf:
+    service: AWS WAF
+    short: WAF
+    fidelity: exact
+    icon: AWS-WAF
+    docs: https://docs.aws.amazon.com/waf/
+  load-balancer:
+    service: Application Load Balancer
+    short: ALB
+    fidelity: exact
+    icon: Elastic-Load-Balancing
+    docs: https://docs.aws.amazon.com/elasticloadbalancing/
+  api-gateway:
+    service: Amazon API Gateway
+    short: APIG
+    fidelity: exact
+    icon: Amazon-API-Gateway
+    docs: https://docs.aws.amazon.com/apigateway/
+  container-service:
+    service: Amazon ECS on AWS Fargate
+    short: ECS
+    fidelity: exact
+    icon: AWS-Fargate
+    alternatives: [Amazon EKS, AWS App Runner]
+    docs: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
+  serverless-function:
+    service: AWS Lambda
+    short: λ
+    fidelity: exact
+    icon: AWS-Lambda
+    docs: https://docs.aws.amazon.com/lambda/
+  llm-inference:
+    service: Amazon Bedrock
+    short: BR
+    fidelity: exact
+    icon: Amazon-Bedrock
+    docs: https://docs.aws.amazon.com/bedrock/
+  message-queue:
+    service: Amazon SQS
+    short: SQS
+    fidelity: exact
+    icon: Amazon-Simple-Queue-Service
+    docs: https://docs.aws.amazon.com/sqs/
+  event-bus:
+    service: Amazon EventBridge
+    short: EB
+    fidelity: exact
+    icon: Amazon-EventBridge
+    docs: https://docs.aws.amazon.com/eventbridge/
+  stream:
+    service: Amazon Kinesis Data Streams
+    short: KDS
+    fidelity: exact
+    icon: Amazon-Kinesis-Data-Streams
+    alternatives: [Amazon MSK]
+    docs: https://docs.aws.amazon.com/streams/
+  workflow:
+    service: AWS Step Functions
+    short: SFN
+    fidelity: exact
+    icon: AWS-Step-Functions
+    docs: https://docs.aws.amazon.com/step-functions/
+  batch-etl:
+    service: AWS Glue
+    short: GLU
+    fidelity: exact
+    icon: AWS-Glue
+    docs: https://docs.aws.amazon.com/glue/
+  object-storage:
+    service: Amazon S3
+    short: S3
+    fidelity: exact
+    icon: Amazon-Simple-Storage-Service
+    docs: https://docs.aws.amazon.com/s3/
+  relational-db:
+    service: Amazon RDS for PostgreSQL
+    short: RDS
+    fidelity: exact
+    icon: Amazon-RDS
+    alternatives: [Amazon Aurora PostgreSQL]
+    docs: https://docs.aws.amazon.com/rds/
+  key-value-db:
+    service: Amazon DynamoDB
+    short: DDB
+    fidelity: exact
+    icon: Amazon-DynamoDB
+    docs: https://docs.aws.amazon.com/dynamodb/
+  cache:
+    service: Amazon ElastiCache (Redis OSS / Valkey)
+    short: EC
+    fidelity: exact
+    icon: Amazon-ElastiCache
+    docs: https://docs.aws.amazon.com/elasticache/
+  vector-search:
+    service: Amazon OpenSearch Serverless (vector)
+    short: AOS
+    fidelity: close
+    icon: Amazon-OpenSearch-Service
+    alternatives: [Aurora PostgreSQL with pgvector, Amazon S3 Vectors]
+    note: >-
+      Vector search is one feature of a general search engine; a smaller workload may
+      be cheaper on pgvector in the relational database.
+    docs: https://docs.aws.amazon.com/opensearch-service/
+  data-warehouse:
+    service: Amazon Redshift Serverless
+    short: RS
+    fidelity: exact
+    icon: Amazon-Redshift
+    alternatives: [Amazon Athena on S3]
+    docs: https://docs.aws.amazon.com/redshift/
+  identity:
+    service: Amazon Cognito
+    short: COG
+    fidelity: exact
+    icon: Amazon-Cognito
+    docs: https://docs.aws.amazon.com/cognito/
+  secrets:
+    service: AWS Secrets Manager
+    short: SM
+    fidelity: exact
+    icon: AWS-Secrets-Manager
+    docs: https://docs.aws.amazon.com/secretsmanager/
+  monitoring:
+    service: Amazon CloudWatch
+    short: CW
+    fidelity: exact
+    icon: Amazon-CloudWatch
+    docs: https://docs.aws.amazon.com/cloudwatch/
+  kubernetes:
+    service: Amazon EKS
+    short: EKS
+    fidelity: exact
+    icon: Elastic-Kubernetes-Service
+    alternatives: [EKS Auto Mode]
+    docs: https://docs.aws.amazon.com/eks/
+  event-autoscaling:
+    service: KEDA on Amazon EKS
+    short: KEDA
+    fidelity: close
+    alternatives: [Application Auto Scaling (ECS)]
+    note: >-
+      KEDA is an open-source CNCF project you install on EKS. For ECS services,
+      Application Auto Scaling with queue-based target tracking does a similar job.
+    docs: https://keda.sh/docs/
+  source-control:
+    service: GitHub or GitLab via AWS CodeConnections
+    short: GIT
+    fidelity: partial
+    alternatives: [AWS CodeCommit]
+    note: >-
+      Most teams host code on GitHub or GitLab and connect it to AWS pipelines with
+      CodeConnections. Check AWS CodeCommit's current availability before choosing it.
+    docs: https://docs.aws.amazon.com/dtconsole/latest/userguide/welcome-connections.html
+  ci-build:
+    service: AWS CodeBuild
+    short: CB
+    fidelity: exact
+    icon: CodeBuild
+    alternatives: [GitHub Actions]
+    docs: https://docs.aws.amazon.com/codebuild/
+  container-registry:
+    service: Amazon ECR
+    short: ECR
+    fidelity: exact
+    icon: Elastic-Container-Registry
+    docs: https://docs.aws.amazon.com/ecr/
+  cd-deploy:
+    service: AWS CodePipeline
+    short: CP
+    fidelity: exact
+    icon: CodePipeline
+    alternatives: [AWS CodeDeploy, GitHub Actions]
+    docs: https://docs.aws.amazon.com/codepipeline/
+  iac:
+    service: AWS CloudFormation
+    short: CFN
+    fidelity: exact
+    icon: CloudFormation
+    alternatives: [AWS CDK, Terraform or OpenTofu]
+    docs: https://docs.aws.amazon.com/cloudformation/

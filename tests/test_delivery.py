@@ -1,5 +1,5 @@
-from cloudarchie.delivery import add_delivery, has_delivery
-from cloudarchie.spec import load_pattern, load_spec
+from clarchy.delivery import add_delivery, has_delivery
+from clarchy.spec import load_pattern, load_spec
 
 
 def spec(components, edges=()):

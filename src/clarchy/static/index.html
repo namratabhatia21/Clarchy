@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clarchy · cloud architecture drawings</title>
+  <meta name="description" content="Describe your app or upload a requirements document. Clarchy draws the cloud architecture on AWS, Azure, Google Cloud or open source, explains every choice and estimates the cost.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231f4e86'/%3E%3Cg fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M4 26.5h24'/%3E%3Cpath d='M8.5 26.5V15a7.5 7.5 0 0 1 15 0v11.5'/%3E%3Cpath d='M12.5 26.5V15.5a3.5 3.5 0 0 1 7 0v11' stroke-width='1.4'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="#plan" aria-label="Clarchy home">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 27.5h28M3.5 29.5l2-4M26.5 29.5l2-4"/>
+          <path class="arch" d="M8.5 27.5V15a7.5 7.5 0 0 1 15 0v12.5" stroke-width="2.2"/>
+          <path d="M12.5 27.5V15.5a3.5 3.5 0 0 1 7 0v12"/>
+          <path d="M16 2.5v3.5" stroke-dasharray="1.6 1.2"/>
+        </g>
+      </svg>
+      <span class="brand-name">Clarchy</span>
+      <span class="brand-tag">Cloud architecture drawings</span>
+    </a>
+    <nav class="main-nav" aria-label="Sections">
+      <a href="#plan" class="main-link" data-page="plan"><span class="no">01</span>Plan</a>
+      <a href="#examples" class="main-link" data-page="examples"><span class="no">02</span>Examples</a>
+      <a href="#services" class="main-link" data-page="services"><span class="no">03</span>Services</a>
+    </nav>
+    <span class="engine-chip" id="engine-chip" hidden></span>
+  </header>
+
+  <main id="main">
+    <!-- Plan: describe the app, watch the agent work, explore the result -->
+    <section class="page" id="page-plan" data-page="plan">
+      <div class="plan-start" id="plan-start">
+        <div class="hero">
+          <p class="eyebrow">Requirements in, architecture out</p>
+          <h1>Describe your app. <span class="second">Get the architecture.</span></h1>
+          <p class="hero-sub">Type your requirements or upload a document. An agent designs the services, how they connect and how changes ship, on AWS, Azure, Google Cloud or open source.</p>
+        </div>
+
+        <form class="composer marks" id="composer" novalidate>
+          <p class="static-note" id="static-note" hidden>
+            This demo has no server, so it replays recorded runs of the samples below.
+            <a href="https://github.com/namratabhatia21/CloudArchie#run-it-yourself" target="_blank" rel="noopener noreferrer">Run Clarchy yourself</a>
+            to plan your own app.
+          </p>
+          <label class="sr-only" for="requirements">Requirements</label>
+          <textarea id="requirements" rows="5" placeholder="A booking app for 40 clinics in the US. Patients sign in, book appointments and pay a deposit by card. HIPAA applies, about 120,000 patients, 99.95% uptime. The backend is already in Docker."></textarea>
+          <div class="attachment" id="attachment" hidden>
+            <span class="file-badge" id="file-badge"></span>
+            <span class="file-name" id="file-name"></span>
+            <span class="file-size" id="file-size"></span>
+            <button type="button" class="icon-btn" id="file-remove" aria-label="Remove the attached document">×</button>
+          </div>
+          <div class="composer-bar">
+            <label class="btn btn-ghost attach-btn" for="file-input" title="Word, PDF, Excel, Markdown or text, up to 10 MB">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6l7.8-7.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Attach
+            </label>
+            <input type="file" id="file-input" class="sr-only" accept=".docx,.pdf,.xlsx,.md,.markdown,.txt,.csv">
+            <label class="select-chip" id="region-option">
+              <span>Region</span>
+              <select id="region">
+                <option value="">From the text</option>
+              </select>
+            </label>
+            <label class="select-chip" id="mode-option">
+              <span>Planner</span>
+              <select id="mode">
+                <option value="auto">Best available</option>
+                <option value="ai">AI agent</option>
+                <option value="rules">Rule-based</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary" id="plan-button">Design architecture</button>
+          </div>
+          <div class="hf-settings" id="hf-settings" hidden>
+            <label class="field"><span>Hugging Face token</span><input type="password" id="hf-token" autocomplete="off" spellcheck="false" placeholder="hf_…"></label>
+            <label class="field"><span>Model</span><input type="text" id="hf-model" autocomplete="off" spellcheck="false"></label>
+            <details class="field-more">
+              <summary>Use another endpoint</summary>
+              <label class="field"><span>OpenAI-compatible endpoint</span><input type="url" id="hf-endpoint" autocomplete="off" spellcheck="false" placeholder="https://router.huggingface.co/v1"></label>
+              <p class="hint">For a model on your own machine, run Ollama with <code>OLLAMA_ORIGINS=*</code> and use <code>http://localhost:11434/v1</code> with a model such as <code>qwen2.5:7b</code>; leave the token empty.</p>
+            </details>
+            <p class="hint">The token goes only to the model provider, straight from this browser, and is forgotten when you close the tab. <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">Create a free Hugging Face token ↗</a> with permission to make calls to Inference Providers.</p>
+          </div>
+          <p class="composer-error" id="composer-error" role="alert" hidden></p>
+          <div class="drop-hint" aria-hidden="true">Drop your document here</div>
+        </form>
+        <p class="composer-foot" id="composer-foot">Word, PDF, Excel, Markdown or text, up to 10 MB · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to start</p>
+
+        <section class="samples" aria-labelledby="samples-title">
+          <h2 class="label" id="samples-title">Try a sample</h2>
+          <ul class="sample-list" id="sample-list"></ul>
+        </section>
+
+        <ol class="how-line" aria-label="How it works">
+          <li><span>Read</span></li>
+          <li><span>Understand</span></li>
+          <li><span>Design with MCP tools</span></li>
+          <li><span>Add build and deploy</span></li>
+          <li><span>Describe workflows</span></li>
+          <li><span>Map to every cloud</span></li>
+        </ol>
+      </div>
+
+      <div class="run" id="run" hidden>
+        <div class="run-head">
+          <button type="button" class="btn btn-ghost back-btn" id="new-plan">← New plan</button>
+          <span class="run-source" id="run-input-name"></span>
+          <span class="run-mode" id="run-mode"></span>
+        </div>
+        <div class="run-notices" id="run-notices"></div>
+        <details class="pipeline" id="pipeline" open>
+          <summary>
+            <span class="pipeline-status" id="pipeline-status">Planning…</span>
+            <ol class="stepper" id="stepper" aria-hidden="true"></ol>
+            <span class="pipeline-toggle"><span class="show">Show steps</span><span class="hide">Hide steps</span></span>
+          </summary>
+          <ol class="stages" id="stages" aria-live="polite"></ol>
+        </details>
+        <div class="result-placeholder" id="result-placeholder">
+          <div class="skeleton"></div>
+          <p>The design appears here when the pipeline finishes.</p>
+        </div>
+        <div class="workspace" id="plan-workspace" hidden></div>
+      </div>
+    </section>
+
+    <!-- Examples: reviewed reference architectures -->
+    <section class="page" id="page-examples" data-page="examples" hidden>
+      <div class="examples-index" id="examples-index">
+        <div class="page-head">
+          <p class="eyebrow">Sheet 02 · Reference drawings</p>
+          <h1>Examples</h1>
+          <p>Reference architectures to learn from or start with. Open one to see it on every cloud.</p>
+        </div>
+        <div class="chips-row" id="example-filters" role="group" aria-label="Filter examples"></div>
+        <ul class="example-grid" id="example-grid"></ul>
+      </div>
+      <div class="example-detail" id="example-detail" hidden>
+        <a class="back-link" href="#examples">← All examples</a>
+        <div class="workspace" id="example-workspace"></div>
+      </div>
+    </section>
+
+    <!-- Services: equivalent services across clouds -->
+    <section class="page catalog-layout" id="page-services" data-page="services" hidden>
+      <aside class="filters" aria-label="Filters">
+        <div class="filter-group">
+          <h2 class="label">Stage</h2>
+          <div class="filter-list" id="filter-stages"></div>
+        </div>
+        <div class="filter-group">
+          <h2 class="label">Providers</h2>
+          <div class="filter-list" id="filter-providers"></div>
+        </div>
+        <div class="filter-group">
+          <h2 class="label">Match</h2>
+          <div class="segmented full" id="filter-match"></div>
+        </div>
+        <div class="filter-foot">
+          <p id="catalog-review"></p>
+          <details>
+            <summary>What the match labels mean</summary>
+            <dl>
+              <dt>Same everywhere</dt><dd>Same concept with comparable features.</dd>
+              <dt><span class="tag close">Close</span></dt><dd>Does the same job, with differences worth knowing.</dd>
+              <dt><span class="tag partial">Partial</span></dt><dd>Covers only part of the job.</dd>
+            </dl>
+            <p>Open-source entries also count the work of running it yourself.</p>
+          </details>
+        </div>
+      </aside>
+      <div class="catalog-main">
+        <div class="catalog-head">
+          <div>
+            <p class="eyebrow">Sheet 03 · Service schedule</p>
+            <h1>Services <span class="count" id="catalog-count"></span></h1>
+            <p class="catalog-sub">One card per job a system needs, with the service that does it on each cloud.</p>
+          </div>
+          <div class="catalog-controls">
+            <label class="search">
+              <span class="sr-only">Search services</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <input type="search" id="catalog-search" placeholder="Search, e.g. Lambda, queue, KEDA" autocomplete="off">
+            </label>
+            <label class="select-chip">
+              <span>Sort</span>
+              <select id="catalog-sort">
+                <option value="stage">Stage</option>
+                <option value="name">Name</option>
+                <option value="differences">Differences</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <ul class="catalog-results" id="catalog-results"></ul>
+        <p class="empty" id="catalog-empty" hidden>No services match. Try another search or clear a filter.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <dl class="sheet-title">
+      <div class="brand-cell"><dt>Project</dt><dd>Clarchy</dd></div>
+      <div><dt>Sheet</dt><dd id="sheet-name">01 · Plan</dd></div>
+      <div><dt>Drawn by</dt><dd>Namrata Bhatia</dd></div>
+      <div><dt>Revision</dt><dd id="version">–</dd></div>
+      <div class="notes"><dt>Notes</dt><dd>Service names belong to their owners; Clarchy is not affiliated with any cloud provider. Estimates use list prices.</dd></div>
+    </dl>
+  </footer>
+
+  <template id="workspace-template">
+    <div class="ws-head">
+      <div class="ws-title">
+        <h2 class="ws-name"></h2>
+        <p class="ws-summary"></p>
+        <p class="ws-meta"></p>
+      </div>
+      <div class="ws-actions">
+        <details class="menu">
+          <summary class="btn"><span class="menu-label">Download</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="menu-list">
+            <button type="button" data-action="svg">Diagram <span>.svg</span></button>
+            <button type="button" data-action="md">Explanation <span>.md</span></button>
+            <button type="button" data-action="yaml">Spec <span>.yaml</span></button>
+          </div>
+        </details>
+        <span class="dl-status" role="status"></span>
+      </div>
+    </div>
+    <details class="ws-review-notes" hidden>
+      <summary><span class="review-icon" aria-hidden="true">?</span><span class="review-title"></span></summary>
+      <div class="ws-notes"></div>
+    </details>
+    <div class="ws-frame">
+      <div class="ws-bar">
+        <div class="ws-provider-bar" role="tablist" aria-label="Cloud provider"></div>
+        <div class="ws-views" role="tablist" aria-label="View">
+          <button type="button" role="tab" class="ws-view-tab" data-view="diagram" aria-selected="true">Diagram</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="bill" aria-selected="false">Services</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="cost" aria-selected="false">Cost</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="workflows" aria-selected="false">Workflows</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="spec" aria-selected="false">Spec <span class="status-dot"></span></button>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="banner ws-banner" hidden></div>
+        <section class="ws-view" data-view="diagram">
+          <div class="ws-diagram">
+            <div class="sheet marks">
+              <div class="canvas-wrap">
+                <div class="canvas ws-canvas" aria-live="polite"></div>
+                <button type="button" class="btn btn-small zoom-toggle" aria-pressed="false">Actual size</button>
+              </div>
+              <dl class="title-block">
+                <div><dt>Drawing</dt><dd class="tb-name"></dd></div>
+                <div><dt>Cloud</dt><dd class="tb-provider"></dd></div>
+                <div><dt>Region</dt><dd class="tb-region"></dd></div>
+                <div><dt>Services</dt><dd class="tb-count"></dd></div>
+                <div><dt>Scale</dt><dd title="Not to scale">NTS</dd></div>
+                <div><dt>Sheet</dt><dd class="tb-sheet"></dd></div>
+              </dl>
+            </div>
+            <aside class="inspector" hidden aria-label="Component details">
+              <button type="button" class="inspector-close" aria-label="Close details">×</button>
+              <div class="inspector-body"></div>
+            </aside>
+          </div>
+          <p class="hint">Click a service to see why it is there. <span class="ws-review"></span> <span class="icon-note"></span></p>
+        </section>
+        <section class="ws-view" data-view="bill" hidden>
+          <div class="bill"></div>
+        </section>
+        <section class="ws-view" data-view="cost" hidden>
+          <div class="cost"></div>
+        </section>
+        <section class="ws-view" data-view="workflows" hidden>
+          <div class="wf-layout">
+            <div class="wf-side">
+              <div class="chips-row wf-tabs" role="tablist" aria-label="Workflow"></div>
+              <div class="wf-controls">
+                <button type="button" class="btn btn-small btn-accent" data-wf="play">Play</button>
+                <button type="button" class="btn btn-small btn-icon" data-wf="prev" aria-label="Previous step">←</button>
+                <button type="button" class="btn btn-small btn-icon" data-wf="next" aria-label="Next step">→</button>
+                <span class="wf-position"></span>
+              </div>
+              <ol class="wf-steps"></ol>
+            </div>
+            <div class="canvas wf-canvas"></div>
+          </div>
+        </section>
+        <section class="ws-view" data-view="spec" hidden>
+          <div class="editor-bar">
+            <span class="hint editor-hint">Edits re-validate and redraw as you type.</span>
+            <button type="button" class="btn btn-small editor-reset">Reset</button>
+          </div>
+          <p class="hint editor-readonly" hidden>Read-only in this demo. Run <code>clarchy serve</code> to edit specs live.</p>
+          <textarea class="spec-editor" spellcheck="false" aria-label="Spec YAML"></textarea>
+          <ul class="errors"></ul>
+        </section>
+      </div>
+    </div>
+  </template>
+
+  <script src="/static/core.js"></script>
+  <script src="/static/workspace.js"></script>
+  <script src="/static/plan.js"></script>
+  <script src="/static/examples.js"></script>
+  <script src="/static/services.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

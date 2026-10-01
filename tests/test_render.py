@@ -4,12 +4,12 @@ from pathlib import Path
 
 import pytest
 
-from cloudarchie import catalog
-from cloudarchie.explain import explain_markdown
-from cloudarchie.icons import IconLibrary
-from cloudarchie.mapping import map_to_provider
-from cloudarchie.render import render_svg
-from cloudarchie.spec import load_pattern
+from clarchy import catalog
+from clarchy.explain import explain_markdown
+from clarchy.icons import IconLibrary
+from clarchy.mapping import map_to_provider
+from clarchy.render import render_svg
+from clarchy.spec import load_pattern
 
 EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 UPDATE = os.environ.get("UPDATE_GOLDEN") == "1"

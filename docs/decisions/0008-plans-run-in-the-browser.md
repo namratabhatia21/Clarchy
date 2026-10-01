@@ -6,17 +6,17 @@
 
 The public site is static (GitHub Pages). Replaying recorded runs (ADR 0005) showed what
 planning looks like, but visitors could not plan their own requirements without
-installing CloudArchie. Hosting a backend costs money and would have to hold an API key
+installing Clarchy. Hosting a backend costs money and would have to hold an API key
 for the AI steps.
 
 ## Decision
 
-- The site runs CloudArchie's own Python package in the browser with
-  [Pyodide](https://pyodide.org). `cloudarchie export-site` writes
-  `cloudarchie-engine.zip` (the package's Python and data files) next to the page. On the
+- The site runs Clarchy's own Python package in the browser with
+  [Pyodide](https://pyodide.org). `clarchy export-site` writes
+  `clarchy-engine.zip` (the package's Python and data files) next to the page. On the
   first plan the page loads Pyodide and its pydantic and PyYAML packages from the Pyodide
-  CDN, unpacks the bundle and calls `cloudarchie.browser.plan` and
-  `cloudarchie.browser.design`, which produce the same events and payloads as the server.
+  CDN, unpacks the bundle and calls `clarchy.browser.plan` and
+  `clarchy.browser.design`, which produce the same events and payloads as the server.
   `pypdf` is installed on demand for PDF uploads.
 - Planning is rule-based by default. For the AI steps the visitor can choose an
   open-source model on Hugging Face's OpenAI-compatible router with their own token, or

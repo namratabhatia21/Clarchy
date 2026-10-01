@@ -141,4 +141,4 @@ About **$2,000 a month** on demand (Iowa (us-central1) list prices as of 2026-10
 - Prices are for Iowa (us-central1); your region (Belgium (europe-west1)) may differ.
 
 ---
-Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

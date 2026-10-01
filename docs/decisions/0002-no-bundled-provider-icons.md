@@ -14,8 +14,8 @@ using them in a diagram.
 ## Decision
 
 - The repository contains no provider icons.
-- Users download each provider's official package and point CloudArchie at it with
-  `--icons` or `CLOUDARCHIE_ICONS_<PROVIDER>`.
+- Users download each provider's official package and point Clarchy at it with
+  `--icons` or `CLARCHY_ICONS_<PROVIDER>`.
 - Icons are embedded unmodified (as data URIs) into generated diagrams.
 - Without icons, diagrams use neutral lettered badges coloured by tier.
 - Every diagram carries a "not affiliated" footer.
@@ -23,7 +23,7 @@ using them in a diagram.
 ## Consequences
 
 - Zero licensing risk in the repository itself.
-- One extra setup step for official-looking diagrams; `cloudarchie icons` makes it easy
+- One extra setup step for official-looking diagrams; `clarchy icons` makes it easy
   to verify.
 - A hosted web version (phase 5) needs a separate review of each provider's terms
   before serving icons.

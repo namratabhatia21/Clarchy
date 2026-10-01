@@ -4,7 +4,7 @@
 
 ## Context
 
-CloudArchie starts with AWS but must later compare the same design on GCP, Azure and
+Clarchy starts with AWS but must later compare the same design on GCP, Azure and
 open-source stacks. If designs were written in AWS service names, every comparison would
 be three separately generated designs with different sizing, which is not a fair
 comparison.

@@ -4,7 +4,7 @@ import zipfile
 import pytest
 from helpers import make_docx, make_pdf, make_xlsx
 
-from cloudarchie.ingest import (
+from clarchy.ingest import (
     MAX_TEXT_CHARS,
     MAX_UPLOAD_BYTES,
     IngestError,

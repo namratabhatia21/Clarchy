@@ -1,8 +1,8 @@
 import pytest
 
-from cloudarchie import catalog
-from cloudarchie.mapping import FIDELITY_LEVELS, MappingError, map_to_provider, service_choice
-from cloudarchie.spec import load_pattern, load_spec
+from clarchy import catalog
+from clarchy.mapping import FIDELITY_LEVELS, MappingError, map_to_provider, service_choice
+from clarchy.spec import load_pattern, load_spec
 
 PROVIDERS = catalog.providers()
 MAPPABLE = [n for n, c in catalog.capabilities().items() if c["tier"] != "external"]

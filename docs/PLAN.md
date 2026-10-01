@@ -1,6 +1,6 @@
-# CloudArchie: product and build plan
+# Clarchy: product and build plan
 
-Product name: **CloudArchie**. Start with AWS, then add GCP, Azure and open-source options.
+Product name: **Clarchy**. Start with AWS, then add GCP, Azure and open-source options.
 
 > Research was done on 2026-10-01 through web search. Items marked **(verified)** were
 > confirmed from a source page. Items marked **(unverified)** come from search snippets

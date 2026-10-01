@@ -1,4 +1,4 @@
-from cloudarchie.cli import main
+from clarchy.cli import main
 
 
 def test_patterns_lists_builtins(capsys):
@@ -42,9 +42,9 @@ def test_invalid_spec_reports_error(tmp_path, capsys):
 
 
 def test_icons_without_directory(capsys, monkeypatch):
-    monkeypatch.delenv("CLOUDARCHIE_ICONS_AWS", raising=False)
+    monkeypatch.delenv("CLARCHY_ICONS_AWS", raising=False)
     assert main(["icons", "--provider", "aws"]) == 1
-    assert "CLOUDARCHIE_ICONS_AWS" in capsys.readouterr().err
+    assert "CLARCHY_ICONS_AWS" in capsys.readouterr().err
 
 
 def test_plan_from_long_text_writes_spec_diagrams_and_explanations(tmp_path, capsys):

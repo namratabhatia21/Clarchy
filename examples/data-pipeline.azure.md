@@ -98,4 +98,4 @@ About **$1,681 a month** on demand (East US list prices as of 2026-10-01; Azure 
 - Prices are for East US; your region (Frankfurt (germanywestcentral)) may differ.
 
 ---
-Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

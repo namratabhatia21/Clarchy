@@ -104,4 +104,4 @@ About **$83.56 a month** on demand (US East (N. Virginia) list prices as of 2026
 - Excludes tax, support plans, and data transfer not listed.
 
 ---
-Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

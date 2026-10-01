@@ -2,9 +2,9 @@ import re
 
 import pytest
 
-from cloudarchie import catalog
-from cloudarchie.mapping import map_to_provider
-from cloudarchie.planner.rules import analyse, plan_with_rules
+from clarchy import catalog
+from clarchy.mapping import map_to_provider
+from clarchy.planner.rules import analyse, plan_with_rules
 
 SAMPLES = {sample_id: text for sample_id, _title, text in catalog.samples()}
 

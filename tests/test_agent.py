@@ -5,11 +5,11 @@ import asyncio
 import pytest
 from helpers import ScriptedLLM, tool_use
 
-from cloudarchie import catalog
-from cloudarchie.ingest import from_text
-from cloudarchie.planner import PlanError, PlanOptions, run_plan
-from cloudarchie.planner.agent import check_submission
-from cloudarchie.planner.llm import LLMError
+from clarchy import catalog
+from clarchy.ingest import from_text
+from clarchy.planner import PlanError, PlanOptions, run_plan
+from clarchy.planner.agent import check_submission
+from clarchy.planner.llm import LLMError
 
 pytest.importorskip("mcp")
 

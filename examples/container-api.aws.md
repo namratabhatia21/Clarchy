@@ -116,4 +116,4 @@ About **$568 a month** on demand (US East (N. Virginia) list prices as of 2026-1
 - Prices are for US East (N. Virginia); your region (Ireland (eu-west-1)) may differ.
 
 ---
-Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; CloudArchie is not affiliated with any cloud provider.
+Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

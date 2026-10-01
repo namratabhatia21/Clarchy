@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from cloudarchie import catalog
-from cloudarchie.spec import load_pattern, load_spec
+from clarchy import catalog
+from clarchy.spec import load_pattern, load_spec
 
 
 def minimal(**overrides):

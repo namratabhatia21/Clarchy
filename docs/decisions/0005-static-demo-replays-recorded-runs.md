@@ -9,15 +9,15 @@ key or read uploaded documents, but a visitor should still see what planning loo
 
 ## Decision
 
-- `cloudarchie export-site` runs the rule-based pipeline on each sample at build time,
+- `clarchy export-site` runs the rule-based pipeline on each sample at build time,
   records every event, and embeds the events, the resulting specs and their rendered
   designs on every provider.
 - The Plan page replays a recorded run with short pauses between stages and says it is
   a recorded rule-based run. Typing and uploading are disabled, with a link to running
-  CloudArchie yourself.
+  Clarchy yourself.
 - Designs are looked up by the exact spec text, so the same front-end code works in
   server, static and remote modes.
-- `--api-base` builds a front end that calls a hosted CloudArchie API instead of
+- `--api-base` builds a front end that calls a hosted Clarchy API instead of
   embedding data, for when a backend is deployed.
 
 ## Consequences

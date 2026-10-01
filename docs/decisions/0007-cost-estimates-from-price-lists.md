@@ -24,10 +24,10 @@ published price and kept current without hand editing.
   reserved capacity where a service has one. A 3-year rate falls back to the 1-year rate
   when there is none. The break-even month compares only the items a commitment covers.
 - The AWS price book is generated from the **AWS Price List API** bulk offer files
-  (`cloudarchie prices update`), the machine-readable source behind AWS's pricing pages.
+  (`clarchy prices update`), the machine-readable source behind AWS's pricing pages.
   Each price records its SKU, AWS's description and the publication date. The Pages
   workflow regenerates it on every deploy and every Monday; when AWS cannot be reached it
-  publishes the committed book and warns. `cloudarchie prices lookup` searches one
+  publishes the committed book and warns. `clarchy prices lookup` searches one
   service's current prices live, and MCP clients such as Claude have the same search as
   the `aws_price_lookup` tool. The design agent uses `estimate_cost` only.
 - Azure and Google Cloud price books are compiled by hand from their pricing pages, with

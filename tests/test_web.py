@@ -9,8 +9,8 @@ pytest.importorskip("httpx")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from cloudarchie import catalog  # noqa: E402
-from cloudarchie.web import create_app  # noqa: E402
+from clarchy import catalog  # noqa: E402
+from clarchy.web import create_app  # noqa: E402
 
 SCRIPTS = ("core.js", "workspace.js", "plan.js", "examples.js", "services.js", "app.js")
 
@@ -18,7 +18,7 @@ SCRIPTS = ("core.js", "workspace.js", "plan.js", "examples.js", "services.js", "
 @pytest.fixture(scope="module")
 def client():
     with pytest.MonkeyPatch.context() as mp:
-        mp.setenv("CLOUDARCHIE_LLM", "rules")  # never reach a real model from tests
+        mp.setenv("CLARCHY_LLM", "rules")  # never reach a real model from tests
         return TestClient(create_app())
 
 
@@ -38,7 +38,10 @@ def design(client, yaml_text, provider="aws"):
 
 def test_index_and_assets_served(client):
     page = client.get("/")
-    assert page.status_code == 200 and "<title>CloudArchie</title>" in page.text
+    assert (
+        page.status_code == 200
+        and "<title>Clarchy · cloud architecture drawings</title>" in page.text
+    )
     for asset in (*(f"/static/{name}" for name in SCRIPTS), "/static/app.css"):
         assert client.get(asset).status_code == 200
 
@@ -213,7 +216,7 @@ def test_ai_mode_without_a_model_reports_an_error_event(client):
 def test_cors_is_off_by_default_and_configurable(monkeypatch, client):
     origin = {"Origin": "https://example.github.io"}
     assert "access-control-allow-origin" not in client.get("/api/meta", headers=origin).headers
-    monkeypatch.setenv("CLOUDARCHIE_CORS_ORIGINS", "https://example.github.io")
-    monkeypatch.setenv("CLOUDARCHIE_LLM", "rules")
+    monkeypatch.setenv("CLARCHY_CORS_ORIGINS", "https://example.github.io")
+    monkeypatch.setenv("CLARCHY_LLM", "rules")
     allowed = TestClient(create_app()).get("/api/meta", headers=origin)
     assert allowed.headers["access-control-allow-origin"] == "https://example.github.io"

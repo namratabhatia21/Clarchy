@@ -1,4 +1,4 @@
-# CloudArchie
+# Clarchy
 
 **Describe your app. Get the architecture.** Type your requirements or upload a Word, PDF
 or Excel document. An agent turns them into a cloud-neutral spec and designs everything
@@ -8,11 +8,15 @@ or open source**, each in its own look, explains every choice and estimates the 
 1 month, 6 months, 1 year and 3 years**, on demand and with commitments.
 
 **Live site:** https://clarchy.com plans your own requirements
-right in your browser, with no server: the page runs CloudArchie's Python engine with
+right in your browser, with no server: the page runs Clarchy's Python engine with
 [Pyodide](https://pyodide.org). Planning is rule-based by default; for the AI agent, use an
 open-source model on Hugging Face with your own free token, or a model on your machine
 through Ollama. AWS prices are refreshed from the AWS Price List API on every deploy and
 every week.
+
+The site looks like an architect's drawing set: trace paper by day, a blueprint in dark
+mode, with sheet numbers, title blocks and dimension lines
+([ADR 0009](docs/decisions/0009-a-drawing-set-identity.md)).
 
 ![Microservices on Kubernetes, on AWS](examples/kubernetes-microservices.aws.svg)
 
@@ -47,7 +51,7 @@ document ─► read ─► understand ─► design ─────────
 2. **Understand**: Claude extracts users, peak load, data size, availability, region,
    compliance and budget as **structured output** (a JSON schema), plus each need with a
    quote from the document. Quotes that are not in the document are dropped.
-3. **Design**: Claude works as an **agent**. It is an MCP client of CloudArchie's own
+3. **Design**: Claude works as an **agent**. It is an MCP client of Clarchy's own
    **MCP server**, so it can list capabilities, regions and reference patterns, search
    equivalent services and validate drafts. It must finish by calling `submit_design`,
    whose input is checked against the schema and every provider mapping. Errors go back
@@ -82,8 +86,8 @@ periods cost more than a multiple of the first month.
 - **AWS prices come from the [AWS Price List API](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html)**,
   AWS's official machine-readable source behind its pricing pages, with the SKU and AWS's
   description for every price, including Savings Plans and reserved-instance rates.
-  `cloudarchie prices update` refreshes them; the public site refreshes them on every
-  deploy and every Monday. `cloudarchie prices lookup AmazonS3 storage` searches any
+  `clarchy prices update` refreshes them; the public site refreshes them on every
+  deploy and every Monday. `clarchy prices lookup AmazonS3 storage` searches any
   service's current prices live.
 - Azure and Google Cloud prices are compiled by hand from their pricing pages and marked
   **approximate** in the UI until they are read from those providers' price APIs too.
@@ -98,44 +102,44 @@ git clone https://github.com/namratabhatia21/CloudArchie && cd CloudArchie
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[all]"
 
-cloudarchie serve                       # http://127.0.0.1:8000, rule-based planner
+clarchy serve                       # http://127.0.0.1:8000, rule-based planner
 ```
 
 ### Turn on the AI agent
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...     # Claude API
-cloudarchie serve                        # the top bar now shows the AI agent
+clarchy serve                        # the top bar now shows the AI agent
 
 # or Claude on Amazon Bedrock, with your usual AWS credentials
-export CLOUDARCHIE_LLM=bedrock AWS_REGION=us-east-1
+export CLARCHY_LLM=bedrock AWS_REGION=us-east-1
 
 # or an open-source model on Hugging Face (free token: huggingface.co/settings/tokens)
 export HF_TOKEN=hf_...                   # default model: Qwen/Qwen2.5-72B-Instruct
 
 # or an open-source model on your own machine
 ollama pull qwen2.5:7b
-export CLOUDARCHIE_LLM=ollama CLOUDARCHIE_MODEL=qwen2.5:7b
+export CLARCHY_LLM=ollama CLARCHY_MODEL=qwen2.5:7b
 ```
 
 | Variable | Meaning |
 |---|---|
 | `ANTHROPIC_API_KEY` | Enables the AI agent through the Claude API. |
 | `HF_TOKEN` | Enables the AI agent on open-source models through Hugging Face Inference Providers. |
-| `CLOUDARCHIE_LLM` | `anthropic`, `bedrock`, `huggingface`, `ollama`, `openai-compatible` or `rules` (default: `anthropic` with an Anthropic key, `huggingface` with `HF_TOKEN`, otherwise `rules`). |
-| `CLOUDARCHIE_MODEL` | The model id (defaults are in `src/cloudarchie/planner/`). |
-| `CLOUDARCHIE_LLM_BASE_URL`, `CLOUDARCHIE_LLM_API_KEY` | Endpoint and key for `ollama` (optional) or `openai-compatible`. |
+| `CLARCHY_LLM` | `anthropic`, `bedrock`, `huggingface`, `ollama`, `openai-compatible` or `rules` (default: `anthropic` with an Anthropic key, `huggingface` with `HF_TOKEN`, otherwise `rules`). |
+| `CLARCHY_MODEL` | The model id (defaults are in `src/clarchy/planner/`). |
+| `CLARCHY_LLM_BASE_URL`, `CLARCHY_LLM_API_KEY` | Endpoint and key for `ollama` (optional) or `openai-compatible`. |
 | `AWS_REGION` | Region for Amazon Bedrock. |
-| `CLOUDARCHIE_PRICES_DIR` | Folder of refreshed price books (default: `~/.cache/cloudarchie/prices`, written by `cloudarchie prices update`). |
-| `CLOUDARCHIE_CORS_ORIGINS` | Comma-separated origins allowed to call the API, for a front end hosted elsewhere. |
-| `CLOUDARCHIE_ICONS_AWS` (and `_AZURE`, `_GCP`) | Folder of a provider's official icon package; see below. |
+| `CLARCHY_PRICES_DIR` | Folder of refreshed price books (default: `~/.cache/clarchy/prices`, written by `clarchy prices update`). |
+| `CLARCHY_CORS_ORIGINS` | Comma-separated origins allowed to call the API, for a front end hosted elsewhere. |
+| `CLARCHY_ICONS_AWS` (and `_AZURE`, `_GCP`) | Folder of a provider's official icon package; see below. |
 
 ### From the command line
 
 ```bash
-cloudarchie plan requirements.docx              # AI agent if configured, otherwise rules
-cloudarchie plan "A booking app for 40 clinics in the UK..." --rules -o plan/
-cloudarchie plan brief.pdf --region eu-central --mcp "<command that starts an MCP server>"
+clarchy plan requirements.docx              # AI agent if configured, otherwise rules
+clarchy plan "A booking app for 40 clinics in the UK..." --rules -o plan/
+clarchy plan brief.pdf --region eu-central --mcp "<command that starts an MCP server>"
 ```
 
 `plan` writes `spec.yaml` plus a diagram (`.svg`) and an explanation (`.md`) for every
@@ -144,23 +148,23 @@ whose tools the agent may also use.
 
 Other commands: `patterns`, `validate <spec>`, `render <spec> --provider azure`,
 `explain <spec>`, `prices update`, `prices lookup <AWS service> <words>`, `export-site`,
-`mcp`. Run `cloudarchie --help` for details.
+`mcp`. Run `clarchy --help` for details.
 
-## Use CloudArchie from Claude
+## Use Clarchy from Claude
 
-CloudArchie is an MCP server, so Claude Code, Claude Desktop or any MCP client can design
+Clarchy is an MCP server, so Claude Code, Claude Desktop or any MCP client can design
 with it directly:
 
 ```bash
-claude mcp add cloudarchie -- cloudarchie mcp                     # Claude Code
+claude mcp add clarchy -- clarchy mcp                     # Claude Code
 ```
 
 ```json
-{ "mcpServers": { "cloudarchie": { "command": "cloudarchie", "args": ["mcp"] } } }
+{ "mcpServers": { "clarchy": { "command": "clarchy", "args": ["mcp"] } } }
 ```
 
 (Claude Desktop: add that to `claude_desktop_config.json`, using the full path to
-`cloudarchie` inside your virtual environment.)
+`clarchy` inside your virtual environment.)
 
 | Tool | What it does |
 |---|---|
@@ -173,9 +177,9 @@ claude mcp add cloudarchie -- cloudarchie mcp                     # Claude Code
 | `aws_price_lookup` | Search the latest AWS prices of one service, live from the AWS Price List API. |
 | `draft_architecture` | A rule-based first draft from requirements text. |
 
-The server also offers each pattern as a resource (`cloudarchie://patterns/{id}`) and a
+The server also offers each pattern as a resource (`clarchy://patterns/{id}`) and a
 `design_architecture` prompt. For Claude Code there is an Agent Skill in
-[skills/cloudarchie-architect](skills/cloudarchie-architect/SKILL.md) that walks through a
+[skills/clarchy-architect](skills/clarchy-architect/SKILL.md) that walks through a
 complete design; copy the folder to `~/.claude/skills/`.
 
 ## The spec
@@ -205,8 +209,8 @@ edges:
 Optional sections: `assumptions`, `open_questions` and `workflows` (named, ordered steps
 that reference component ids). Capabilities, with their tier, lifecycle stage and
 category, are in
-[`data/capabilities.yaml`](src/cloudarchie/data/capabilities.yaml); each provider's
-services and diagram theme are in [`data/mappings/`](src/cloudarchie/data/mappings/).
+[`data/capabilities.yaml`](src/clarchy/data/capabilities.yaml); each provider's
+services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/).
 
 ## Code map
 
@@ -228,18 +232,18 @@ Design decisions are recorded in [docs/decisions/](docs/decisions/).
 ## Static site
 
 ```bash
-cloudarchie export-site -o site/                          # index.html + cloudarchie-engine.zip
-cloudarchie export-site -o site/ --no-engine              # replay-only page
-cloudarchie export-site -o site/ --api-base https://...   # a front end for a hosted API
+clarchy export-site -o site/                          # index.html + clarchy-engine.zip
+clarchy export-site -o site/ --no-engine              # replay-only page
+clarchy export-site -o site/ --api-base https://...   # a front end for a hosted API
 ```
 
 The page plans in the visitor's browser: it loads Pyodide from its CDN on first use (about
-15 MB, then cached) and runs this package from `cloudarchie-engine.zip` next to the page.
+15 MB, then cached) and runs this package from `clarchy-engine.zip` next to the page.
 Examples, the catalog and recorded runs of the samples are embedded, so they appear
 instantly ([ADR 0008](docs/decisions/0008-plans-run-in-the-browser.md)). The `Pages`
 workflow refreshes the AWS prices and publishes the site on every push to the default
-branch and every Monday. With `--api-base` the page talks to a CloudArchie server instead,
-which needs `CLOUDARCHIE_CORS_ORIGINS` set.
+branch and every Monday. With `--api-base` the page talks to a Clarchy server instead,
+which needs `CLARCHY_CORS_ORIGINS` set.
 
 The live site is served at **clarchy.com** from GitHub Pages: the domain's DNS points at
 GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` from
@@ -249,15 +253,15 @@ domain or under a `github.io` path.
 
 ## Official provider icons
 
-CloudArchie never ships provider icons
+Clarchy never ships provider icons
 ([ADR 0002](docs/decisions/0002-no-bundled-provider-icons.md)); diagrams use lettered
 badges coloured by service category. To use the official AWS set, download the
 [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) package, read its
-terms, and point CloudArchie at it:
+terms, and point Clarchy at it:
 
 ```bash
-export CLOUDARCHIE_ICONS_AWS=~/Downloads/Asset-Package
-cloudarchie icons --provider aws              # shows which icons were found
+export CLARCHY_ICONS_AWS=~/Downloads/Asset-Package
+clarchy icons --provider aws              # shows which icons were found
 ```
 
 ## Development
@@ -269,7 +273,7 @@ make examples    # regenerate examples/, which double as golden test files
 
 > **Review status:** no provider's mappings have been checked by a specialist yet. The UI
 > and the explanations say so. Set `reviewed: true` in
-> `src/cloudarchie/data/mappings/<provider>.yaml` once someone has.
+> `src/clarchy/data/mappings/<provider>.yaml` once someone has.
 
 ## Roadmap
 
@@ -299,5 +303,5 @@ make examples    # regenerate examples/, which double as golden test files
 Not chosen yet; until a licence is added, all rights are reserved.
 
 AWS, Azure, Google Cloud and all service names are trademarks of their owners.
-CloudArchie is an independent project, not affiliated with or endorsed by any cloud
+Clarchy is an independent project, not affiliated with or endorsed by any cloud
 provider.

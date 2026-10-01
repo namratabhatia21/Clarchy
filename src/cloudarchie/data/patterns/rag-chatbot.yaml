@@ -1,0 +1,67 @@
+name: RAG chatbot
+summary: Chat assistant that answers from your own documents using retrieval-augmented generation with a managed LLM.
+requirements:
+  users: 2000
+  peak_rps: 5
+  data_gb: 50
+  data_growth_gb_per_month: 5
+  availability_target: "99.9"
+  region: us-west
+components:
+  - id: users
+    capability: client
+    label: Employees (browser)
+  - id: cdn
+    capability: cdn
+    label: Web front end
+    sizing: { egress_gb_per_month: 20 }
+  - id: lb
+    capability: load-balancer
+    label: HTTPS load balancer
+  - id: app
+    capability: container-service
+    label: Chat API (streaming)
+    rationale: Streaming responses hold connections for many seconds, which suits containers better than short-lived functions.
+    sizing: { vcpu: 1, memory_gb: 2, tasks: 2, hours_per_month: 730 }
+  - id: llm
+    capability: llm-inference
+    label: LLM + embeddings
+    rationale: Managed models avoid hosting GPUs; pay per token.
+    sizing: { input_tokens_per_month: 60000000, output_tokens_per_month: 8000000, embedding_tokens_per_month: 20000000 }
+  - id: ingest
+    capability: serverless-function
+    label: Chunk + embed documents
+    rationale: Runs only when documents change.
+    sizing: { invocations_per_month: 50000, avg_duration_ms: 3000, memory_mb: 1024 }
+  - id: docs
+    capability: object-storage
+    label: Source documents
+    sizing: { storage_gb: 50 }
+  - id: vectors
+    capability: vector-search
+    label: Embeddings index
+    rationale: Similarity search over document chunks; hybrid keyword + vector improves recall.
+    sizing: { vectors: 2000000, dimensions: 1024 }
+  - id: history
+    capability: key-value-db
+    label: Chat history
+    sizing: { storage_gb: 10, reads_per_month: 2000000, writes_per_month: 1000000 }
+  - id: auth
+    capability: identity
+    label: Single sign-on
+    sizing: { monthly_active_users: 2000 }
+  - id: logs
+    capability: monitoring
+    label: Logs, traces, cost alarms
+    sizing: { log_ingest_gb_per_month: 15 }
+edges:
+  - { from: users, to: cdn, label: HTTPS }
+  - { from: cdn, to: lb, label: /api/* }
+  - { from: lb, to: app }
+  - { from: app, to: vectors, label: retrieve }
+  - { from: app, to: llm, label: generate }
+  - { from: app, to: history }
+  - { from: docs, to: ingest, label: on upload }
+  - { from: ingest, to: llm, label: embed }
+  - { from: ingest, to: vectors, label: index }
+  - { from: app, to: auth, label: verify token }

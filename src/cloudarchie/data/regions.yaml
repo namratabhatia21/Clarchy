@@ -1,0 +1,25 @@
+# Neutral region key -> provider region code.
+us-east:
+  label: US East (N. Virginia)
+  aws: us-east-1
+us-west:
+  label: US West (Oregon)
+  aws: us-west-2
+eu-west:
+  label: Europe (Ireland)
+  aws: eu-west-1
+eu-central:
+  label: Europe (Frankfurt)
+  aws: eu-central-1
+uk:
+  label: Europe (London)
+  aws: eu-west-2
+india-mumbai:
+  label: Asia Pacific (Mumbai)
+  aws: ap-south-1
+singapore:
+  label: Asia Pacific (Singapore)
+  aws: ap-southeast-1
+sydney:
+  label: Asia Pacific (Sydney)
+  aws: ap-southeast-2

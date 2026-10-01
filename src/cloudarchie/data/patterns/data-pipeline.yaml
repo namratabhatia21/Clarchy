@@ -1,0 +1,47 @@
+name: Analytics data pipeline
+summary: Streams application events into a data lake, transforms them on a schedule and serves dashboards from a warehouse.
+requirements:
+  users: 200
+  peak_rps: 500
+  data_gb: 2000
+  data_growth_gb_per_month: 300
+  availability_target: "99.5"
+  region: eu-central
+components:
+  - id: apps
+    capability: client
+    label: Product apps
+  - id: collector
+    capability: api-gateway
+    label: Event collector
+    sizing: { requests_per_month: 300000000 }
+  - id: stream
+    capability: stream
+    label: Event stream
+    rationale: Ordered, replayable ingestion that absorbs peaks and lets several consumers read the same data.
+    sizing: { shards: 4, ingest_gb_per_month: 300 }
+  - id: etl
+    capability: batch-etl
+    label: Nightly transforms
+    rationale: Managed Spark jobs to clean and partition data without running a cluster.
+    sizing: { dpu_hours_per_month: 200 }
+  - id: lake
+    capability: object-storage
+    label: Data lake (raw + curated)
+    rationale: Cheapest durable storage for large, growing data; lifecycle rules move old data to colder tiers.
+    sizing: { storage_gb: 2000 }
+  - id: warehouse
+    capability: data-warehouse
+    label: Reporting warehouse
+    rationale: Fast SQL for dashboards; serverless billing suits a few analysts working office hours.
+    sizing: { rpu_hours_per_month: 300, storage_gb: 500 }
+  - id: logs
+    capability: monitoring
+    label: Pipeline monitoring
+    sizing: { log_ingest_gb_per_month: 10 }
+edges:
+  - { from: apps, to: collector, label: events }
+  - { from: collector, to: stream }
+  - { from: stream, to: lake, label: raw }
+  - { from: etl, to: lake, label: read + write }
+  - { from: lake, to: warehouse, label: load }

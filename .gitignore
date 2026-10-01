@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+# Provider icon packages are downloaded by each user, never committed.
+icons/
+Asset-Package*/

@@ -1,0 +1,63 @@
+name: Event-driven processing
+summary: Uploads and events trigger asynchronous processing through a queue and a workflow, so slow jobs never block users.
+requirements:
+  users: 5000
+  peak_rps: 20
+  data_gb: 500
+  data_growth_gb_per_month: 60
+  availability_target: "99.9"
+  region: india-mumbai
+components:
+  - id: producers
+    capability: client
+    label: Apps and partners
+  - id: api
+    capability: api-gateway
+    label: Ingest API
+    sizing: { requests_per_month: 2000000 }
+  - id: ingest
+    capability: serverless-function
+    label: Validate + enqueue
+    rationale: Short validation work per request; returns immediately and lets the queue absorb bursts.
+    sizing: { invocations_per_month: 2000000, avg_duration_ms: 80, memory_mb: 256 }
+  - id: queue
+    capability: message-queue
+    label: Job queue
+    rationale: Buffers bursts, retries failures and sends poison messages to a dead-letter queue.
+    sizing: { requests_per_month: 6000000 }
+  - id: events
+    capability: event-bus
+    label: Domain events
+    rationale: Lets new consumers subscribe later without changing producers.
+    sizing: { events_per_month: 2000000 }
+  - id: workflow
+    capability: workflow
+    label: Processing steps
+    rationale: Multi-step jobs with retries and visible state instead of hand-written orchestration.
+    sizing: { state_transitions_per_month: 10000000 }
+  - id: workers
+    capability: serverless-function
+    label: Workers
+    sizing: { invocations_per_month: 8000000, avg_duration_ms: 900, memory_mb: 1024 }
+  - id: raw
+    capability: object-storage
+    label: Raw + processed files
+    sizing: { storage_gb: 500, put_requests_per_month: 2000000 }
+  - id: state
+    capability: key-value-db
+    label: Job status
+    sizing: { storage_gb: 5, reads_per_month: 10000000, writes_per_month: 6000000 }
+  - id: logs
+    capability: monitoring
+    label: Logs, metrics, alarms
+    sizing: { log_ingest_gb_per_month: 20 }
+edges:
+  - { from: producers, to: api }
+  - { from: api, to: ingest }
+  - { from: ingest, to: raw, label: store }
+  - { from: ingest, to: queue }
+  - { from: queue, to: workflow }
+  - { from: workflow, to: workers }
+  - { from: workers, to: raw }
+  - { from: workers, to: state }
+  - { from: workers, to: events, label: job done }

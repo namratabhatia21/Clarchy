@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="792" viewBox="0 0 1160 792" role="img" aria-label="Event-driven processing on AWS">
+<style>.bg{fill:#ffffff}
+.title{font:600 18px sans-serif;fill:#16191f}
+.subtitle{font:13px sans-serif;fill:#545b64}
+.cloud{fill:#f8f9fa;stroke:#232f3e;stroke-width:1.5}
+.cloud-label{font:600 13px sans-serif;fill:#232f3e}
+.band{fill:none;stroke:#aab7b8;stroke-dasharray:5 4}
+.band-label{font:600 12px sans-serif;fill:#545b64}
+.node-box{fill:#ffffff;stroke-width:1.5}
+.badge{font:700 14px sans-serif;fill:#ffffff}
+.service{font:600 12px sans-serif;fill:#16191f}
+.label{font:11px sans-serif;fill:#545b64}
+.fidelity{font:italic 10px sans-serif;fill:#b0084d}
+.edge{fill:none;stroke:#545b64;stroke-width:1.5}
+.edge-label{font:11px sans-serif;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
+.footer{font:10px sans-serif;fill:#879196}</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
+<rect class="bg" width="1160" height="792"/>
+<text class="title" x="24" y="36">Event-driven processing · AWS</text>
+<text class="subtitle" x="24" y="56">Uploads and events trigger asynchronous processing through a queue and a workflow, so slow jobs never block users.</text>
+<rect class="cloud" x="252" y="104" width="884" height="636" rx="4"/>
+<text class="cloud-label" x="262" y="123">AWS Cloud · Asia Pacific (Mumbai) (ap-south-1)</text>
+<rect class="band" x="262" y="568" width="864" height="162" rx="4"/>
+<text class="band-label" x="272" y="588">Shared services</text>
+<path class="edge" d="M180,340 C227,340 227,340 274,340" marker-end="url(#arrow)"/>
+<path class="edge" d="M430,340 C466,340 466,266 502,266" marker-end="url(#arrow)"/>
+<path class="edge" d="M658,266 C808,266 808,266 958,266" marker-end="url(#arrow)"/>
+<text class="edge-label" x="808" y="260" text-anchor="middle">store</text>
+<path class="edge" d="M658,266 C694,266 694,192 730,192" marker-end="url(#arrow)"/>
+<path class="edge" d="M808,250 C808,340 808,340 808,430" marker-end="url(#arrow)"/>
+<path class="edge" d="M730,488 C694,488 694,414 658,414" marker-end="url(#arrow)"/>
+<path class="edge" d="M658,414 C808,414 808,266 958,266" marker-end="url(#arrow)"/>
+<path class="edge" d="M658,414 C808,414 808,414 958,414" marker-end="url(#arrow)"/>
+<path class="edge" d="M658,414 C694,414 694,340 730,340" marker-end="url(#arrow)"/>
+<text class="edge-label" x="694" y="371" text-anchor="middle">job done</text>
+<g class="node" data-id="producers" data-capability="client">
+<rect class="node-box" x="24" y="282" width="156" height="116" rx="8" style="stroke:#545B64"/>
+<g fill="#545B64"><circle cx="102" cy="306" r="10"/><path d="M84,338 Q84,320 102,320 Q120,320 120,338 Z"/></g>
+<text class="service" x="102" y="356" text-anchor="middle">Apps and partners</text>
+</g>
+<g class="node" data-id="api" data-capability="api-gateway">
+<rect class="node-box" x="274" y="282" width="156" height="116" rx="8" style="stroke:#E7157B"/>
+<rect x="328" y="292" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="352" y="321" text-anchor="middle">APIG</text>
+<text class="service" x="352" y="356" text-anchor="middle">Amazon API Gateway</text>
+<text class="label" x="352" y="391" text-anchor="middle">Ingest API</text>
+</g>
+<g class="node" data-id="ingest" data-capability="serverless-function">
+<rect class="node-box" x="502" y="208" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="556" y="218" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="580" y="247" text-anchor="middle">λ</text>
+<text class="service" x="580" y="282" text-anchor="middle">AWS Lambda</text>
+<text class="label" x="580" y="317" text-anchor="middle">Validate + enqueue</text>
+</g>
+<g class="node" data-id="queue" data-capability="message-queue">
+<rect class="node-box" x="730" y="134" width="156" height="116" rx="8" style="stroke:#B0084D"/>
+<rect x="784" y="144" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="808" y="173" text-anchor="middle">SQS</text>
+<text class="service" x="808" y="208" text-anchor="middle">Amazon SQS</text>
+<text class="label" x="808" y="243" text-anchor="middle">Job queue</text>
+</g>
+<g class="node" data-id="events" data-capability="event-bus">
+<rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#B0084D"/>
+<rect x="784" y="292" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="808" y="321" text-anchor="middle">EB</text>
+<text class="service" x="808" y="356" text-anchor="middle">Amazon EventBridge</text>
+<text class="label" x="808" y="391" text-anchor="middle">Domain events</text>
+</g>
+<g class="node" data-id="workflow" data-capability="workflow">
+<rect class="node-box" x="730" y="430" width="156" height="116" rx="8" style="stroke:#B0084D"/>
+<rect x="784" y="440" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="808" y="469" text-anchor="middle">SFN</text>
+<text class="service" x="808" y="504" text-anchor="middle">AWS Step Functions</text>
+<text class="label" x="808" y="539" text-anchor="middle">Processing steps</text>
+</g>
+<g class="node" data-id="workers" data-capability="serverless-function">
+<rect class="node-box" x="502" y="356" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="556" y="366" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="580" y="395" text-anchor="middle">λ</text>
+<text class="service" x="580" y="430" text-anchor="middle">AWS Lambda</text>
+<text class="label" x="580" y="465" text-anchor="middle">Workers</text>
+</g>
+<g class="node" data-id="raw" data-capability="object-storage">
+<rect class="node-box" x="958" y="208" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="218" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="247" text-anchor="middle">S3</text>
+<text class="service" x="1036" y="282" text-anchor="middle">Amazon S3</text>
+<text class="label" x="1036" y="317" text-anchor="middle">Raw + processed files</text>
+</g>
+<g class="node" data-id="state" data-capability="key-value-db">
+<rect class="node-box" x="958" y="356" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="366" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="395" text-anchor="middle">DDB</text>
+<text class="service" x="1036" y="430" text-anchor="middle">Amazon DynamoDB</text>
+<text class="label" x="1036" y="465" text-anchor="middle">Job status</text>
+</g>
+<g class="node" data-id="logs" data-capability="monitoring">
+<rect class="node-box" x="274" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="328" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="641" text-anchor="middle">CW</text>
+<text class="service" x="352" y="676" text-anchor="middle">Amazon CloudWatch</text>
+<text class="label" x="352" y="711" text-anchor="middle">Logs, metrics, alarms</text>
+</g>
+<text class="footer" x="24" y="780">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with AWS.</text>
+</svg>

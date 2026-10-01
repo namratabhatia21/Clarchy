@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="644" viewBox="0 0 1160 644" role="img" aria-label="Serverless web app on AWS">
+<style>.bg{fill:#ffffff}
+.title{font:600 18px sans-serif;fill:#16191f}
+.subtitle{font:13px sans-serif;fill:#545b64}
+.cloud{fill:#f8f9fa;stroke:#232f3e;stroke-width:1.5}
+.cloud-label{font:600 13px sans-serif;fill:#232f3e}
+.band{fill:none;stroke:#aab7b8;stroke-dasharray:5 4}
+.band-label{font:600 12px sans-serif;fill:#545b64}
+.node-box{fill:#ffffff;stroke-width:1.5}
+.badge{font:700 14px sans-serif;fill:#ffffff}
+.service{font:600 12px sans-serif;fill:#16191f}
+.label{font:11px sans-serif;fill:#545b64}
+.fidelity{font:italic 10px sans-serif;fill:#b0084d}
+.edge{fill:none;stroke:#545b64;stroke-width:1.5}
+.edge-label{font:11px sans-serif;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
+.footer{font:10px sans-serif;fill:#879196}</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
+<rect class="bg" width="1160" height="644"/>
+<text class="title" x="24" y="36">Serverless web app · AWS</text>
+<text class="subtitle" x="24" y="56">Single-page app with a serverless API, for spiky or low traffic where paying per request beats paying for idle servers.</text>
+<rect class="cloud" x="252" y="104" width="884" height="488" rx="4"/>
+<text class="cloud-label" x="262" y="123">AWS Cloud · US East (N. Virginia) (us-east-1)</text>
+<rect class="band" x="262" y="420" width="864" height="162" rx="4"/>
+<text class="band-label" x="272" y="440">Shared services</text>
+<path class="edge" d="M180,266 C227,266 227,340 274,340" marker-end="url(#arrow)"/>
+<path class="edge" d="M180,266 C227,266 227,192 274,192" marker-end="url(#arrow)"/>
+<text class="edge-label" x="227" y="223" text-anchor="middle">HTTPS</text>
+<path class="edge" d="M430,192 C694,192 694,192 958,192" marker-end="url(#arrow)"/>
+<path class="edge" d="M430,192 C466,192 466,266 502,266" marker-end="url(#arrow)"/>
+<text class="edge-label" x="466" y="223" text-anchor="middle">/api/*</text>
+<path class="edge" d="M658,266 C694,266 694,266 730,266" marker-end="url(#arrow)"/>
+<path class="edge" d="M886,266 C922,266 922,340 958,340" marker-end="url(#arrow)"/>
+<g class="node" data-id="users" data-capability="client">
+<rect class="node-box" x="24" y="208" width="156" height="116" rx="8" style="stroke:#545B64"/>
+<g fill="#545B64"><circle cx="102" cy="232" r="10"/><path d="M84,264 Q84,246 102,246 Q120,246 120,264 Z"/></g>
+<text class="service" x="102" y="282" text-anchor="middle">Users (browser)</text>
+</g>
+<g class="node" data-id="dns" data-capability="dns">
+<rect class="node-box" x="274" y="282" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
+<rect x="328" y="292" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="321" text-anchor="middle">R53</text>
+<text class="service" x="352" y="356" text-anchor="middle">Amazon Route 53</text>
+<text class="label" x="352" y="391" text-anchor="middle">Domain</text>
+</g>
+<g class="node" data-id="cdn" data-capability="cdn">
+<rect class="node-box" x="274" y="134" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
+<rect x="328" y="144" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="173" text-anchor="middle">CF</text>
+<text class="service" x="352" y="208" text-anchor="middle">Amazon CloudFront</text>
+<text class="label" x="352" y="243" text-anchor="middle">Static site + API edge</text>
+</g>
+<g class="node" data-id="site" data-capability="object-storage">
+<rect class="node-box" x="958" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="173" text-anchor="middle">S3</text>
+<text class="service" x="1036" y="208" text-anchor="middle">Amazon S3</text>
+<text class="label" x="1036" y="243" text-anchor="middle">Front-end assets</text>
+</g>
+<g class="node" data-id="api" data-capability="api-gateway">
+<rect class="node-box" x="502" y="208" width="156" height="116" rx="8" style="stroke:#E7157B"/>
+<rect x="556" y="218" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="580" y="247" text-anchor="middle">APIG</text>
+<text class="service" x="580" y="282" text-anchor="middle">Amazon API Gateway</text>
+<text class="label" x="580" y="317" text-anchor="middle">REST API</text>
+</g>
+<g class="node" data-id="functions" data-capability="serverless-function">
+<rect class="node-box" x="730" y="208" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="784" y="218" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="808" y="247" text-anchor="middle">λ</text>
+<text class="service" x="808" y="282" text-anchor="middle">AWS Lambda</text>
+<text class="label" x="808" y="317" text-anchor="middle">Business logic</text>
+</g>
+<g class="node" data-id="db" data-capability="key-value-db">
+<rect class="node-box" x="958" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="321" text-anchor="middle">DDB</text>
+<text class="service" x="1036" y="356" text-anchor="middle">Amazon DynamoDB</text>
+<text class="label" x="1036" y="391" text-anchor="middle">App data</text>
+</g>
+<g class="node" data-id="auth" data-capability="identity">
+<rect class="node-box" x="274" y="454" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="328" y="464" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="493" text-anchor="middle">COG</text>
+<text class="service" x="352" y="528" text-anchor="middle">Amazon Cognito</text>
+<text class="label" x="352" y="563" text-anchor="middle">Sign-up and sign-in</text>
+</g>
+<g class="node" data-id="logs" data-capability="monitoring">
+<rect class="node-box" x="462" y="454" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="516" y="464" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="540" y="493" text-anchor="middle">CW</text>
+<text class="service" x="540" y="528" text-anchor="middle">Amazon CloudWatch</text>
+<text class="label" x="540" y="563" text-anchor="middle">Logs, metrics, alarms</text>
+</g>
+<text class="footer" x="24" y="632">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with AWS.</text>
+</svg>

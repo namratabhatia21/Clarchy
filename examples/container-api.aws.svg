@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="792" viewBox="0 0 1160 792" role="img" aria-label="Containerised API on AWS">
+<style>.bg{fill:#ffffff}
+.title{font:600 18px sans-serif;fill:#16191f}
+.subtitle{font:13px sans-serif;fill:#545b64}
+.cloud{fill:#f8f9fa;stroke:#232f3e;stroke-width:1.5}
+.cloud-label{font:600 13px sans-serif;fill:#232f3e}
+.band{fill:none;stroke:#aab7b8;stroke-dasharray:5 4}
+.band-label{font:600 12px sans-serif;fill:#545b64}
+.node-box{fill:#ffffff;stroke-width:1.5}
+.badge{font:700 14px sans-serif;fill:#ffffff}
+.service{font:600 12px sans-serif;fill:#16191f}
+.label{font:11px sans-serif;fill:#545b64}
+.fidelity{font:italic 10px sans-serif;fill:#b0084d}
+.edge{fill:none;stroke:#545b64;stroke-width:1.5}
+.edge-label{font:11px sans-serif;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
+.footer{font:10px sans-serif;fill:#879196}</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
+<rect class="bg" width="1160" height="792"/>
+<text class="title" x="24" y="36">Containerised API · AWS</text>
+<text class="subtitle" x="24" y="56">Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.</text>
+<rect class="cloud" x="252" y="104" width="884" height="636" rx="4"/>
+<text class="cloud-label" x="262" y="123">AWS Cloud · Europe (Ireland) (eu-west-1)</text>
+<rect class="band" x="262" y="568" width="864" height="162" rx="4"/>
+<text class="band-label" x="272" y="588">Shared services</text>
+<path class="edge" d="M180,340 C227,340 227,266 274,266" marker-end="url(#arrow)"/>
+<path class="edge" d="M180,340 C227,340 227,414 274,414" marker-end="url(#arrow)"/>
+<text class="edge-label" x="227" y="371" text-anchor="middle">HTTPS</text>
+<path class="edge" d="M430,414 C466,414 466,340 502,340" marker-end="url(#arrow)"/>
+<path class="edge" d="M658,340 C694,340 694,340 730,340" marker-end="url(#arrow)"/>
+<path class="edge" d="M886,340 C922,340 922,192 958,192" marker-end="url(#arrow)"/>
+<path class="edge" d="M886,340 C922,340 922,340 958,340" marker-end="url(#arrow)"/>
+<path class="edge" d="M886,340 C922,340 922,488 958,488" marker-end="url(#arrow)"/>
+<g class="node" data-id="users" data-capability="client">
+<rect class="node-box" x="24" y="282" width="156" height="116" rx="8" style="stroke:#545B64"/>
+<g fill="#545B64"><circle cx="102" cy="306" r="10"/><path d="M84,338 Q84,320 102,320 Q120,320 120,338 Z"/></g>
+<text class="service" x="102" y="356" text-anchor="middle">Clients</text>
+</g>
+<g class="node" data-id="dns" data-capability="dns">
+<rect class="node-box" x="274" y="208" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
+<rect x="328" y="218" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="247" text-anchor="middle">R53</text>
+<text class="service" x="352" y="282" text-anchor="middle">Amazon Route 53</text>
+<text class="label" x="352" y="317" text-anchor="middle">Domain</text>
+</g>
+<g class="node" data-id="firewall" data-capability="waf">
+<rect class="node-box" x="274" y="356" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
+<rect x="328" y="366" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="395" text-anchor="middle">WAF</text>
+<text class="service" x="352" y="430" text-anchor="middle">AWS WAF</text>
+<text class="label" x="352" y="465" text-anchor="middle">Web firewall</text>
+</g>
+<g class="node" data-id="lb" data-capability="load-balancer">
+<rect class="node-box" x="502" y="282" width="156" height="116" rx="8" style="stroke:#E7157B"/>
+<rect x="556" y="292" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="580" y="321" text-anchor="middle">ALB</text>
+<text class="service" x="580" y="356" text-anchor="middle">Application Load</text>
+<text class="service" x="580" y="370" text-anchor="middle">Balancer</text>
+<text class="label" x="580" y="391" text-anchor="middle">HTTPS load balancer</text>
+</g>
+<g class="node" data-id="app" data-capability="container-service">
+<rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="784" y="292" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="808" y="321" text-anchor="middle">ECS</text>
+<text class="service" x="808" y="356" text-anchor="middle">Amazon ECS on AWS</text>
+<text class="service" x="808" y="370" text-anchor="middle">Fargate</text>
+<text class="label" x="808" y="391" text-anchor="middle">API containers</text>
+</g>
+<g class="node" data-id="cache" data-capability="cache">
+<rect class="node-box" x="958" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="173" text-anchor="middle">EC</text>
+<text class="service" x="1036" y="208" text-anchor="middle">Amazon ElastiCache</text>
+<text class="service" x="1036" y="222" text-anchor="middle">(Redis OSS / Valkey)</text>
+<text class="label" x="1036" y="243" text-anchor="middle">Session + query cache</text>
+</g>
+<g class="node" data-id="db" data-capability="relational-db">
+<rect class="node-box" x="958" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="321" text-anchor="middle">RDS</text>
+<text class="service" x="1036" y="356" text-anchor="middle">Amazon RDS for</text>
+<text class="service" x="1036" y="370" text-anchor="middle">PostgreSQL</text>
+<text class="label" x="1036" y="391" text-anchor="middle">PostgreSQL</text>
+</g>
+<g class="node" data-id="files" data-capability="object-storage">
+<rect class="node-box" x="958" y="430" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
+<rect x="1012" y="440" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="469" text-anchor="middle">S3</text>
+<text class="service" x="1036" y="504" text-anchor="middle">Amazon S3</text>
+<text class="label" x="1036" y="539" text-anchor="middle">Uploads</text>
+</g>
+<g class="node" data-id="secrets" data-capability="secrets">
+<rect class="node-box" x="274" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="328" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="641" text-anchor="middle">SM</text>
+<text class="service" x="352" y="676" text-anchor="middle">AWS Secrets Manager</text>
+<text class="label" x="352" y="711" text-anchor="middle">DB credentials</text>
+</g>
+<g class="node" data-id="logs" data-capability="monitoring">
+<rect class="node-box" x="462" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="516" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="540" y="641" text-anchor="middle">CW</text>
+<text class="service" x="540" y="676" text-anchor="middle">Amazon CloudWatch</text>
+<text class="label" x="540" y="711" text-anchor="middle">Logs, metrics, alarms</text>
+</g>
+<text class="footer" x="24" y="780">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with AWS.</text>
+</svg>

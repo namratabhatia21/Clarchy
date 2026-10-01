@@ -1,0 +1,83 @@
+# Cloud-neutral capabilities. A spec is written in these terms; each provider maps them
+# to concrete services in data/mappings/<provider>.yaml.
+#
+# tier decides the diagram column (left to right):
+#   external -> edge -> entry -> compute -> integration -> data
+# "platform" capabilities (identity, secrets, monitoring) are drawn in a shared-services
+# band under the main flow.
+
+client:
+  tier: external
+  description: People or systems outside the cloud that use the application.
+
+dns:
+  tier: edge
+  description: Domain name resolution and routing.
+cdn:
+  tier: edge
+  description: Content delivery network that caches content close to users.
+waf:
+  tier: edge
+  description: Web application firewall that filters malicious HTTP traffic.
+
+load-balancer:
+  tier: entry
+  description: Distributes HTTP traffic across healthy compute instances.
+api-gateway:
+  tier: entry
+  description: Managed HTTP API front door with auth, throttling and routing.
+
+container-service:
+  tier: compute
+  description: Runs containers without managing servers.
+serverless-function:
+  tier: compute
+  description: Event-driven functions billed per invocation and duration.
+llm-inference:
+  tier: compute
+  description: Managed access to large language models and embedding models.
+
+message-queue:
+  tier: integration
+  description: Point-to-point queue that decouples producers and consumers.
+event-bus:
+  tier: integration
+  description: Routes events between services by rules.
+stream:
+  tier: integration
+  description: Ordered, replayable high-throughput event stream.
+workflow:
+  tier: integration
+  description: Orchestrates multi-step processes with retries and state.
+batch-etl:
+  tier: integration
+  description: Managed extract-transform-load jobs.
+
+object-storage:
+  tier: data
+  description: Durable storage for files and blobs.
+relational-db:
+  tier: data
+  description: Managed SQL database.
+key-value-db:
+  tier: data
+  description: Serverless key-value / document database with single-digit ms reads.
+cache:
+  tier: data
+  description: In-memory cache (Redis-compatible).
+vector-search:
+  tier: data
+  description: Similarity search over embeddings.
+data-warehouse:
+  tier: data
+  description: Analytical SQL over large datasets.
+
+identity:
+  tier: platform
+  description: User sign-up, sign-in and tokens.
+secrets:
+  tier: platform
+  description: Stores and rotates credentials.
+monitoring:
+  tier: platform
+  description: Metrics, logs, dashboards and alarms.

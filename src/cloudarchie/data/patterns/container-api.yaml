@@ -1,0 +1,63 @@
+name: Containerised API
+summary: Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.
+requirements:
+  users: 50000
+  peak_rps: 120
+  data_gb: 200
+  data_growth_gb_per_month: 15
+  availability_target: "99.9"
+  region: eu-west
+components:
+  - id: users
+    capability: client
+    label: Clients
+  - id: dns
+    capability: dns
+    label: Domain
+  - id: firewall
+    capability: waf
+    label: Web firewall
+    rationale: Blocks common attacks (SQL injection, bad bots) before they reach the app.
+    sizing: { rules: 10, requests_per_month: 50000000 }
+  - id: lb
+    capability: load-balancer
+    label: HTTPS load balancer
+    rationale: Spreads traffic across containers in two availability zones and terminates TLS.
+    sizing: { lcu_hours_per_month: 1460 }
+  - id: app
+    capability: container-service
+    label: API containers
+    rationale: Steady traffic and long-lived connections favour always-on containers; reuses the existing Docker image.
+    sizing: { vcpu: 1, memory_gb: 2, tasks: 3, hours_per_month: 730 }
+  - id: cache
+    capability: cache
+    label: Session + query cache
+    rationale: Cuts database reads for hot data and keeps p95 latency low.
+    sizing: { node_memory_gb: 3, nodes: 2 }
+  - id: db
+    capability: relational-db
+    label: PostgreSQL
+    rationale: Relational data with joins and transactions; Multi-AZ meets the 99.9% target.
+    sizing: { vcpu: 2, memory_gb: 8, storage_gb: 200, multi_az: true, backup_gb: 200 }
+  - id: files
+    capability: object-storage
+    label: Uploads
+    sizing: { storage_gb: 300, egress_gb_per_month: 200 }
+  - id: secrets
+    capability: secrets
+    label: DB credentials
+    rationale: Rotated credentials instead of passwords in environment files.
+    sizing: { secrets: 5 }
+  - id: logs
+    capability: monitoring
+    label: Logs, metrics, alarms
+    sizing: { log_ingest_gb_per_month: 30 }
+edges:
+  - { from: users, to: dns }
+  - { from: users, to: firewall, label: HTTPS }
+  - { from: firewall, to: lb }
+  - { from: lb, to: app }
+  - { from: app, to: cache }
+  - { from: app, to: db }
+  - { from: app, to: files }
+  - { from: app, to: secrets }

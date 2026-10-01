@@ -1,0 +1,59 @@
+name: Serverless web app
+summary: Single-page app with a serverless API, for spiky or low traffic where paying per request beats paying for idle servers.
+requirements:
+  users: 20000
+  peak_rps: 30
+  data_gb: 20
+  data_growth_gb_per_month: 2
+  availability_target: "99.9"
+  region: us-east
+components:
+  - id: users
+    capability: client
+    label: Users (browser)
+  - id: dns
+    capability: dns
+    label: Domain
+    rationale: Managed DNS with health checks; also issues the custom domain for the CDN.
+  - id: cdn
+    capability: cdn
+    label: Static site + API edge
+    rationale: Serves the static front end from edge locations and keeps egress cheaper than serving from origin.
+    sizing: { egress_gb_per_month: 100, requests_per_month: 5000000 }
+  - id: site
+    capability: object-storage
+    label: Front-end assets
+    rationale: Static files need no servers; the CDN reads them privately.
+    sizing: { storage_gb: 1 }
+  - id: api
+    capability: api-gateway
+    label: REST API
+    rationale: Auth, throttling and routing without running a server; pay per request.
+    sizing: { requests_per_month: 3000000 }
+  - id: functions
+    capability: serverless-function
+    label: Business logic
+    rationale: Spiky traffic and scale-to-zero make per-invocation billing cheaper than always-on containers.
+    sizing: { invocations_per_month: 3000000, avg_duration_ms: 120, memory_mb: 512 }
+  - id: db
+    capability: key-value-db
+    label: App data
+    rationale: Access patterns are simple key lookups; on-demand capacity scales with traffic and has no idle cost.
+    sizing: { storage_gb: 20, reads_per_month: 6000000, writes_per_month: 1000000 }
+  - id: auth
+    capability: identity
+    label: Sign-up and sign-in
+    rationale: Managed user pool avoids building password storage and token handling yourself.
+    sizing: { monthly_active_users: 20000 }
+  - id: logs
+    capability: monitoring
+    label: Logs, metrics, alarms
+    sizing: { log_ingest_gb_per_month: 5 }
+edges:
+  - { from: users, to: dns }
+  - { from: users, to: cdn, label: HTTPS }
+  - { from: cdn, to: site }
+  - { from: cdn, to: api, label: /api/* }
+  - { from: api, to: functions }
+  - { from: functions, to: db }
+  - { from: api, to: auth, label: verify token }

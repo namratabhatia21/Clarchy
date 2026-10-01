@@ -99,7 +99,7 @@ periods cost more than a multiple of the first month.
 ## Run it yourself
 
 ```bash
-git clone https://github.com/namratabhatia21/CloudArchie && cd CloudArchie
+git clone https://github.com/namratabhatia21/Clarchy && cd Clarchy
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[all]"
 

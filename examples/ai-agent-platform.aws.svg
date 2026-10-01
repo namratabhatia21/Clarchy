@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1388" height="1126" viewBox="0 0 1388 1126" role="img" data-body-top="80" data-body-bottom="1098" aria-label="AI agent platform on AWS">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1604" height="1126" viewBox="0 0 1604 1126" role="img" data-body-top="80" data-body-bottom="1098" aria-label="AI agent platform on AWS">
 <style>.ca-aws{font-family:'Open Sans', 'Helvetica Neue', Arial, sans-serif}
 .ca-aws .ca-bg{fill:#ffffff}
 .ca-aws .ca-title{font-size:18px;font-weight:600;fill:#16191f}
@@ -16,14 +16,14 @@
 .ca-aws .ca-arrow{fill:#545B64}
 .ca-aws .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
 .ca-aws .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1388" height="1126"/>
+<rect class="ca-bg" width="1604" height="1126"/>
 <text class="ca-title" x="24" y="36">AI agent platform · AWS</text>
 <text class="ca-subtitle" x="24" y="56">Tool-using AI agents behind a chat API, with an LLM gateway for model routing and budgets, retrieval over company documents, and tracing of…</text>
-<rect class="ca-cloud" x="252" y="104" width="1112" height="970" rx="4"/>
+<rect class="ca-cloud" x="252" y="104" width="1328" height="970" rx="4"/>
 <text class="ca-cloud-label" x="262" y="123">AWS Cloud · N. Virginia (us-east-1)</text>
-<rect class="ca-band" x="262" y="134" width="1092" height="164" rx="4"/>
+<rect class="ca-band" x="262" y="134" width="1308" height="164" rx="4"/>
 <text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="902" width="1092" height="162" rx="4"/>
+<rect class="ca-band" x="262" y="902" width="1308" height="162" rx="4"/>
 <text class="ca-band-label" x="272" y="922">Shared services</text>
 <path class="ca-edge" data-from="users" data-to="cdn" d="M180,600 C227,600 227,600 274,600"/>
 <polygon class="ca-arrow" data-from="users" data-to="cdn" points="274,600 265,595.5 265,604.5"/>
@@ -36,12 +36,12 @@
 <path class="ca-edge" data-from="app" data-to="agent" d="M808,584 C808,600 808,600 808,616"/>
 <polygon class="ca-arrow" data-from="app" data-to="agent" points="808,616 803.5,607 812.5,607"/>
 <text class="ca-edge-label" data-from="app" data-to="agent" x="808" y="594" text-anchor="middle">run</text>
-<path class="ca-edge" data-from="agent" data-to="gateway" d="M886,674 C922,674 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="agent" data-to="gateway" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="agent" data-to="gateway" x="922" y="594" text-anchor="middle">prompt</text>
-<path class="ca-edge" data-from="gateway" data-to="llm" d="M1036,584 C1036,600 1036,600 1036,616"/>
-<polygon class="ca-arrow" data-from="gateway" data-to="llm" points="1036,616 1031.5,607 1040.5,607"/>
-<text class="ca-edge-label" data-from="gateway" data-to="llm" x="1036" y="594" text-anchor="middle">route</text>
+<path class="ca-edge" data-from="agent" data-to="gateway" d="M886,674 C922,674 922,452 958,452"/>
+<polygon class="ca-arrow" data-from="agent" data-to="gateway" points="958,452 949,447.5 949,456.5"/>
+<text class="ca-edge-label" data-from="agent" data-to="gateway" x="922" y="557" text-anchor="middle">prompt</text>
+<path class="ca-edge" data-from="gateway" data-to="llm" d="M1036,510 C1036,526 1036,526 1036,542"/>
+<polygon class="ca-arrow" data-from="gateway" data-to="llm" points="1036,542 1031.5,533 1040.5,533"/>
+<text class="ca-edge-label" data-from="gateway" data-to="llm" x="1036" y="520" text-anchor="middle">route</text>
 <path class="ca-edge" data-from="agent" data-to="vectors" d="M886,674 C1036,674 1036,600 1186,600"/>
 <polygon class="ca-arrow" data-from="agent" data-to="vectors" points="1186,600 1177,595.5 1177,604.5"/>
 <text class="ca-edge-label" data-from="agent" data-to="vectors" x="1036" y="631" text-anchor="middle">retrieve</text>
@@ -54,12 +54,15 @@
 <path class="ca-edge" data-from="docs" data-to="ingest" d="M1186,452 C1036,452 1036,378 886,378"/>
 <polygon class="ca-arrow" data-from="docs" data-to="ingest" points="886,378 895,373.5 895,382.5"/>
 <text class="ca-edge-label" data-from="docs" data-to="ingest" x="1036" y="409" text-anchor="middle">on upload</text>
-<path class="ca-edge" data-from="ingest" data-to="gateway" d="M886,378 C922,378 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="gateway" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="gateway" x="922" y="446" text-anchor="middle">embed</text>
+<path class="ca-edge" data-from="ingest" data-to="gateway" d="M886,378 C922,378 922,452 958,452"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="gateway" points="958,452 949,447.5 949,456.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="gateway" x="922" y="409" text-anchor="middle">embed</text>
 <path class="ca-edge" data-from="ingest" data-to="vectors" d="M886,378 C1036,378 1036,600 1186,600"/>
 <polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1186,600 1177,595.5 1177,604.5"/>
 <text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1036" y="483" text-anchor="middle">index</text>
+<path class="ca-edge" data-from="agent" data-to="guardrails" d="M886,674 C922,674 922,748 958,748"/>
+<polygon class="ca-arrow" data-from="agent" data-to="guardrails" points="958,748 949,743.5 949,752.5"/>
+<text class="ca-edge-label" data-from="agent" data-to="guardrails" x="922" y="705" text-anchor="middle">screen</text>
 <path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
 <polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
 <text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
@@ -111,18 +114,18 @@
 <text class="ca-label" x="808" y="873" text-anchor="middle">Tool functions</text>
 </g>
 <g class="node" data-id="gateway" data-capability="llm-gateway" data-stage="integrate">
-<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="1012" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">GW</text>
-<text class="ca-service" x="1036" y="542" text-anchor="middle">LiteLLM on Amazon ECS</text>
-<text class="ca-service" x="1036" y="556" text-anchor="middle">(AWS gateway guidance)</text>
-<text class="ca-label" x="1036" y="577" text-anchor="middle">LLM gateway (LiteLLM)</text>
-<text class="ca-fidelity" x="1108" y="482" text-anchor="end">close</text>
+<rect class="ca-node-box" x="958" y="394" width="156" height="116" rx="8" style="stroke:#01A88D"/>
+<rect x="1012" y="404" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="433" text-anchor="middle">GW</text>
+<text class="ca-service" x="1036" y="468" text-anchor="middle">LiteLLM on Amazon ECS</text>
+<text class="ca-service" x="1036" y="482" text-anchor="middle">(AWS gateway guidance)</text>
+<text class="ca-label" x="1036" y="503" text-anchor="middle">LLM gateway (LiteLLM)</text>
+<text class="ca-fidelity" x="1108" y="408" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="llm" data-capability="llm-inference" data-stage="run">
-<rect class="ca-node-box" x="958" y="616" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="1012" y="626" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="655" text-anchor="middle">BR</text>
-<text class="ca-service" x="1036" y="690" text-anchor="middle">Amazon Bedrock</text>
-<text class="ca-label" x="1036" y="725" text-anchor="middle">Models + embeddings</text>
+<rect class="ca-node-box" x="958" y="542" width="156" height="116" rx="8" style="stroke:#01A88D"/>
+<rect x="1012" y="552" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="581" text-anchor="middle">BR</text>
+<text class="ca-service" x="1036" y="616" text-anchor="middle">Amazon Bedrock</text>
+<text class="ca-label" x="1036" y="651" text-anchor="middle">Models + embeddings</text>
 </g>
 <g class="node" data-id="docs" data-capability="object-storage" data-stage="store">
 <rect class="ca-node-box" x="1186" y="394" width="156" height="116" rx="8" style="stroke:#7AA116"/>
@@ -171,11 +174,37 @@
 <text class="ca-label" x="728" y="1045" text-anchor="middle">LLM tracing (Langfuse)</text>
 <text class="ca-fidelity" x="800" y="950" text-anchor="end">close</text>
 </g>
+<g class="node" data-id="guardrails" data-capability="ai-guardrails" data-stage="integrate">
+<rect class="ca-node-box" x="958" y="690" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="1012" y="700" width="48" height="48" rx="6" fill="#DD344C"/><text class="ca-badge" x="1036" y="729" text-anchor="middle">GR</text>
+<text class="ca-service" x="1036" y="764" text-anchor="middle">Amazon Bedrock</text>
+<text class="ca-service" x="1036" y="778" text-anchor="middle">Guardrails</text>
+<text class="ca-label" x="1036" y="799" text-anchor="middle">AI guardrails</text>
+</g>
+<g class="node" data-id="access" data-capability="access-governance" data-stage="operate">
+<rect class="ca-node-box" x="838" y="936" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="892" y="946" width="48" height="48" rx="6" fill="#DD344C"/><text class="ca-badge" x="916" y="975" text-anchor="middle">IAM</text>
+<text class="ca-service" x="916" y="1010" text-anchor="middle">AWS IAM Identity</text>
+<text class="ca-service" x="916" y="1024" text-anchor="middle">Center + Organizations</text>
+<text class="ca-label" x="916" y="1045" text-anchor="middle">Cloud access governance</text>
+</g>
+<g class="node" data-id="audit" data-capability="audit-logging" data-stage="operate">
+<rect class="ca-node-box" x="1026" y="936" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="1080" y="946" width="48" height="48" rx="6" fill="#DD344C"/><text class="ca-badge" x="1104" y="975" text-anchor="middle">CT</text>
+<text class="ca-service" x="1104" y="1010" text-anchor="middle">AWS CloudTrail</text>
+<text class="ca-label" x="1104" y="1045" text-anchor="middle">Audit trail</text>
+</g>
+<g class="node" data-id="keys" data-capability="key-management" data-stage="operate">
+<rect class="ca-node-box" x="1214" y="936" width="156" height="116" rx="8" style="stroke:#DD344C"/>
+<rect x="1268" y="946" width="48" height="48" rx="6" fill="#DD344C"/><text class="ca-badge" x="1292" y="975" text-anchor="middle">KMS</text>
+<text class="ca-service" x="1292" y="1010" text-anchor="middle">AWS KMS</text>
+<text class="ca-label" x="1292" y="1045" text-anchor="middle">Encryption keys</text>
+</g>
 <g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
-<rect class="ca-node-box" x="838" y="936" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="892" y="946" width="48" height="48" rx="6" fill="#E7157B"/><text class="ca-badge" x="916" y="975" text-anchor="middle">CW</text>
-<text class="ca-service" x="916" y="1010" text-anchor="middle">Amazon CloudWatch</text>
-<text class="ca-label" x="916" y="1045" text-anchor="middle">Logs, metrics, alarms</text>
+<rect class="ca-node-box" x="1402" y="936" width="156" height="116" rx="8" style="stroke:#E7157B"/>
+<rect x="1456" y="946" width="48" height="48" rx="6" fill="#E7157B"/><text class="ca-badge" x="1480" y="975" text-anchor="middle">CW</text>
+<text class="ca-service" x="1480" y="1010" text-anchor="middle">Amazon CloudWatch</text>
+<text class="ca-label" x="1480" y="1045" text-anchor="middle">Logs, metrics, alarms</text>
 </g>
 <g class="node" data-id="repo" data-capability="source-control" data-stage="code">
 <rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#3B48CC"/>

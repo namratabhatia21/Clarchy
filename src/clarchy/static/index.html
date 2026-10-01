@@ -30,6 +30,8 @@
       <a href="#plan" class="main-link" data-page="plan"><span class="no">01</span>Plan</a>
       <a href="#examples" class="main-link" data-page="examples"><span class="no">02</span>Examples</a>
       <a href="#services" class="main-link" data-page="services"><span class="no">03</span>Services</a>
+      <a href="#blog" class="main-link" data-page="blog"><span class="no">04</span>Blog</a>
+      <a href="#about" class="main-link" data-page="about"><span class="no">05</span>About</a>
     </nav>
     <span class="engine-chip" id="engine-chip" hidden></span>
   </header>
@@ -369,13 +371,53 @@
         <p class="empty" id="catalog-empty" hidden>No services match. Try another search or clear a filter.</p>
       </div>
     </section>
+
+    <!-- Blog: why Clarchy exists, worked examples, what to plan for -->
+    <section class="page" id="page-blog" data-page="blog" hidden>
+      <div class="blog-index" id="blog-index">
+        <div class="page-head">
+          <p class="eyebrow">Sheet 04 · Notes</p>
+          <h1>Blog</h1>
+          <p>Why Clarchy exists, worked examples, and what architects should plan for.</p>
+        </div>
+        <ul class="post-list" id="post-list"></ul>
+      </div>
+      <article class="post" id="post" hidden></article>
+    </section>
+
+    <!-- About -->
+    <section class="page" id="page-about" data-page="about" hidden>
+      <div class="about">
+        <div class="page-head">
+          <p class="eyebrow">Sheet 05 · About</p>
+          <h1>About Clarchy</h1>
+          <p>Clarchy turns a requirements brief into a cloud architecture you can question, price and compare across AWS, Azure, Google Cloud and open source.</p>
+        </div>
+        <div class="about-grid">
+          <article class="founder-card marks">
+            <p class="label">Founder</p>
+            <h2 class="founder-name">Namrata Bhatia</h2>
+            <p class="founder-role">Founder and creator of Clarchy</p>
+            <p>Namrata is an AWS educator. She built Clarchy to make architecture decisions explainable: every service tied to the requirement that asked for it, priced from real list prices, and drawn the same way on every cloud.</p>
+            <p class="founder-contact"><span class="label">Contact</span><a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a></p>
+          </article>
+          <dl class="principles">
+            <div><dt>Explainable</dt><dd>Every component quotes the sentence of your brief that asked for it, and everything Clarchy assumed is listed for you to confirm.</dd></div>
+            <div><dt>Priced from the source</dt><dd>AWS prices come from the AWS Price List API and are refreshed every week. Azure, Google Cloud and third-party prices are marked approximate.</dd></div>
+            <div><dt>Cloud-neutral</dt><dd>One design, drawn on AWS, Azure, Google Cloud and open source, each in its own look.</dd></div>
+            <div><dt>Ready for review</dt><dd>Security, access, audit, retention and AI regulations are part of the drawing, not an afterthought.</dd></div>
+            <div><dt>Private by default</dt><dd>Plans run in your browser. Your documents leave it only if you choose a hosted model.</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
     <dl class="sheet-title">
       <div class="brand-cell"><dt>Project</dt><dd>Clarchy</dd></div>
       <div><dt>Sheet</dt><dd id="sheet-name">01 · Plan</dd></div>
-      <div><dt>Drawn by</dt><dd>Namrata Bhatia</dd></div>
+      <div><dt>Founder</dt><dd><a href="#about">Namrata Bhatia</a></dd></div>
       <div><dt>Revision</dt><dd id="version">–</dd></div>
       <div class="notes"><dt>Notes</dt><dd>Service names belong to their owners; Clarchy is not affiliated with any cloud provider. Estimates use list prices.</dd></div>
     </dl>
@@ -415,6 +457,7 @@
           <button type="button" role="tab" class="ws-view-tab" data-view="diagram" aria-selected="true">Diagram</button>
           <button type="button" role="tab" class="ws-view-tab" data-view="bill" aria-selected="false">Services</button>
           <button type="button" role="tab" class="ws-view-tab" data-view="cost" aria-selected="false">Cost</button>
+          <button type="button" role="tab" class="ws-view-tab" data-view="policies" aria-selected="false">Policies</button>
           <button type="button" role="tab" class="ws-view-tab" data-view="workflows" aria-selected="false">Workflows</button>
           <button type="button" role="tab" class="ws-view-tab" data-view="spec" aria-selected="false">Spec <span class="status-dot"></span></button>
         </div>
@@ -450,6 +493,9 @@
         <section class="ws-view" data-view="cost" hidden>
           <div class="cost"></div>
         </section>
+        <section class="ws-view" data-view="policies" hidden>
+          <div class="policies"></div>
+        </section>
         <section class="ws-view" data-view="workflows" hidden>
           <div class="wf-layout">
             <div class="wf-side">
@@ -484,6 +530,7 @@
   <script src="/static/plan.js"></script>
   <script src="/static/examples.js"></script>
   <script src="/static/services.js"></script>
+  <script src="/static/blog.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

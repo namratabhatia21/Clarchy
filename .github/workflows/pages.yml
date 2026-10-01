@@ -1,7 +1,12 @@
 name: Pages
 
-# Publishes the site (clarchy export-site) to GitHub Pages, with AWS prices refreshed
-# from the AWS Price List API on every deploy and every Monday.
+# Publishes the site (clarchy export-site) to GitHub Pages and, when the repository has
+# Cloudflare secrets, to Cloudflare Pages. AWS prices are refreshed from the AWS Price List
+# API on every deploy and every Monday.
+#
+# Cloudflare: add the secrets CLOUDFLARE_API_TOKEN (Pages edit permission) and
+# CLOUDFLARE_ACCOUNT_ID, and create a Pages project called "clarchy" (Direct Upload).
+# To stop publishing to GitHub Pages, set the repository variable GITHUB_PAGES to "off".
 # Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
 # set in Settings → Pages too; workflow deployments ignore a CNAME file.
 
@@ -25,6 +30,8 @@ jobs:
     # Deploy only from the default branch, whichever it is.
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
+    env:
+      HAS_CLOUDFLARE: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,13 +44,23 @@ jobs:
             || echo "::warning::Could not refresh AWS prices; publishing the committed price book"
       - run: pip install .
       - run: clarchy export-site -o site
+      - name: Deploy to Cloudflare Pages
+        if: env.HAS_CLOUDFLARE == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=clarchy --branch=main
       - uses: actions/configure-pages@v5
+        if: vars.GITHUB_PAGES != 'off'
       - uses: actions/upload-pages-artifact@v3
+        if: vars.GITHUB_PAGES != 'off'
         with:
           path: site
 
   deploy:
     needs: build
+    if: vars.GITHUB_PAGES != 'off'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

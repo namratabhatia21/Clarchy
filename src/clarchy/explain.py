@@ -48,6 +48,8 @@ def explain_markdown(arch: ProviderArchitecture) -> str:
         ("Availability target", f"{req.availability_target}%"),
         ("Compliance", ", ".join(req.compliance) or "none stated"),
         ("Monthly budget (USD)", req.monthly_budget_usd),
+        ("Developers", req.developers),
+        ("Records kept (years)", req.retention_years),
     ]
     lines += [f"- **{k}:** {_num(v)}" for k, v in facts if v is not None]
     if spec.assumptions:

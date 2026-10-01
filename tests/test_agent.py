@@ -3,7 +3,7 @@
 import asyncio
 
 import pytest
-from helpers import ScriptedLLM, tool_use
+from helpers import POLICY_DOC, ScriptedLLM, tool_use
 
 from clarchy import catalog
 from clarchy.ingest import from_text
@@ -13,7 +13,7 @@ from clarchy.planner.llm import LLMError
 
 pytest.importorskip("mcp")
 
-DOC = next(text for sid, _, text in catalog.samples() if sid == "policy-assistant")
+DOC = POLICY_DOC
 
 
 def plan(llm, mode="auto", region=None):

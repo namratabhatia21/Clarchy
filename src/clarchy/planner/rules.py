@@ -26,7 +26,7 @@ NUM = r"(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)\s*(k|m|million|thousand|lakh|crore)?\
 MULTIPLIER = {"k": 1e3, "thousand": 1e3, "m": 1e6, "million": 1e6, "lakh": 1e5, "crore": 1e7}
 
 USERS = re.compile(
-    NUM + r"\s*\+?\s*(?:monthly |daily |weekly )?(?:active |concurrent |registered |paying )?"
+    NUM + r"\s*\+?\s*(?:[a-z][a-z-]*\s+){0,2}?"
     r"(users|customers|visitors|shoppers|members|students|employees|people|subscribers|"
     r"players|patients|drivers|riders|learners)",
     FLAGS,
@@ -47,6 +47,13 @@ AVAILABILITY = re.compile(r"(99(?:\.\d{1,3})?)\s*%", FLAGS)
 HIGH_AVAILABILITY = re.compile(
     r"\b(high(ly)? availab\w*|mission[- ]critical|no downtime|24/7|always on)\b", FLAGS
 )
+DEVELOPERS = re.compile(
+    NUM + r"\s*(?:software |full[- ]stack |backend |frontend )?"
+    r"(developers|engineers|devs|programmers)\b",
+    FLAGS,
+)
+RETENTION_WORDS = re.compile(r"\b(keep|kept|retain\w*|retention|archiv\w*|preserv\w*)\b", FLAGS)
+PERIOD = re.compile(r"(\d+(?:\.\d+)?)[- ]*(years?|yrs?|months?)\b", FLAGS)
 BUDGET = re.compile(r"\$\s?" + NUM + r"\s*(?:usd)?\s*(?:per|a|/)\s*(month|year)", FLAGS)
 
 COMPLIANCE = {
@@ -56,6 +63,7 @@ COMPLIANCE = {
     "SOC 2": r"\bsoc ?2\b",
     "ISO 27001": r"\biso ?27001\b",
     "FedRAMP": r"\bfedramp\b",
+    "SOX": r"\b(sox|sarbanes[- ]oxley)\b",
 }
 
 # Checked in order; the first match wins.
@@ -84,10 +92,11 @@ NEEDS = {
     r"reservations?|relational|sql|postgres\w*|mysql|billing|accounting|catalogu?e?s?|"
     r"appointments?|enrol\w*|checkout|deposits?)\b",
     "keyvalue": r"\b(sessions?|shopping carts?|carts?|leaderboards?|key[- ]value|nosql|"
+    r"chat history|conversation history|"
     r"device state|user preferences|high write)\b",
     "cache": r"\b(cach\w+|low latency|sub[- ]second|fast response|hot data|leaderboards?)\b",
     "llm": r"\b(chat ?bots?|ai assistant|assistants?|llms?|gpt|claude|generative|gen ?ai|"
-    r"summari[sz]\w*|natural language|question answering|rag|copilot)\b",
+    r"summari[sz]\w*|natural language|language models?|question answering|rag)\b",
     "agents": r"\b(ai agents?|agentic|langgraph|lang ?chain|crewai|autogen|multi[- ]agent|"
     r"tool[- ]calling|agents? that (?:call|use|run) tools|agent workflows?)\b",
     "gateway": r"\b(litellm|llm gateway|ai gateway|model gateway|model router|model routing|"
@@ -96,6 +105,20 @@ NEEDS = {
     "llmops": r"\b(langfuse|langsmith|llm tracing|llm observability|tracing|traces|"
     r"prompt management|prompt versions?|evals?|evaluations?|token (?:usage|costs?)|"
     r"hallucinat\w*)\b",
+    "guardrails": r"\b(guardrails?|content safety|content filter\w*|prompt injection|"
+    r"jailbreak\w*|toxic\w*|harmful content|pii|personal data|redact\w*)\b",
+    "access": r"\b(iam|access control|least privilege|role[- ]based|rbac|access reviews?|"
+    r"cloud architects?|platform team|grants? access|access requests?|privileged access|"
+    r"permissions?)\b",
+    "audit": r"\b(audit\w*|traceab\w*|who did what|sox|change logs?)\b",
+    "encryption": r"\b(encrypt\w*|kms|customer[- ]managed keys|own keys|byok|hsm)\b",
+    "backup": r"\b(backups?|disaster recovery|point[- ]in[- ]time|restores?|rpo|rto)\b",
+    "archive": r"\b(archiv\w*|glacier|cold storage|retention|retain\w*|"
+    r"records? (?:management|keeping))\b",
+    "devenv": r"\b(codespaces|dev ?containers?|cloud (?:ide|workstations?)|"
+    r"dev(?:elopment)? environments?)\b",
+    "coding_ai": r"\b(copilot|claude code|cursor|amazon q developer|gemini code assist|"
+    r"ai coding|coding assistants?|ai pair[- ]programm\w*)\b",
     "vector": r"\b(rag|retrieval|semantic search|embeddings?|vectors?|knowledge base|"
     r"(?:our|company|internal|policy) (?:docs|documents|documentation|wiki))\b",
     "jobs": r"\b(background|asynchronous|async|queues?|jobs?|thumbnails?|transcod\w*|"
@@ -103,8 +126,8 @@ NEEDS = {
     r"(?:send|sends|sending) (?:an? )?e-?mails?)\b",
     "events": r"\b(event[- ]driven|webhooks?|pub/?sub|publish\w*|subscrib\w*|"
     r"integrations? with|notify other)\b",
-    "workflow": r"\b(workflows?|multi[- ]step|approvals?|orchestrat\w+|state machines?|"
-    r"sagas?)\b",
+    "workflow": r"\b(workflows?(?! management)|multi[- ]step|approval (?:workflows?|steps?|"
+    r"chains?|process\w*)|second approver|sign[- ]offs?|orchestrat\w+|state machines?|sagas?)\b",
     "stream": r"\b(stream(?:s|ing)? (?:of )?(?:events|data|telemetry)|real[- ]time "
     r"(?:analytics|events|data|processing|tracking)|telemetry|clickstream|iot|sensors?|"
     r"kafka|kinesis)\b",
@@ -113,7 +136,7 @@ NEEDS = {
     "etl": r"\b(etl|data pipelines?|transform(?:s|ations)? (?:the )?data|nightly|"
     r"data cleaning|aggregat\w+)\b",
     "containers": r"\b(containers?|containeri[sz]\w*|docker|microservices?|long[- ]running|"
-    r"websockets?|streaming responses|existing (?:app|application|service))\b",
+    r"websockets?|streaming responses|streams? back|existing (?:app|application|service))\b",
     "kubernetes": r"\b(kubernetes|k8s|helm|keda|gitops|argo ?cd|eks|aks|gke)\b",
     "serverless": r"\b(serverless|lambda|functions?|spiky|bursty|pay[- ]per[- ]use|"
     r"scale to zero|low traffic|occasional)\b",
@@ -290,6 +313,21 @@ def _read_requirements(r: Reading, plan: RulesPlan) -> Requirements:
         )
         plan.found.append(f"${req['monthly_budget_usd']:,} a month budget")
 
+    devs = DEVELOPERS.search(text)
+    if devs:
+        req["developers"] = int(_number(devs.group(1), devs.group(2)))
+        plan.found.append(f"{req['developers']:,} developers")
+    # The longest period mentioned decides how long records are kept.
+    periods = [
+        float(m.group(1)) if m.group(2).lower().startswith("y") else float(m.group(1)) / 12
+        for sentence in SENTENCE.findall(text)
+        if RETENTION_WORDS.search(sentence)
+        for m in PERIOD.finditer(sentence)
+    ]
+    if periods:
+        req["retention_years"] = round(max(periods), 2)
+        plan.found.append(f"records kept {req['retention_years']:g} years")
+
     compliance = [name for name, pattern in COMPLIANCE.items() if re.search(pattern, text, FLAGS)]
     if compliance:
         req["compliance"] = compliance
@@ -386,6 +424,7 @@ PHRASES: dict[str, list[tuple[str, str | None]]] = {
         (r"key[- ]value|nosql|high write", None),
         (r"(?:shopping )?carts?", "shopping carts"),
         (r"(session|leaderboard)s?", r"\1s"),
+        (r"(?:chat|conversation) history", "chat history"),
     ],
     "llm": [
         (r"llms?|gpt|claude|generative|gen ?ai", None),
@@ -859,6 +898,98 @@ def _assemble(plan: RulesPlan) -> None:
             evidence=need.get("secrets_hint", [])[:1],
         )
         link("app", "secrets")
+    # Security and records: what regulated, AI or company-wide systems need around them.
+    regulated = bool(req.compliance)
+    ai = "llm" in need
+    if "llm" in need and ("guardrails" in need or "agents" in need or regulated):
+        add(
+            id="guardrails",
+            capability="ai-guardrails",
+            label="AI guardrails",
+            rationale="Screens prompts and answers for prompt injection, harmful content and "
+            "personal data before they reach the model or the user.",
+            evidence=need.get("guardrails", [])[:1],
+        )
+        link("agent" if "agents" in need else "app", "guardrails", "screen")
+        if "guardrails" not in need:
+            plan.assumptions.append(
+                "Added AI guardrails: agents and regulated data need prompts and answers "
+                "screened for injection and personal data."
+            )
+    if "access" in need or regulated or ai:
+        add(
+            id="access",
+            capability="access-governance",
+            label="Cloud access governance",
+            rationale="Staff sign in to the cloud with the company directory; the cloud "
+            "architects approve roles with least privilege, and access is reviewed regularly.",
+            evidence=need.get("access", [])[:1],
+        )
+    if "audit" in need or regulated or ai:
+        add(
+            id="audit",
+            capability="audit-logging",
+            label="Audit trail",
+            rationale="Records who did what - every console change, data access and model "
+            "call - in a log nobody can edit"
+            + (f", kept {req.retention_years:g} years." if req.retention_years else "."),
+            evidence=need.get("audit", [])[:1],
+        )
+    if "encryption" in need or set(req.compliance) & {"HIPAA", "PCI DSS", "GDPR", "FedRAMP"}:
+        add(
+            id="keys",
+            capability="key-management",
+            label="Encryption keys",
+            rationale="Customer-managed keys encrypt the databases, files and backups, with "
+            "rotation and a log of every use.",
+            evidence=need.get("encryption", [])[:1],
+        )
+    data_stores = [c.id for c in comps if c.capability in ("relational-db", "key-value-db")]
+    if data_stores and ("backup" in need or req.retention_years or regulated or ha):
+        add(
+            id="backup",
+            capability="backup",
+            label="Backups",
+            rationale="Daily backups with point-in-time restore, copied to a separate account "
+            "so a mistake or an attack cannot delete both.",
+            evidence=need.get("backup", [])[:1],
+        )
+    if req.retention_years or "archive" in need:
+        add(
+            id="archive",
+            capability="archive-storage",
+            label="Records archive",
+            rationale="Lifecycle rules move records out of the hot stores as they age, into "
+            "archive storage that costs a fraction"
+            + (
+                f", until they can be deleted after {req.retention_years:g} years."
+                if req.retention_years
+                else "."
+            ),
+            evidence=need.get("archive", [])[:1],
+        )
+        records = [c.id for c in comps if c.capability == "object-storage" and c.id != "site"]
+        for store in [*data_stores, *records][:2]:
+            link(store, "archive", "age out")
+    # Assistant first, so the build lane reads assistant → environment → repository.
+    if "coding_ai" in need:
+        add(
+            id="assistant",
+            capability="ai-coding-assistant",
+            label="AI coding assistant",
+            rationale="AI suggestions in the editor and in code review, licensed per developer.",
+            evidence=need["coding_ai"][:1],
+        )
+
+    if "devenv" in need:
+        add(
+            id="devenv",
+            capability="dev-environment",
+            label="Dev environments",
+            rationale="Ready-to-code environments, so a new developer starts in minutes with "
+            "the same tools as everyone else.",
+            evidence=need["devenv"][:1],
+        )
     add(
         id="logs",
         capability="monitoring",

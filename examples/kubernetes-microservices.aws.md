@@ -82,6 +82,8 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Trade-offs and alternatives
 
+- **Amazon Route 53** (Domain): alternatives: Cloudflare DNS
+- **AWS WAF** (Web firewall): alternatives: Cloudflare WAF
 - **Amazon EKS** (API microservices): alternatives: EKS Auto Mode
 - **Amazon EKS** (Order workers): alternatives: EKS Auto Mode
 - **Amazon RDS for PostgreSQL** (Orders and catalogue): alternatives: Amazon Aurora PostgreSQL

@@ -43,6 +43,7 @@ class Workspace {
     this.state = {
       specYaml: "", originalYaml: "", provider: "aws", view: "diagram", design: null,
       selectedId: null, workflow: 0, step: -1, playing: null, seq: 0, zoomed: false, term: 12,
+      credits: CA.recall("clarchy.credits") || { cloud: 0, ai: 0 },
     };
     root.dataset.provider = this.state.provider;
 
@@ -162,6 +163,7 @@ class Workspace {
     this.renderDiagram(d);
     this.renderBill(d);
     this.renderCost(d);
+    this.renderPolicies(d);
     this.renderWorkflows(d);
     this.renderInspector();
   }
@@ -430,19 +432,55 @@ class Workspace {
               ? `A 1-year commitment pays off after about ${plural(cost.break_even_months, "month")}`
               : "Commitments start at 1 year" })]));
 
+    // Prepaid credits: cloud credits count against the whole bill, model credits (OpenAI,
+    // Hugging Face, Anthropic) only against spend on language models.
+    const credits = this.state.credits;
+    const aiMonthly = cost.lines.filter((l) => l.capability === "llm-inference").reduce((s, l) => s + l.monthly, 0);
+    const hasCredits = credits.cloud > 0 || credits.ai > 0;
+    const afterCredits = (amount, months) => Math.max(0, amount - credits.cloud - Math.min(credits.ai, aiMonthly * months));
+    const covered = credits.cloud + Math.min(credits.ai, aiMonthly * 36);
+    const coverMonths = cost.monthly > 0 ? covered / cost.monthly : 0;
+
     const table = el("table", { class: "cost-table" },
-      el("thead", {}, el("tr", {}, ["Period", "On demand", "With commitments", "You save"].map((h) => el("th", { text: h })))),
+      el("thead", {}, el("tr", {}, ["Period", "On demand", "With commitments", "You save", hasCredits && "After credits"]
+        .filter(Boolean).map((h) => el("th", { text: h })))),
       el("tbody", {}, terms.map((t) => el("tr", { class: t.months === this.state.term ? "current" : null },
         el("td", { text: t.label }),
         el("td", { text: money(t.on_demand) }),
         el("td", { text: t.committed != null ? money(t.committed) : "–" }),
-        el("td", { class: "good", text: t.committed != null ? money(t.on_demand - t.committed) : "–" })))));
+        el("td", { class: "good", text: t.committed != null ? money(t.on_demand - t.committed) : "–" }),
+        hasCredits && el("td", { class: "credit-cell", text: money(afterCredits(t.committed ?? t.on_demand, t.months)) })))));
+
+    const creditInput = (key, label, hint) => el("label", { class: "credit-field" },
+      el("span", { class: "credit-label", text: label }),
+      el("span", { class: "credit-input" }, "$", el("input", {
+        type: "number", min: "0", step: "100", inputmode: "numeric", value: credits[key] || "", placeholder: "0",
+        "aria-label": label, title: hint,
+        onchange: (e) => {
+          const value = Math.max(0, Number(e.target.value) || 0);
+          if (value === (this.state.credits[key] || 0)) return;
+          this.state.credits = { ...this.state.credits, [key]: value };
+          CA.store("clarchy.credits", this.state.credits);
+          // Re-render after the event: the input being changed is replaced by the render.
+          setTimeout(() => this.renderCost(this.state.design), 0);
+        },
+      })));
+    const creditPanel = el("div", { class: "credits" },
+      el("h3", { class: "cost-subhead", text: "Prepaid credits" }),
+      el("div", { class: "credit-row" },
+        creditInput("cloud", `${d.provider_name} credits`, "Startup or promotional credits that apply to the whole cloud bill"),
+        creditInput("ai", "Model credits", "OpenAI, Hugging Face or Anthropic credits; they count against language-model spend only"),
+        el("p", { class: "credit-result", text: hasCredits
+          ? `Credits cover about ${coverMonths >= 36 ? "the whole 3 years" : CA.plural(Math.round(coverMonths * 10) / 10, "month")} of this bill${credits.ai > 0 ? `; model credits apply to ${money(aiMonthly)} a month of model spend` : ""}.`
+          : "Add credits from your cloud provider, OpenAI, Hugging Face or Anthropic to see what you actually pay." })));
 
     const lines = [...cost.lines].sort((a, b) => b.monthly - a.monthly);
     const breakdown = el("div", { class: "cost-lines" }, lines.map((line) => el("details", { class: "cost-line" },
       el("summary", {},
         el("span", { class: "svc" }, el("b", { text: line.service }), el("span", { text: line.label })),
-        line.commitment ? el("span", { class: "tag neutral", title: line.commitment, text: "Commitment eligible" }) : el("span"),
+        el("span", { class: "line-tags" },
+          line.approximate && el("span", { class: "tag close", title: "Priced from the vendor's pricing page, not the cloud provider's price list", text: "Approx." }),
+          line.commitment && el("span", { class: "tag neutral", title: line.commitment, text: "Commitment eligible" })),
         el("span", { class: "amount", text: `${money(line.monthly)}/mo` })),
       el("table", { class: "cost-items" }, el("tbody", {}, line.items.map((item) => el("tr", {},
         el("td", {}, item.name, item.basis ? el("small", { text: item.basis }) : null),
@@ -455,6 +493,7 @@ class Workspace {
         el("span", { class: `cost-source ${cost.verified ? "verified" : ""}`, text: cost.verified ? "Prices from the provider's price list" : "Approximate list prices" })),
       stats,
       table,
+      creditPanel,
       el("h3", { class: "cost-subhead", text: "Monthly breakdown" }),
       breakdown,
       el("div", { class: "cost-notes" },
@@ -462,6 +501,50 @@ class Workspace {
         cost.commitment_notes.length > 0 && el("ul", {}, cost.commitment_notes.map((n) => el("li", { text: n }))),
         el("ul", {}, cost.assumptions.map((n) => el("li", { text: n }))),
         cost.calculator && el("p", {}, "Check with the ", el("a", { href: cost.calculator, target: "_blank", rel: "noopener noreferrer", text: "official calculator ↗" }))));
+  }
+
+  // ---------- policies ----------
+  renderPolicies(d) {
+    const { el, fill, plural } = CA;
+    const box = this.q(".policies");
+    const list = d.policies || [];
+    if (!list.length) {
+      fill(box, el("div", { class: "cost-empty" },
+        el("h3", { text: "No AI or data regulations matched this design" }),
+        el("p", { text: "Policies appear when the design uses language models, runs in a regulated region, or states a compliance regime such as GDPR, HIPAA, PCI DSS, SOX or ISO 27001." })));
+      return;
+    }
+    const total = (s) => list.reduce((n, p) => n + p.counts[s], 0);
+    const STATUS = {
+      covered: { tag: "exact", label: "In the design" },
+      gap: { tag: "partial", label: "Gap" },
+      action: { tag: "neutral", label: "For your team" },
+    };
+    const obligation = (o) => el("li", { class: `obligation ${o.status}` },
+      el("span", { class: `tag ${STATUS[o.status].tag}`, text: STATUS[o.status].label }),
+      el("div", {},
+        el("p", { text: o.text }),
+        o.status === "covered" && el("p", { class: "ob-detail", text: `Covered by ${o.by.join(", ")}.` }),
+        o.status === "gap" && o.suggest.length > 0 && el("p", { class: "ob-detail", text: `Consider adding ${o.suggest[0].capability.replace(/-/g, " ")}: ${o.suggest[0].description}` })));
+    fill(box,
+      el("div", { class: "policy-summary" },
+        el("p", {}, el("b", { text: plural(list.length, "policy", "policies") }), " apply to this design: ",
+          `${total("covered")} obligations are covered by the design, `,
+          el("span", { class: total("gap") ? "gap-count" : null, text: `${plural(total("gap"), "gap")}` }),
+          `, and ${plural(total("action"), "action")} for your team.`)),
+      el("div", { class: "policy-list" }, list.map((p, i) => el("details", { class: "policy", open: i === 0 ? true : null },
+        el("summary", {},
+          el("span", { class: "policy-name" }, el("b", { text: p.name }), p.kind && el("span", { text: p.kind })),
+          el("span", { class: "policy-counts" },
+            p.counts.covered > 0 && el("span", { class: "tag exact", text: `${p.counts.covered} covered` }),
+            p.counts.gap > 0 && el("span", { class: "tag partial", text: `${p.counts.gap} gap${p.counts.gap === 1 ? "" : "s"}` }),
+            p.counts.action > 0 && el("span", { class: "tag neutral", text: `${p.counts.action} to do` }))),
+        el("div", { class: "policy-body" },
+          p.summary && el("p", { class: "policy-text", text: p.summary }),
+          p.note && el("p", { class: "hint", text: p.note }),
+          el("ul", { class: "obligations" }, p.obligations.map(obligation)),
+          p.url && el("a", { class: "price-link", href: p.url, target: "_blank", rel: "noopener noreferrer", text: "Read the source ↗" }))))),
+      el("p", { class: "hint", text: "A design checklist, not legal advice. Check the current text with each source and involve your privacy and legal teams early." }));
   }
 
   // ---------- workflows ----------

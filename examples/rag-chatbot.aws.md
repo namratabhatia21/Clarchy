@@ -69,7 +69,9 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Trade-offs and alternatives
 
+- **Amazon CloudFront** (Web front end): alternatives: Cloudflare
 - **Amazon ECS on AWS Fargate** (Chat API (streaming)): alternatives: Amazon EKS, AWS App Runner
+- **Amazon Bedrock** (LLM + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Amazon OpenSearch Serverless (vector)** (Embeddings index): alternatives: Aurora PostgreSQL with pgvector, Amazon S3 Vectors; Vector search is one feature of a general search engine; a smaller workload may be cheaper on pgvector in the relational database.
 - **GitHub or GitLab via AWS CodeConnections** (App and infrastructure code): alternatives: AWS CodeCommit; Most teams host code on GitHub or GitLab and connect it to AWS pipelines with CodeConnections. Check AWS CodeCommit's current availability before choosing it.
 - **AWS CodeBuild** (Build and test): alternatives: GitHub Actions

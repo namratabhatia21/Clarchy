@@ -13,6 +13,12 @@ prices:
   functions.executions: {price: 0.20, unit: 1M executions, source: https://azure.microsoft.com/pricing/details/functions/}
   functions.gb_seconds: {price: 0.000016, unit: GB-second, source: https://azure.microsoft.com/pricing/details/functions/}
   apim.calls: {price: 4.20, unit: 1M calls, source: https://azure.microsoft.com/pricing/details/api-management/}
+  contentsafety.text_records: {price: 0.38, unit: 1K text records, source: https://azure.microsoft.com/pricing/details/cognitive-services/content-safety/}
+  blob.archive_gb: {price: 0.002, unit: "GB-month (Archive, LRS)", source: https://azure.microsoft.com/pricing/details/storage/blobs/}
+  backup.storage_gb: {price: 0.0448, unit: "GB-month (backup storage, GRS)", source: https://azure.microsoft.com/pricing/details/backup/}
+  backup.instances: {price: 10.0, unit: protected instance-month (50 to 500 GB), source: https://azure.microsoft.com/pricing/details/backup/}
+  keyvault.hsm_keys: {price: 1.0, unit: HSM-protected key-month (Premium), source: https://azure.microsoft.com/pricing/details/key-vault/}
+  entra.p2_users: {price: 9.0, unit: user-month (Entra ID P2), source: https://www.microsoft.com/security/business/microsoft-entra-pricing}
   apim.basicv2_hours: {price: 0.2055, unit: Basic v2 unit-hour (about $150 a month), source: https://azure.microsoft.com/pricing/details/api-management/}
   frontdoor.base: {price: 35.0, unit: profile-month, source: https://azure.microsoft.com/pricing/details/frontdoor/}
   frontdoor.egress_gb: {price: 0.083, unit: GB, source: https://azure.microsoft.com/pricing/details/frontdoor/}

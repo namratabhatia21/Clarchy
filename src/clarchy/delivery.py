@@ -27,8 +27,12 @@ def _unique_id(wanted: str, taken: set[str]) -> str:
     return candidate
 
 
+# Tools a team uses around the toolchain; having them doesn't mean the toolchain exists.
+DEV_TOOLS = {"dev-environment", "ai-coding-assistant"}
+
+
 def has_delivery(spec: ArchitectureSpec) -> bool:
-    return any(c.tier == "delivery" for c in spec.components)
+    return any(c.tier == "delivery" and c.capability not in DEV_TOOLS for c in spec.components)
 
 
 def add_delivery(spec: ArchitectureSpec) -> ArchitectureSpec:
@@ -120,6 +124,15 @@ def add_delivery(spec: ArchitectureSpec) -> ArchitectureSpec:
         ),
     ]
     edges.append(Edge(source=deploy, target=infra, label="applies"))
+
+    # Developer tools feed the repository: code is written in the dev environments, with
+    # the AI assistant's suggestions.
+    devenv = next((c.id for c in spec.components if c.capability == "dev-environment"), None)
+    if devenv:
+        edges.append(Edge(source=devenv, target=repo, label="commit"))
+    for c in spec.components:
+        if c.capability == "ai-coding-assistant":
+            edges.append(Edge(source=c.id, target=devenv or repo, label="suggest code"))
 
     has_autoscaler = "event-autoscaling" in caps
     if uses_kubernetes and not has_autoscaler:

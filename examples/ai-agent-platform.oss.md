@@ -32,12 +32,16 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 | Run | Models + embeddings | `llm-inference` | vLLM (open-weight models) | close | Managed models behind the gateway; a larger model plans and a smaller one handles routine steps, billed per token. |
 | Run | Chunk + embed documents | `serverless-function` | Knative Serving | close | Runs only when documents change. |
 | Integrate | LLM gateway (LiteLLM) | `llm-gateway` | LiteLLM Proxy | exact | One OpenAI-compatible API in front of every model, with per-team keys and budgets, fallbacks between providers and response caching. |
+| Integrate | AI guardrails | `ai-guardrails` | NeMo Guardrails + Llama Guard | close | Screens prompts, tool results and answers for prompt injection, harmful content and personal data. |
 | Store | Source documents | `object-storage` | Ceph Object Gateway | close | _Generic: Durable storage for files and blobs._ |
 | Store | Knowledge index | `vector-search` | pgvector (PostgreSQL) | exact | Lets the agent ground its answers in company documents with hybrid keyword and vector search. |
 | Store | Agent state + history | `relational-db` | PostgreSQL | exact | Postgres holds the agent checkpoints, chat history and the gateway's spend log in one managed database. |
 | Operate | Single sign-on | `identity` | Keycloak | exact | _Generic: User sign-up, sign-in and tokens._ |
 | Operate | Model and tool credentials | `secrets` | OpenBao | exact | _Generic: Stores and rotates credentials._ |
 | Operate | LLM tracing (Langfuse) | `llm-observability` | Langfuse | exact | Traces every prompt, tool call, token and cost, and scores samples with evals, so regressions show up before users notice them. |
+| Operate | Cloud access governance | `access-governance` | Keycloak + Open Policy Agent | close | Staff sign in to the cloud with the company directory; the cloud architects approve least-privilege roles, and access is reviewed every quarter. |
+| Operate | Audit trail | `audit-logging` | Wazuh | close | Records every console change, data access and model call in a log nobody can edit. |
+| Operate | Encryption keys | `key-management` | OpenBao Transit | close | Customer-managed keys encrypt the database, documents and backups. |
 | Operate | Logs, metrics, alarms | `monitoring` | Prometheus + Grafana | close | _Generic: Metrics, logs, dashboards and alarms._ |
 
 ## Workflows
@@ -54,9 +58,10 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 8. Agent runtime (LangGraph) → Tool functions: call tools that look up or change data
 9. Agent runtime (LangGraph) → Agent state + history: save the agent's progress and the conversation
 10. Agent runtime (LangGraph) → Model and tool credentials: fetch credentials
-11. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
-12. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
-13. Every component → Logs, metrics, alarms: send logs and metrics
+11. Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer
+12. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
+13. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
+14. Every component → Logs, metrics, alarms: send logs and metrics
 
 ### Background processing
 
@@ -80,19 +85,23 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Trade-offs and alternatives
 
-- **Varnish Cache** (Web front end): alternatives: NGINX caching; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
+- **Varnish Cache** (Web front end): alternatives: NGINX caching, Cloudflare; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
 - **HAProxy** (HTTPS load balancer): alternatives: NGINX, Envoy; Run at least two instances for availability and handle TLS certificates yourself.
 - **Kubernetes** (Chat API (streaming)): alternatives: K3s, HashiCorp Nomad; You manage the cluster, nodes and upgrades; there is no per-second serverless billing.
 - **LangGraph** (Agent runtime (LangGraph)): alternatives: CrewAI, LlamaIndex Workflows; A library that runs inside your own containers, with checkpoints in your database; LangGraph Platform is the hosted option.
 - **Knative Serving** (Tool functions): alternatives: OpenFaaS; Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
 - **LiteLLM Proxy** (LLM gateway (LiteLLM)): alternatives: Portkey Gateway, Kong AI Gateway; Self-hosted proxy with an OpenAI-compatible API for more than 100 model providers, virtual keys, budgets, fallbacks and caching.
-- **vLLM (open-weight models)** (Models + embeddings): alternatives: Ollama, Hugging Face TGI; Needs GPUs you provision; limited to open-weight models.
+- **vLLM (open-weight models)** (Models + embeddings): alternatives: Ollama, Hugging Face TGI, OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints; Needs GPUs you provision; limited to open-weight models.
 - **Ceph Object Gateway** (Source documents): alternatives: SeaweedFS, Garage, MinIO; S3-compatible API, but you operate durability, replication, capacity and upgrades.
 - **Knative Serving** (Chunk + embed documents): alternatives: OpenFaaS; Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
 - **pgvector (PostgreSQL)** (Knowledge index): alternatives: Qdrant, Milvus, OpenSearch
 - **PostgreSQL** (Agent state + history): Backups, failover and upgrades are yours to run (tools such as Patroni help).
 - **OpenBao** (Model and tool credentials): alternatives: HashiCorp Vault
 - **Langfuse** (LLM tracing (Langfuse)): alternatives: Arize Phoenix, OpenLLMetry; Self-hosting needs Postgres, ClickHouse, Redis and object storage; Langfuse Cloud is the hosted option.
+- **NeMo Guardrails + Llama Guard** (AI guardrails): alternatives: Guardrails AI, Microsoft Presidio (PII); You host the safety model and tune the rules yourself.
+- **Keycloak + Open Policy Agent** (Cloud access governance): alternatives: Teleport, HashiCorp Boundary; Approvals and access reviews are processes you build around them.
+- **Wazuh** (Audit trail): alternatives: Falco, OpenSearch audit logs; You decide what to collect and protect the log store from tampering yourself.
+- **OpenBao Transit** (Encryption keys): alternatives: HashiCorp Vault Transit; Keys live in a cluster you run, unseal and back up yourself.
 - **Prometheus + Grafana** (Logs, metrics, alarms): alternatives: OpenTelemetry Collector, Grafana Loki; You store and retain metrics and logs yourself.
 - **GitLab Community Edition** (App and infrastructure code): alternatives: Forgejo, Gitea; You run, back up and upgrade the Git server yourself.
 - **Jenkins** (Build, test and evaluate): alternatives: Tekton, GitLab CI/CD, Woodpecker CI; Build agents and plugins are yours to operate.

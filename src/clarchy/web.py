@@ -6,6 +6,7 @@
 Endpoints:
   GET  /api/meta            providers, capabilities, regions, the planning engine in use
   GET  /api/samples         example requirements documents
+  GET  /api/blog            blog posts, rendered
   POST /api/plan            upload or text -> Server-Sent Events stream of the pipeline
   POST /api/design          spec YAML + provider -> diagram, explanation, components
   GET  /api/patterns[/id]   reference architectures
@@ -98,6 +99,12 @@ def create_app() -> FastAPI:
     @app.get("/api/samples")
     def samples() -> list[dict[str, str]]:
         return payloads.samples_payload()
+
+    @app.get("/api/blog")
+    def blog_posts() -> list[dict[str, Any]]:
+        from clarchy import blog
+
+        return blog.posts()
 
     @app.get("/api/catalog")
     def service_catalog() -> dict[str, Any]:

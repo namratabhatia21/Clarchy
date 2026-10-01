@@ -34,21 +34,21 @@ services:
     service: PowerDNS
     short: PDNS
     fidelity: partial
-    alternatives: [BIND, CoreDNS (internal DNS)]
+    alternatives: [BIND, CoreDNS (internal DNS), Cloudflare DNS]
     note: You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
     docs: https://doc.powerdns.com/
   cdn:
     service: Varnish Cache
     short: VAR
     fidelity: partial
-    alternatives: [NGINX caching]
+    alternatives: [NGINX caching, Cloudflare]
     note: Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
     docs: https://varnish-cache.org/docs/
   waf:
     service: Coraza WAF + OWASP Core Rule Set
     short: CRZ
     fidelity: close
-    alternatives: [ModSecurity]
+    alternatives: [ModSecurity, Cloudflare WAF]
     note: You own rule updates, tuning and false positives.
     docs: https://coraza.io/docs/
   load-balancer:
@@ -83,7 +83,7 @@ services:
     service: vLLM (open-weight models)
     short: VLM
     fidelity: close
-    alternatives: [Ollama, Hugging Face TGI]
+    alternatives: [Ollama, Hugging Face TGI, OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     note: Needs GPUs you provision; limited to open-weight models.
     docs: https://docs.vllm.ai/
   agent-orchestration:
@@ -241,3 +241,59 @@ services:
     fidelity: exact
     alternatives: [Pulumi, Crossplane]
     docs: https://opentofu.org/docs/
+  dev-environment:
+    service: Coder
+    short: CDR
+    fidelity: exact
+    alternatives: [Dev Containers, Eclipse Che]
+    note: Self-hosted cloud development environments on your own Kubernetes or VMs.
+    docs: https://coder.com/docs
+  ai-coding-assistant:
+    service: Continue with open-weight models
+    short: CON
+    fidelity: partial
+    alternatives: [Tabby, Claude Code]
+    note: Runs against your own model server; quality depends on the model you host.
+    docs: https://docs.continue.dev/
+  ai-guardrails:
+    service: NeMo Guardrails + Llama Guard
+    short: NG
+    fidelity: close
+    alternatives: [Guardrails AI, Microsoft Presidio (PII)]
+    note: You host the safety model and tune the rules yourself.
+    docs: https://docs.nvidia.com/nemo/guardrails/
+  archive-storage:
+    service: MinIO (lifecycle tiering)
+    short: MIN
+    fidelity: partial
+    alternatives: [Ceph cold pools, Tape libraries]
+    note: Archival durability depends on the cold storage you provide.
+    docs: https://min.io/docs/minio/linux/administration/object-management/object-lifecycle-management.html
+  access-governance:
+    service: Keycloak + Open Policy Agent
+    short: OPA
+    fidelity: close
+    alternatives: [Teleport, HashiCorp Boundary]
+    note: Approvals and access reviews are processes you build around them.
+    docs: https://www.openpolicyagent.org/docs/latest/
+  key-management:
+    service: OpenBao Transit
+    short: OBT
+    fidelity: close
+    alternatives: [HashiCorp Vault Transit]
+    note: Keys live in a cluster you run, unseal and back up yourself.
+    docs: https://openbao.org/docs/secrets/transit/
+  audit-logging:
+    service: Wazuh
+    short: WZ
+    fidelity: close
+    alternatives: [Falco, OpenSearch audit logs]
+    note: You decide what to collect and protect the log store from tampering yourself.
+    docs: https://documentation.wazuh.com/
+  backup:
+    service: Velero + pgBackRest
+    short: VEL
+    fidelity: close
+    alternatives: [Restic]
+    note: Velero backs up Kubernetes resources and volumes; pgBackRest handles Postgres point-in-time recovery.
+    docs: https://velero.io/docs/

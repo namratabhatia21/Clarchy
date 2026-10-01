@@ -59,8 +59,8 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Trade-offs and alternatives
 
-- **PowerDNS** (Domain): alternatives: BIND, CoreDNS (internal DNS); You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
-- **Varnish Cache** (Static site + API edge): alternatives: NGINX caching; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
+- **PowerDNS** (Domain): alternatives: BIND, CoreDNS (internal DNS), Cloudflare DNS; You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
+- **Varnish Cache** (Static site + API edge): alternatives: NGINX caching, Cloudflare; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
 - **Ceph Object Gateway** (Front-end assets): alternatives: SeaweedFS, Garage, MinIO; S3-compatible API, but you operate durability, replication, capacity and upgrades.
 - **Kong Gateway (OSS)** (REST API): alternatives: Apache APISIX; Feature-rich, but you operate, scale and upgrade it.
 - **Knative Serving** (Business logic): alternatives: OpenFaaS; Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.

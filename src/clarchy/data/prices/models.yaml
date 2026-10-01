@@ -15,6 +15,7 @@ aws:
   included:
     source-control: Repository hosting (GitHub, GitLab) depends on your plan; AWS CodeConnections itself is free.
     iac: CloudFormation is free for AWS resources.
+    access-governance: IAM, IAM Identity Center and AWS Organizations have no charge.
     event-autoscaling: KEDA is open source and runs on the cluster's nodes.
   capabilities:
     dns:
@@ -66,6 +67,37 @@ aws:
         - {name: Input tokens (Amazon Nova Lite), quantity: input_tokens_m, price: bedrock.input_tokens}
         - {name: Output tokens (Amazon Nova Lite), quantity: output_tokens_m, price: bedrock.output_tokens}
         - {name: Embeddings (Titan Text Embeddings V2), quantity: embedding_tokens_m, price: bedrock.embedding_tokens}
+    ai-guardrails:
+      pricing_url: https://aws.amazon.com/bedrock/pricing/
+      items:
+        - {name: Content and prompt-attack filters, quantity: guard_units_k, price: guardrails.content_units}
+        - {name: Personal data masking, quantity: guard_units_k, price: guardrails.pii_units}
+    archive-storage:
+      pricing_url: https://aws.amazon.com/s3/pricing/
+      items:
+        - {name: Archived data, quantity: archive_gb, price: glacier.deep_archive_gb}
+    backup:
+      pricing_url: https://aws.amazon.com/backup/pricing/
+      items:
+        - {name: Backup storage, quantity: backup_gb, price: "backup.{backup_kind}"}
+    key-management:
+      pricing_url: https://aws.amazon.com/kms/pricing/
+      items:
+        - {name: Customer managed keys, quantity: kms_keys, price: kms.keys}
+        - {name: Key requests, quantity: kms_requests_10k, price: kms.requests, free: 2}
+    audit-logging:
+      pricing_url: https://aws.amazon.com/cloudtrail/pricing/
+      items:
+        - {name: Data events recorded, quantity: audit_events_m, price: cloudtrail.data_events}
+    dev-environment:
+      pricing_url: https://github.com/features/codespaces
+      items:
+        - {name: Codespaces compute (4 cores), quantity: dev_core_hours, price: codespaces.core_hours}
+        - {name: Codespaces storage, quantity: dev_storage_gb, price: codespaces.storage_gb}
+    ai-coding-assistant:
+      pricing_url: https://aws.amazon.com/q/developer/pricing/
+      items:
+        - {name: Amazon Q Developer Pro seats, quantity: seats, price: q.developer_seats}
     agent-orchestration:
       pricing_url: https://aws.amazon.com/bedrock/agentcore/pricing/
       items:
@@ -291,6 +323,41 @@ azure:
       items:
         - {name: Log ingestion, quantity: logs_gb, price: monitor.logs_gb, free: 5}
         - {name: Alert rules, quantity: alarms, price: monitor.alerts}
+    ai-guardrails:
+      pricing_url: https://azure.microsoft.com/pricing/details/cognitive-services/content-safety/
+      items:
+        - {name: Text records screened, quantity: guard_records_k, price: contentsafety.text_records}
+    archive-storage:
+      pricing_url: https://azure.microsoft.com/pricing/details/storage/blobs/
+      items:
+        - {name: Archived data, quantity: archive_gb, price: blob.archive_gb}
+    backup:
+      pricing_url: https://azure.microsoft.com/pricing/details/backup/
+      items:
+        - {name: Protected instances, quantity: backup_instances, price: backup.instances}
+        - {name: Backup storage, quantity: backup_gb, price: backup.storage_gb}
+    key-management:
+      pricing_url: https://azure.microsoft.com/pricing/details/key-vault/
+      items:
+        - {name: HSM-protected keys, quantity: kms_keys, price: keyvault.hsm_keys}
+        - {name: Key operations, quantity: kms_requests_10k, price: keyvault.operations}
+    audit-logging:
+      pricing_url: https://azure.microsoft.com/pricing/details/monitor/
+      items:
+        - {name: Audit log retention in Log Analytics, quantity: audit_gb, price: monitor.logs_gb}
+    access-governance:
+      pricing_url: https://www.microsoft.com/security/business/microsoft-entra-pricing
+      items:
+        - {name: Entra ID P2 for administrators, quantity: admins, price: entra.p2_users}
+    dev-environment:
+      pricing_url: https://github.com/features/codespaces
+      items:
+        - {name: Codespaces compute (4 cores), quantity: dev_core_hours, price: codespaces.core_hours}
+        - {name: Codespaces storage, quantity: dev_storage_gb, price: codespaces.storage_gb}
+    ai-coding-assistant:
+      pricing_url: https://github.com/features/copilot/plans
+      items:
+        - {name: GitHub Copilot Business seats, quantity: seats, price: copilot.seats}
     llm-gateway:
       pricing_url: https://azure.microsoft.com/pricing/details/api-management/
       items:
@@ -316,6 +383,7 @@ gcp:
     source-control: Repository hosting depends on your plan (Secure Source Manager, GitHub or GitLab).
     iac: Infrastructure Manager charges only for the Cloud Build minutes of each run.
     event-autoscaling: KEDA is open source and runs on the cluster's nodes.
+    access-governance: Cloud IAM and Privileged Access Manager have no charge.
   capabilities:
     dns:
       pricing_url: https://cloud.google.com/dns/pricing
@@ -433,6 +501,35 @@ gcp:
       items:
         - {name: Log ingestion, quantity: logs_gb, price: logging.gb, free: 50}
         - {name: Alert conditions, quantity: alarms, price: monitoring.alerts}
+    ai-guardrails:
+      pricing_url: https://cloud.google.com/security-command-center/pricing
+      items:
+        - {name: Tokens screened, quantity: guard_tokens_m, price: modelarmor.tokens, free: 2}
+    archive-storage:
+      pricing_url: https://cloud.google.com/storage/pricing
+      items:
+        - {name: Archived data, quantity: archive_gb, price: gcs.archive_gb}
+    backup:
+      pricing_url: https://cloud.google.com/backup-disaster-recovery/pricing
+      items:
+        - {name: Backup storage, quantity: backup_gb, price: backupdr.storage_gb}
+    key-management:
+      pricing_url: https://cloud.google.com/kms/pricing
+      items:
+        - {name: Key versions, quantity: kms_keys, price: kms.key_versions}
+        - {name: Key operations, quantity: kms_requests_10k, price: kms.operations}
+    audit-logging:
+      pricing_url: https://cloud.google.com/stackdriver/pricing
+      items:
+        - {name: Data access audit logs, quantity: audit_gb, price: logging.gb}
+    dev-environment:
+      pricing_url: https://cloud.google.com/workstations/pricing
+      items:
+        - {name: Workstation hours, quantity: dev_hours, price: workstations.hours}
+    ai-coding-assistant:
+      pricing_url: https://cloud.google.com/products/gemini/code-assist
+      items:
+        - {name: Gemini Code Assist Standard seats, quantity: seats, price: codeassist.seats}
     agent-orchestration:
       pricing_url: https://cloud.google.com/vertex-ai/pricing
       items:

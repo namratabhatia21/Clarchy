@@ -4,9 +4,9 @@ import asyncio
 import json
 
 import pytest
-from helpers import POLICY_SPEC, make_docx
+from helpers import POLICY_DOC, POLICY_SPEC, make_docx
 
-from clarchy import browser, catalog
+from clarchy import browser
 from clarchy.ingest import from_text
 from clarchy.planner import PlanOptions, run_plan
 from clarchy.planner.llm import LLMError, llm_from_env
@@ -14,7 +14,7 @@ from clarchy.planner.local_toolbox import LocalToolbox
 from clarchy.planner.openai_compat import OpenAICompatLLM, from_chat, to_chat
 from clarchy.tools import AGENT_TOOL_NAMES
 
-DOC = next(text for sid, _, text in catalog.samples() if sid == "policy-assistant")
+DOC = POLICY_DOC
 
 
 def call(id_, name, args):

@@ -59,6 +59,8 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Trade-offs and alternatives
 
+- **Amazon Route 53** (Domain): alternatives: Cloudflare DNS
+- **Amazon CloudFront** (Static site + API edge): alternatives: Cloudflare
 - **GitHub or GitLab via AWS CodeConnections** (App and infrastructure code): alternatives: AWS CodeCommit; Most teams host code on GitHub or GitLab and connect it to AWS pipelines with CodeConnections. Check AWS CodeCommit's current availability before choosing it.
 - **AWS CodeBuild** (Build and test): alternatives: GitHub Actions
 - **AWS CodePipeline** (Release pipeline): alternatives: AWS CodeDeploy, GitHub Actions

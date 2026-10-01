@@ -63,8 +63,8 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Trade-offs and alternatives
 
-- **PowerDNS** (Domain): alternatives: BIND, CoreDNS (internal DNS); You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
-- **Coraza WAF + OWASP Core Rule Set** (Web firewall): alternatives: ModSecurity; You own rule updates, tuning and false positives.
+- **PowerDNS** (Domain): alternatives: BIND, CoreDNS (internal DNS), Cloudflare DNS; You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
+- **Coraza WAF + OWASP Core Rule Set** (Web firewall): alternatives: ModSecurity, Cloudflare WAF; You own rule updates, tuning and false positives.
 - **HAProxy** (HTTPS load balancer): alternatives: NGINX, Envoy; Run at least two instances for availability and handle TLS certificates yourself.
 - **Kubernetes** (API containers): alternatives: K3s, HashiCorp Nomad; You manage the cluster, nodes and upgrades; there is no per-second serverless billing.
 - **Valkey** (Session + query cache): alternatives: Redis

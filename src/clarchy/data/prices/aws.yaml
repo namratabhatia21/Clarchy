@@ -35,6 +35,16 @@ prices:
     unit: 1M requests
     sku: KKDZ3TFSXUSMCZ3A
     description: $3.50/million requests - first 333 million requests/month
+  backup.rds_gb:
+    price: 0.095
+    unit: GB-month (database backups)
+    sku: FJBXDXSNQ7XGXNKR
+    description: $0.095 per additional GB-month of backup storage exceeding free allocation
+  backup.s3_gb:
+    price: 0.05
+    unit: GB-month (S3 backups)
+    sku: TQA3GRWUJEG8JJR9
+    description: $0.05 per GB-month for warm backup storage for S3
   bedrock.embedding_tokens:
     price: 0.02
     unit: 1M tokens
@@ -60,6 +70,11 @@ prices:
     unit: 10K requests
     sku: NPFD6SEH9MXS8M4J
     description: $0.0100 per 10,000 HTTPS Requests
+  cloudtrail.data_events:
+    price: 1.0
+    unit: 1M data events
+    sku: 8QF7CPEM9ENRC6EA
+    description: 0.000001 per data event recorded in US East (N.Virginia) region
   cloudwatch.alarms:
     price: 0.1
     unit: alarm
@@ -150,11 +165,27 @@ prices:
     description: AWS Fargate - vCPU - US East (N.Virginia)
     commit_1yr: 0.032384
     commit_3yr: 0.022264
+  glacier.deep_archive_gb:
+    price: 0.00099
+    unit: GB-month
+    sku: SKAKWE8C8SPXCVHA
+    description: $0.00099 per GB-Month for storage used in Glacier Deep Archive in US East (N. Virginia)
   glue.dpu_hours:
     price: 0.44
     unit: DPU-hour
     sku: CXGYW3G8GS2SN9UG
     description: $0.44 per Data Processing Unit-Hour for AWS Glue ETL job
+  guardrails.content_units:
+    price: 0.15
+    unit: 1K text units
+    sku: 8Z4D5YJ9KP2G3SFM
+    description: $0.15 per 1K text units for ContentPolicyUnitsConsumed in US East (N. Virginia)
+  guardrails.pii_units:
+    price: 0.1
+    unit: 1K text units
+    sku: BWGV6PGXE535JNYG
+    description: $0.1 per 1K text units for SensitiveInformationPolicyPaidUnitsConsumed in US East (N.
+      Virginia)
   kinesis.put_units:
     price: 0.014
     unit: 1M PUT units
@@ -165,6 +196,16 @@ prices:
     unit: shard-hour
     sku: 7RXVY4V5SG8NQC38
     description: $0.015 per provisioned shard-hour
+  kms.keys:
+    price: 1.0
+    unit: key-month
+    sku: U553K98XGDXCYHWS
+    description: $1 per customer managed KMS key version in US East (N. Virginia)
+  kms.requests:
+    price: 0.03
+    unit: 10K requests
+    sku: MFEBZPX8NHM5FY7Z
+    description: $0.03 per 10000 KMS requests in US East (N. Virginia)
   lambda.gb_seconds:
     price: 1.667e-05
     unit: GB-second
@@ -182,6 +223,11 @@ prices:
     unit: OCU-hour
     sku: TV5CBXF5VXP698KT
     description: $0.24 per OCU-hours for SearchOCU in US East (N. Virginia)
+  q.developer_seats:
+    price: 19.0
+    unit: user-month (Pro)
+    sku: GZQBP6KJ4TD6J25B
+    description: USD19.00 per month per user for Amazon Q Developer Pro - US East (N. Virginia) (us-east-1)
   rds.large.multi:
     price: 0.674
     unit: db.m7g.xlarge Multi-AZ hour

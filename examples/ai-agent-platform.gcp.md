@@ -32,12 +32,16 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 | Run | Models + embeddings | `llm-inference` | Vertex AI | exact | Managed models behind the gateway; a larger model plans and a smaller one handles routine steps, billed per token. |
 | Run | Chunk + embed documents | `serverless-function` | Cloud Run functions | exact | Runs only when documents change. |
 | Integrate | LLM gateway (LiteLLM) | `llm-gateway` | LiteLLM on Cloud Run | close | One OpenAI-compatible API in front of every model, with per-team keys and budgets, fallbacks between providers and response caching. |
+| Integrate | AI guardrails | `ai-guardrails` | Model Armor | exact | Screens prompts, tool results and answers for prompt injection, harmful content and personal data. |
 | Store | Source documents | `object-storage` | Cloud Storage | exact | _Generic: Durable storage for files and blobs._ |
 | Store | Knowledge index | `vector-search` | Vertex AI Vector Search | exact | Lets the agent ground its answers in company documents with hybrid keyword and vector search. |
 | Store | Agent state + history | `relational-db` | Cloud SQL for PostgreSQL | exact | Postgres holds the agent checkpoints, chat history and the gateway's spend log in one managed database. |
 | Operate | Single sign-on | `identity` | Identity Platform | exact | _Generic: User sign-up, sign-in and tokens._ |
 | Operate | Model and tool credentials | `secrets` | Secret Manager | exact | _Generic: Stores and rotates credentials._ |
 | Operate | LLM tracing (Langfuse) | `llm-observability` | Cloud Trace (Vertex AI agent tracing) | partial | Traces every prompt, tool call, token and cost, and scores samples with evals, so regressions show up before users notice them. |
+| Operate | Cloud access governance | `access-governance` | Cloud IAM + Privileged Access Manager | exact | Staff sign in to the cloud with the company directory; the cloud architects approve least-privilege roles, and access is reviewed every quarter. |
+| Operate | Audit trail | `audit-logging` | Cloud Audit Logs | exact | Records every console change, data access and model call in a log nobody can edit. |
+| Operate | Encryption keys | `key-management` | Cloud KMS | exact | Customer-managed keys encrypt the database, documents and backups. |
 | Operate | Logs, metrics, alarms | `monitoring` | Cloud Monitoring + Cloud Logging | exact | _Generic: Metrics, logs, dashboards and alarms._ |
 
 ## Workflows
@@ -54,9 +58,10 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 8. Agent runtime (LangGraph) → Tool functions: call tools that look up or change data
 9. Agent runtime (LangGraph) → Agent state + history: save the agent's progress and the conversation
 10. Agent runtime (LangGraph) → Model and tool credentials: fetch credentials
-11. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
-12. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
-13. Every component → Logs, metrics, alarms: send logs and metrics
+11. Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer
+12. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
+13. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
+14. Every component → Logs, metrics, alarms: send logs and metrics
 
 ### Background processing
 
@@ -80,14 +85,19 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Trade-offs and alternatives
 
-- **Cloud CDN** (Web front end): alternatives: Media CDN; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
+- **Cloud CDN** (Web front end): alternatives: Media CDN, Cloudflare; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
 - **Cloud Run** (Chat API (streaming)): alternatives: GKE Autopilot
 - **Vertex AI Agent Engine** (Agent runtime (LangGraph)): alternatives: LangGraph on Cloud Run, Agent Development Kit; Deploys LangGraph, LangChain and ADK agents with managed sessions and memory, billed for the compute the agents use.
 - **LiteLLM on Cloud Run** (LLM gateway (LiteLLM)): alternatives: Apigee (AI gateway policies); Google Cloud has no lightweight managed LLM gateway; Apigee adds token quotas and model routing at enterprise scale.
+- **Vertex AI** (Models + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Vertex AI Vector Search** (Knowledge index): alternatives: AlloyDB or Cloud SQL with pgvector
 - **Cloud SQL for PostgreSQL** (Agent state + history): alternatives: AlloyDB for PostgreSQL
 - **Identity Platform** (Single sign-on): alternatives: Firebase Authentication
 - **Cloud Trace (Vertex AI agent tracing)** (LLM tracing (Langfuse)): alternatives: Langfuse on Cloud Run; OpenTelemetry traces of agent steps and model calls; prompt management and evaluations are separate (Vertex AI evaluation service).
+- **Model Armor** (AI guardrails): alternatives: Vertex AI safety filters, NeMo Guardrails; Screens prompts and responses for prompt injection, jailbreaks, harmful content and sensitive data, for any model.
+- **Cloud IAM + Privileged Access Manager** (Cloud access governance): alternatives: Organization Policy; Workforce identity federation lets staff sign in with the company directory.
+- **Cloud Audit Logs** (Audit trail): alternatives: Log buckets with locked retention; Admin activity logs are free; data access logs are billed as Cloud Logging ingestion.
+- **Cloud KMS** (Encryption keys): alternatives: Cloud HSM
 - **Secure Source Manager** (App and infrastructure code): alternatives: GitHub or GitLab via Developer Connect
 - **Infrastructure Manager (Terraform)** (Infrastructure as code): alternatives: Terraform or OpenTofu; A managed service that runs Terraform configurations.
 
@@ -108,26 +118,29 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$623 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
+About **$714 a month** on demand (Iowa (us-central1) list prices as of 2026-10-01; Google Cloud pricing pages, compiled manually, approximate).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $623 | – |
-| 6 months | $3,737 | – |
-| 1 year | $7,477 | $6,639 |
-| 3 years | $22,475 | $18,391 |
+| 1 month | $714 | – |
+| 6 months | $4,286 | – |
+| 1 year | $8,575 | $7,737 |
+| 3 years | $25,769 | $21,685 |
 
 | Service | Per month |
 |---|---:|
 | Cloud SQL for PostgreSQL (Agent state + history) | $178 |
 | Vertex AI (Models + embeddings) | $141 |
 | Cloud Run (Chat API (streaming)) | $116 |
+| Model Armor (AI guardrails) | $85.30 |
 | Vertex AI Vector Search (Knowledge index) | $68.47 |
 | LiteLLM on Cloud Run (LLM gateway (LiteLLM)) | $57.82 |
 | Vertex AI Agent Engine (Agent runtime (LangGraph)) | $34.07 |
 | Cloud Load Balancing (Application LB) (HTTPS load balancer) | $19.51 |
+| Cloud KMS (Encryption keys) | $5.03 |
 | Cloud CDN (Web front end) | $3.52 |
 | Cloud Storage (Source documents) | $2.04 |
+| Cloud Audit Logs (Audit trail) | $1.18 |
 | Cloud Monitoring + Cloud Logging (Logs, metrics, alarms) | $1.00 |
 | Artifact Registry (Container images) | $0.45 |
 | Secret Manager (Model and tool credentials) | $0.21 |

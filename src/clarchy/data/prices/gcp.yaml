@@ -32,6 +32,13 @@ prices:
   vertex.embedding_tokens: {price: 0.10, unit: 1M tokens, source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
   agentengine.vcpu_hours: {price: 0.0994, unit: vCPU-hour (Agent Engine), source: https://cloud.google.com/vertex-ai/pricing}
   agentengine.gib_hours: {price: 0.0105, unit: GiB-hour (Agent Engine), source: https://cloud.google.com/vertex-ai/pricing}
+  modelarmor.tokens: {price: 0.10, unit: 1M tokens screened, source: https://cloud.google.com/security-command-center/pricing}
+  gcs.archive_gb: {price: 0.0012, unit: GB-month (Archive class), source: https://cloud.google.com/storage/pricing}
+  backupdr.storage_gb: {price: 0.08, unit: GB-month (backup vault), source: https://cloud.google.com/backup-disaster-recovery/pricing}
+  kms.key_versions: {price: 0.06, unit: active key version-month (software), source: https://cloud.google.com/kms/pricing}
+  kms.operations: {price: 0.03, unit: 10K operations, source: https://cloud.google.com/kms/pricing}
+  workstations.hours: {price: 0.20, unit: workstation-hour (e2-standard-4 with management fee), source: https://cloud.google.com/workstations/pricing}
+  codeassist.seats: {price: 19.0, unit: user-month (Standard, annual), source: https://cloud.google.com/products/gemini/code-assist}
   trace.spans: {price: 0.20, unit: 1M spans ingested, source: https://cloud.google.com/trace/pricing}
   pubsub.tib: {price: 40.0, unit: TiB of messages, source: https://cloud.google.com/pubsub/pricing}
   eventarc.events: {price: 0.40, unit: 1M events, source: https://cloud.google.com/eventarc/pricing}

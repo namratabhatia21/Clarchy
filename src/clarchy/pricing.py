@@ -88,6 +88,10 @@ class Context:
     grower: str | None  # the component whose storage carries the data growth
     first_cluster: str | None
     has_vector: bool
+    developers: int = 10
+    retention_years: float | None = None
+    has_relational: bool = False
+    llm_calls: float = 0.0
 
 
 def _n(value: float) -> str:
@@ -120,6 +124,17 @@ def _context(arch: ProviderArchitecture) -> Context:
         grower=grower,
         first_cluster=clusters[0] if clusters else None,
         has_vector=any(c.capability == "vector-search" for c in spec.components),
+        developers=req.developers or 10,
+        retention_years=req.retention_years,
+        has_relational=any(c.capability == "relational-db" for c in spec.components),
+        llm_calls=next(
+            (
+                float((c.sizing or {}).get("requests_per_month") or users * 20)
+                for c in spec.components
+                if c.capability == "llm-inference"
+            ),
+            users * 20.0,
+        ),
     )
 
 
@@ -199,6 +214,60 @@ def usage(comp, ctx: Context) -> dict[str, Q | str]:
             "requests_m": Q(calls / 1e6, f"{_n(calls / 1e6)}M invocations a month"),
             "gb_seconds": Q(gb_s, f"{_n(ms)} ms at {_n(mb)} MB each"),
             "vcpu_seconds": Q(vcpu_s, f"{_n(ms)} ms each"),
+        }
+    elif cap == "ai-guardrails":
+        calls = float(s.get("requests_per_month") or ctx.llm_calls)
+        out |= {
+            "guard_units_k": Q(
+                calls * 3 / 1000, f"{_n(calls)} model calls × 3 text units (prompt and answer)"
+            ),
+            "guard_records_k": Q(calls * 3 / 1000, f"{_n(calls)} model calls × 3 text records"),
+            "guard_tokens_m": Q(calls * 1900 / 1e6, f"{_n(calls)} model calls × 1,900 tokens"),
+        }
+    elif cap == "archive-storage":
+        years = ctx.retention_years
+        kept = f", kept {_n(years)} years" if years else ""
+        gb = float(s.get("storage_gb") or max(50.0, ctx.data_gb))
+        grows = ctx.growth_gb
+        basis = f"{_n(gb)} GB of older records" + (
+            f", growing {_n(grows)} GB a month" if grows else ""
+        )
+        out["archive_gb"] = Q(gb, basis + kept, grows)
+    elif cap == "backup":
+        gb = float(s.get("storage_gb") or max(20.0, ctx.data_gb))
+        out |= {
+            "backup_gb": Q(
+                gb, f"{_n(gb)} GB: daily incremental backups kept 35 days", ctx.growth_gb
+            ),
+            "backup_kind": "rds_gb" if ctx.has_relational else "s3_gb",
+            "backup_instances": Q(
+                float(s.get("instances") or 2), "databases and file stores protected"
+            ),
+        }
+    elif cap == "key-management":
+        keys = float(s.get("keys") or 5)
+        out |= {
+            "kms_keys": Q(keys, f"{_n(keys)} customer-managed keys"),
+            "kms_requests_10k": Q(
+                ctx.requests_month * 0.2 / 1e4, "about one key request per five app requests"
+            ),
+        }
+    elif cap == "audit-logging":
+        events = ctx.requests_month * 0.2  # data events on the sensitive stores
+        out |= {
+            "audit_events_m": Q(events / 1e6, f"{_n(events / 1e6)}M data events on sensitive data"),
+            "audit_gb": Q(max(1.0, events * 1.5 / 1e6), "about 1.5 KB per audit event"),
+        }
+    elif cap == "access-governance":
+        admins = float(s.get("admins") or 5)
+        out["admins"] = Q(admins, f"{_n(admins)} cloud administrators with just-in-time access")
+    elif cap in ("dev-environment", "ai-coding-assistant"):
+        devs = float(s.get("developers") or ctx.developers)
+        out |= {
+            "seats": Q(devs, f"{_n(devs)} developers"),
+            "dev_hours": Q(devs * 60, f"{_n(devs)} developers × 60 hours a month"),
+            "dev_core_hours": Q(devs * 60 * 4, f"{_n(devs)} developers × 60 hours × 4 cores"),
+            "dev_storage_gb": Q(devs * 32, f"{_n(devs)} developers × 32 GB"),
         }
     elif cap == "llm-gateway":
         vcpu = float(s.get("vcpu") or 0.5)
@@ -371,6 +440,7 @@ class Item:
     free: float
     scale: float
     commit: dict[int, float] = field(default_factory=dict)
+    approximate: bool = False
 
     def billable(self, month: int) -> float:
         return max(0.0, (self.quantity + self.grows * self.scale * month) - self.free)
@@ -391,7 +461,13 @@ def _items(comp, model: dict[str, Any], book: dict[str, Any], ctx: Context) -> l
         if not isinstance(q, Q):
             raise KeyError(f"{comp.capability}: no usage quantity {spec['quantity']!r}")
         key = spec["price"].format(**choices)
-        entry = book["prices"][key]
+        entry = book["prices"].get(key)
+        # Lines priced from the third-party book are flagged; a provider's own book is
+        # labelled as a whole (verified or approximate).
+        approximate = False
+        if entry is None:
+            entry = price_book("thirdparty")["prices"][key]
+            approximate = True
         scale = float(spec.get("scale", 1))
         free = float(spec.get("free", 0))
         quantity = q.value * scale
@@ -412,6 +488,7 @@ def _items(comp, model: dict[str, Any], book: dict[str, Any], ctx: Context) -> l
                 free,
                 scale,
                 commit,
+                approximate,
             )
         )
     return items
@@ -486,12 +563,14 @@ def estimate(arch: ProviderArchitecture) -> dict[str, Any]:
         payload_lines.append(
             {
                 "component": comp.id,
+                "capability": comp.capability,
                 "service": service,
                 "label": comp.display_label,
                 "stage": comp.stage,
                 "monthly": round(sum(i.cost(0) for i in items), 2),
                 "commitment": commitment,
                 "pricing_url": model.get("pricing_url"),
+                "approximate": any(i.approximate for i in items),
                 "items": [
                     {
                         "name": i.name,

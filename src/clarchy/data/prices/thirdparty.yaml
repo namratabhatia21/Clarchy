@@ -1,0 +1,12 @@
+# Services that are not part of AWS, Azure or Google Cloud (SaaS such as GitHub), used
+# wherever a provider's mapping names them. Compiled by hand from each vendor's pricing
+# page; lines priced from this book are marked approximate.
+currency: USD
+price_region: global
+as_of: 2026-10-01
+source: Vendor pricing pages, compiled by hand
+verified: false
+prices:
+  codespaces.core_hours: {price: 0.09, unit: core-hour (a 4-core codespace is $0.36 an hour), source: https://docs.github.com/billing/concepts/product-billing/github-codespaces}
+  codespaces.storage_gb: {price: 0.07, unit: GB-month, source: https://docs.github.com/billing/concepts/product-billing/github-codespaces}
+  copilot.seats: {price: 19.0, unit: user-month (Copilot Business), source: https://github.com/features/copilot/plans}

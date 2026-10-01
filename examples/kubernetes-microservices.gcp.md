@@ -82,6 +82,8 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Trade-offs and alternatives
 
+- **Cloud DNS** (Domain): alternatives: Cloudflare DNS
+- **Google Cloud Armor** (Web firewall): alternatives: Cloudflare WAF
 - **Google Kubernetes Engine (GKE)** (API microservices): alternatives: GKE Autopilot
 - **Pub/Sub** (Order queue): alternatives: Cloud Tasks; Pub/Sub is publish/subscribe; a single subscription behaves like a queue. Cloud Tasks suits explicit task dispatch with rate limits.
 - **Google Kubernetes Engine (GKE)** (Order workers): alternatives: GKE Autopilot

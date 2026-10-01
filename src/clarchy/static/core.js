@@ -159,6 +159,7 @@ const CA = (() => {
     mode: MODE,
     meta: () => (MODE === "static" ? DATA.meta : getJSON("/api/meta")),
     samples: () => (MODE === "static" ? DATA.samples : getJSON("/api/samples")),
+    blog: () => (MODE === "static" ? DATA.blog || [] : getJSON("/api/blog")),
     patterns: () => (MODE === "static" ? DATA.patterns : getJSON("/api/patterns")),
     catalog: () => (MODE === "static" ? DATA.catalog : getJSON("/api/catalog")),
     async pattern(id) {

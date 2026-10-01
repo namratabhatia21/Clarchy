@@ -32,12 +32,16 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 | Run | Models + embeddings | `llm-inference` | Azure AI Foundry (incl. Azure OpenAI) | exact | Managed models behind the gateway; a larger model plans and a smaller one handles routine steps, billed per token. |
 | Run | Chunk + embed documents | `serverless-function` | Azure Functions | exact | Runs only when documents change. |
 | Integrate | LLM gateway (LiteLLM) | `llm-gateway` | Azure API Management (AI gateway) | close | One OpenAI-compatible API in front of every model, with per-team keys and budgets, fallbacks between providers and response caching. |
+| Integrate | AI guardrails | `ai-guardrails` | Azure AI Content Safety (Prompt Shields) | exact | Screens prompts, tool results and answers for prompt injection, harmful content and personal data. |
 | Store | Source documents | `object-storage` | Azure Blob Storage | exact | _Generic: Durable storage for files and blobs._ |
 | Store | Knowledge index | `vector-search` | Azure AI Search | close | Lets the agent ground its answers in company documents with hybrid keyword and vector search. |
 | Store | Agent state + history | `relational-db` | Azure Database for PostgreSQL (Flexible Server) | exact | Postgres holds the agent checkpoints, chat history and the gateway's spend log in one managed database. |
 | Operate | Single sign-on | `identity` | Microsoft Entra External ID | exact | _Generic: User sign-up, sign-in and tokens._ |
 | Operate | Model and tool credentials | `secrets` | Azure Key Vault | exact | _Generic: Stores and rotates credentials._ |
 | Operate | LLM tracing (Langfuse) | `llm-observability` | Application Insights (Foundry tracing) | close | Traces every prompt, tool call, token and cost, and scores samples with evals, so regressions show up before users notice them. |
+| Operate | Cloud access governance | `access-governance` | Microsoft Entra ID + Privileged Identity Management | exact | Staff sign in to the cloud with the company directory; the cloud architects approve least-privilege roles, and access is reviewed every quarter. |
+| Operate | Audit trail | `audit-logging` | Azure Monitor activity log + Log Analytics | exact | Records every console change, data access and model call in a log nobody can edit. |
+| Operate | Encryption keys | `key-management` | Azure Key Vault (keys) | exact | Customer-managed keys encrypt the database, documents and backups. |
 | Operate | Logs, metrics, alarms | `monitoring` | Azure Monitor + Application Insights | exact | _Generic: Metrics, logs, dashboards and alarms._ |
 
 ## Workflows
@@ -54,9 +58,10 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 8. Agent runtime (LangGraph) → Tool functions: call tools that look up or change data
 9. Agent runtime (LangGraph) → Agent state + history: save the agent's progress and the conversation
 10. Agent runtime (LangGraph) → Model and tool credentials: fetch credentials
-11. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
-12. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
-13. Every component → Logs, metrics, alarms: send logs and metrics
+11. Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer
+12. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
+13. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
+14. Every component → Logs, metrics, alarms: send logs and metrics
 
 ### Background processing
 
@@ -80,12 +85,17 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Trade-offs and alternatives
 
-- **Azure Front Door** (Web front end): Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
+- **Azure Front Door** (Web front end): alternatives: Cloudflare; Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
 - **Azure Container Apps** (Chat API (streaming)): alternatives: Azure Kubernetes Service
 - **Foundry Agent Service** (Agent runtime (LangGraph)): alternatives: LangGraph on Azure Container Apps, Semantic Kernel; Managed agents with threads, tools and evaluations in Microsoft Foundry; LangGraph agents can run as hosted agents or on Container Apps.
 - **Azure API Management (AI gateway)** (LLM gateway (LiteLLM)): alternatives: LiteLLM on Azure Container Apps; Gateway policies for Azure OpenAI and other models, such as token limits, load balancing across deployments, semantic caching and token metrics. Teams that also call non-Azure models often run LiteLLM instead.
+- **Azure AI Foundry (incl. Azure OpenAI)** (Models + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Azure AI Search** (Knowledge index): alternatives: Cosmos DB vector search, PostgreSQL with pgvector; Vector search is one feature of a full search service; small workloads may be cheaper in the database.
 - **Application Insights (Foundry tracing)** (LLM tracing (Langfuse)): alternatives: Langfuse on Azure; OpenTelemetry traces of agent runs and model calls, viewed in Foundry next to its evaluations.
+- **Azure AI Content Safety (Prompt Shields)** (AI guardrails): alternatives: NeMo Guardrails; Harm categories, prompt-injection shields and groundedness checks; Azure OpenAI deployments also apply default content filters.
+- **Microsoft Entra ID + Privileged Identity Management** (Cloud access governance): alternatives: Azure Policy, Management groups; Just-in-time role activation with approval and access reviews need Entra ID P2 licences for the people who use them.
+- **Azure Monitor activity log + Log Analytics** (Audit trail): alternatives: Microsoft Sentinel; The activity log is kept 90 days for free; longer retention goes to a Log Analytics workspace or storage.
+- **Azure Key Vault (keys)** (Encryption keys): alternatives: Azure Managed HSM
 - **Azure Repos** (App and infrastructure code): alternatives: GitHub
 - **Azure Pipelines** (Build, test and evaluate): alternatives: GitHub Actions
 - **Azure Pipelines (release stages)** (Release pipeline): alternatives: GitHub Actions environments; The same Azure Pipelines definition usually builds and deploys.
@@ -108,26 +118,30 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$999 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$1,572 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $999 | – |
-| 6 months | $5,995 | – |
-| 1 year | $11,993 | $11,710 |
-| 3 years | $36,020 | $35,055 |
+| 1 month | $1,572 | – |
+| 6 months | $9,434 | – |
+| 1 year | $18,871 | $18,588 |
+| 3 years | $56,654 | $55,689 |
 
 | Service | Per month |
 |---|---:|
+| Azure AI Content Safety (Prompt Shields) (AI guardrails) | $513 |
 | Azure AI Foundry (incl. Azure OpenAI) (Models + embeddings) | $210 |
 | Azure Application Gateway (HTTPS load balancer) | $185 |
 | Azure Container Apps (Chat API (streaming)) | $158 |
 | Azure API Management (AI gateway) (LLM gateway (LiteLLM)) | $150 |
 | Azure Database for PostgreSQL (Flexible Server) (Agent state + history) | $132 |
 | Azure AI Search (Knowledge index) | $73.73 |
+| Microsoft Entra ID + Privileged Identity Management (Cloud access governance) | $45.00 |
 | Azure Front Door (Web front end) | $38.84 |
 | Azure Monitor + Application Insights (Logs, metrics, alarms) | $35.50 |
+| Azure Key Vault (keys) (Encryption keys) | $9.73 |
 | Application Insights (Foundry tracing) (LLM tracing (Langfuse)) | $8.62 |
+| Azure Monitor activity log + Log Analytics (Audit trail) | $5.44 |
 | Azure Container Registry (Container images) | $5.00 |
 | Azure Blob Storage (Source documents) | $1.88 |
 | Azure Key Vault (Model and tool credentials) | $0.24 |

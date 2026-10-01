@@ -32,18 +32,20 @@ services:
     service: Cloud DNS
     short: DNS
     fidelity: exact
+    alternatives: [Cloudflare DNS]
     docs: https://cloud.google.com/dns/docs
   cdn:
     service: Cloud CDN
     short: CDN
     fidelity: close
-    alternatives: [Media CDN]
+    alternatives: [Media CDN, Cloudflare]
     note: Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
     docs: https://cloud.google.com/cdn/docs
   waf:
     service: Google Cloud Armor
     short: ARM
     fidelity: exact
+    alternatives: [Cloudflare WAF]
     docs: https://cloud.google.com/armor/docs
   load-balancer:
     service: Cloud Load Balancing (Application LB)
@@ -72,6 +74,7 @@ services:
     service: Vertex AI
     short: VAI
     fidelity: exact
+    alternatives: [OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     docs: https://cloud.google.com/vertex-ai/docs
   agent-orchestration:
     service: Vertex AI Agent Engine
@@ -218,3 +221,55 @@ services:
     alternatives: [Terraform or OpenTofu]
     note: A managed service that runs Terraform configurations.
     docs: https://cloud.google.com/infrastructure-manager/docs
+  dev-environment:
+    service: Cloud Workstations
+    short: CWS
+    fidelity: exact
+    alternatives: [GitHub Codespaces]
+    docs: https://cloud.google.com/workstations/docs
+  ai-coding-assistant:
+    service: Gemini Code Assist
+    short: GCA
+    fidelity: exact
+    alternatives: [GitHub Copilot, Claude Code]
+    docs: https://cloud.google.com/gemini/docs/codeassist/overview
+  ai-guardrails:
+    service: Model Armor
+    short: MA
+    fidelity: exact
+    alternatives: [Vertex AI safety filters, NeMo Guardrails]
+    note: Screens prompts and responses for prompt injection, jailbreaks, harmful content and sensitive data, for any model.
+    docs: https://cloud.google.com/security-command-center/docs/model-armor-overview
+  archive-storage:
+    service: Cloud Storage (Archive class)
+    short: ARC
+    fidelity: exact
+    alternatives: [Coldline class]
+    note: Millisecond access but a 365-day minimum storage charge; Object Lifecycle Management moves objects automatically.
+    docs: https://cloud.google.com/storage/docs/storage-classes
+  access-governance:
+    service: Cloud IAM + Privileged Access Manager
+    short: IAM
+    fidelity: exact
+    alternatives: [Organization Policy]
+    note: Workforce identity federation lets staff sign in with the company directory.
+    docs: https://cloud.google.com/iam/docs/pam-overview
+  key-management:
+    service: Cloud KMS
+    short: KMS
+    fidelity: exact
+    alternatives: [Cloud HSM]
+    docs: https://cloud.google.com/kms/docs
+  audit-logging:
+    service: Cloud Audit Logs
+    short: AUD
+    fidelity: exact
+    alternatives: [Log buckets with locked retention]
+    note: Admin activity logs are free; data access logs are billed as Cloud Logging ingestion.
+    docs: https://cloud.google.com/logging/docs/audit
+  backup:
+    service: Backup and DR Service
+    short: BDR
+    fidelity: exact
+    alternatives: [Cloud SQL automated backups]
+    docs: https://cloud.google.com/backup-disaster-recovery/docs

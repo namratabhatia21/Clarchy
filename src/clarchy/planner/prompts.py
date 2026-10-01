@@ -113,6 +113,8 @@ def understand_schema() -> dict[str, Any]:
             },
             "compliance": {"type": "array", "items": {"type": "string"}},
             "monthly_budget_usd": nullable_number,
+            "developers": nullable("integer"),
+            "retention_years": nullable_number,
             "features": {
                 "type": "array",
                 "items": {
@@ -136,6 +138,8 @@ def understand_schema() -> dict[str, Any]:
             "region",
             "compliance",
             "monthly_budget_usd",
+            "developers",
+            "retention_years",
             "features",
             "assumptions",
             "open_questions",

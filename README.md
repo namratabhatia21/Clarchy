@@ -25,9 +25,10 @@ protractor turns as you scroll the home page and a detail drawing assembles stag
 
 | Page | What it does |
 |---|---|
-| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt). Watch the pipeline work stage by stage, including the agent's tool calls, then explore the result: an architecture diagram per provider, every service grouped by lifecycle stage, the cost over time, step-by-step workflows that light up the diagram, and the editable YAML spec. |
-| **Examples** | Six reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes) on every provider. |
-| **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "BigQuery", "Lambda"). |
+| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt), or start from a realistic sample (a field service agent for wind turbine technicians, a claims triage agent, clinic booking under HIPAA, fleet telemetry, supplier invoice processing). Watch the pipeline work stage by stage, then explore the result: a diagram per provider, every service grouped by lifecycle stage, the cost over time with prepaid credits, the AI and data policies that apply, step-by-step workflows that light up the diagram, and the editable YAML spec. Answer the open questions and plan again. |
+| **Examples** | Seven reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes, AI agent platform) on every provider. |
+| **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "LangGraph", "Glacier", "Copilot"). |
+| **Blog** and **About** | Why Clarchy exists, worked examples and AI regulations for architects; and who builds it. |
 
 Every component carries a **rationale**, the **sentences from your document** that led to
 it, how close each provider's service is (**exact, close or partial**) and the
@@ -76,6 +77,31 @@ The model never draws the diagram or invents services. Layout is deterministic c
 the model can only use capabilities from the catalog (see
 [ADR 0004](docs/decisions/0004-agent-designs-with-mcp-tools.md)).
 
+## Security, records and AI policies
+
+Designs include what reviews ask about, not just the app:
+
+- **AI building blocks**: agent orchestration (LangGraph, Bedrock AgentCore, Foundry Agent
+  Service, Vertex AI Agent Engine), an LLM gateway (LiteLLM, Azure API Management),
+  guardrails (Bedrock Guardrails, Azure AI Content Safety, Model Armor, NeMo Guardrails)
+  and LLM tracing (Langfuse, CloudWatch, Application Insights, Cloud Trace).
+- **Security and access**: access governance (who may change the cloud, approved by the
+  cloud architects), customer-managed keys and an audit trail.
+- **Records**: backups, and an archive tier (S3 Glacier Deep Archive, Azure Archive,
+  Cloud Storage Archive) for records kept for years; the planner reads retention periods
+  such as "audit logs are kept for 7 years".
+- **Developer tools** in the build lane: cloud dev environments (GitHub Codespaces, Cloud
+  Workstations, Coder) and AI coding assistants (Amazon Q Developer, GitHub Copilot, Gemini
+  Code Assist), priced per developer. Cloudflare and the OpenAI, Anthropic and Hugging Face
+  APIs appear as alternatives.
+
+The **Policies** view checks each design against the EU AI Act, GDPR, the OWASP Top 10
+for LLM applications, the NIST AI RMF, ISO/IEC 42001, model provider terms, HIPAA,
+PCI DSS, SOX, ISO/IEC 27001 and India's DPDP Act, as they apply
+([data/policies.yaml](src/clarchy/data/policies.yaml)). Each obligation is covered by a
+component, a gap with a suggested capability, or an action for the team. It is a design
+checklist, not legal advice.
+
 ## Cost estimates
 
 Every design is priced on each cloud, per service and per line item (quantity × unit
@@ -92,6 +118,11 @@ periods cost more than a multiple of the first month.
   service's current prices live.
 - Azure and Google Cloud prices are compiled by hand from their pricing pages and marked
   **approximate** in the UI until they are read from those providers' price APIs too.
+  Services from outside the three clouds, such as GitHub Codespaces and Copilot, come from
+  a third-party price book and are tagged approximate line by line.
+- **Prepaid credits** (cloud credits for the whole bill, model credits from OpenAI, Hugging
+  Face or Anthropic for model spend) can be entered on the cost view to see what you
+  actually pay and how many months they cover.
 - Usage comes from each component's `sizing` and the requirements, and every line says
   what it assumed. Edit the spec to see the effect. See
   [ADR 0007](docs/decisions/0007-cost-estimates-from-price-lists.md).
@@ -226,7 +257,10 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `spec.py`, `catalog.py`, `mapping.py` | The neutral spec, its data and the provider mapping |
 | `render.py`, `explain.py` | Themed SVG diagrams and Markdown explanations |
 | `web.py`, `payloads.py`, `static/` | FastAPI app (with a server-sent events `/api/plan` stream) and a no-build front end |
-| `export.py` | The static site for GitHub Pages, with the in-browser engine bundle |
+| `planner/answers.py` | Answers to open questions turned into requirement statements for a re-plan |
+| `policies.py`, `data/policies.yaml` | AI and data regulations checked against a design |
+| `blog.py`, `data/blog/` | Blog posts in Markdown, rendered without dependencies |
+| `export.py` | The static site for GitHub Pages or Cloudflare Pages, with the in-browser engine bundle |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
 
@@ -251,6 +285,19 @@ GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` 
 `www` to `namratabhatia21.github.io`), and the custom domain is set in the repository's
 Settings → Pages. The page uses only relative links, so the same build works on a custom
 domain or under a `github.io` path.
+
+**Hosting on Cloudflare Pages instead.** The same workflow also deploys to Cloudflare Pages
+once the repository has two secrets:
+
+1. In Cloudflare, create a Pages project named `clarchy` (Workers & Pages → Create →
+   Pages → Upload assets), and an API token with the *Cloudflare Pages: Edit* permission.
+2. In GitHub, add the repository secrets `CLOUDFLARE_API_TOKEN` and
+   `CLOUDFLARE_ACCOUNT_ID`, then re-run the `Pages` workflow.
+3. In the Pages project, add the custom domains `clarchy.com` and `www.clarchy.com`. If
+   the domain's DNS is on Cloudflare, the records are created for you; otherwise move the
+   domain's nameservers to Cloudflare first.
+4. Remove the custom domain from GitHub's Settings → Pages and set the repository variable
+   `GITHUB_PAGES` to `off`, so only Cloudflare serves the site.
 
 ## Official provider icons
 

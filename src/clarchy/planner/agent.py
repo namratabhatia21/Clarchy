@@ -124,6 +124,8 @@ async def understand(llm: LLM, text: str, emitter: Emitter) -> Understanding:
             "region",
             "compliance",
             "monthly_budget_usd",
+            "developers",
+            "retention_years",
         )
         if data.get(key) not in (None, [], "")
     }

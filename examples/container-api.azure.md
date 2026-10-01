@@ -63,7 +63,8 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Trade-offs and alternatives
 
-- **Azure Web Application Firewall** (Web firewall): Runs on Azure Front Door or Application Gateway rather than as a separate service.
+- **Azure DNS** (Domain): alternatives: Cloudflare DNS
+- **Azure Web Application Firewall** (Web firewall): alternatives: Cloudflare WAF; Runs on Azure Front Door or Application Gateway rather than as a separate service.
 - **Azure Container Apps** (API containers): alternatives: Azure Kubernetes Service
 - **Azure Managed Redis** (Session + query cache): alternatives: Azure Cache for Redis
 - **Azure Repos** (App and infrastructure code): alternatives: GitHub

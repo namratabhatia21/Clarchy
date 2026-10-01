@@ -42,6 +42,16 @@ cd-deploy:
   category: devtools
   stage: ship
   description: Releases builds to environments with approvals and rollback.
+dev-environment:
+  tier: delivery
+  category: devtools
+  stage: code
+  description: Ready-to-code cloud development environments, so a new developer starts in minutes (for example GitHub Codespaces).
+ai-coding-assistant:
+  tier: delivery
+  category: devtools
+  stage: code
+  description: AI pair programming in the editor and in code review, licensed per developer (for example GitHub Copilot or Claude Code).
 
 # --- Serve ------------------------------------------------------------------------
 dns:
@@ -133,6 +143,11 @@ llm-gateway:
   category: ai
   stage: integrate
   description: One API in front of many models, with keys, budgets, rate limits, fallbacks and caching (for example LiteLLM).
+ai-guardrails:
+  tier: integration
+  category: security
+  stage: integrate
+  description: Screens prompts and answers for prompt injection, harmful content and personal data before they reach the model or the user.
 
 # --- Store ------------------------------------------------------------------------
 object-storage:
@@ -165,6 +180,11 @@ data-warehouse:
   category: analytics
   stage: store
   description: Analytical SQL over large datasets.
+archive-storage:
+  tier: data
+  category: storage
+  stage: store
+  description: Very low-cost storage for records that must be kept for years but are rarely read; lifecycle rules move data there as it ages.
 
 # --- Operate ----------------------------------------------------------------------
 identity:
@@ -187,3 +207,23 @@ llm-observability:
   category: management
   stage: operate
   description: Traces prompts, tool calls, tokens, cost and answer quality in LLM apps (for example Langfuse).
+access-governance:
+  tier: platform
+  category: security
+  stage: operate
+  description: Who may change the cloud - staff sign-in, roles with least privilege, access approved by the cloud architects, and regular access reviews.
+key-management:
+  tier: platform
+  category: security
+  stage: operate
+  description: Customer-managed encryption keys with rotation and a log of every key use.
+audit-logging:
+  tier: platform
+  category: security
+  stage: operate
+  description: A tamper-evident record of who did what in the cloud, kept for the retention period.
+backup:
+  tier: platform
+  category: storage
+  stage: operate
+  description: Scheduled, versioned backups with point-in-time restore, copied away from the primary account or region.

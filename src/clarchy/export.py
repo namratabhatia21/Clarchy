@@ -28,7 +28,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from clarchy import catalog, payloads
+from clarchy import blog, catalog, payloads
 from clarchy.icons import IconLibrary
 
 SCRIPT_TAG = re.compile(r'<script src="/static/([\w-]+\.js)"></script>')
@@ -109,6 +109,7 @@ def site_data(clipboard_only: bool = False, engine: dict[str, Any] | None = None
     return {
         "meta": payloads.meta_payload(no_icons),
         "samples": payloads.samples_payload(),
+        "blog": blog.posts(),
         "patterns": payloads.patterns_payload(),
         "pattern_yaml": pattern_yaml,
         "catalog": payloads.catalog_payload(),

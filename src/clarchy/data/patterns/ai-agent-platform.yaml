@@ -73,6 +73,22 @@ components:
     label: LLM tracing (Langfuse)
     rationale: Traces every prompt, tool call, token and cost, and scores samples with evals, so regressions show up before users notice them.
     sizing: { requests_per_month: 150000 }
+  - id: guardrails
+    capability: ai-guardrails
+    label: AI guardrails
+    rationale: Screens prompts, tool results and answers for prompt injection, harmful content and personal data.
+  - id: access
+    capability: access-governance
+    label: Cloud access governance
+    rationale: Staff sign in to the cloud with the company directory; the cloud architects approve least-privilege roles, and access is reviewed every quarter.
+  - id: audit
+    capability: audit-logging
+    label: Audit trail
+    rationale: Records every console change, data access and model call in a log nobody can edit.
+  - id: keys
+    capability: key-management
+    label: Encryption keys
+    rationale: Customer-managed keys encrypt the database, documents and backups.
   - id: logs
     capability: monitoring
     label: Logs, metrics, alarms
@@ -112,6 +128,7 @@ edges:
   - { from: ingest, to: vectors, label: index }
   - { from: app, to: auth, label: verify token }
   - { from: agent, to: secrets }
+  - { from: agent, to: guardrails, label: screen }
   - { from: repo, to: build, label: push }
   - { from: build, to: registry, label: image }
   - { from: registry, to: deploy }
@@ -141,6 +158,8 @@ workflows:
       components: [agent, state]
     - text: 'Agent runtime (LangGraph) → Model and tool credentials: fetch credentials'
       components: [agent, secrets]
+    - text: 'Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer'
+      components: [agent, guardrails]
     - text: 'LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails'
       components: [gateway, llm]
     - text: 'Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost'

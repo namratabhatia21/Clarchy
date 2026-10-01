@@ -32,12 +32,16 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 | Run | Models + embeddings | `llm-inference` | Amazon Bedrock | exact | Managed models behind the gateway; a larger model plans and a smaller one handles routine steps, billed per token. |
 | Run | Chunk + embed documents | `serverless-function` | AWS Lambda | exact | Runs only when documents change. |
 | Integrate | LLM gateway (LiteLLM) | `llm-gateway` | LiteLLM on Amazon ECS (AWS gateway guidance) | close | One OpenAI-compatible API in front of every model, with per-team keys and budgets, fallbacks between providers and response caching. |
+| Integrate | AI guardrails | `ai-guardrails` | Amazon Bedrock Guardrails | exact | Screens prompts, tool results and answers for prompt injection, harmful content and personal data. |
 | Store | Source documents | `object-storage` | Amazon S3 | exact | _Generic: Durable storage for files and blobs._ |
 | Store | Knowledge index | `vector-search` | Amazon OpenSearch Serverless (vector) | close | Lets the agent ground its answers in company documents with hybrid keyword and vector search. |
 | Store | Agent state + history | `relational-db` | Amazon RDS for PostgreSQL | exact | Postgres holds the agent checkpoints, chat history and the gateway's spend log in one managed database. |
 | Operate | Single sign-on | `identity` | Amazon Cognito | exact | _Generic: User sign-up, sign-in and tokens._ |
 | Operate | Model and tool credentials | `secrets` | AWS Secrets Manager | exact | _Generic: Stores and rotates credentials._ |
 | Operate | LLM tracing (Langfuse) | `llm-observability` | Amazon CloudWatch generative AI observability | close | Traces every prompt, tool call, token and cost, and scores samples with evals, so regressions show up before users notice them. |
+| Operate | Cloud access governance | `access-governance` | AWS IAM Identity Center + Organizations | exact | Staff sign in to the cloud with the company directory; the cloud architects approve least-privilege roles, and access is reviewed every quarter. |
+| Operate | Audit trail | `audit-logging` | AWS CloudTrail | exact | Records every console change, data access and model call in a log nobody can edit. |
+| Operate | Encryption keys | `key-management` | AWS KMS | exact | Customer-managed keys encrypt the database, documents and backups. |
 | Operate | Logs, metrics, alarms | `monitoring` | Amazon CloudWatch | exact | _Generic: Metrics, logs, dashboards and alarms._ |
 
 ## Workflows
@@ -54,9 +58,10 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 8. Agent runtime (LangGraph) → Tool functions: call tools that look up or change data
 9. Agent runtime (LangGraph) → Agent state + history: save the agent's progress and the conversation
 10. Agent runtime (LangGraph) → Model and tool credentials: fetch credentials
-11. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
-12. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
-13. Every component → Logs, metrics, alarms: send logs and metrics
+11. Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer
+12. LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails
+13. Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost
+14. Every component → Logs, metrics, alarms: send logs and metrics
 
 ### Background processing
 
@@ -80,12 +85,18 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Trade-offs and alternatives
 
+- **Amazon CloudFront** (Web front end): alternatives: Cloudflare
 - **Amazon ECS on AWS Fargate** (Chat API (streaming)): alternatives: Amazon EKS, AWS App Runner
 - **Amazon Bedrock AgentCore Runtime** (Agent runtime (LangGraph)): alternatives: LangGraph on Amazon ECS, Amazon Bedrock Agents; Hosts agents built with LangGraph, CrewAI or Strands in isolated sessions, billed for active CPU and memory; AgentCore Memory, Gateway and Identity are separate add-ons.
 - **LiteLLM on Amazon ECS (AWS gateway guidance)** (LLM gateway (LiteLLM)): alternatives: Amazon Bedrock inference profiles, Amazon API Gateway; AWS has no managed LLM gateway; its multi-provider generative AI gateway guidance runs LiteLLM on ECS. Bedrock on its own gives one API across Bedrock models only.
+- **Amazon Bedrock** (Models + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Amazon OpenSearch Serverless (vector)** (Knowledge index): alternatives: Aurora PostgreSQL with pgvector, Amazon S3 Vectors; Vector search is one feature of a general search engine; a smaller workload may be cheaper on pgvector in the relational database.
 - **Amazon RDS for PostgreSQL** (Agent state + history): alternatives: Amazon Aurora PostgreSQL
 - **Amazon CloudWatch generative AI observability** (LLM tracing (Langfuse)): alternatives: Langfuse on AWS, Bedrock model invocation logging; OpenTelemetry traces of agent steps, model calls, tokens and latency; prompt versions and evaluation datasets need AgentCore Evaluations or Langfuse.
+- **Amazon Bedrock Guardrails** (AI guardrails): alternatives: NeMo Guardrails, Llama Guard; Content filters, prompt-attack detection, denied topics and PII masking; works with any model through the ApplyGuardrail API.
+- **AWS IAM Identity Center + Organizations** (Cloud access governance): alternatives: IAM roles, Service control policies; Staff sign in with the company directory; permission sets per role; service control policies set limits for every account.
+- **AWS CloudTrail** (Audit trail): alternatives: CloudTrail Lake; Management events of one trail are free; data events (object reads, function calls, model invocations) are billed per event.
+- **AWS KMS** (Encryption keys): alternatives: AWS CloudHSM
 - **GitHub or GitLab via AWS CodeConnections** (App and infrastructure code): alternatives: AWS CodeCommit; Most teams host code on GitHub or GitLab and connect it to AWS pipelines with CodeConnections. Check AWS CodeCommit's current availability before choosing it.
 - **AWS CodeBuild** (Build, test and evaluate): alternatives: GitHub Actions
 - **AWS CodePipeline** (Release pipeline): alternatives: AWS CodeDeploy, GitHub Actions
@@ -108,29 +119,32 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$722 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$1,071 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $722 | – |
-| 6 months | $4,333 | – |
-| 1 year | $8,670 | $8,095 |
-| 3 years | $26,059 | $22,547 |
+| 1 month | $1,071 | – |
+| 6 months | $6,425 | – |
+| 1 year | $12,855 | $12,280 |
+| 3 years | $38,614 | $35,102 |
 
 | Service | Per month |
 |---|---:|
 | Amazon OpenSearch Serverless (vector) (Knowledge index) | $350 |
+| Amazon Bedrock Guardrails (AI guardrails) | $338 |
 | Amazon RDS for PostgreSQL (Agent state + history) | $106 |
 | Amazon Bedrock (Models + embeddings) | $84.07 |
 | Amazon ECS on AWS Fargate (Chat API (streaming)) | $72.08 |
 | LiteLLM on Amazon ECS (AWS gateway guidance) (LLM gateway (LiteLLM)) | $36.04 |
 | Amazon Bedrock AgentCore Runtime (Agent runtime (LangGraph)) | $30.67 |
 | Application Load Balancer (HTTPS load balancer) | $22.27 |
+| AWS KMS (Encryption keys) | $9.67 |
 | Amazon CloudWatch (Logs, metrics, alarms) | $7.50 |
 | Amazon CloudFront (Web front end) | $4.05 |
 | AWS Secrets Manager (Model and tool credentials) | $2.39 |
 | Amazon S3 (Source documents) | $2.34 |
 | Amazon CloudWatch generative AI observability (LLM tracing (Langfuse)) | $1.88 |
+| AWS CloudTrail (Audit trail) | $1.58 |
 | AWS CodeBuild (Build, test and evaluate) | $1.00 |
 | AWS CodePipeline (Release pipeline) | $1.00 |
 | Amazon ECR (Container images) | $0.50 |

@@ -32,17 +32,20 @@ services:
     service: Azure DNS
     short: DNS
     fidelity: exact
+    alternatives: [Cloudflare DNS]
     docs: https://learn.microsoft.com/azure/dns/
   cdn:
     service: Azure Front Door
     short: AFD
     fidelity: exact
+    alternatives: [Cloudflare]
     note: Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
     docs: https://learn.microsoft.com/azure/frontdoor/
   waf:
     service: Azure Web Application Firewall
     short: WAF
     fidelity: exact
+    alternatives: [Cloudflare WAF]
     note: Runs on Azure Front Door or Application Gateway rather than as a separate service.
     docs: https://learn.microsoft.com/azure/web-application-firewall/
   load-balancer:
@@ -70,6 +73,7 @@ services:
     service: Azure AI Foundry (incl. Azure OpenAI)
     short: AIF
     fidelity: exact
+    alternatives: [OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     docs: https://learn.microsoft.com/azure/ai-foundry/
   agent-orchestration:
     service: Foundry Agent Service
@@ -214,3 +218,57 @@ services:
     fidelity: exact
     alternatives: [ARM templates, Terraform or OpenTofu]
     docs: https://learn.microsoft.com/azure/azure-resource-manager/bicep/
+  dev-environment:
+    service: GitHub Codespaces
+    short: CS
+    fidelity: exact
+    alternatives: [Microsoft Dev Box]
+    note: GitHub is part of Microsoft; Dev Box gives full Windows workstations instead.
+    docs: https://docs.github.com/codespaces
+  ai-coding-assistant:
+    service: GitHub Copilot
+    short: GHC
+    fidelity: exact
+    alternatives: [Claude Code, Cursor]
+    note: Business plan per developer, with IP indemnity and policy controls.
+    docs: https://docs.github.com/copilot
+  ai-guardrails:
+    service: Azure AI Content Safety (Prompt Shields)
+    short: ACS
+    fidelity: exact
+    alternatives: [NeMo Guardrails]
+    note: Harm categories, prompt-injection shields and groundedness checks; Azure OpenAI deployments also apply default content filters.
+    docs: https://learn.microsoft.com/azure/ai-services/content-safety/overview
+  archive-storage:
+    service: Azure Blob Storage (Archive tier)
+    short: ARC
+    fidelity: exact
+    alternatives: [Blob Storage Cold tier]
+    note: Rehydration takes hours; lifecycle management policies move blobs automatically.
+    docs: https://learn.microsoft.com/azure/storage/blobs/access-tiers-overview
+  access-governance:
+    service: Microsoft Entra ID + Privileged Identity Management
+    short: PIM
+    fidelity: exact
+    alternatives: [Azure Policy, Management groups]
+    note: Just-in-time role activation with approval and access reviews need Entra ID P2 licences for the people who use them.
+    docs: https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure
+  key-management:
+    service: Azure Key Vault (keys)
+    short: KV
+    fidelity: exact
+    alternatives: [Azure Managed HSM]
+    docs: https://learn.microsoft.com/azure/key-vault/keys/about-keys
+  audit-logging:
+    service: Azure Monitor activity log + Log Analytics
+    short: ACT
+    fidelity: exact
+    alternatives: [Microsoft Sentinel]
+    note: The activity log is kept 90 days for free; longer retention goes to a Log Analytics workspace or storage.
+    docs: https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log
+  backup:
+    service: Azure Backup
+    short: BAK
+    fidelity: exact
+    alternatives: [Database point-in-time restore]
+    docs: https://learn.microsoft.com/azure/backup/backup-overview

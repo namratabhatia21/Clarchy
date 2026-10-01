@@ -34,6 +34,12 @@ class Requirements(BaseModel):
     region: str = "us-east"
     compliance: list[str] = Field(default_factory=list)
     monthly_budget_usd: float | None = Field(default=None, ge=0)
+    developers: int | None = Field(
+        default=None, ge=0, description="Engineers who build and run it (for per-seat tools)"
+    )
+    retention_years: float | None = Field(
+        default=None, ge=0, description="How long records must be kept"
+    )
 
     @field_validator("region")
     @classmethod

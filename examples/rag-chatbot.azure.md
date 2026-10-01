@@ -69,8 +69,9 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Trade-offs and alternatives
 
-- **Azure Front Door** (Web front end): Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
+- **Azure Front Door** (Web front end): alternatives: Cloudflare; Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
 - **Azure Container Apps** (Chat API (streaming)): alternatives: Azure Kubernetes Service
+- **Azure AI Foundry (incl. Azure OpenAI)** (LLM + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Azure AI Search** (Embeddings index): alternatives: Cosmos DB vector search, PostgreSQL with pgvector; Vector search is one feature of a full search service; small workloads may be cheaper in the database.
 - **Azure Cosmos DB** (Chat history): alternatives: Azure Table Storage
 - **Azure Repos** (App and infrastructure code): alternatives: GitHub

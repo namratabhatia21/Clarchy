@@ -63,6 +63,8 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Trade-offs and alternatives
 
+- **Cloud DNS** (Domain): alternatives: Cloudflare DNS
+- **Google Cloud Armor** (Web firewall): alternatives: Cloudflare WAF
 - **Cloud Run** (API containers): alternatives: GKE Autopilot
 - **Cloud SQL for PostgreSQL** (PostgreSQL): alternatives: AlloyDB for PostgreSQL
 - **Secure Source Manager** (App and infrastructure code): alternatives: GitHub or GitLab via Developer Connect

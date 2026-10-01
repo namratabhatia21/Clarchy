@@ -1,0 +1,172 @@
+# AI and data regulations, standards and guidance, and the parts of a design that help
+# meet them. Clarchy shows the ones that apply to a design and checks each obligation:
+#
+#   when      when the policy applies: ai (the design uses language models), regions (any
+#             of these region keys), compliance (any of these stated regimes). Any match.
+#   controls  capabilities that help meet an obligation. "Covered" when the design has one
+#             of them, a "gap" when it has none. Obligations without controls are work for
+#             the team (assessments, contracts, notices), not something a diagram provides.
+#
+# This is a design checklist, not legal advice. Check the current text with the source.
+policies:
+  - id: eu-ai-act
+    name: EU AI Act
+    kind: Regulation (EU) 2024/1689
+    url: https://eur-lex.europa.eu/eli/reg/2024/1689/oj
+    when: {ai: true, regions: [eu-west, eu-central]}
+    summary: The EU law on AI systems. It entered into force in August 2024 and applies in stages from February 2025 to August 2027; what you must do depends on the risk level of the use case.
+    note: The EU has proposed moving some high-risk deadlines, so check the current timeline.
+    obligations:
+      - text: Classify the use case. Uses such as hiring, credit decisions or access to essential services are high-risk and need risk management, documentation, logging and human oversight.
+      - text: Tell people when they are interacting with an AI system, and mark AI-generated content (Article 50).
+      - text: Keep logs that let you trace what the system did and why (record-keeping for high-risk systems, Article 12).
+        controls: [llm-observability, audit-logging]
+      - text: Keep a person in control of consequential decisions, with the ability to override the system.
+      - text: Make sure the people who build and use the system have enough AI literacy (Article 4, applies since February 2025).
+
+  - id: gdpr
+    name: GDPR and UK GDPR
+    kind: Regulation (EU) 2016/679
+    url: https://eur-lex.europa.eu/eli/reg/2016/679/oj
+    when: {compliance: [GDPR], regions: [eu-west, eu-central, uk]}
+    summary: Personal data in prompts, documents, logs and backups is still personal data, with the same duties as anywhere else.
+    obligations:
+      - text: Carry out a data protection impact assessment before processing personal data at scale with new technology such as AI (Article 35).
+      - text: Keep personal data out of prompts where you can, and mask what you can't.
+        controls: [ai-guardrails]
+      - text: Protect personal data with encryption and strict access control (Article 32).
+        controls: [key-management, access-governance]
+      - text: Sign data processing terms with the cloud and model providers, and keep data in the regions you promised.
+      - text: Decisions with legal or similarly significant effects need human involvement (Article 22).
+      - text: Keep personal data only as long as the purpose needs, then delete or archive it on a schedule.
+        controls: [archive-storage]
+
+  - id: owasp-llm
+    name: OWASP Top 10 for LLM Applications
+    kind: Security guidance, 2025 edition
+    url: https://genai.owasp.org/llm-top-10/
+    when: {ai: true}
+    summary: The most common security failures in applications built on language models.
+    obligations:
+      - text: Prompt injection (LLM01). Screen inputs, including text that arrives through documents and tool results.
+        controls: [ai-guardrails]
+      - text: Sensitive information disclosure (LLM02). Mask personal data and limit what the model can see.
+        controls: [ai-guardrails, access-governance]
+      - text: Excessive agency (LLM06). Give agents only the tools and permissions they need, and have a person confirm risky actions.
+        controls: [access-governance]
+      - text: Unbounded consumption (LLM10). Set rate limits and token budgets per team or user.
+        controls: [llm-gateway]
+      - text: Monitor model behaviour in production so misuse and regressions show up quickly.
+        controls: [llm-observability]
+
+  - id: nist-ai-rmf
+    name: NIST AI Risk Management Framework
+    kind: NIST AI 100-1, with the Generative AI Profile (NIST AI 600-1)
+    url: https://www.nist.gov/itl/ai-risk-management-framework
+    when: {ai: true}
+    summary: A voluntary framework, widely used to organise AI risk work in four functions - govern, map, measure and manage.
+    obligations:
+      - text: Govern. Name owners for AI risk and decide who may change the system and its models.
+        controls: [access-governance]
+      - text: Map. Document the use case, its users, its data and what could go wrong.
+      - text: Measure. Test and monitor quality, safety and bias before and after each release.
+        controls: [llm-observability]
+      - text: Manage. Put controls on inputs and outputs, and plan for incidents.
+        controls: [ai-guardrails]
+
+  - id: iso-42001
+    name: ISO/IEC 42001
+    kind: AI management system standard, 2023
+    url: https://www.iso.org/standard/42001
+    when: {ai: true}
+    summary: A certifiable management system for AI, structured like ISO/IEC 27001; useful when customers ask for evidence of responsible AI.
+    obligations:
+      - text: Set an AI policy, roles and responsibilities, and an AI risk and impact assessment process.
+      - text: Keep records that show the controls work.
+        controls: [audit-logging, llm-observability]
+
+  - id: model-terms
+    name: Model provider data terms
+    kind: Contracts with model providers
+    when: {ai: true}
+    summary: Where prompts and answers go, and what the provider may do with them, is decided by the endpoint you call and its terms.
+    obligations:
+      - text: Use enterprise model endpoints that don't train on your prompts by default (Amazon Bedrock, Azure OpenAI and Vertex AI don't), and check retention settings for any third-party API.
+        controls: [llm-inference]
+      - text: Send all model traffic through one place, so keys, budgets and usage logs are controlled centrally.
+        controls: [llm-gateway]
+
+  - id: hipaa
+    name: HIPAA Security Rule
+    kind: 45 CFR Part 164, Subpart C
+    url: https://www.hhs.gov/hipaa/for-professionals/security/index.html
+    when: {compliance: [HIPAA]}
+    summary: Safeguards for electronic protected health information, including in prompts sent to models.
+    obligations:
+      - text: Sign a business associate agreement with the cloud provider and use only HIPAA-eligible services, including the model service if prompts contain health data.
+      - text: Audit controls. Record and examine access to health data (164.312(b)).
+        controls: [audit-logging]
+      - text: Encrypt health data at rest and in transit.
+        controls: [key-management]
+      - text: Back up data and plan for disaster recovery (164.308(a)(7)).
+        controls: [backup]
+      - text: Keep required security documentation for 6 years (164.316).
+        controls: [archive-storage]
+
+  - id: pci-dss
+    name: PCI DSS v4.0
+    kind: Payment Card Industry Data Security Standard
+    url: https://www.pcisecuritystandards.org/standards/pci-dss/
+    when: {compliance: [PCI DSS]}
+    summary: Requirements for any system that stores, processes or transmits card data.
+    obligations:
+      - text: Keep card numbers out of your systems by using a payment provider's hosted checkout, which shrinks the scope of an audit.
+      - text: Protect stored account data with strong cryptography (requirement 3).
+        controls: [key-management]
+      - text: Log and monitor all access to system components and cardholder data (requirement 10).
+        controls: [audit-logging, monitoring]
+      - text: Protect public web applications against attacks (requirement 6.4).
+        controls: [waf]
+
+  - id: sox
+    name: SOX IT general controls
+    kind: Sarbanes-Oxley Act, section 404
+    url: https://www.sec.gov/spotlight/sarbanes-oxley.htm
+    when: {compliance: [SOX]}
+    summary: Controls over the systems that produce financial reporting.
+    obligations:
+      - text: Change management. Every change is reviewed, tested and approved before release.
+        controls: [source-control, ci-build, cd-deploy]
+      - text: Access to financial systems is approved and reviewed regularly.
+        controls: [access-governance]
+      - text: Keep an audit trail of changes and approvals for the retention period.
+        controls: [audit-logging, archive-storage]
+
+  - id: iso-27001
+    name: ISO/IEC 27001
+    kind: Information security management, 2022
+    url: https://www.iso.org/standard/27001
+    when: {compliance: [ISO 27001]}
+    summary: The information security controls of Annex A that a design touches directly.
+    obligations:
+      - text: Access control and privileged access rights (A.5.15, A.8.2).
+        controls: [access-governance]
+      - text: Logging and monitoring (A.8.15, A.8.16).
+        controls: [audit-logging, monitoring]
+      - text: Use of cryptography (A.8.24).
+        controls: [key-management]
+      - text: Information backup (A.8.13).
+        controls: [backup]
+
+  - id: dpdp
+    name: India DPDP Act
+    kind: Digital Personal Data Protection Act, 2023
+    url: https://www.meity.gov.in/data-protection-framework
+    when: {regions: [india-mumbai]}
+    summary: India's personal data law, whose rules are being phased in.
+    obligations:
+      - text: Give a clear notice and get consent for each purpose, with an easy way to withdraw it.
+      - text: Take reasonable security safeguards to prevent personal data breaches.
+        controls: [key-management, access-governance]
+      - text: Erase personal data when the purpose is served, unless the law requires keeping it.
+        controls: [archive-storage]

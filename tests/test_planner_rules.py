@@ -34,9 +34,47 @@ def test_each_sample_picks_the_right_compute():
     designs = {sid: plan_with_rules(text) for sid, text in SAMPLES.items()}
     assert compute(designs["clinic-booking"]) == "container-service"  # "already in Docker"
     assert compute(designs["fleet-telemetry"]) == "kubernetes"
-    assert compute(designs["photo-sharing"]) == "serverless-function"  # spiky traffic
-    policy = {c.capability for c in designs["policy-assistant"].components}
-    assert {"llm-inference", "vector-search"} <= policy
+    assert compute(designs["invoice-processing"]) == "serverless-function"  # bursty volumes
+    assert compute(designs["field-service-assistant"]) == "container-service"  # streams answers
+
+
+def test_enterprise_ai_sample_gets_agents_security_and_records():
+    spec = plan_with_rules(SAMPLES["field-service-assistant"])
+    req = spec.requirements
+    assert (req.users, req.region, req.developers, req.retention_years) == (
+        6_000,
+        "eu-central",
+        8,
+        7,
+    )
+    assert {"GDPR", "ISO 27001"} <= set(req.compliance)
+    caps = {c.capability for c in spec.components}
+    assert {
+        "agent-orchestration",
+        "llm-gateway",
+        "llm-observability",
+        "ai-guardrails",
+        "vector-search",
+        "access-governance",
+        "audit-logging",
+        "key-management",
+        "backup",
+        "archive-storage",
+        "dev-environment",
+        "ai-coding-assistant",
+    } <= caps
+    edges = {(e.source, e.target) for e in spec.edges}
+    assert {("app", "agent"), ("agent", "gateway"), ("gateway", "llm"), ("devenv", "repo")} <= edges
+    assert not spec.open_questions
+
+
+def test_retention_takes_the_longest_period_in_a_sentence():
+    spec = plan_with_rules(
+        "An internal tool for 200 employees. Chat logs are kept for 6 months and audit "
+        "logs for 7 years."
+    )
+    assert spec.requirements.retention_years == 7
+    assert "archive-storage" in {c.capability for c in spec.components}
 
 
 def test_fleet_reads_numbers_region_and_scales_workers_with_keda():

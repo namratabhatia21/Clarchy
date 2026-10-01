@@ -59,7 +59,8 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Trade-offs and alternatives
 
-- **Cloud CDN** (Static site + API edge): alternatives: Media CDN; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
+- **Cloud DNS** (Domain): alternatives: Cloudflare DNS
+- **Cloud CDN** (Static site + API edge): alternatives: Media CDN, Cloudflare; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
 - **API Gateway** (REST API): alternatives: Apigee; Lighter than Amazon API Gateway or Azure API Management; Apigee is the full-featured option.
 - **Firestore** (App data): alternatives: Bigtable; A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
 - **Identity Platform** (Sign-up and sign-in): alternatives: Firebase Authentication

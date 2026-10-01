@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import zipfile
+from pathlib import Path
 from typing import Any
 
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -95,6 +96,9 @@ def make_pdf(line: str) -> bytes:
 
 
 # --- a scripted model -----------------------------------------------------------------
+
+# The brief the agent tests plan from (an internal policy assistant).
+POLICY_DOC = (Path(__file__).parent / "fixtures" / "policy-assistant.md").read_text()
 
 POLICY_SPEC = """
 name: Policy assistant

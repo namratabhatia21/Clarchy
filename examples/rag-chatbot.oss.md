@@ -69,10 +69,10 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Trade-offs and alternatives
 
-- **Varnish Cache** (Web front end): alternatives: NGINX caching; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
+- **Varnish Cache** (Web front end): alternatives: NGINX caching, Cloudflare; Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
 - **HAProxy** (HTTPS load balancer): alternatives: NGINX, Envoy; Run at least two instances for availability and handle TLS certificates yourself.
 - **Kubernetes** (Chat API (streaming)): alternatives: K3s, HashiCorp Nomad; You manage the cluster, nodes and upgrades; there is no per-second serverless billing.
-- **vLLM (open-weight models)** (LLM + embeddings): alternatives: Ollama, Hugging Face TGI; Needs GPUs you provision; limited to open-weight models.
+- **vLLM (open-weight models)** (LLM + embeddings): alternatives: Ollama, Hugging Face TGI, OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints; Needs GPUs you provision; limited to open-weight models.
 - **Knative Serving** (Chunk + embed documents): alternatives: OpenFaaS; Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
 - **Ceph Object Gateway** (Source documents): alternatives: SeaweedFS, Garage, MinIO; S3-compatible API, but you operate durability, replication, capacity and upgrades.
 - **pgvector (PostgreSQL)** (Embeddings index): alternatives: Qdrant, Milvus, OpenSearch

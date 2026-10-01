@@ -63,6 +63,8 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Trade-offs and alternatives
 
+- **Amazon Route 53** (Domain): alternatives: Cloudflare DNS
+- **AWS WAF** (Web firewall): alternatives: Cloudflare WAF
 - **Amazon ECS on AWS Fargate** (API containers): alternatives: Amazon EKS, AWS App Runner
 - **Amazon RDS for PostgreSQL** (PostgreSQL): alternatives: Amazon Aurora PostgreSQL
 - **GitHub or GitLab via AWS CodeConnections** (App and infrastructure code): alternatives: AWS CodeCommit; Most teams host code on GitHub or GitLab and connect it to AWS pipelines with CodeConnections. Check AWS CodeCommit's current availability before choosing it.

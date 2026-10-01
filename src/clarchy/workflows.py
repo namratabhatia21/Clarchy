@@ -30,6 +30,14 @@ ROLE = {
     "agent-orchestration": "plan the steps and call tools",
     "llm-gateway": "check the key and budget, then pick a model",
     "llm-observability": "record the prompt, tool calls, tokens and cost",
+    "ai-guardrails": "screen the prompt and the answer",
+    "archive-storage": "move records that have aged out",
+    "backup": "back up the data",
+    "key-management": "decrypt with the managed key",
+    "audit-logging": "record who did what",
+    "access-governance": "approve and grant access",
+    "dev-environment": "open a ready-to-code environment",
+    "ai-coding-assistant": "suggest code and review changes",
     "message-queue": "queue the job",
     "event-bus": "publish an event",
     "stream": "append to the event stream",
@@ -86,6 +94,10 @@ LABEL_PHRASE = {
     "enqueue": "queue the job",
     "publish": "publish an event",
     "run": "hand the request to the agent",
+    "screen": "screen the prompt and the answer",
+    "age out": "move records that have aged out to the archive",
+    "commit": "commit and push the change",
+    "suggest code": "suggest code and review the change",
     "call tools": "call tools that look up or change data",
     "checkpoint": "save the agent's progress and the conversation",
     "prompt": "send the prompt through the gateway",
@@ -94,7 +106,7 @@ LABEL_PHRASE = {
 
 DATA_CAPS = {"stream", "batch-etl", "data-warehouse"}
 # Calls a request waits for, so the request flow follows them even outside compute.
-SYNC_CAPS = {"llm-gateway", "llm-inference"}
+SYNC_CAPS = {"llm-gateway", "llm-inference", "ai-guardrails"}
 ASYNC_CAPS = {"message-queue", "event-bus", "workflow"}
 # What a release pipeline rolls out to.
 RUNTIME_COMPUTE = {
@@ -241,7 +253,15 @@ def generate_workflows(spec: ArchitectureSpec) -> list[Workflow]:
         entry_points = [c.id for c in delivery if not any(e.target == c.id for e in delivery_edges)]
         steps = []
         repos = [c for c in delivery if c.capability == "source-control"]
-        if repos:
+        devenvs = [c for c in delivery if c.capability == "dev-environment"]
+        if devenvs:
+            steps.append(
+                WorkflowStep(
+                    text=f"A developer → {devenvs[0].display_label}: {ROLE['dev-environment']}",
+                    components=[devenvs[0].id],
+                )
+            )
+        elif repos:
             steps.append(
                 WorkflowStep(
                     text=f"A developer → {repos[0].display_label}: {ROLE['source-control']}",

@@ -82,7 +82,8 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Trade-offs and alternatives
 
-- **Azure Web Application Firewall** (Web firewall): Runs on Azure Front Door or Application Gateway rather than as a separate service.
+- **Azure DNS** (Domain): alternatives: Cloudflare DNS
+- **Azure Web Application Firewall** (Web firewall): alternatives: Cloudflare WAF; Runs on Azure Front Door or Application Gateway rather than as a separate service.
 - **Azure Service Bus (queues)** (Order queue): alternatives: Azure Queue Storage
 - **Azure Managed Redis** (Sessions and hot catalogue): alternatives: Azure Cache for Redis
 - **Azure Repos** (App and infrastructure code): alternatives: GitHub

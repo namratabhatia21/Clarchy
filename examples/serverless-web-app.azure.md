@@ -59,7 +59,8 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Trade-offs and alternatives
 
-- **Azure Front Door** (Static site + API edge): Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
+- **Azure DNS** (Domain): alternatives: Cloudflare DNS
+- **Azure Front Door** (Static site + API edge): alternatives: Cloudflare; Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
 - **Azure Cosmos DB** (App data): alternatives: Azure Table Storage
 - **Azure Repos** (App and infrastructure code): alternatives: GitHub
 - **Azure Pipelines** (Build and test): alternatives: GitHub Actions

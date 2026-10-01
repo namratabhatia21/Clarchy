@@ -11,7 +11,7 @@ from typing import Any
 import yaml
 from pydantic import ValidationError
 
-from clarchy import __version__, catalog, pricing
+from clarchy import __version__, catalog, policies, pricing
 from clarchy.explain import explain_markdown
 from clarchy.icons import IconLibrary
 from clarchy.mapping import MappingError, map_to_provider, service_choice
@@ -193,6 +193,7 @@ def design_payload(
         "svg": render_svg(arch, icons),
         "explanation_md": explain_markdown(arch),
         "cost": pricing.estimate(arch),
+        "policies": policies.check(spec),
         "official_icons": icons.root is not None,
         "reviewed": arch.reviewed,
         "kind": arch.kind,

@@ -69,8 +69,9 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Trade-offs and alternatives
 
-- **Cloud CDN** (Web front end): alternatives: Media CDN; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
+- **Cloud CDN** (Web front end): alternatives: Media CDN, Cloudflare; Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
 - **Cloud Run** (Chat API (streaming)): alternatives: GKE Autopilot
+- **Vertex AI** (LLM + embeddings): alternatives: OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints
 - **Vertex AI Vector Search** (Embeddings index): alternatives: AlloyDB or Cloud SQL with pgvector
 - **Firestore** (Chat history): alternatives: Bigtable; A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
 - **Identity Platform** (Single sign-on): alternatives: Firebase Authentication

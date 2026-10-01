@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1356" height="978" viewBox="0 0 1356 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="RAG chatbot on AWS">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1388" height="978" viewBox="0 0 1388 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="RAG chatbot on AWS">
 <style>.ca-aws{font-family:'Open Sans', 'Helvetica Neue', Arial, sans-serif}
 .ca-aws .ca-bg{fill:#ffffff}
 .ca-aws .ca-title{font-size:18px;font-weight:600;fill:#16191f}
@@ -16,14 +16,14 @@
 .ca-aws .ca-arrow{fill:#545B64}
 .ca-aws .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
 .ca-aws .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1356" height="978"/>
+<rect class="ca-bg" width="1388" height="978"/>
 <text class="ca-title" x="24" y="36">RAG chatbot · AWS</text>
 <text class="ca-subtitle" x="24" y="56">Chat assistant that answers from your own documents using retrieval-augmented generation with a managed LLM.</text>
-<rect class="ca-cloud" x="252" y="104" width="1080" height="822" rx="4"/>
+<rect class="ca-cloud" x="252" y="104" width="1112" height="822" rx="4"/>
 <text class="ca-cloud-label" x="262" y="123">AWS Cloud · Oregon (us-west-2)</text>
-<rect class="ca-band" x="262" y="134" width="1060" height="164" rx="4"/>
+<rect class="ca-band" x="262" y="134" width="1092" height="164" rx="4"/>
 <text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="754" width="1060" height="162" rx="4"/>
+<rect class="ca-band" x="262" y="754" width="1092" height="162" rx="4"/>
 <text class="ca-band-label" x="272" y="774">Shared services</text>
 <path class="ca-edge" data-from="users" data-to="cdn" d="M180,526 C227,526 227,526 274,526"/>
 <polygon class="ca-arrow" data-from="users" data-to="cdn" points="274,526 265,521.5 265,530.5"/>
@@ -31,25 +31,25 @@
 <path class="ca-edge" data-from="cdn" data-to="lb" d="M430,526 C466,526 466,526 502,526"/>
 <polygon class="ca-arrow" data-from="cdn" data-to="lb" points="502,526 493,521.5 493,530.5"/>
 <text class="ca-edge-label" data-from="cdn" data-to="lb" x="466" y="520" text-anchor="middle">/api/*</text>
-<path class="ca-edge" data-from="lb" data-to="app" d="M658,526 C694,526 694,674 730,674"/>
-<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,674 721,669.5 721,678.5"/>
-<path class="ca-edge" data-from="app" data-to="vectors" d="M886,674 C922,674 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="app" data-to="vectors" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="app" data-to="vectors" x="922" y="594" text-anchor="middle">retrieve</text>
-<path class="ca-edge" data-from="app" data-to="llm" d="M808,616 C808,600 808,600 808,584"/>
-<polygon class="ca-arrow" data-from="app" data-to="llm" points="808,584 803.5,593 812.5,593"/>
-<text class="ca-edge-label" data-from="app" data-to="llm" x="808" y="594" text-anchor="middle">generate</text>
-<path class="ca-edge" data-from="app" data-to="history" d="M886,674 C922,674 922,674 958,674"/>
-<polygon class="ca-arrow" data-from="app" data-to="history" points="958,674 949,669.5 949,678.5"/>
-<path class="ca-edge" data-from="docs" data-to="ingest" d="M958,378 C922,378 922,378 886,378"/>
-<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="886,378 895,373.5 895,382.5"/>
-<text class="ca-edge-label" data-from="docs" data-to="ingest" x="922" y="372" text-anchor="middle">on upload</text>
-<path class="ca-edge" data-from="ingest" data-to="llm" d="M808,436 C808,452 808,452 808,468"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="llm" points="808,468 803.5,459 812.5,459"/>
-<text class="ca-edge-label" data-from="ingest" data-to="llm" x="808" y="446" text-anchor="middle">embed</text>
-<path class="ca-edge" data-from="ingest" data-to="vectors" d="M886,378 C922,378 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="922" y="446" text-anchor="middle">index</text>
+<path class="ca-edge" data-from="lb" data-to="app" d="M658,526 C694,526 694,600 730,600"/>
+<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,600 721,595.5 721,604.5"/>
+<path class="ca-edge" data-from="app" data-to="vectors" d="M886,600 C1036,600 1036,526 1186,526"/>
+<polygon class="ca-arrow" data-from="app" data-to="vectors" points="1186,526 1177,521.5 1177,530.5"/>
+<text class="ca-edge-label" data-from="app" data-to="vectors" x="1036" y="557" text-anchor="middle">retrieve</text>
+<path class="ca-edge" data-from="app" data-to="llm" d="M886,600 C922,600 922,526 958,526"/>
+<polygon class="ca-arrow" data-from="app" data-to="llm" points="958,526 949,521.5 949,530.5"/>
+<text class="ca-edge-label" data-from="app" data-to="llm" x="922" y="557" text-anchor="middle">generate</text>
+<path class="ca-edge" data-from="app" data-to="history" d="M886,600 C1036,600 1036,674 1186,674"/>
+<polygon class="ca-arrow" data-from="app" data-to="history" points="1186,674 1177,669.5 1177,678.5"/>
+<path class="ca-edge" data-from="docs" data-to="ingest" d="M1186,378 C1036,378 1036,452 886,452"/>
+<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="886,452 895,447.5 895,456.5"/>
+<text class="ca-edge-label" data-from="docs" data-to="ingest" x="1036" y="409" text-anchor="middle">on upload</text>
+<path class="ca-edge" data-from="ingest" data-to="llm" d="M886,452 C922,452 922,526 958,526"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="llm" points="958,526 949,521.5 949,530.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="llm" x="922" y="483" text-anchor="middle">embed</text>
+<path class="ca-edge" data-from="ingest" data-to="vectors" d="M886,452 C1036,452 1036,526 1186,526"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1186,526 1177,521.5 1177,530.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1036" y="483" text-anchor="middle">index</text>
 <path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
 <polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
 <text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
@@ -80,43 +80,43 @@
 <text class="ca-label" x="580" y="577" text-anchor="middle">HTTPS load balancer</text>
 </g>
 <g class="node" data-id="app" data-capability="container-service" data-stage="run">
-<rect class="ca-node-box" x="730" y="616" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="626" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="655" text-anchor="middle">ECS</text>
-<text class="ca-service" x="808" y="690" text-anchor="middle">Amazon ECS on AWS</text>
-<text class="ca-service" x="808" y="704" text-anchor="middle">Fargate</text>
-<text class="ca-label" x="808" y="725" text-anchor="middle">Chat API (streaming)</text>
+<rect class="ca-node-box" x="730" y="542" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="784" y="552" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="581" text-anchor="middle">ECS</text>
+<text class="ca-service" x="808" y="616" text-anchor="middle">Amazon ECS on AWS</text>
+<text class="ca-service" x="808" y="630" text-anchor="middle">Fargate</text>
+<text class="ca-label" x="808" y="651" text-anchor="middle">Chat API (streaming)</text>
 </g>
 <g class="node" data-id="llm" data-capability="llm-inference" data-stage="run">
-<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="784" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="808" y="507" text-anchor="middle">BR</text>
-<text class="ca-service" x="808" y="542" text-anchor="middle">Amazon Bedrock</text>
-<text class="ca-label" x="808" y="577" text-anchor="middle">LLM + embeddings</text>
+<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
+<rect x="1012" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">BR</text>
+<text class="ca-service" x="1036" y="542" text-anchor="middle">Amazon Bedrock</text>
+<text class="ca-label" x="1036" y="577" text-anchor="middle">LLM + embeddings</text>
 </g>
 <g class="node" data-id="ingest" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="730" y="320" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="330" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="359" text-anchor="middle">λ</text>
-<text class="ca-service" x="808" y="394" text-anchor="middle">AWS Lambda</text>
-<text class="ca-label" x="808" y="429" text-anchor="middle">Chunk + embed documents</text>
+<rect class="ca-node-box" x="730" y="394" width="156" height="116" rx="8" style="stroke:#ED7100"/>
+<rect x="784" y="404" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="433" text-anchor="middle">λ</text>
+<text class="ca-service" x="808" y="468" text-anchor="middle">AWS Lambda</text>
+<text class="ca-label" x="808" y="503" text-anchor="middle">Chunk + embed documents</text>
 </g>
 <g class="node" data-id="docs" data-capability="object-storage" data-stage="store">
-<rect class="ca-node-box" x="958" y="320" width="156" height="116" rx="8" style="stroke:#7AA116"/>
-<rect x="1012" y="330" width="48" height="48" rx="6" fill="#7AA116"/><text class="ca-badge" x="1036" y="359" text-anchor="middle">S3</text>
-<text class="ca-service" x="1036" y="394" text-anchor="middle">Amazon S3</text>
-<text class="ca-label" x="1036" y="429" text-anchor="middle">Source documents</text>
+<rect class="ca-node-box" x="1186" y="320" width="156" height="116" rx="8" style="stroke:#7AA116"/>
+<rect x="1240" y="330" width="48" height="48" rx="6" fill="#7AA116"/><text class="ca-badge" x="1264" y="359" text-anchor="middle">S3</text>
+<text class="ca-service" x="1264" y="394" text-anchor="middle">Amazon S3</text>
+<text class="ca-label" x="1264" y="429" text-anchor="middle">Source documents</text>
 </g>
 <g class="node" data-id="vectors" data-capability="vector-search" data-stage="store">
-<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="1012" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">AOS</text>
-<text class="ca-service" x="1036" y="542" text-anchor="middle">Amazon OpenSearch</text>
-<text class="ca-service" x="1036" y="556" text-anchor="middle">Serverless (vector)</text>
-<text class="ca-label" x="1036" y="577" text-anchor="middle">Embeddings index</text>
-<text class="ca-fidelity" x="1108" y="482" text-anchor="end">close</text>
+<rect class="ca-node-box" x="1186" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
+<rect x="1240" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1264" y="507" text-anchor="middle">AOS</text>
+<text class="ca-service" x="1264" y="542" text-anchor="middle">Amazon OpenSearch</text>
+<text class="ca-service" x="1264" y="556" text-anchor="middle">Serverless (vector)</text>
+<text class="ca-label" x="1264" y="577" text-anchor="middle">Embeddings index</text>
+<text class="ca-fidelity" x="1336" y="482" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="history" data-capability="key-value-db" data-stage="store">
-<rect class="ca-node-box" x="958" y="616" width="156" height="116" rx="8" style="stroke:#C925D1"/>
-<rect x="1012" y="626" width="48" height="48" rx="6" fill="#C925D1"/><text class="ca-badge" x="1036" y="655" text-anchor="middle">DDB</text>
-<text class="ca-service" x="1036" y="690" text-anchor="middle">Amazon DynamoDB</text>
-<text class="ca-label" x="1036" y="725" text-anchor="middle">Chat history</text>
+<rect class="ca-node-box" x="1186" y="616" width="156" height="116" rx="8" style="stroke:#C925D1"/>
+<rect x="1240" y="626" width="48" height="48" rx="6" fill="#C925D1"/><text class="ca-badge" x="1264" y="655" text-anchor="middle">DDB</text>
+<text class="ca-service" x="1264" y="690" text-anchor="middle">Amazon DynamoDB</text>
+<text class="ca-label" x="1264" y="725" text-anchor="middle">Chat history</text>
 </g>
 <g class="node" data-id="auth" data-capability="identity" data-stage="operate">
 <rect class="ca-node-box" x="274" y="788" width="156" height="116" rx="8" style="stroke:#DD344C"/>

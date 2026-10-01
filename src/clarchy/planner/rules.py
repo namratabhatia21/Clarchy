@@ -88,6 +88,14 @@ NEEDS = {
     "cache": r"\b(cach\w+|low latency|sub[- ]second|fast response|hot data|leaderboards?)\b",
     "llm": r"\b(chat ?bots?|ai assistant|assistants?|llms?|gpt|claude|generative|gen ?ai|"
     r"summari[sz]\w*|natural language|question answering|rag|copilot)\b",
+    "agents": r"\b(ai agents?|agentic|langgraph|lang ?chain|crewai|autogen|multi[- ]agent|"
+    r"tool[- ]calling|agents? that (?:call|use|run) tools|agent workflows?)\b",
+    "gateway": r"\b(litellm|llm gateway|ai gateway|model gateway|model router|model routing|"
+    r"(?:several|multiple|different) (?:llms|models|model providers)|fallback models?|"
+    r"token budgets?|token quotas?|azure openai|openrouter)\b",
+    "llmops": r"\b(langfuse|langsmith|llm tracing|llm observability|tracing|traces|"
+    r"prompt management|prompt versions?|evals?|evaluations?|token (?:usage|costs?)|"
+    r"hallucinat\w*)\b",
     "vector": r"\b(rag|retrieval|semantic search|embeddings?|vectors?|knowledge base|"
     r"(?:our|company|internal|policy) (?:docs|documents|documentation|wiki))\b",
     "jobs": r"\b(background|asynchronous|async|queues?|jobs?|thumbnails?|transcod\w*|"
@@ -336,6 +344,9 @@ def analyse(text: str) -> RulesPlan:
         if quotes:
             plan.needs[need] = quotes
             plan.words[need] = words
+    if "agents" in plan.needs and "llm" not in plan.needs:
+        plan.needs["llm"] = plan.needs["agents"][:1]
+        plan.words["llm"] = []
     _assemble(plan)
     return plan
 
@@ -351,6 +362,16 @@ def _list(words: list[str], limit: int = 3) -> str:
 # How matched words read inside a sentence. None drops a word that adds nothing there
 # ("queue" in "while queue and jobs run"); words not listed are used as written.
 PHRASES: dict[str, list[tuple[str, str | None]]] = {
+    "agents": [
+        (r"agentic|agent workflows?", None),
+        (r"langgraph", "LangGraph agents"),
+        (r"lang ?chain", "LangChain agents"),
+        (r"crewai", "CrewAI agents"),
+        (r"autogen", "AutoGen agents"),
+        (r"multi[- ]agent", "multi-agent workflows"),
+        (r"tool[- ]calling|agents? that \w+ tools", "tool-calling agents"),
+        (r"ai agents?", "the AI agents"),
+    ],
     "files": [
         (r"upload\w*", None),
         (r"(photo|image|picture|video|file|attachment|avatar|recording)s?", r"\1s"),
@@ -675,7 +696,50 @@ def _assemble(plan: RulesPlan) -> None:
             "instead of hosting GPUs.",
             evidence=need["llm"][:1],
         )
-        link("app", "llm", "generate")
+        # Who talks to the models: the app, or an agent runtime working for it, through a
+        # gateway when there are several models, providers or budgets to manage.
+        caller = "app"
+        if "agents" in need:
+            add(
+                id="agent",
+                capability="agent-orchestration",
+                label="AI agent",
+                rationale=f"Runs {say('agents', 'the agents', 1)}: multi-step reasoning that calls "
+                "tools, keeps state between steps and can be resumed after a failure.",
+                evidence=need["agents"][:1],
+            )
+            link("app", "agent", "run")
+            caller = "agent"
+            plan.decisions.append(
+                f"an agent runtime, because you mention {say('agents', 'agents', 1)}"
+            )
+        if "gateway" in need:
+            add(
+                id="gateway",
+                capability="llm-gateway",
+                label="LLM gateway",
+                rationale="One API for every model, with per-team keys, budgets, rate limits, "
+                "fallbacks to another model and caching.",
+                evidence=need["gateway"][:1],
+            )
+            link(caller, "gateway", "prompt")
+            link("gateway", "llm", "route")
+        else:
+            link(caller, "llm", "generate")
+        if "agents" in need or "gateway" in need or "llmops" in need:
+            add(
+                id="llm-traces",
+                capability="llm-observability",
+                label="LLM tracing",
+                rationale="Records every prompt, tool call, token count and cost, so answers can "
+                "be debugged, evaluated and kept within budget.",
+                evidence=need.get("llmops", [])[:1],
+            )
+            if "llmops" not in need:
+                plan.assumptions.append(
+                    "Added LLM tracing because agents and model gateways are hard to debug and "
+                    "cost-control without it."
+                )
         if "vector" in need:
             add(
                 id="knowledge",
@@ -698,7 +762,7 @@ def _assemble(plan: RulesPlan) -> None:
                 rationale="Splits new documents into chunks and indexes their embeddings when "
                 "they change.",
             )
-            link("app", "knowledge", "retrieve")
+            link(caller, "knowledge", "retrieve")
             link("docs", "indexer", "on upload")
             link("indexer", "llm", "embed")
             link("indexer", "knowledge", "index")

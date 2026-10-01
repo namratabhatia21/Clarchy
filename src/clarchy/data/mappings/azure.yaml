@@ -71,6 +71,27 @@ services:
     short: AIF
     fidelity: exact
     docs: https://learn.microsoft.com/azure/ai-foundry/
+  agent-orchestration:
+    service: Foundry Agent Service
+    short: FAS
+    fidelity: close
+    alternatives: [LangGraph on Azure Container Apps, Semantic Kernel]
+    note: Managed agents with threads, tools and evaluations in Microsoft Foundry; LangGraph agents can run as hosted agents or on Container Apps.
+    docs: https://learn.microsoft.com/azure/ai-foundry/agents/overview
+  llm-gateway:
+    service: Azure API Management (AI gateway)
+    short: AIG
+    fidelity: close
+    alternatives: [LiteLLM on Azure Container Apps]
+    note: Gateway policies for Azure OpenAI and other models, such as token limits, load balancing across deployments, semantic caching and token metrics. Teams that also call non-Azure models often run LiteLLM instead.
+    docs: https://learn.microsoft.com/azure/api-management/genai-gateway-capabilities
+  llm-observability:
+    service: Application Insights (Foundry tracing)
+    short: TRC
+    fidelity: close
+    alternatives: [Langfuse on Azure]
+    note: OpenTelemetry traces of agent runs and model calls, viewed in Foundry next to its evaluations.
+    docs: https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application
   message-queue:
     service: Azure Service Bus (queues)
     short: SB

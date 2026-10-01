@@ -22,6 +22,7 @@ from clarchy.delivery import add_delivery
 from clarchy.ingest import Document
 from clarchy.mapping import map_to_provider
 from clarchy.planner import agent
+from clarchy.planner.answers import Answer, drop_answered, with_answers
 from clarchy.planner.events import EmitFn, Emitter
 from clarchy.planner.llm import LLM, LLMError
 from clarchy.planner.rules import analyse, build_spec
@@ -43,6 +44,8 @@ class PlanOptions:
     # "mcp": the agent is an MCP client of Clarchy's server; "local": the same tools are
     # called in-process (the browser engine, or when the MCP SDK is not installed).
     toolbox: Literal["mcp", "local"] = "mcp"
+    # Answers to an earlier plan's questions; appended to the brief before planning again.
+    answers: list[Answer] = field(default_factory=list)
 
 
 def _toolbox(options: PlanOptions):
@@ -149,6 +152,7 @@ async def run_plan(
 ) -> PlanResult:
     options = options or PlanOptions()
     emitter = Emitter(emit)
+    doc = with_answers(doc, options.answers)
     details = ", ".join(doc.details)
     await emitter.stage(
         "read",
@@ -177,6 +181,8 @@ async def run_plan(
             spec = await _rules_design(doc, options, emitter)
     else:
         spec = await _rules_design(doc, options, emitter)
+
+    spec = drop_answered(spec, options.answers)
 
     await emitter.stage("toolchain", "running")
     before = {c.id for c in spec.components}

@@ -18,13 +18,27 @@ const TIER_NAMES = {
   compute: "Compute", integration: "Integration", data: "Data", platform: "Shared service",
 };
 
+// A placeholder that shows what kind of answer helps, from the question's wording.
+function answerHint(text, kind) {
+  const t = text.toLowerCase();
+  if (/where are most users|region/.test(t)) return "e.g. Germany, and data must stay in the EU";
+  if (/how many people|user numbers/.test(t)) return "e.g. 10,000 employees, about 50 requests a second at peak";
+  if (/budget/.test(t)) return "e.g. $3,000 a month";
+  if (/availability/.test(t)) return "e.g. 99.95%";
+  if (kind === "assumption") return "Leave empty to keep it, or correct it";
+  if (/^(does|do|is|are|will|can|should)\b/.test(t)) return "Yes or no, or a short answer";
+  return "Your answer";
+}
+
 class Workspace {
-  constructor(root, { editable = false } = {}) {
+  constructor(root, { editable = false, onReplan = null } = {}) {
     this.root = root;
     root.replaceChildren(document.getElementById("workspace-template").content.cloneNode(true));
     this.q = (sel) => root.querySelector(sel);
     this.qa = (sel) => root.querySelectorAll(sel);
     this.editable = editable && CA.canEdit();
+    this.onReplan = onReplan;
+    this.answering = false;
     this.cache = new Map();
     this.state = {
       specYaml: "", originalYaml: "", provider: "aws", view: "diagram", design: null,
@@ -36,6 +50,14 @@ class Workspace {
       tab.addEventListener("click", () => this.setView(tab.dataset.view));
     }
     this.q(".inspector-close").addEventListener("click", () => this.select(null));
+    this.q(".answer-btn").addEventListener("click", (e) => {
+      e.preventDefault(); // a button inside <summary> would also toggle the panel
+      this.setAnswering(true);
+    });
+    this.q(".answer-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      this.submitAnswers();
+    });
     this.q(".zoom-toggle").addEventListener("click", () => this.setZoom(!this.state.zoomed));
     root.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && this.state.selectedId) this.select(null);
@@ -79,6 +101,7 @@ class Workspace {
     this.state.workflow = 0;
     this.state.step = -1;
     this.stopPlaying();
+    this.answering = false;
     if (provider) this.setProvider(provider, { refresh: false });
     this.setView(view);
     this.q(".spec-editor").value = specYaml;
@@ -191,6 +214,68 @@ class Workspace {
       ? el("section", {}, el("h3", { text: title }), el("ul", {}, items.map((t) => el("li", { text: t }))))
       : null;
     fill(this.q(".ws-notes"), list("What was assumed", assumptions), list("Questions to confirm", questions));
+
+    const canAnswer = Boolean(this.onReplan) && (assumptions.length > 0 || questions.length > 0);
+    this.q(".answer-btn").hidden = !canAnswer || this.answering;
+    this.q(".ws-notes").hidden = this.answering;
+    const form = this.q(".answer-form");
+    form.hidden = !this.answering;
+    if (this.answering) this.renderAnswerForm(form, assumptions, questions);
+  }
+
+  setAnswering(on) {
+    this.answering = on && Boolean(this.onReplan);
+    const box = this.q(".ws-review-notes");
+    if (this.answering) box.open = true;
+    this.renderNotes(this.state.design);
+    if (this.answering) {
+      const first = box.querySelector(".answer-input");
+      if (first) first.focus();
+    }
+  }
+
+  // Questions first: they are what the planner could not work out on its own.
+  renderAnswerForm(form, assumptions, questions) {
+    const { el, fill } = CA;
+    const item = (text, kind) => el("label", { class: "answer-item" },
+      el("span", { class: "answer-q", text }),
+      el("input", {
+        type: "text", class: "answer-input", "data-question": text, autocomplete: "off",
+        maxlength: "500", placeholder: answerHint(text, kind),
+      }));
+    const group = (title, items, kind) => items.length
+      ? el("fieldset", { class: "answer-group" }, el("legend", { text: title }), items.map((t) => item(t, kind)))
+      : null;
+    fill(form,
+      el("p", { class: "hint", text: "Answer what you know and leave the rest. Your answers are added to the end of the brief and the design is planned again." }),
+      group("Questions to confirm", questions, "question"),
+      group("What was assumed", assumptions, "assumption"),
+      el("label", { class: "answer-item" },
+        el("span", { class: "answer-q", text: "Anything else to add or change?" }),
+        el("textarea", {
+          class: "answer-extra", rows: "2", maxlength: "500",
+          placeholder: "e.g. Developers use GitHub Copilot, or keep chat logs for 2 years",
+        })),
+      el("p", { class: "answer-error", role: "alert", hidden: true }),
+      el("div", { class: "answer-actions" },
+        el("button", { type: "submit", class: "btn btn-primary", text: "Re-plan with my answers" }),
+        el("button", { type: "button", class: "btn btn-ghost", text: "Cancel", onclick: () => this.setAnswering(false) })));
+  }
+
+  submitAnswers() {
+    const form = this.q(".answer-form");
+    const answers = [...form.querySelectorAll(".answer-input")]
+      .map((input) => ({ question: input.dataset.question, answer: input.value.trim() }))
+      .filter((a) => a.answer);
+    const extra = form.querySelector(".answer-extra").value.trim();
+    if (extra) answers.push({ question: "", answer: extra });
+    const error = form.querySelector(".answer-error");
+    if (!answers.length) {
+      error.textContent = "Answer at least one question, or press Cancel.";
+      error.hidden = false;
+      return;
+    }
+    this.onReplan(answers);
   }
 
   renderReview(d) {

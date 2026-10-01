@@ -124,9 +124,11 @@ def create_app() -> FastAPI:
         text: Annotated[str | None, Form()] = None,
         mode: Annotated[str, Form()] = "auto",
         region: Annotated[str | None, Form()] = None,
+        answers: Annotated[str | None, Form()] = None,
         file: Annotated[UploadFile | None, File()] = None,
     ):
         from clarchy.planner import PlanError, PlanOptions, run_plan
+        from clarchy.planner.answers import AnswerError, parse_answers
 
         if mode not in ("auto", "ai", "rules"):
             return JSONResponse(
@@ -134,6 +136,10 @@ def create_app() -> FastAPI:
             )
         if region and region not in catalog.regions():
             return JSONResponse({"errors": [{"where": "region", "message": "unknown region"}]}, 422)
+        try:
+            answered = parse_answers(answers)
+        except AnswerError as exc:
+            return JSONResponse({"errors": [{"where": "answers", "message": str(exc)}]}, 422)
         try:
             if file is not None and file.filename:
                 data = await file.read(MAX_UPLOAD_BYTES + 1)
@@ -148,7 +154,10 @@ def create_app() -> FastAPI:
         async def run() -> None:
             try:
                 await run_plan(
-                    doc, PlanOptions(mode=mode, region=region or None), llm=llm, emit=queue.put
+                    doc,
+                    PlanOptions(mode=mode, region=region or None, answers=answered),
+                    llm=llm,
+                    emit=queue.put,
                 )
             except PlanError as exc:
                 await queue.put({"type": "error", "message": str(exc)})

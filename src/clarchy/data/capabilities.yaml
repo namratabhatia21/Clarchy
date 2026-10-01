@@ -92,10 +92,15 @@ serverless-function:
   stage: run
   description: Event-driven functions billed per invocation and duration.
 llm-inference:
-  tier: compute
+  tier: integration
   category: ai
   stage: run
   description: Managed access to large language models and embedding models.
+agent-orchestration:
+  tier: compute
+  category: ai
+  stage: run
+  description: Runs AI agents, multi-step LLM workflows that call tools and keep state (for example LangGraph).
 
 # --- Integrate --------------------------------------------------------------------
 message-queue:
@@ -123,6 +128,11 @@ batch-etl:
   category: analytics
   stage: integrate
   description: Managed extract-transform-load jobs.
+llm-gateway:
+  tier: integration
+  category: ai
+  stage: integrate
+  description: One API in front of many models, with keys, budgets, rate limits, fallbacks and caching (for example LiteLLM).
 
 # --- Store ------------------------------------------------------------------------
 object-storage:
@@ -172,3 +182,8 @@ monitoring:
   category: management
   stage: operate
   description: Metrics, logs, dashboards and alarms.
+llm-observability:
+  tier: platform
+  category: management
+  stage: operate
+  description: Traces prompts, tool calls, tokens, cost and answer quality in LLM apps (for example Langfuse).

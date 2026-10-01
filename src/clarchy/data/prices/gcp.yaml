@@ -30,6 +30,9 @@ prices:
   vertex.input_tokens: {price: 0.10, unit: 1M tokens (Gemini Flash-Lite), source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
   vertex.output_tokens: {price: 0.40, unit: 1M tokens (Gemini Flash-Lite), source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
   vertex.embedding_tokens: {price: 0.10, unit: 1M tokens, source: https://cloud.google.com/vertex-ai/generative-ai/pricing}
+  agentengine.vcpu_hours: {price: 0.0994, unit: vCPU-hour (Agent Engine), source: https://cloud.google.com/vertex-ai/pricing}
+  agentengine.gib_hours: {price: 0.0105, unit: GiB-hour (Agent Engine), source: https://cloud.google.com/vertex-ai/pricing}
+  trace.spans: {price: 0.20, unit: 1M spans ingested, source: https://cloud.google.com/trace/pricing}
   pubsub.tib: {price: 40.0, unit: TiB of messages, source: https://cloud.google.com/pubsub/pricing}
   eventarc.events: {price: 0.40, unit: 1M events, source: https://cloud.google.com/eventarc/pricing}
   workflows.steps: {price: 0.01, unit: 1K steps, source: https://cloud.google.com/workflows/pricing}

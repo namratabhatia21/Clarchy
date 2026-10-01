@@ -10,6 +10,16 @@ source: AWS Price List API
 verified: true
 calculator: https://calculator.aws/
 prices:
+  agentcore.gb_hours:
+    price: 0.00945
+    unit: GB-hour
+    sku: H5Z74PWV6XHEN9JG
+    description: $0.00945 per GB-Hour for Runtime:Consumption-based:Memory in US East (N. Virginia)
+  agentcore.vcpu_hours:
+    price: 0.0895
+    unit: vCPU-hour (active)
+    sku: XF44DNBTFC8XWPWU
+    description: $0.0895 per vCPU-Hour for Runtime:Consumption-based:vCPU in US East (N. Virginia)
   alb.hours:
     price: 0.0225
     unit: hour

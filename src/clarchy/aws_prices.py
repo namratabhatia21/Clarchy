@@ -104,6 +104,20 @@ ON_DEMAND: dict[str, tuple[str, str, dict[str, str], str, float]] = {
         "GB-hour",
         1,
     ),
+    "agentcore.vcpu_hours": (
+        "AmazonBedrockAgentCore",
+        "us-east-1",
+        {"usagetype": "USE1-Runtime:Consumption-based:vCPU"},
+        "vCPU-hour (active)",
+        1,
+    ),
+    "agentcore.gb_hours": (
+        "AmazonBedrockAgentCore",
+        "us-east-1",
+        {"usagetype": "USE1-Runtime:Consumption-based:Memory"},
+        "GB-hour",
+        1,
+    ),
     "eks.cluster_hours": (
         "AmazonEKS",
         "us-east-1",

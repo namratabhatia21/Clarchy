@@ -66,6 +66,21 @@ aws:
         - {name: Input tokens (Amazon Nova Lite), quantity: input_tokens_m, price: bedrock.input_tokens}
         - {name: Output tokens (Amazon Nova Lite), quantity: output_tokens_m, price: bedrock.output_tokens}
         - {name: Embeddings (Titan Text Embeddings V2), quantity: embedding_tokens_m, price: bedrock.embedding_tokens}
+    agent-orchestration:
+      pricing_url: https://aws.amazon.com/bedrock/agentcore/pricing/
+      items:
+        - {name: AgentCore Runtime vCPU (active time only), quantity: agent_vcpu_hours, price: agentcore.vcpu_hours}
+        - {name: AgentCore Runtime memory, quantity: agent_gb_hours, price: agentcore.gb_hours}
+    llm-gateway:
+      pricing_url: https://aws.amazon.com/fargate/pricing/
+      commitment: Compute Savings Plans
+      items:
+        - {name: LiteLLM tasks (vCPU), quantity: vcpu_hours, price: fargate.vcpu_hours}
+        - {name: LiteLLM tasks (memory), quantity: gb_hours, price: fargate.gb_hours}
+    llm-observability:
+      pricing_url: https://aws.amazon.com/cloudwatch/pricing/
+      items:
+        - {name: Trace and span ingestion, quantity: trace_gb, price: cloudwatch.logs_gb}
     message-queue:
       pricing_url: https://aws.amazon.com/sqs/pricing/
       items:
@@ -158,6 +173,7 @@ azure:
     iac: Bicep is free.
     event-autoscaling: The KEDA add-on for AKS has no extra charge.
     cd-deploy: Release stages run in Azure Pipelines (counted with CI).
+    agent-orchestration: Foundry Agent Service has no charge of its own; you pay for the model tokens (counted under the models) and any tools the agents call.
   capabilities:
     dns:
       pricing_url: https://azure.microsoft.com/pricing/details/dns/
@@ -275,6 +291,14 @@ azure:
       items:
         - {name: Log ingestion, quantity: logs_gb, price: monitor.logs_gb, free: 5}
         - {name: Alert rules, quantity: alarms, price: monitor.alerts}
+    llm-gateway:
+      pricing_url: https://azure.microsoft.com/pricing/details/api-management/
+      items:
+        - {name: API Management Basic v2 unit, quantity: gateway_hours, price: apim.basicv2_hours}
+    llm-observability:
+      pricing_url: https://azure.microsoft.com/pricing/details/monitor/
+      items:
+        - {name: Trace ingestion (Application Insights), quantity: trace_gb, price: monitor.logs_gb}
     container-registry:
       pricing_url: https://azure.microsoft.com/pricing/details/container-registry/
       items:
@@ -409,6 +433,21 @@ gcp:
       items:
         - {name: Log ingestion, quantity: logs_gb, price: logging.gb, free: 50}
         - {name: Alert conditions, quantity: alarms, price: monitoring.alerts}
+    agent-orchestration:
+      pricing_url: https://cloud.google.com/vertex-ai/pricing
+      items:
+        - {name: Agent Engine vCPU, quantity: agent_vcpu_hours, price: agentengine.vcpu_hours}
+        - {name: Agent Engine memory, quantity: agent_gb_hours, price: agentengine.gib_hours}
+    llm-gateway:
+      pricing_url: https://cloud.google.com/run/pricing
+      commitment: Cloud Run committed use discounts
+      items:
+        - {name: LiteLLM instances (vCPU), quantity: vcpu_hours, price: run.vcpu_hours}
+        - {name: LiteLLM instances (memory), quantity: gb_hours, price: run.gib_hours}
+    llm-observability:
+      pricing_url: https://cloud.google.com/trace/pricing
+      items:
+        - {name: Spans ingested, quantity: spans_m, price: trace.spans, free: 2.5}
     container-registry:
       pricing_url: https://cloud.google.com/artifact-registry/pricing
       items:

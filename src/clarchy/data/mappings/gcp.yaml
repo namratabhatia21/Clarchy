@@ -73,6 +73,27 @@ services:
     short: VAI
     fidelity: exact
     docs: https://cloud.google.com/vertex-ai/docs
+  agent-orchestration:
+    service: Vertex AI Agent Engine
+    short: AGE
+    fidelity: close
+    alternatives: [LangGraph on Cloud Run, Agent Development Kit]
+    note: Deploys LangGraph, LangChain and ADK agents with managed sessions and memory, billed for the compute the agents use.
+    docs: https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview
+  llm-gateway:
+    service: LiteLLM on Cloud Run
+    short: GW
+    fidelity: close
+    alternatives: [Apigee (AI gateway policies)]
+    note: Google Cloud has no lightweight managed LLM gateway; Apigee adds token quotas and model routing at enterprise scale.
+    docs: https://cloud.google.com/run/docs
+  llm-observability:
+    service: Cloud Trace (Vertex AI agent tracing)
+    short: TRC
+    fidelity: partial
+    alternatives: [Langfuse on Cloud Run]
+    note: OpenTelemetry traces of agent steps and model calls; prompt management and evaluations are separate (Vertex AI evaluation service).
+    docs: https://cloud.google.com/trace/docs
   message-queue:
     service: Pub/Sub
     short: PS

@@ -86,6 +86,30 @@ services:
     fidelity: exact
     icon: Amazon-Bedrock
     docs: https://docs.aws.amazon.com/bedrock/
+  agent-orchestration:
+    service: Amazon Bedrock AgentCore Runtime
+    short: ACR
+    fidelity: close
+    icon: Amazon-Bedrock-AgentCore
+    alternatives: [LangGraph on Amazon ECS, Amazon Bedrock Agents]
+    note: Hosts agents built with LangGraph, CrewAI or Strands in isolated sessions, billed for active CPU and memory; AgentCore Memory, Gateway and Identity are separate add-ons.
+    docs: https://docs.aws.amazon.com/bedrock-agentcore/
+  llm-gateway:
+    service: LiteLLM on Amazon ECS (AWS gateway guidance)
+    short: GW
+    fidelity: close
+    icon: Amazon-Elastic-Container-Service
+    alternatives: [Amazon Bedrock inference profiles, Amazon API Gateway]
+    note: AWS has no managed LLM gateway; its multi-provider generative AI gateway guidance runs LiteLLM on ECS. Bedrock on its own gives one API across Bedrock models only.
+    docs: https://aws.amazon.com/solutions/guidance/multi-provider-generative-ai-gateway-on-aws/
+  llm-observability:
+    service: Amazon CloudWatch generative AI observability
+    short: GAO
+    fidelity: close
+    icon: Amazon-CloudWatch
+    alternatives: [Langfuse on AWS, Bedrock model invocation logging]
+    note: OpenTelemetry traces of agent steps, model calls, tokens and latency; prompt versions and evaluation datasets need AgentCore Evaluations or Langfuse.
+    docs: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/
   message-queue:
     service: Amazon SQS
     short: SQS

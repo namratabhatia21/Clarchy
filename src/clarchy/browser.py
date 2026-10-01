@@ -21,6 +21,7 @@ from urllib.parse import urlsplit
 from clarchy import payloads
 from clarchy.ingest import IngestError, from_text, read_document
 from clarchy.planner import PlanError, PlanOptions, run_plan
+from clarchy.planner.answers import AnswerError, parse_answers
 from clarchy.planner.openai_compat import (
     HUGGING_FACE_MODEL,
     HUGGING_FACE_URL,
@@ -30,19 +31,20 @@ from clarchy.planner.openai_compat import (
 
 async def plan(request_json: str, emit: Any) -> None:
     """request: {text | file_path + file_name, mode: "rules" | "hf", region,
-    hf: {token, model, base_url}}"""
+    hf: {token, model, base_url}, answers: [{question, answer}]}"""
     request = json.loads(request_json)
 
     def send(event: dict[str, Any]) -> None:
         emit(json.dumps(event, ensure_ascii=False))
 
     try:
+        answers = parse_answers(request.get("answers"))
         if request.get("file_path"):
             data = Path(request["file_path"]).read_bytes()
             doc = read_document(data, request.get("file_name") or "document")
         else:
             doc = from_text(request.get("text") or "")
-    except IngestError as exc:
+    except (IngestError, AnswerError) as exc:
         send({"type": "error", "message": str(exc)})
         return
 
@@ -54,7 +56,10 @@ async def plan(request_json: str, emit: Any) -> None:
         where = "Hugging Face" if base_url == HUGGING_FACE_URL else urlsplit(base_url).netloc
         llm = OpenAICompatLLM(model, base_url, hf.get("token") or None, f"{model} ({where})")
     options = PlanOptions(
-        mode="ai" if llm else "rules", region=request.get("region") or None, toolbox="local"
+        mode="ai" if llm else "rules",
+        region=request.get("region") or None,
+        toolbox="local",
+        answers=answers,
     )
     try:
         await run_plan(doc, options, llm, send)

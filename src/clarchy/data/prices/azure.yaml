@@ -13,6 +13,7 @@ prices:
   functions.executions: {price: 0.20, unit: 1M executions, source: https://azure.microsoft.com/pricing/details/functions/}
   functions.gb_seconds: {price: 0.000016, unit: GB-second, source: https://azure.microsoft.com/pricing/details/functions/}
   apim.calls: {price: 4.20, unit: 1M calls, source: https://azure.microsoft.com/pricing/details/api-management/}
+  apim.basicv2_hours: {price: 0.2055, unit: Basic v2 unit-hour (about $150 a month), source: https://azure.microsoft.com/pricing/details/api-management/}
   frontdoor.base: {price: 35.0, unit: profile-month, source: https://azure.microsoft.com/pricing/details/frontdoor/}
   frontdoor.egress_gb: {price: 0.083, unit: GB, source: https://azure.microsoft.com/pricing/details/frontdoor/}
   frontdoor.requests: {price: 0.009, unit: 10K requests, source: https://azure.microsoft.com/pricing/details/frontdoor/}

@@ -6,7 +6,7 @@ const Examples = (() => {
   const { $, el, fill, api } = CA;
   const TAG_RULES = [
     ["Kubernetes", ["kubernetes", "event-autoscaling"]],
-    ["AI", ["llm-inference", "vector-search"]],
+    ["AI", ["llm-inference", "vector-search", "agent-orchestration", "llm-gateway"]],
     ["Data", ["stream", "batch-etl", "data-warehouse"]],
     ["Event-driven", ["message-queue", "event-bus", "workflow"]],
     ["Serverless", ["serverless-function"]],

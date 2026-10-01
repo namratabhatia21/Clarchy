@@ -27,6 +27,9 @@ ROLE = {
     "kubernetes": "run the business logic",
     "serverless-function": "run the function",
     "llm-inference": "generate or embed text",
+    "agent-orchestration": "plan the steps and call tools",
+    "llm-gateway": "check the key and budget, then pick a model",
+    "llm-observability": "record the prompt, tool calls, tokens and cost",
     "message-queue": "queue the job",
     "event-bus": "publish an event",
     "stream": "append to the event stream",
@@ -82,12 +85,26 @@ LABEL_PHRASE = {
     "/api/*": "forward API calls",
     "enqueue": "queue the job",
     "publish": "publish an event",
+    "run": "hand the request to the agent",
+    "call tools": "call tools that look up or change data",
+    "checkpoint": "save the agent's progress and the conversation",
+    "prompt": "send the prompt through the gateway",
+    "route": "call the chosen model, falling back to another if it fails",
 }
 
 DATA_CAPS = {"stream", "batch-etl", "data-warehouse"}
+# Calls a request waits for, so the request flow follows them even outside compute.
+SYNC_CAPS = {"llm-gateway", "llm-inference"}
 ASYNC_CAPS = {"message-queue", "event-bus", "workflow"}
 # What a release pipeline rolls out to.
-RUNTIME_COMPUTE = {"container-service", "kubernetes", "serverless-function", "batch-etl"}
+RUNTIME_COMPUTE = {
+    "container-service",
+    "kubernetes",
+    "serverless-function",
+    "batch-etl",
+    "agent-orchestration",
+    "llm-gateway",
+}
 
 
 def _phrase(src: Component, dst: Component, label: str | None) -> str:
@@ -151,9 +168,20 @@ def generate_workflows(spec: ArchitectureSpec) -> list[Workflow]:
         edges_from,
         used,
         edge_index,
-        expand=lambda n: tier[n] in ("edge", "entry", "compute", "data"),
+        expand=lambda n: (
+            tier[n] in ("edge", "entry", "compute", "data") or by_id[n].capability in SYNC_CAPS
+        ),
     )
     request_steps = [_step(by_id, e) for e in request_edges]
+    tracers = [c for c in spec.components if c.capability == "llm-observability"]
+    model_callers = {e.source for e in request_edges if by_id[e.target].capability in SYNC_CAPS}
+    if request_steps and tracers and model_callers:
+        request_steps.append(
+            WorkflowStep(
+                text=f"Every model call → {tracers[0].display_label}: {ROLE['llm-observability']}",
+                components=[tracers[0].id, *sorted(model_callers)],
+            )
+        )
     monitors = [c for c in spec.components if c.capability == "monitoring"]
     if request_steps and monitors:
         request_steps.append(

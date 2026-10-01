@@ -86,6 +86,27 @@ services:
     alternatives: [Ollama, Hugging Face TGI]
     note: Needs GPUs you provision; limited to open-weight models.
     docs: https://docs.vllm.ai/
+  agent-orchestration:
+    service: LangGraph
+    short: LG
+    fidelity: exact
+    alternatives: [CrewAI, LlamaIndex Workflows]
+    note: A library that runs inside your own containers, with checkpoints in your database; LangGraph Platform is the hosted option.
+    docs: https://github.com/langchain-ai/langgraph
+  llm-gateway:
+    service: LiteLLM Proxy
+    short: LTL
+    fidelity: exact
+    alternatives: [Portkey Gateway, Kong AI Gateway]
+    note: Self-hosted proxy with an OpenAI-compatible API for more than 100 model providers, virtual keys, budgets, fallbacks and caching.
+    docs: https://docs.litellm.ai/
+  llm-observability:
+    service: Langfuse
+    short: LF
+    fidelity: exact
+    alternatives: [Arize Phoenix, OpenLLMetry]
+    note: Self-hosting needs Postgres, ClickHouse, Redis and object storage; Langfuse Cloud is the hosted option.
+    docs: https://langfuse.com/docs
   message-queue:
     service: RabbitMQ
     short: RMQ

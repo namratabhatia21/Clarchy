@@ -130,11 +130,13 @@ const CA = (() => {
     return engine.loading;
   }
 
-  async function planInBrowser({ text, file, mode, region, hf }, onEvent) {
+  async function planInBrowser({ text, file, mode, region, hf, answers }, onEvent) {
     const progress = (t) => onEvent({ type: "progress", text: t });
     try {
       const eng = await startEngine(progress);
-      const request = { text, mode: mode === "hf" ? "hf" : "rules", region: region || null, hf: hf || null };
+      const request = {
+        text, mode: mode === "hf" ? "hf" : "rules", region: region || null, hf: hf || null, answers: answers || [],
+      };
       if (file) {
         const path = `/tmp/upload-${Date.now()}`;
         eng.py.FS.writeFile(path, new Uint8Array(await file.arrayBuffer()));
@@ -193,7 +195,7 @@ const CA = (() => {
       }
     },
     // Runs a plan; onEvent receives every pipeline event. Resolves when the stream ends.
-    async plan({ text, file, mode, region, sampleId, hf }, onEvent) {
+    async plan({ text, file, mode, region, sampleId, hf, answers }, onEvent) {
       if (MODE === "static") {
         const run = sampleId && DATA.runs[sampleId];
         if (run) {
@@ -207,7 +209,7 @@ const CA = (() => {
           onEvent({ type: "error", message: "This build can only replay the samples. Run Clarchy yourself to plan your own app." });
           return;
         }
-        await planInBrowser({ text, file, mode, region, hf }, onEvent);
+        await planInBrowser({ text, file, mode, region, hf, answers }, onEvent);
         return;
       }
       const form = new FormData();
@@ -215,6 +217,7 @@ const CA = (() => {
       else form.append("text", text || "");
       form.append("mode", mode || "auto");
       if (region) form.append("region", region);
+      if (answers && answers.length) form.append("answers", JSON.stringify(answers));
       let res;
       try {
         res = await fetch(API_BASE + "/api/plan", { method: "POST", body: form });

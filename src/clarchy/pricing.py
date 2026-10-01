@@ -200,6 +200,31 @@ def usage(comp, ctx: Context) -> dict[str, Q | str]:
             "gb_seconds": Q(gb_s, f"{_n(ms)} ms at {_n(mb)} MB each"),
             "vcpu_seconds": Q(vcpu_s, f"{_n(ms)} ms each"),
         }
+    elif cap == "llm-gateway":
+        vcpu = float(s.get("vcpu") or 0.5)
+        mem = float(s.get("memory_gb") or 1)
+        tasks = int(s.get("tasks") or 2)
+        out |= {
+            "vcpu_hours": Q(vcpu * tasks * HOURS, f"{tasks} × {_n(vcpu)} vCPU proxies, always on"),
+            "gb_hours": Q(mem * tasks * HOURS, f"{tasks} × {_n(mem)} GB, always on"),
+            "gateway_hours": Q(HOURS, "one gateway unit, always on"),
+        }
+    elif cap in ("agent-orchestration", "llm-observability"):
+        runs = float(s.get("requests_per_month") or ctx.users * 20)
+        if cap == "agent-orchestration":
+            out |= {
+                "agent_vcpu_hours": Q(
+                    runs * 4 / 3600, f"{_n(runs)} agent runs × 4 s of active CPU (1 vCPU)"
+                ),
+                "agent_gb_hours": Q(
+                    runs * 2 * 20 / 3600, f"{_n(runs)} runs × 2 GB for about 20 s each"
+                ),
+            }
+        else:
+            out |= {
+                "trace_gb": Q(runs * 25 / 1e6, f"{_n(runs)} traced runs × about 25 KB each"),
+                "spans_m": Q(runs * 10 / 1e6, f"{_n(runs)} runs × about 10 spans each"),
+            }
     elif cap == "llm-inference":
         questions = float(s.get("requests_per_month") or ctx.users * 20)
         embed = questions * 30 / 1e6 + (5 if ctx.has_vector else 0)

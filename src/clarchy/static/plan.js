@@ -159,7 +159,9 @@ const Plan = (() => {
     const how = e.mode === "ai" ? `by ${e.model}` : run.replay ? "(recorded rule-based run)" : "with the rule-based planner";
     // Render while hidden so the previous result never flashes up.
     const root = $("plan-workspace");
-    if (!workspace) workspace = new Workspace(root, { editable: true });
+    if (!workspace) {
+      workspace = new Workspace(root, { editable: true, onReplan: CA.canPlan() ? replan : null });
+    }
     await workspace.load(e.spec_yaml);
     const pipeline = $("pipeline");
     pipeline.classList.add("done");
@@ -203,10 +205,25 @@ const Plan = (() => {
     };
   }
 
-  async function start({ text, file, sampleId, label }) {
+  // Plan again with answers to the open questions (and corrections to assumptions),
+  // keeping the answers already given so each round builds on the last.
+  function replan(answers) {
+    const input = run.input;
+    if (!input) return;
+    const fresh = new Set(answers.map((a) => a.question).filter(Boolean));
+    const merged = [...(input.answers || []).filter((a) => !a.question || !fresh.has(a.question)), ...answers];
+    const base = input.baseLabel || input.label
+      || (input.file ? input.file.name : `“${input.text.trim().replace(/\s+/g, " ").slice(0, 120)}”`);
+    start({
+      text: input.text, file: input.file, answers: merged, baseLabel: base,
+      label: `${base} · ${CA.plural(merged.length, "answer")}`,
+    });
+  }
+
+  async function start({ text, file, sampleId, label, answers = [], baseLabel = null }) {
     if (run.active) return;
     const mode = $("mode").value;
-    const replay = Boolean(sampleId) && CA.hasRecordedRun(sampleId) && mode !== "hf";
+    const replay = Boolean(sampleId) && CA.hasRecordedRun(sampleId) && mode !== "hf" && !answers.length;
     if (!replay) {
       if (!file && (!text || text.trim().length < 20)) {
         showError("Describe your app in a sentence or two, or attach a requirements document.");
@@ -222,6 +239,7 @@ const Plan = (() => {
     showError("");
     run.active = true;
     run.replay = replay;
+    run.input = { text, file, label, answers, baseLabel };
     $("plan-start").hidden = true;
     $("run").hidden = false;
     $("run-notices").replaceChildren();
@@ -237,6 +255,7 @@ const Plan = (() => {
         text, file, mode, region: $("region").value,
         sampleId: replay ? sampleId : null,
         hf: mode === "hf" ? hfSettings() : null,
+        answers,
       }, onEvent);
     } finally {
       run.active = false;

@@ -12,7 +12,15 @@ from fastapi.testclient import TestClient  # noqa: E402
 from clarchy import catalog  # noqa: E402
 from clarchy.web import create_app  # noqa: E402
 
-SCRIPTS = ("core.js", "workspace.js", "plan.js", "examples.js", "services.js", "app.js")
+SCRIPTS = (
+    "core.js",
+    "drafting.js",
+    "workspace.js",
+    "plan.js",
+    "examples.js",
+    "services.js",
+    "app.js",
+)
 
 
 @pytest.fixture(scope="module")

@@ -38,6 +38,17 @@
     <!-- Plan: describe the app, watch the agent work, explore the result -->
     <section class="page" id="page-plan" data-page="plan">
       <div class="plan-start" id="plan-start">
+        <div class="instruments" aria-hidden="true">
+          <div class="protractor">
+            <svg class="dial-svg" viewBox="-380 -380 760 760"></svg>
+            <svg class="needle-svg" viewBox="-380 -380 760 760"></svg>
+          </div>
+          <div class="scale-rule">
+            <span class="scale-title">1:100</span>
+            <svg class="scale-svg" viewBox="0 -10 48 620"></svg>
+            <span class="scale-marker"></span>
+          </div>
+        </div>
         <div class="hero">
           <p class="eyebrow">Requirements in, architecture out</p>
           <h1>Describe your app. <span class="second">Get the architecture.</span></h1>
@@ -100,14 +111,145 @@
           <ul class="sample-list" id="sample-list"></ul>
         </section>
 
-        <ol class="how-line" aria-label="How it works">
-          <li><span>Read</span></li>
-          <li><span>Understand</span></li>
-          <li><span>Design with MCP tools</span></li>
-          <li><span>Add build and deploy</span></li>
-          <li><span>Describe workflows</span></li>
-          <li><span>Map to every cloud</span></li>
-        </ol>
+        <button type="button" class="scroll-cue" id="scroll-cue">
+          <span class="cue-line" aria-hidden="true"></span>See how a drawing comes together
+        </button>
+
+        <section class="story" id="story" aria-labelledby="story-title">
+          <div class="story-head">
+            <p class="eyebrow">Detail A · How it works</p>
+            <h2 id="story-title">From brief to drawing</h2>
+          </div>
+          <div class="story-grid">
+            <div class="story-steps">
+              <article class="story-step"><span class="step-no">1</span><div><h3>Read the brief</h3><p>Type it, or drop in a Word, PDF or Excel file. Paragraphs and tables are read alike, and nothing leaves your browser.</p></div></article>
+              <article class="story-step"><span class="step-no">2</span><div><h3>Mark up what matters</h3><p>The numbers that size a design are picked out: users, traffic, data, uptime, region, compliance and budget. Anything missing becomes a question for you.</p></div></article>
+              <article class="story-step"><span class="step-no">3</span><div><h3>Draw the architecture</h3><p>An agent chooses each service with MCP tools, from the edge to the data, and says why, quoting your own words.</p></div></article>
+              <article class="story-step"><span class="step-no">4</span><div><h3>Add build and deploy</h3><p>Source control, CI, a registry, a release pipeline and infrastructure as code come with every design.</p></div></article>
+              <article class="story-step"><span class="step-no">5</span><div><h3>Trace the workflows</h3><p>A request, a release, a background job: each one is a numbered path through the drawing.</p></div></article>
+              <article class="story-step"><span class="step-no">6</span><div><h3>Every cloud, with costs</h3><p>The same design is drawn for AWS, Azure, Google Cloud and open source, priced from one month to three years.</p></div></article>
+            </div>
+            <div class="story-panel">
+              <ol class="how-line" aria-label="How it works">
+                <li><span>Read</span></li>
+                <li><span>Understand</span></li>
+                <li><span>Design with MCP tools</span></li>
+                <li><span>Add build and deploy</span></li>
+                <li><span>Describe workflows</span></li>
+                <li><span>Map to every cloud</span></li>
+              </ol>
+              <div class="story-sheet">
+                <svg class="story-fig" viewBox="0 0 640 440" role="img" aria-label="A requirements brief being turned into an architecture drawing, stage by stage">
+              <g class="sheet-frame">
+                <path class="ink" d="M8 8H632V432H8Z"/>
+                <path class="ink thin" d="M8 404H632M392 404V432M512 404V432"/>
+                <text x="20" y="422" class="lbl small" text-anchor="start">DETAIL A · FROM BRIEF TO DRAWING</text>
+                <text x="404" y="422" class="lbl small" text-anchor="start">SCALE 1:100</text>
+                <text x="524" y="422" class="lbl small" text-anchor="start">SHEET A-01</text>
+              </g>
+              <g data-s="1">
+              <path class="ink draw" pathLength="1" d="M28 56H128L150 78V300H28Z"/>
+              <path class="ink thin draw" pathLength="1" d="M128 56V78H150"/>
+              <path class="ink bold draw" pathLength="1" d="M42 76H104"/>
+              <path class="ink thin draw" pathLength="1" style="--d:1" d="M42 96H136"/>
+              <path class="ink thin draw" pathLength="1" style="--d:2" d="M42 112H124"/>
+              <path class="ink thin draw" pathLength="1" style="--d:3" d="M42 128H136"/>
+              <path class="ink thin draw" pathLength="1" style="--d:4" d="M42 144H110"/>
+              <path class="ink thin draw" pathLength="1" style="--d:5" d="M42 160H136"/>
+              <path class="ink thin draw" pathLength="1" style="--d:6" d="M42 176H130"/>
+              <path class="ink thin draw" pathLength="1" style="--d:7" d="M42 192H96"/>
+              <path class="ink thin draw" pathLength="1" style="--d:8" d="M42 208H136"/>
+              <path class="ink thin draw" pathLength="1" style="--d:9" d="M42 224H120"/>
+              <path class="ink thin draw" pathLength="1" style="--d:10" d="M42 240H136"/>
+              <path class="ink thin draw" pathLength="1" style="--d:11" d="M42 256H88"/>
+              <path class="ink thin draw" pathLength="1" style="--d:12" d="M42 272H120"/>
+              <text x="28" y="320" class="lbl" text-anchor="start">BRIEF.DOCX</text>
+              </g>
+              <g data-s="2" class="redline">
+              <path class="red draw" pathLength="1" style="--d:0" d="M35 112a48 9 0 1 0 96 0a48 9 0 1 0 -96 0"/>
+              <path class="red draw" pathLength="1" style="--d:2" d="M36 176a50 9 0 1 0 100 0a50 9 0 1 0 -100 0"/>
+              <path class="red draw" pathLength="1" style="--d:4" d="M35 224a46 9 0 1 0 92 0a46 9 0 1 0 -92 0"/>
+              <path class="red thin draw" pathLength="1" style="--d:1" d="M131 112L160 100H244"/>
+              <path class="red thin draw" pathLength="1" style="--d:3" d="M136 176L160 164H244"/>
+              <path class="red thin draw" pathLength="1" style="--d:5" d="M127 224L160 212H244"/>
+              <text x="164" y="95" class="lbl red-text" text-anchor="start">120K PATIENTS</text>
+              <text x="164" y="159" class="lbl red-text" text-anchor="start">99.95% UPTIME</text>
+              <text x="164" y="207" class="lbl red-text" text-anchor="start">HIPAA · US</text>
+              </g>
+              <g data-s="3">
+              <path class="ink dashed" d="M300 136H624V340H300Z"/>
+              <text x="310" y="152" class="lbl" text-anchor="start">CLOUD · REGION</text>
+              <path class="ink draw" pathLength="1" d="M269 228a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M262 252a14 12 0 0 1 28 0"/>
+              <text x="276" y="268" class="lbl" text-anchor="middle">USERS</text>
+              <path class="ink draw" pathLength="1" style="--d:0" d="M314 200h60v44h-60Z"/>
+              <text x="344.0" y="225.5" class="lbl" text-anchor="middle">EDGE</text>
+              <path class="ink draw" pathLength="1" style="--d:1" d="M404 200h60v44h-60Z"/>
+              <text x="434.0" y="225.5" class="lbl" text-anchor="middle">API</text>
+              <path class="ink draw" pathLength="1" style="--d:2" d="M548 168h64v44h-64Z"/>
+              <text x="580.0" y="193.5" class="lbl" text-anchor="middle">DATABASE</text>
+              <path class="ink draw" pathLength="1" style="--d:3" d="M404 282h60v40h-60Z"/>
+              <text x="434.0" y="305.5" class="lbl" text-anchor="middle">QUEUE</text>
+              <path class="ink draw" pathLength="1" style="--d:4" d="M548 282h64v40h-64Z"/>
+              <text x="580.0" y="305.5" class="lbl" text-anchor="middle">WORKER</text>
+              <path class="ink draw" pathLength="1" style="--d:5" d="M294 222H314"/>
+              <path class="ink head" d="M308 218L314 222L308 226"/>
+              <path class="ink draw" pathLength="1" style="--d:6" d="M374 222H404"/>
+              <path class="ink head" d="M398 218L404 222L398 226"/>
+              <path class="ink draw" pathLength="1" style="--d:7" d="M464 214C506 214 506 190 548 190"/>
+              <path class="ink head" d="M542 186.5L548 190L542 193.5"/>
+              <path class="ink draw" pathLength="1" style="--d:8" d="M434 244V282"/>
+              <path class="ink head" d="M430 276L434 282L438 276"/>
+              <path class="ink draw" pathLength="1" style="--d:9" d="M464 302H548"/>
+              <path class="ink head" d="M542 298L548 302L542 306"/>
+              <path class="ink draw" pathLength="1" style="--d:10" d="M580 282V212"/>
+              <path class="ink head" d="M576 218L580 212L584 218"/>
+              </g>
+              <g data-s="4">
+              <path class="ink dashed" d="M300 52H624V118H300Z"/>
+              <text x="310" y="68" class="lbl" text-anchor="start">BUILD AND DEPLOY</text>
+              <path class="ink draw" pathLength="1" style="--d:0" d="M316 78h56v28h-56Z"/>
+              <text x="344" y="96" class="lbl" text-anchor="middle">REPO</text>
+              <path class="ink draw" pathLength="1" style="--d:1" d="M392 78h56v28h-56Z"/>
+              <text x="420" y="96" class="lbl" text-anchor="middle">CI</text>
+              <path class="ink draw" pathLength="1" style="--d:2" d="M468 78h56v28h-56Z"/>
+              <text x="496" y="96" class="lbl" text-anchor="middle">IMAGE</text>
+              <path class="ink draw" pathLength="1" style="--d:3" d="M548 78h56v28h-56Z"/>
+              <text x="576" y="96" class="lbl" text-anchor="middle">DEPLOY</text>
+              <path class="ink draw" pathLength="1" style="--d:4" d="M372 92H392M448 92H468M524 92H548"/>
+              <path class="ink head" d="M386 88L392 92L386 96M462 88L468 92L462 96M542 88L548 92L542 96"/>
+              <path class="ink thin dashed" d="M576 106V126H434V200"/>
+              <text x="440" y="176" class="lbl small" text-anchor="start">RELEASE</text>
+              </g>
+              <g data-s="5">
+              <circle class="bubble" cx="304" cy="206" r="8"/><text x="304" y="209.2" class="lbl num" text-anchor="middle">1</text>
+              <circle class="bubble" cx="389" cy="206" r="8"/><text x="389" y="209.2" class="lbl num" text-anchor="middle">2</text>
+              <circle class="bubble" cx="506" cy="186" r="8"/><text x="506" y="189.2" class="lbl num" text-anchor="middle">3</text>
+              <circle class="bubble" cx="418" cy="263" r="8"/><text x="418" y="266.2" class="lbl num" text-anchor="middle">4</text>
+              <circle class="bubble" cx="506" cy="288" r="8"/><text x="506" y="291.2" class="lbl num" text-anchor="middle">5</text>
+              <circle class="bubble" cx="596" cy="247" r="8"/><text x="596" y="250.2" class="lbl num" text-anchor="middle">6</text>
+              <circle class="flow-dot" r="4.5"><animateMotion dur="4.2s" repeatCount="indefinite" path="M276 222H434V302H580V190"/></circle>
+              </g>
+              <g data-s="6">
+<text x="421" y="33" class="lbl tab tab0" text-anchor="middle">AWS</text>
+<text x="479" y="33" class="lbl tab tab1" text-anchor="middle">AZURE</text>
+<text x="537" y="33" class="lbl tab tab2" text-anchor="middle">GCP</text>
+<text x="595" y="33" class="lbl tab tab3" text-anchor="middle">OSS</text>
+              <rect class="tab-bar" x="392" y="39" width="58" height="2.5"/>
+              <rect class="badge" x="319" y="205" width="9" height="9"/>
+              <rect class="badge" x="409" y="205" width="9" height="9"/>
+              <rect class="badge" x="553" y="173" width="9" height="9"/>
+              <rect class="badge" x="409" y="287" width="9" height="9"/>
+              <rect class="badge" x="553" y="287" width="9" height="9"/>
+              <path class="ink thin" d="M300 344V376M624 344V376"/>
+              <path class="ink thin draw" pathLength="1" d="M300 366H624"/>
+              <path class="ink" d="M295 371L305 361M619 371L629 361"/>
+              <text x="462" y="360" class="lbl" text-anchor="middle">ESTIMATED COST · 1 MONTH TO 3 YEARS</text>
+              </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div class="run" id="run" hidden>
@@ -126,7 +268,29 @@
           <ol class="stages" id="stages" aria-live="polite"></ol>
         </details>
         <div class="result-placeholder" id="result-placeholder">
-          <div class="skeleton"></div>
+          <svg class="drafting-loader" viewBox="0 0 640 220" role="img" aria-label="Drafting the architecture">
+            <path class="ink" d="M6 6H634V214H6Z"/>
+            <path class="ink thin" d="M136 110H160M148 98V122"/>
+            <path class="ink loop" pathLength="1" d="M210 110A62 62 0 1 1 86 110A62 62 0 1 1 210 110"/>
+            <g class="compass">
+              <path class="ink" d="M148 110L179 58L210 110"/>
+              <path class="ink" d="M179 58V42"/>
+              <circle class="hinge" cx="179" cy="58" r="4"/>
+              <circle class="lead" cx="210" cy="110" r="3"/>
+            </g>
+            <path class="ink thin hatch" pathLength="1" style="--k:0" d="M290 58H612"/>
+            <path class="ink thin hatch" pathLength="1" style="--k:1" d="M290 84H612"/>
+            <path class="ink thin hatch" pathLength="1" style="--k:2" d="M290 110H612"/>
+            <path class="ink thin hatch" pathLength="1" style="--k:3" d="M290 136H612"/>
+            <path class="ink thin hatch" pathLength="1" style="--k:4" d="M290 162H612"/>
+            <g class="parallel-rule">
+              <path class="rule-body" d="M280 40H622V54H280Z"/>
+              <path class="ink thin" d="M290 54v-5M306 54v-3M322 54v-5M338 54v-3M354 54v-5M370 54v-3M386 54v-5M402 54v-3M418 54v-5M434 54v-3M450 54v-5M466 54v-3M482 54v-5M498 54v-3M514 54v-5M530 54v-3M546 54v-5M562 54v-3M578 54v-5M594 54v-3M610 54v-5"/>
+            </g>
+            <path class="ink thin" d="M290 192H612M290 186V198M612 186V198"/>
+            <path class="scale-tip" d="M290 182L296 192L284 192Z"/>
+            <text x="24" y="202" class="lbl">DRAFTING THE ARCHITECTURE</text>
+          </svg>
           <p>The design appears here when the pipeline finishes.</p>
         </div>
         <div class="workspace" id="plan-workspace" hidden></div>
@@ -313,6 +477,7 @@
   </template>
 
   <script src="/static/core.js"></script>
+  <script src="/static/drafting.js"></script>
   <script src="/static/workspace.js"></script>
   <script src="/static/plan.js"></script>
   <script src="/static/examples.js"></script>

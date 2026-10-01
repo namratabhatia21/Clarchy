@@ -14,8 +14,9 @@ open-source model on Hugging Face with your own free token, or a model on your m
 through Ollama. AWS prices are refreshed from the AWS Price List API on every deploy and
 every week.
 
-The site looks like an architect's drawing set: trace paper by day, a blueprint in dark
-mode, with sheet numbers, title blocks and dimension lines
+The site looks like an architect's drawing set: trace paper by day, a drafting table at
+night, redline orange for what matters, sheet numbers, title blocks and dimension lines. A
+protractor turns as you scroll the home page and a detail drawing assembles stage by stage
 ([ADR 0009](docs/decisions/0009-a-drawing-set-identity.md)).
 
 ![Microservices on Kubernetes, on AWS](examples/kubernetes-microservices.aws.svg)

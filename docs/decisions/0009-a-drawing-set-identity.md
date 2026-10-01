@@ -10,9 +10,11 @@ made, without changing how the site works.
 
 ## Decision
 
-- **Two papers.** Light mode is ink on trace paper (warm off-white, graphite text,
-  blueprint-blue accent). Dark mode is a blueprint (deep blue, white lines, light blue
-  accent). Both carry a faint drafting grid with a heavier line every fifth square.
+- **Two papers, one redline.** Light mode is ink on trace paper (warm off-white, graphite
+  text); dark mode is a drafting table at night (deep slate, pale lines). Both carry a
+  faint drafting grid with a heavier line every fifth square. The single accent is a
+  redline orange, the colour architects mark drawings up with, so the main action, the
+  current sheet and annotations stand out against the cool paper and grid.
 - **Drawing conventions instead of ornament.** Hairline frames with crop marks around the
   composer and each diagram sheet; "How it works" drawn as a chain dimension with slash
   ticks; pipeline stages as numbered grid bubbles; pages numbered as sheets (01 Plan,
@@ -24,8 +26,17 @@ made, without changing how the site works.
 - **Diagrams are printed on paper in both themes.** The diagram's white background is
   dropped on screen so it sits on the sheet's grid. The SVG files themselves, and each
   provider's colours inside the workspace (ADR 0006), are unchanged.
-- **The look only.** Every interaction, view and flow stays as it was; the change is
-  confined to the style sheet, decorative markup and the title-block text.
+- **Instruments in motion (`drafting.js`).** On the home page a large protractor turns as
+  you scroll, read by a fixed redline needle, and an architect's scale in the margin marks
+  how far down the page you are. "From brief to drawing" is a detail sheet that assembles
+  stage by stage as you scroll: the brief, redline mark-ups of the numbers that matter,
+  the architecture, the build lane, numbered workflow bubbles, then the same drawing on
+  every cloud with a cost dimension. While a plan runs, a compass draws a circle and a
+  parallel rule hatches lines; results and new provider sheets draw themselves in.
+  Everything stands still for people who prefer reduced motion.
+- **The look only.** Every interaction, view and flow stays as it was; the changes are
+  confined to the style sheet, decorative markup, title-block text and decorative
+  motion.
 
 ## Consequences
 

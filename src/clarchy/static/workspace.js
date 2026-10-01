@@ -82,10 +82,12 @@ class Workspace {
     if (provider) this.setProvider(provider, { refresh: false });
     this.setView(view);
     this.q(".spec-editor").value = specYaml;
+    this.drawNext = true;
     await this.refresh();
   }
 
   setProvider(id, { refresh = true } = {}) {
+    this.drawNext = true; // a new sheet draws itself in; live spec edits just redraw
     this.state.provider = id;
     this.root.dataset.provider = id;
     this.renderProviders();
@@ -229,6 +231,8 @@ class Workspace {
   renderDiagram(d) {
     const canvas = this.q(".ws-canvas");
     this.placeDiagram(canvas, d.svg);
+    if (this.drawNext && typeof Drafting !== "undefined") Drafting.drawIn(canvas);
+    this.drawNext = false;
     this.wireNodes(canvas, (id) => this.select(this.state.selectedId === id ? null : id));
     this.q(".icon-note").textContent = d.official_icons ? "Icons come from the official package configured on the server." : "";
   }

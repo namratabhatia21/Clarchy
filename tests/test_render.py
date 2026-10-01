@@ -49,19 +49,22 @@ def test_render_is_deterministic(name):
     assert render_svg(arch(name)) == render_svg(arch(name))
 
 
+@pytest.mark.parametrize("provider", catalog.providers())
 @pytest.mark.parametrize("name", catalog.pattern_names())
-def test_golden_svg(name):
-    check_golden(EXAMPLES / f"{name}.aws.svg", render_svg(arch(name)))
+def test_golden_svg(name, provider):
+    check_golden(EXAMPLES / f"{name}.{provider}.svg", render_svg(arch(name, provider)))
 
 
+@pytest.mark.parametrize("provider", catalog.providers())
 @pytest.mark.parametrize("name", catalog.pattern_names())
-def test_golden_explain(name):
-    check_golden(EXAMPLES / f"{name}.aws.md", explain_markdown(arch(name)))
+def test_golden_explain(name, provider):
+    check_golden(EXAMPLES / f"{name}.{provider}.md", explain_markdown(arch(name, provider)))
 
 
-def test_nodes_do_not_overlap():
+@pytest.mark.parametrize("provider", catalog.providers())
+def test_nodes_do_not_overlap(provider):
     for name in catalog.pattern_names():
-        root = ET.fromstring(render_svg(arch(name)))
+        root = ET.fromstring(render_svg(arch(name, provider)))
         rects = [
             tuple(float(r.get(k)) for k in ("x", "y", "width", "height"))
             for r in root.iter(f"{SVG_NS}rect")

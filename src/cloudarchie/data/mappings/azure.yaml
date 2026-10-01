@@ -1,0 +1,134 @@
+# Capability -> Microsoft Azure service. Same fields as aws.yaml.
+# Not yet reviewed by an Azure specialist; the UI says so.
+
+provider:
+  name: Azure
+  cloud_label: Microsoft Azure
+  kind: cloud
+  reviewed: false
+
+services:
+  dns:
+    service: Azure DNS
+    short: DNS
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/dns/
+  cdn:
+    service: Azure Front Door
+    short: AFD
+    fidelity: exact
+    note: Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
+    docs: https://learn.microsoft.com/azure/frontdoor/
+  waf:
+    service: Azure Web Application Firewall
+    short: WAF
+    fidelity: exact
+    note: Runs on Azure Front Door or Application Gateway rather than as a separate service.
+    docs: https://learn.microsoft.com/azure/web-application-firewall/
+  load-balancer:
+    service: Azure Application Gateway
+    short: AGW
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/application-gateway/
+  api-gateway:
+    service: Azure API Management
+    short: APIM
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/api-management/
+  container-service:
+    service: Azure Container Apps
+    short: ACA
+    fidelity: exact
+    alternatives: [Azure Kubernetes Service]
+    docs: https://learn.microsoft.com/azure/container-apps/
+  serverless-function:
+    service: Azure Functions
+    short: FN
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/azure-functions/
+  llm-inference:
+    service: Azure AI Foundry (incl. Azure OpenAI)
+    short: AIF
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/ai-foundry/
+  message-queue:
+    service: Azure Service Bus (queues)
+    short: SB
+    fidelity: exact
+    alternatives: [Azure Queue Storage]
+    docs: https://learn.microsoft.com/azure/service-bus-messaging/
+  event-bus:
+    service: Azure Event Grid
+    short: EG
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/event-grid/
+  stream:
+    service: Azure Event Hubs
+    short: EH
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/event-hubs/
+  workflow:
+    service: Azure Logic Apps
+    short: LA
+    fidelity: close
+    alternatives: [Durable Functions]
+    note: Logic Apps is low-code; Durable Functions is the code-first option closer to writing Step Functions logic in code.
+    docs: https://learn.microsoft.com/azure/logic-apps/
+  batch-etl:
+    service: Azure Data Factory
+    short: ADF
+    fidelity: close
+    alternatives: [Azure Databricks, Microsoft Fabric]
+    note: Data Factory orchestrates and moves data; heavy transformations usually run in Databricks or Fabric Spark.
+    docs: https://learn.microsoft.com/azure/data-factory/
+  object-storage:
+    service: Azure Blob Storage
+    short: BLOB
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/storage/blobs/
+  relational-db:
+    service: Azure Database for PostgreSQL (Flexible Server)
+    short: PG
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/postgresql/flexible-server/
+  key-value-db:
+    service: Azure Cosmos DB
+    short: CDB
+    fidelity: exact
+    alternatives: [Azure Table Storage]
+    docs: https://learn.microsoft.com/azure/cosmos-db/
+  cache:
+    service: Azure Managed Redis
+    short: RED
+    fidelity: exact
+    alternatives: [Azure Cache for Redis]
+    docs: https://learn.microsoft.com/azure/redis/
+  vector-search:
+    service: Azure AI Search
+    short: AIS
+    fidelity: close
+    alternatives: [Cosmos DB vector search, PostgreSQL with pgvector]
+    note: Vector search is one feature of a full search service; small workloads may be cheaper in the database.
+    docs: https://learn.microsoft.com/azure/search/
+  data-warehouse:
+    service: Microsoft Fabric Data Warehouse
+    short: FAB
+    fidelity: close
+    alternatives: [Azure Synapse Analytics]
+    note: Fabric is an analytics platform billed by reserved capacity, not per query or per compute-second.
+    docs: https://learn.microsoft.com/fabric/data-warehouse/
+  identity:
+    service: Microsoft Entra External ID
+    short: ENT
+    fidelity: exact
+    docs: https://learn.microsoft.com/entra/external-id/
+  secrets:
+    service: Azure Key Vault
+    short: KV
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/key-vault/
+  monitoring:
+    service: Azure Monitor + Application Insights
+    short: MON
+    fidelity: exact
+    docs: https://learn.microsoft.com/azure/azure-monitor/

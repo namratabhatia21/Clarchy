@@ -22,9 +22,15 @@ def explain_markdown(arch: ProviderArchitecture) -> str:
     if spec.summary:
         lines += [spec.summary, ""]
 
+    if not arch.reviewed:
+        lines += [
+            f"> {arch.provider_name} mappings have not yet been reviewed by a specialist. "
+            "Check the service choices before relying on them.",
+            "",
+        ]
     lines += ["## Requirements", ""]
     facts = [
-        ("Region", f"{arch.region_label} ({arch.region_code})"),
+        ("Region", arch.region_text),
         ("Monthly active users", req.users),
         ("Peak requests/second", req.peak_rps),
         ("Data stored (GB)", req.data_gb),

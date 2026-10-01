@@ -2,9 +2,11 @@
 
 Chat assistant that answers from your own documents using retrieval-augmented generation with a managed LLM.
 
+> AWS mappings have not yet been reviewed by a specialist. Check the service choices before relying on them.
+
 ## Requirements
 
-- **Region:** US West (Oregon) (us-west-2)
+- **Region:** Oregon (us-west-2)
 - **Monthly active users:** 2000
 - **Peak requests/second:** 5
 - **Data stored (GB):** 50

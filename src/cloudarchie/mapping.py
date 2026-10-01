@@ -36,10 +36,18 @@ class ProviderArchitecture:
     provider: str
     provider_name: str
     cloud_label: str
-    region_code: str
+    kind: str  # "cloud" or "self-hosted"
+    reviewed: bool  # has a specialist reviewed this provider's mappings?
+    region_code: str  # empty for self-hosted providers
     region_label: str
     spec: ArchitectureSpec
     components: tuple[MappedComponent, ...]
+
+    @property
+    def region_text(self) -> str:
+        return (
+            f"{self.region_label} ({self.region_code})" if self.region_code else self.region_label
+        )
 
     def by_id(self, component_id: str) -> MappedComponent:
         return next(m for m in self.components if m.component.id == component_id)
@@ -66,7 +74,11 @@ def service_choice(provider: str, capability: str) -> ServiceChoice:
 def map_to_provider(spec: ArchitectureSpec, provider: str) -> ProviderArchitecture:
     meta = catalog.provider_mapping(provider)["provider"]
     region = catalog.regions()[spec.requirements.region]
-    if provider not in region:
+    if meta["kind"] == "self-hosted":
+        region_code, region_label = "", region["label"]
+    elif provider in region:
+        region_code, region_label = region[provider]["code"], region[provider]["location"]
+    else:
         raise MappingError(f"region {spec.requirements.region!r} is not mapped for {provider}")
 
     mapped, missing = [], []
@@ -85,8 +97,10 @@ def map_to_provider(spec: ArchitectureSpec, provider: str) -> ProviderArchitectu
         provider=provider,
         provider_name=meta["name"],
         cloud_label=meta["cloud_label"],
-        region_code=region[provider],
-        region_label=region["label"],
+        kind=meta["kind"],
+        reviewed=bool(meta.get("reviewed", False)),
+        region_code=region_code,
+        region_label=region_label,
         spec=spec,
         components=tuple(mapped),
     )

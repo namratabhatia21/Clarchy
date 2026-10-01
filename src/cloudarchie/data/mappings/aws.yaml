@@ -12,6 +12,9 @@
 provider:
   name: AWS
   cloud_label: AWS Cloud
+  kind: cloud
+  # Set to true once an AWS specialist has reviewed every entry.
+  reviewed: false
 
 services:
   dns:

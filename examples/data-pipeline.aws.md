@@ -2,9 +2,11 @@
 
 Streams application events into a data lake, transforms them on a schedule and serves dashboards from a warehouse.
 
+> AWS mappings have not yet been reviewed by a specialist. Check the service choices before relying on them.
+
 ## Requirements
 
-- **Region:** Europe (Frankfurt) (eu-central-1)
+- **Region:** Frankfurt (eu-central-1)
 - **Monthly active users:** 200
 - **Peak requests/second:** 500
 - **Data stored (GB):** 2000

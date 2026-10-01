@@ -30,8 +30,14 @@ See [docs/PLAN.md](docs/PLAN.md) for the full product plan and market research.
 
 ## Status
 
-**Phase 1 (this release):** cloud-neutral spec, 5 starter patterns, AWS mapping,
-deterministic SVG diagrams, Markdown explanations, CLI. No cost engine or LLM yet.
+**Phase 1 (this release):** cloud-neutral spec, 5 starter patterns, mappings for AWS,
+Azure, Google Cloud and open source, deterministic SVG diagrams, Markdown explanations,
+CLI, and a web UI with a designer and a cross-cloud service catalog. No cost engine or
+LLM yet.
+
+> **Review status:** no provider's mappings have been checked by a specialist yet. The UI
+> and the explanations say so. Flip `reviewed: true` in
+> `src/cloudarchie/data/mappings/<provider>.yaml` once someone has.
 
 ## Quick start
 
@@ -45,7 +51,26 @@ cloudarchie explain rag-chatbot -o rag.md              # why each service was ch
 cloudarchie validate my-spec.yaml                      # check your own design
 ```
 
-Pre-rendered outputs for every pattern are in [examples/](examples/).
+Use `--provider aws|azure|gcp|oss` with `render` and `explain`. Pre-rendered outputs for
+every pattern on every provider are in [examples/](examples/).
+
+## Web UI
+
+```bash
+pip install -e ".[web]"
+cloudarchie serve                                      # http://127.0.0.1:8000
+```
+
+- **Designer:** pick a pattern or edit the YAML spec; it re-validates and redraws as you
+  type. Switch between AWS, Azure, Google Cloud and open source. Click any box to see why
+  that service was chosen, how close the match is, alternatives, connections, sizing and
+  the official docs. Download the SVG, the explanation or the spec.
+- **Service catalog:** a searchable list of every function (queue, object storage,
+  serverless functions, ...) with the equivalent service on each provider side by side.
+  Filter by category, providers to compare and match quality ("has differences" finds
+  the places where clouds are not like-for-like). Search by any service name, e.g.
+  "Lambda" or "BigQuery", to find its equivalents. Filters live in the URL, so a view can
+  be shared as a link.
 
 ### Use the official AWS icons
 
@@ -107,6 +132,7 @@ idea ─► requirements ─► NEUTRAL SPEC ─► provider mapping ─► diag
 - `render.py`: deterministic layout by tier (users → edge → entry → compute →
   integration → data, shared services below), crossing reduction, optional official icons
 - `explain.py`: Markdown explanation of choices, alternatives and sizing
+- `web.py` + `static/`: FastAPI app and a no-build vanilla JS front end
 - `data/`: capabilities, regions, mappings and patterns as reviewable YAML
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
@@ -122,13 +148,13 @@ make examples    # regenerate examples/ (they double as golden test files)
 
 | Phase | What |
 |---|---|
-| ✅ 1 | Neutral spec, patterns, AWS mapping, SVG renderer, CLI |
+| ✅ 1 | Neutral spec, patterns, AWS/Azure/GCP/OSS mappings, SVG renderer, CLI, web UI and service catalog |
 | 2 | AWS cost engine: Price List ingestion, usage model, hidden costs, low/expected/high ranges, accuracy check against the AWS Pricing Calculator |
 | 3 | Savings Plans / Reserved Instances / Spot with break-even, Well-Architected advisor and add-ons, PDF report |
 | 4 | LLM intake: idea → clarifying questions → spec, with teach mode |
 | 5 | Web UI with provider tabs, deployed on AWS |
-| 6-8 | GCP and Azure tabs, side-by-side comparison |
-| 9 | Open-source alternatives with an operations-effort cost model |
+| 6-8 | GCP and Azure pricing, specialist review of their mappings, side-by-side cost comparison |
+| 9 | Open-source cost model including operations effort; more open-source alternatives |
 
 ## Known limitations
 

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="932" height="644" viewBox="0 0 932 644" role="img" aria-label="Analytics data pipeline on AWS">
+<svg xmlns="http://www.w3.org/2000/svg" width="932" height="644" viewBox="0 0 932 644" role="img" aria-label="Analytics data pipeline on Open source">
 <style>.bg{fill:#ffffff}
 .title{font:600 18px sans-serif;fill:#16191f}
 .subtitle{font:13px sans-serif;fill:#545b64}
@@ -16,10 +16,10 @@
 .footer{font:10px sans-serif;fill:#879196}</style>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
 <rect class="bg" width="932" height="644"/>
-<text class="title" x="24" y="36">Analytics data pipeline · AWS</text>
+<text class="title" x="24" y="36">Analytics data pipeline · Open source</text>
 <text class="subtitle" x="24" y="56">Streams application events into a data lake, transforms them on a schedule and serves dashboards from a warehouse.</text>
 <rect class="cloud" x="252" y="104" width="656" height="488" rx="4"/>
-<text class="cloud-label" x="262" y="123">AWS Cloud · Frankfurt (eu-central-1)</text>
+<text class="cloud-label" x="262" y="123">Self-hosted (open source) · Central Europe</text>
 <rect class="band" x="262" y="420" width="636" height="162" rx="4"/>
 <text class="band-label" x="272" y="440">Shared services</text>
 <path class="edge" d="M180,266 C227,266 227,266 274,266" marker-end="url(#arrow)"/>
@@ -38,41 +38,44 @@
 </g>
 <g class="node" data-id="collector" data-capability="api-gateway">
 <rect class="node-box" x="274" y="208" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="328" y="218" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="352" y="247" text-anchor="middle">APIG</text>
-<text class="service" x="352" y="282" text-anchor="middle">Amazon API Gateway</text>
+<rect x="328" y="218" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="352" y="247" text-anchor="middle">KNG</text>
+<text class="service" x="352" y="282" text-anchor="middle">Kong Gateway (OSS)</text>
 <text class="label" x="352" y="317" text-anchor="middle">Event collector</text>
+<text class="fidelity" x="424" y="222" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="stream" data-capability="stream">
 <rect class="node-box" x="502" y="282" width="156" height="116" rx="8" style="stroke:#B0084D"/>
-<rect x="556" y="292" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="321" text-anchor="middle">KDS</text>
-<text class="service" x="580" y="356" text-anchor="middle">Amazon Kinesis Data</text>
-<text class="service" x="580" y="370" text-anchor="middle">Streams</text>
+<rect x="556" y="292" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="321" text-anchor="middle">KFK</text>
+<text class="service" x="580" y="356" text-anchor="middle">Apache Kafka</text>
 <text class="label" x="580" y="391" text-anchor="middle">Event stream</text>
 </g>
 <g class="node" data-id="etl" data-capability="batch-etl">
 <rect class="node-box" x="502" y="134" width="156" height="116" rx="8" style="stroke:#B0084D"/>
-<rect x="556" y="144" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="173" text-anchor="middle">GLU</text>
-<text class="service" x="580" y="208" text-anchor="middle">AWS Glue</text>
+<rect x="556" y="144" width="48" height="48" rx="6" fill="#B0084D"/><text class="badge" x="580" y="173" text-anchor="middle">SPK</text>
+<text class="service" x="580" y="208" text-anchor="middle">Apache Spark</text>
 <text class="label" x="580" y="243" text-anchor="middle">Nightly transforms</text>
+<text class="fidelity" x="652" y="148" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="lake" data-capability="object-storage">
 <rect class="node-box" x="730" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="784" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="173" text-anchor="middle">S3</text>
-<text class="service" x="808" y="208" text-anchor="middle">Amazon S3</text>
+<rect x="784" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="173" text-anchor="middle">CEPH</text>
+<text class="service" x="808" y="208" text-anchor="middle">Ceph Object Gateway</text>
 <text class="label" x="808" y="243" text-anchor="middle">Data lake (raw + curated)</text>
+<text class="fidelity" x="880" y="148" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="warehouse" data-capability="data-warehouse">
 <rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="784" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="321" text-anchor="middle">RS</text>
-<text class="service" x="808" y="356" text-anchor="middle">Amazon Redshift</text>
-<text class="service" x="808" y="370" text-anchor="middle">Serverless</text>
+<rect x="784" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="808" y="321" text-anchor="middle">CH</text>
+<text class="service" x="808" y="356" text-anchor="middle">ClickHouse</text>
 <text class="label" x="808" y="391" text-anchor="middle">Reporting warehouse</text>
+<text class="fidelity" x="880" y="296" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring">
 <rect class="node-box" x="274" y="454" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="328" y="464" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="493" text-anchor="middle">CW</text>
-<text class="service" x="352" y="528" text-anchor="middle">Amazon CloudWatch</text>
+<rect x="328" y="464" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="493" text-anchor="middle">PRO</text>
+<text class="service" x="352" y="528" text-anchor="middle">Prometheus + Grafana</text>
 <text class="label" x="352" y="563" text-anchor="middle">Pipeline monitoring</text>
+<text class="fidelity" x="424" y="468" text-anchor="end">close</text>
 </g>
-<text class="footer" x="24" y="632">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with AWS.</text>
+<text class="footer" x="24" y="632">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with Open source.</text>
 </svg>

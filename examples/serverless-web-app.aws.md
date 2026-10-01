@@ -2,9 +2,11 @@
 
 Single-page app with a serverless API, for spiky or low traffic where paying per request beats paying for idle servers.
 
+> AWS mappings have not yet been reviewed by a specialist. Check the service choices before relying on them.
+
 ## Requirements
 
-- **Region:** US East (N. Virginia) (us-east-1)
+- **Region:** N. Virginia (us-east-1)
 - **Monthly active users:** 20000
 - **Peak requests/second:** 30
 - **Data stored (GB):** 20

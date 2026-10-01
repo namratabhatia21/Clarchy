@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="792" viewBox="0 0 1160 792" role="img" aria-label="Containerised API on AWS">
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="792" viewBox="0 0 1160 792" role="img" aria-label="Containerised API on Azure">
 <style>.bg{fill:#ffffff}
 .title{font:600 18px sans-serif;fill:#16191f}
 .subtitle{font:13px sans-serif;fill:#545b64}
@@ -16,10 +16,10 @@
 .footer{font:10px sans-serif;fill:#879196}</style>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545b64"/></marker></defs>
 <rect class="bg" width="1160" height="792"/>
-<text class="title" x="24" y="36">Containerised API · AWS</text>
+<text class="title" x="24" y="36">Containerised API · Azure</text>
 <text class="subtitle" x="24" y="56">Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.</text>
 <rect class="cloud" x="252" y="104" width="884" height="636" rx="4"/>
-<text class="cloud-label" x="262" y="123">AWS Cloud · Ireland (eu-west-1)</text>
+<text class="cloud-label" x="262" y="123">Microsoft Azure · Ireland (northeurope)</text>
 <rect class="band" x="262" y="568" width="864" height="162" rx="4"/>
 <text class="band-label" x="272" y="588">Shared services</text>
 <path class="edge" d="M180,340 C227,340 227,266 274,266" marker-end="url(#arrow)"/>
@@ -37,61 +37,61 @@
 </g>
 <g class="node" data-id="dns" data-capability="dns">
 <rect class="node-box" x="274" y="208" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
-<rect x="328" y="218" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="247" text-anchor="middle">R53</text>
-<text class="service" x="352" y="282" text-anchor="middle">Amazon Route 53</text>
+<rect x="328" y="218" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="247" text-anchor="middle">DNS</text>
+<text class="service" x="352" y="282" text-anchor="middle">Azure DNS</text>
 <text class="label" x="352" y="317" text-anchor="middle">Domain</text>
 </g>
 <g class="node" data-id="firewall" data-capability="waf">
 <rect class="node-box" x="274" y="356" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
 <rect x="328" y="366" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="badge" x="352" y="395" text-anchor="middle">WAF</text>
-<text class="service" x="352" y="430" text-anchor="middle">AWS WAF</text>
+<text class="service" x="352" y="430" text-anchor="middle">Azure Web Application</text>
+<text class="service" x="352" y="444" text-anchor="middle">Firewall</text>
 <text class="label" x="352" y="465" text-anchor="middle">Web firewall</text>
 </g>
 <g class="node" data-id="lb" data-capability="load-balancer">
 <rect class="node-box" x="502" y="282" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="556" y="292" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="580" y="321" text-anchor="middle">ALB</text>
-<text class="service" x="580" y="356" text-anchor="middle">Application Load</text>
-<text class="service" x="580" y="370" text-anchor="middle">Balancer</text>
+<rect x="556" y="292" width="48" height="48" rx="6" fill="#E7157B"/><text class="badge" x="580" y="321" text-anchor="middle">AGW</text>
+<text class="service" x="580" y="356" text-anchor="middle">Azure Application</text>
+<text class="service" x="580" y="370" text-anchor="middle">Gateway</text>
 <text class="label" x="580" y="391" text-anchor="middle">HTTPS load balancer</text>
 </g>
 <g class="node" data-id="app" data-capability="container-service">
 <rect class="node-box" x="730" y="282" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="292" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="808" y="321" text-anchor="middle">ECS</text>
-<text class="service" x="808" y="356" text-anchor="middle">Amazon ECS on AWS</text>
-<text class="service" x="808" y="370" text-anchor="middle">Fargate</text>
+<rect x="784" y="292" width="48" height="48" rx="6" fill="#ED7100"/><text class="badge" x="808" y="321" text-anchor="middle">ACA</text>
+<text class="service" x="808" y="356" text-anchor="middle">Azure Container Apps</text>
 <text class="label" x="808" y="391" text-anchor="middle">API containers</text>
 </g>
 <g class="node" data-id="cache" data-capability="cache">
 <rect class="node-box" x="958" y="134" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="173" text-anchor="middle">EC</text>
-<text class="service" x="1036" y="208" text-anchor="middle">Amazon ElastiCache</text>
-<text class="service" x="1036" y="222" text-anchor="middle">(Redis OSS / Valkey)</text>
+<rect x="1012" y="144" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="173" text-anchor="middle">RED</text>
+<text class="service" x="1036" y="208" text-anchor="middle">Azure Managed Redis</text>
 <text class="label" x="1036" y="243" text-anchor="middle">Session + query cache</text>
 </g>
 <g class="node" data-id="db" data-capability="relational-db">
 <rect class="node-box" x="958" y="282" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="321" text-anchor="middle">RDS</text>
-<text class="service" x="1036" y="356" text-anchor="middle">Amazon RDS for</text>
-<text class="service" x="1036" y="370" text-anchor="middle">PostgreSQL</text>
+<rect x="1012" y="292" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="321" text-anchor="middle">PG</text>
+<text class="service" x="1036" y="356" text-anchor="middle">Azure Database for</text>
+<text class="service" x="1036" y="370" text-anchor="middle">PostgreSQL (Flexible…</text>
 <text class="label" x="1036" y="391" text-anchor="middle">PostgreSQL</text>
 </g>
 <g class="node" data-id="files" data-capability="object-storage">
 <rect class="node-box" x="958" y="430" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="1012" y="440" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="469" text-anchor="middle">S3</text>
-<text class="service" x="1036" y="504" text-anchor="middle">Amazon S3</text>
+<rect x="1012" y="440" width="48" height="48" rx="6" fill="#3B48CC"/><text class="badge" x="1036" y="469" text-anchor="middle">BLOB</text>
+<text class="service" x="1036" y="504" text-anchor="middle">Azure Blob Storage</text>
 <text class="label" x="1036" y="539" text-anchor="middle">Uploads</text>
 </g>
 <g class="node" data-id="secrets" data-capability="secrets">
 <rect class="node-box" x="274" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="328" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="641" text-anchor="middle">SM</text>
-<text class="service" x="352" y="676" text-anchor="middle">AWS Secrets Manager</text>
+<rect x="328" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="352" y="641" text-anchor="middle">KV</text>
+<text class="service" x="352" y="676" text-anchor="middle">Azure Key Vault</text>
 <text class="label" x="352" y="711" text-anchor="middle">DB credentials</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring">
 <rect class="node-box" x="462" y="602" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="516" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="540" y="641" text-anchor="middle">CW</text>
-<text class="service" x="540" y="676" text-anchor="middle">Amazon CloudWatch</text>
+<rect x="516" y="612" width="48" height="48" rx="6" fill="#DD344C"/><text class="badge" x="540" y="641" text-anchor="middle">MON</text>
+<text class="service" x="540" y="676" text-anchor="middle">Azure Monitor +</text>
+<text class="service" x="540" y="690" text-anchor="middle">Application Insights</text>
 <text class="label" x="540" y="711" text-anchor="middle">Logs, metrics, alarms</text>
 </g>
-<text class="footer" x="24" y="780">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with AWS.</text>
+<text class="footer" x="24" y="780">Generated by CloudArchie. Service names and icons belong to their owners; CloudArchie is not affiliated with Azure.</text>
 </svg>

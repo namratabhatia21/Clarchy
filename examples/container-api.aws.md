@@ -2,9 +2,11 @@
 
 Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.
 
+> AWS mappings have not yet been reviewed by a specialist. Check the service choices before relying on them.
+
 ## Requirements
 
-- **Region:** Europe (Ireland) (eu-west-1)
+- **Region:** Ireland (eu-west-1)
 - **Monthly active users:** 50000
 - **Peak requests/second:** 120
 - **Data stored (GB):** 200

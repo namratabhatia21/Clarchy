@@ -84,6 +84,17 @@ def cmd_icons(args: argparse.Namespace) -> int:
     return 0 if missing == 0 else 1
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    try:
+        from cloudarchie.web import serve
+    except ImportError:
+        print('error: the web UI needs extra packages: pip install -e ".[web]"', file=sys.stderr)
+        return 2
+    print(f"CloudArchie UI on http://{args.host}:{args.port}", file=sys.stderr)
+    serve(args.host, args.port)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cloudarchie", description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -112,6 +123,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--provider", default="aws", choices=catalog.providers())
     p.add_argument("--icons", help="folder with the provider's official icon package")
     p.set_defaults(func=cmd_icons)
+
+    p = sub.add_parser("serve", help="start the web UI")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8000)
+    p.set_defaults(func=cmd_serve)
     return parser
 
 

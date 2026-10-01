@@ -1,0 +1,159 @@
+# Capability -> open-source software you run yourself. Same fields as aws.yaml.
+# Fidelity here also reflects operational burden: "close" usually means you take on
+# scaling, upgrades and availability that a managed service would handle.
+# Licences change (e.g. Redis, MinIO, Vault, ScyllaDB moved away from OSI licences);
+# choices below favour OSI-licensed projects. Not yet reviewed by a specialist.
+
+provider:
+  name: Open source
+  cloud_label: Self-hosted (open source)
+  kind: self-hosted
+  reviewed: false
+
+services:
+  dns:
+    service: PowerDNS
+    short: PDNS
+    fidelity: partial
+    alternatives: [BIND, CoreDNS (internal DNS)]
+    note: You run and protect authoritative DNS servers yourself; most teams keep a managed DNS provider.
+    docs: https://doc.powerdns.com/
+  cdn:
+    service: Varnish Cache
+    short: VAR
+    fidelity: partial
+    alternatives: [NGINX caching]
+    note: Caches at your own servers, not at a global edge network; a worldwide CDN is not practical to self-host.
+    docs: https://varnish-cache.org/docs/
+  waf:
+    service: Coraza WAF + OWASP Core Rule Set
+    short: CRZ
+    fidelity: close
+    alternatives: [ModSecurity]
+    note: You own rule updates, tuning and false positives.
+    docs: https://coraza.io/docs/
+  load-balancer:
+    service: HAProxy
+    short: HAP
+    fidelity: close
+    alternatives: [NGINX, Envoy]
+    note: Run at least two instances for availability and handle TLS certificates yourself.
+    docs: https://docs.haproxy.org/
+  api-gateway:
+    service: Kong Gateway (OSS)
+    short: KNG
+    fidelity: close
+    alternatives: [Apache APISIX]
+    note: Feature-rich, but you operate, scale and upgrade it.
+    docs: https://developer.konghq.com/gateway/
+  container-service:
+    service: Kubernetes
+    short: K8S
+    fidelity: close
+    alternatives: [K3s, HashiCorp Nomad]
+    note: You manage the cluster, nodes and upgrades; there is no per-second serverless billing.
+    docs: https://kubernetes.io/docs/
+  serverless-function:
+    service: Knative Serving
+    short: KN
+    fidelity: close
+    alternatives: [OpenFaaS]
+    note: Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
+    docs: https://knative.dev/docs/
+  llm-inference:
+    service: vLLM (open-weight models)
+    short: VLM
+    fidelity: close
+    alternatives: [Ollama, Hugging Face TGI]
+    note: Needs GPUs you provision; limited to open-weight models.
+    docs: https://docs.vllm.ai/
+  message-queue:
+    service: RabbitMQ
+    short: RMQ
+    fidelity: exact
+    alternatives: [NATS JetStream]
+    docs: https://www.rabbitmq.com/docs
+  event-bus:
+    service: Knative Eventing
+    short: KNE
+    fidelity: partial
+    alternatives: [NATS]
+    note: Provides event routing on Kubernetes; rule-based routing across many sources needs more assembly than a managed event bus.
+    docs: https://knative.dev/docs/eventing/
+  stream:
+    service: Apache Kafka
+    short: KFK
+    fidelity: exact
+    alternatives: [Apache Pulsar]
+    docs: https://kafka.apache.org/documentation/
+  workflow:
+    service: Temporal
+    short: TMP
+    fidelity: close
+    alternatives: [Apache Airflow]
+    note: Code-first durable workflows; Airflow suits scheduled data pipelines more than application workflows.
+    docs: https://docs.temporal.io/
+  batch-etl:
+    service: Apache Spark
+    short: SPK
+    fidelity: close
+    alternatives: [Apache Airflow + dbt]
+    note: You run the cluster and a scheduler; managed ETL services hide both.
+    docs: https://spark.apache.org/docs/latest/
+  object-storage:
+    service: Ceph Object Gateway
+    short: CEPH
+    fidelity: close
+    alternatives: [SeaweedFS, Garage, MinIO]
+    note: S3-compatible API, but you operate durability, replication, capacity and upgrades.
+    docs: https://docs.ceph.com/en/latest/radosgw/
+  relational-db:
+    service: PostgreSQL
+    short: PG
+    fidelity: exact
+    note: Backups, failover and upgrades are yours to run (tools such as Patroni help).
+    docs: https://www.postgresql.org/docs/
+  key-value-db:
+    service: Apache Cassandra
+    short: CAS
+    fidelity: close
+    alternatives: [FerretDB]
+    note: Scales well but needs careful data modelling and cluster operations.
+    docs: https://cassandra.apache.org/doc/latest/
+  cache:
+    service: Valkey
+    short: VK
+    fidelity: exact
+    alternatives: [Redis]
+    docs: https://valkey.io/docs/
+  vector-search:
+    service: pgvector (PostgreSQL)
+    short: PGV
+    fidelity: exact
+    alternatives: [Qdrant, Milvus, OpenSearch]
+    docs: https://github.com/pgvector/pgvector
+  data-warehouse:
+    service: ClickHouse
+    short: CH
+    fidelity: close
+    alternatives: [Apache Doris, DuckDB]
+    note: Very fast analytical queries, but you size and operate the cluster.
+    docs: https://clickhouse.com/docs
+  identity:
+    service: Keycloak
+    short: KC
+    fidelity: exact
+    docs: https://www.keycloak.org/documentation
+  secrets:
+    service: OpenBao
+    short: BAO
+    fidelity: exact
+    alternatives: [HashiCorp Vault]
+    docs: https://openbao.org/docs/
+  monitoring:
+    service: Prometheus + Grafana
+    short: PRO
+    fidelity: close
+    alternatives: [OpenTelemetry Collector, Grafana Loki]
+    note: You store and retain metrics and logs yourself.
+    docs: https://prometheus.io/docs/

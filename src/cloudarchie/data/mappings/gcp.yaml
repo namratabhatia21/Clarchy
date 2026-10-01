@@ -1,0 +1,137 @@
+# Capability -> Google Cloud service. Same fields as aws.yaml.
+# Not yet reviewed by a Google Cloud specialist; the UI says so.
+
+provider:
+  name: Google Cloud
+  cloud_label: Google Cloud
+  kind: cloud
+  reviewed: false
+
+services:
+  dns:
+    service: Cloud DNS
+    short: DNS
+    fidelity: exact
+    docs: https://cloud.google.com/dns/docs
+  cdn:
+    service: Cloud CDN
+    short: CDN
+    fidelity: close
+    alternatives: [Media CDN]
+    note: Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
+    docs: https://cloud.google.com/cdn/docs
+  waf:
+    service: Google Cloud Armor
+    short: ARM
+    fidelity: exact
+    docs: https://cloud.google.com/armor/docs
+  load-balancer:
+    service: Cloud Load Balancing (Application LB)
+    short: LB
+    fidelity: exact
+    docs: https://cloud.google.com/load-balancing/docs
+  api-gateway:
+    service: API Gateway
+    short: APIG
+    fidelity: close
+    alternatives: [Apigee]
+    note: Lighter than Amazon API Gateway or Azure API Management; Apigee is the full-featured option.
+    docs: https://cloud.google.com/api-gateway/docs
+  container-service:
+    service: Cloud Run
+    short: RUN
+    fidelity: exact
+    alternatives: [GKE Autopilot]
+    docs: https://cloud.google.com/run/docs
+  serverless-function:
+    service: Cloud Run functions
+    short: FN
+    fidelity: exact
+    docs: https://cloud.google.com/functions/docs
+  llm-inference:
+    service: Vertex AI
+    short: VAI
+    fidelity: exact
+    docs: https://cloud.google.com/vertex-ai/docs
+  message-queue:
+    service: Pub/Sub
+    short: PS
+    fidelity: close
+    alternatives: [Cloud Tasks]
+    note: Pub/Sub is publish/subscribe; a single subscription behaves like a queue. Cloud Tasks suits explicit task dispatch with rate limits.
+    docs: https://cloud.google.com/pubsub/docs
+  event-bus:
+    service: Eventarc
+    short: EA
+    fidelity: close
+    note: Routes events to Cloud Run, functions and Workflows; filtering is simpler than EventBridge rules.
+    docs: https://cloud.google.com/eventarc/docs
+  stream:
+    service: Pub/Sub
+    short: PS
+    fidelity: close
+    alternatives: [Google Cloud Managed Service for Apache Kafka]
+    note: Supports ordering keys and replay by seeking, but is not a partitioned log like Kinesis or Kafka.
+    docs: https://cloud.google.com/pubsub/docs
+  workflow:
+    service: Workflows
+    short: WF
+    fidelity: exact
+    docs: https://cloud.google.com/workflows/docs
+  batch-etl:
+    service: Dataflow
+    short: DF
+    fidelity: close
+    alternatives: [Dataproc Serverless, Cloud Data Fusion]
+    note: Dataflow runs Apache Beam pipelines; Spark jobs fit Dataproc Serverless better.
+    docs: https://cloud.google.com/dataflow/docs
+  object-storage:
+    service: Cloud Storage
+    short: GCS
+    fidelity: exact
+    docs: https://cloud.google.com/storage/docs
+  relational-db:
+    service: Cloud SQL for PostgreSQL
+    short: SQL
+    fidelity: exact
+    alternatives: [AlloyDB for PostgreSQL]
+    docs: https://cloud.google.com/sql/docs/postgres
+  key-value-db:
+    service: Firestore
+    short: FS
+    fidelity: close
+    alternatives: [Bigtable]
+    note: A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
+    docs: https://cloud.google.com/firestore/docs
+  cache:
+    service: Memorystore (Redis / Valkey)
+    short: MS
+    fidelity: exact
+    docs: https://cloud.google.com/memorystore/docs
+  vector-search:
+    service: Vertex AI Vector Search
+    short: VS
+    fidelity: exact
+    alternatives: [AlloyDB or Cloud SQL with pgvector]
+    docs: https://cloud.google.com/vertex-ai/docs/vector-search/overview
+  data-warehouse:
+    service: BigQuery
+    short: BQ
+    fidelity: exact
+    docs: https://cloud.google.com/bigquery/docs
+  identity:
+    service: Identity Platform
+    short: IDP
+    fidelity: exact
+    alternatives: [Firebase Authentication]
+    docs: https://cloud.google.com/identity-platform/docs
+  secrets:
+    service: Secret Manager
+    short: SM
+    fidelity: exact
+    docs: https://cloud.google.com/secret-manager/docs
+  monitoring:
+    service: Cloud Monitoring + Cloud Logging
+    short: MON
+    fidelity: exact
+    docs: https://cloud.google.com/monitoring/docs

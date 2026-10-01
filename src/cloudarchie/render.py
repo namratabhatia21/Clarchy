@@ -300,7 +300,7 @@ def render_svg(arch: ProviderArchitecture, icons: IconLibrary | None = None) -> 
         f'height="{_n(f["cloud_bottom"] - f["cloud_top"])}" rx="4"/>',
         f'<text class="cloud-label" x="{_n(f["cloud_left"] + 10)}" '
         f'y="{_n(f["cloud_top"] + 19)}">{escape(arch.cloud_label)} · '
-        f"{escape(arch.region_label)} ({escape(arch.region_code)})</text>",
+        f"{escape(arch.region_text)}</text>",
     ]
     if f["band_top"] >= 0:
         out += [

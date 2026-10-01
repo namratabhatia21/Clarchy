@@ -2,9 +2,11 @@
 
 Uploads and events trigger asynchronous processing through a queue and a workflow, so slow jobs never block users.
 
+> AWS mappings have not yet been reviewed by a specialist. Check the service choices before relying on them.
+
 ## Requirements
 
-- **Region:** Asia Pacific (Mumbai) (ap-south-1)
+- **Region:** Mumbai (ap-south-1)
 - **Monthly active users:** 5000
 - **Peak requests/second:** 20
 - **Data stored (GB):** 500

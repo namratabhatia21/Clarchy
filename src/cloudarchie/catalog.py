@@ -42,11 +42,30 @@ def providers() -> list[str]:
     )
 
 
+PROVIDER_KINDS = ("cloud", "self-hosted")
+
+
 @cache
 def provider_mapping(provider: str) -> dict[str, Any]:
     if provider not in providers():
         raise KeyError(f"unknown provider {provider!r}; available: {', '.join(providers())}")
-    return _load_yaml("mappings", f"{provider}.yaml")
+    data = _load_yaml("mappings", f"{provider}.yaml")
+    if data["provider"].get("kind") not in PROVIDER_KINDS:
+        raise ValueError(f"{provider}: provider.kind must be one of {PROVIDER_KINDS}")
+    return data
+
+
+def providers_in_display_order() -> list[str]:
+    """Clouds first (AWS, then alphabetical), self-hosted last."""
+    order = {"aws": 0}
+    return sorted(
+        providers(),
+        key=lambda p: (
+            provider_mapping(p)["provider"]["kind"] != "cloud",
+            order.get(p, 1),
+            provider_mapping(p)["provider"]["name"],
+        ),
+    )
 
 
 def pattern_names() -> list[str]:

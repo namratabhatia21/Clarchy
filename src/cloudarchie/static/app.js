@@ -104,9 +104,11 @@ function formatNumber(value) {
   return typeof value === "number" ? value.toLocaleString("en-US") : String(value);
 }
 
-// Hosted pages can't start downloads, so the static site copies to the clipboard instead.
+// Sandboxed hosts can't start downloads, so builds made for them copy to the clipboard.
+const CLIPBOARD_ONLY = Boolean(STATIC_DATA?.clipboard_only);
+
 async function deliver(filename, text, type, label) {
-  if (!STATIC_DATA) { download(filename, text, type); return; }
+  if (!CLIPBOARD_ONLY) { download(filename, text, type); return; }
   const status = $("dl-status");
   try {
     await navigator.clipboard.writeText(text);
@@ -379,12 +381,12 @@ async function init() {
   $("dl-svg").addEventListener("click", () => deliver(`${slug()}.${state.provider}.svg`, state.design.svg, "image/svg+xml", "SVG"));
   $("dl-md").addEventListener("click", () => deliver(`${slug()}.${state.provider}.md`, state.design.explanation_md, "text/markdown", "Explanation"));
   $("dl-yaml").addEventListener("click", () => deliver(`${slug()}.yaml`, $("spec-editor").value, "application/yaml", "Spec YAML"));
+  if (CLIPBOARD_ONLY) $("dl-label").textContent = "Copy";
   if (STATIC_DATA) {
     $("spec-editor").readOnly = true;
     $("spec-readonly").hidden = false;
     $("reset-spec").hidden = true;
     $("editor-hint").hidden = true;
-    $("dl-label").textContent = "Copy";
     $("custom-spec-text").textContent = "Read any pattern's YAML in the Spec tab. Editing runs in the local app.";
   }
 

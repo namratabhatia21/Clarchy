@@ -5,6 +5,9 @@ CloudArchie designs it, draws it with the provider's own icons, explains every s
 choice, and (soon) prices it, including what you save with longer commitments. AWS first,
 then GCP, Azure and open-source alternatives side by side.
 
+**Live demo:** https://namratabhatia21.github.io/CloudArchie/ (the service catalog and
+every pattern on every provider; spec editing needs the local app).
+
 ![RAG chatbot on AWS](examples/rag-chatbot.aws.svg)
 
 ## Why
@@ -79,8 +82,9 @@ cloudarchie export-site -o site/        # one self-contained site/index.html
 ```
 
 The exported page embeds every pattern on every provider and the full service catalog,
-so it can be hosted anywhere (for example GitHub Pages). Specs are read-only there; live
-editing needs `cloudarchie serve`. Official provider icons are never embedded in the
+so it can be hosted anywhere. The `Pages` workflow publishes it to GitHub Pages on every
+push to the default branch. Specs are read-only there; live editing needs
+`cloudarchie serve`. Official provider icons are never embedded in the
 export.
 
 ### Use the official AWS icons

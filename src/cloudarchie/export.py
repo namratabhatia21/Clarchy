@@ -6,7 +6,8 @@
 
 The page embeds every built-in pattern rendered on every provider plus the service catalog,
 so it works without a server. Live spec editing needs the server (`cloudarchie serve`);
-the exported page shows specs read-only and says so.
+the exported page shows specs read-only and says so. Fragment builds target sandboxed
+hosts that block downloads, so their download buttons copy to the clipboard instead.
 
 Official provider icons are never embedded: hosting them is a separate licensing question
 (see docs/decisions/0002-no-bundled-provider-icons.md).
@@ -27,7 +28,7 @@ APP_SCRIPT_TAG = '<script src="/static/app.js"></script>'
 STYLESHEET_TAG = '<link rel="stylesheet" href="/static/app.css">'
 
 
-def site_data() -> dict[str, Any]:
+def site_data(clipboard_only: bool = False) -> dict[str, Any]:
     no_icons = {p: IconLibrary(None) for p in catalog.providers()}
     designs = {}
     for name in catalog.pattern_names():
@@ -42,6 +43,7 @@ def site_data() -> dict[str, Any]:
         "pattern_yaml": {name: catalog.pattern_text(name) for name in catalog.pattern_names()},
         "catalog": payloads.catalog_payload(),
         "designs": designs,
+        "clipboard_only": clipboard_only,
     }
 
 
@@ -60,9 +62,9 @@ def build_site(fragment: bool = False) -> str:
 
     # "<" never appears outside JSON strings, so escaping it keeps "</script>" inside
     # embedded SVG from ending the script element early.
-    data = json.dumps(site_data(), ensure_ascii=False, separators=(",", ":")).replace(
-        "<", "\\u003c"
-    )
+    data = json.dumps(
+        site_data(clipboard_only=fragment), ensure_ascii=False, separators=(",", ":")
+    ).replace("<", "\\u003c")
 
     head = _between(index, "<head>", "</head>")
     body = _between(index, "<body>", "</body>")

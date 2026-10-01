@@ -29,6 +29,7 @@ def test_full_page_is_self_contained():
     data = embedded_data(page)
     assert data["designs"]["rag-chatbot.aws"]["svg"].startswith("<svg")
     assert "official_icons" in data["meta"]
+    assert data["clipboard_only"] is False  # GitHub Pages and similar allow downloads
 
 
 def test_fragment_has_no_document_skeleton():
@@ -36,6 +37,7 @@ def test_fragment_has_no_document_skeleton():
     assert page.startswith("<title>")
     for tag in ("<!doctype", "<html", "<head>", "<body>"):
         assert tag not in page.lower()
+    assert embedded_data(page)["clipboard_only"] is True  # sandboxed hosts block downloads
 
 
 def test_export_site_cli(tmp_path):

@@ -9,9 +9,10 @@ name: Pages
 # Monday schedule and on manual runs, so fresh AWS prices reach clarchy.com every week.
 # That needs the secrets CLOUDFLARE_API_TOKEN (permissions "Workers Scripts: Edit" and
 # "D1: Edit") and CLOUDFLARE_ACCOUNT_ID.
-# To stop publishing to GitHub Pages, set the repository variable GITHUB_PAGES to "off".
-# Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
-# set in Settings → Pages too; workflow deployments ignore a CNAME file.
+# GitHub Pages is optional: the copy there is published only when Settings → Pages → Source
+# is "GitHub Actions" (private repositories need a paid GitHub plan for Pages). When Pages
+# is off, those steps are skipped and the run still passes. To skip them on purpose, set
+# the repository variable GITHUB_PAGES to "off".
 
 on:
   push:
@@ -33,6 +34,8 @@ jobs:
     # Deploy only from the default branch, whichever it is.
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
+    outputs:
+      pages: ${{ steps.pages.outcome == 'success' }}
     env:
       HAS_CLOUDFLARE: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
@@ -52,16 +55,20 @@ jobs:
           # The action's default (wrangler 3.90) can't read wrangler.jsonc.
           wranglerVersion: "4.147.0"
           command: deploy
-      - uses: actions/configure-pages@v5
+      - name: Check that GitHub Pages is turned on
+        id: pages
         if: vars.GITHUB_PAGES != 'off'
+        # Answers "Not Found" when Pages is off; that only skips the GitHub Pages copy.
+        continue-on-error: true
+        uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
-        if: vars.GITHUB_PAGES != 'off'
+        if: steps.pages.outcome == 'success'
         with:
           path: site
 
   deploy:
     needs: build
-    if: vars.GITHUB_PAGES != 'off'
+    if: needs.build.outputs.pages == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

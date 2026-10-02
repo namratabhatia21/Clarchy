@@ -11,7 +11,8 @@ name: Pages
 # GitHub Pages is optional: the copy there is published only when Settings → Pages → Source
 # is "GitHub Actions" (private repositories need a paid GitHub plan for Pages). When Pages
 # is off, those steps are skipped and the run still passes. To skip them on purpose, set
-# the repository variable GITHUB_PAGES to "off".
+# the repository variable GH_PAGES to "off" (GitHub refuses variable names that start
+# with GITHUB_).
 
 on:
   push:
@@ -54,7 +55,7 @@ jobs:
           command: deploy
       - name: Check that GitHub Pages is turned on
         id: pages
-        if: vars.GITHUB_PAGES != 'off'
+        if: vars.GH_PAGES != 'off'
         # Answers "Not Found" when Pages is off; that only skips the GitHub Pages copy.
         continue-on-error: true
         uses: actions/configure-pages@v5

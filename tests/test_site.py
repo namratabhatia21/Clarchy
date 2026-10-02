@@ -90,7 +90,7 @@ def test_every_address_is_its_own_page(built):
         assert text[opening.end() :].lstrip().startswith('<a class="skip-link"'), p.path
         # The menu marks where the visitor is.
         menu = site.PARENT.get(p.key, p.key)
-        if menu in {"plan", "examples", "services", "pricing", "howto", "blog", "about"}:
+        if menu in {"examples", "services", "pricing", "howto"}:
             assert f'data-page="{menu}" aria-current="page"' in text
 
 
@@ -256,5 +256,11 @@ def test_design_rules_that_can_be_checked(built):
     pricing = (out / "pricing" / "index.html").read_text()
     assert pricing.count('<article class="plan-card') == 2, "two plans, not three tiers"
     assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css
+    # Four sections in the header; the rest are in the footer.
+    header = re.search(r'<nav class="main-nav".*?</nav>', template, re.S).group(0)
+    assert header.count('class="main-link"') == 4
+    footer = re.search(r'<p class="footer-links">.*?</p>', template, re.S).group(0)
+    for path in ("/about/", "/blog/", "/privacy/", "/terms/"):
+        assert f'href="{path}"' in footer
     # The Services page is a two-column grid; its breadcrumbs take a row of their own.
     assert ".catalog-layout > .crumbs { grid-column: 1 / -1;" in css

@@ -17,6 +17,14 @@ is a white block on a navy base, with its official icon on top and its height se
 it costs a month, and callouts name the costliest. It is made from the RAG chatbot example
 and the current price book every time the site is built, so it is never a mock-up.
 
+## Layout
+
+- The header has four sections (Examples, Services, Pricing, How to) and one button,
+  Start a plan; the logo goes home. About, Blog, Privacy, Terms and the planner note are
+  in the footer.
+- The home page sits within gutters of 6% of the width (24 to 96px). The scale stands in
+  the left gutter only where it is wide enough (1400px and up), so it never touches text.
+
 ## Tokens (app.css `:root`)
 
 | Token | Light | Dark | Use |

@@ -239,6 +239,8 @@ a, button, summary, label, select { touch-action: manipulation; }
 }
 .main-link:hover { color: var(--text); }
 .main-link[aria-current="page"] { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+.nav-cta { height: 36px; padding: 0 16px; font-size: 14px; white-space: nowrap; }
+.footer-links .engine-chip { margin-left: auto; }
 .engine-chip { font: 500 12.5px var(--font-body); color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
 .engine-chip::before { content: ""; width: 7px; height: 7px; border: 1px solid var(--faint); flex: none; }
 .engine-chip.ai::before { background: var(--ok); border-color: var(--ok); }
@@ -318,7 +320,11 @@ main { flex: 1; }
 .menu-list button span { color: var(--faint); font-family: var(--font-mono); font-size: 12px; }
 
 /* ---------- Plan: composer ---------- */
-.plan-start { max-width: 1240px; margin: 44px auto 24px; display: flex; flex-direction: column; gap: 22px; }
+.plan-start {
+  --gutter: clamp(24px, 6vw, 96px);
+  max-width: calc(1240px + 2 * var(--gutter)); margin: 44px auto 24px; padding-inline: var(--gutter);
+  display: flex; flex-direction: column; gap: 22px;
+}
 .plan-start > :not(.instruments, .hero-grid, .story) { width: 100%; max-width: 800px; margin-inline: auto; }
 .hero { display: flex; flex-direction: column; gap: 16px; margin-bottom: 8px; }
 .hero h1 { font-size: clamp(36px, 4.8vw, 56px); }
@@ -327,7 +333,7 @@ main { flex: 1; }
 
 /* The hero: the brief on the left, a massing model of a real design on the right
    (massing.py, ADR 0015). Block height is monthly cost; the blocks rise once. */
-.hero-grid { display: grid; grid-template-columns: minmax(0, 620px) minmax(0, 1fr); gap: 32px 40px; align-items: center; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); gap: 32px 40px; align-items: center; }
 .hero-main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
 .hero-model { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .hero-model figcaption { color: var(--muted); font-size: 13px; max-width: 56ch; }
@@ -336,8 +342,8 @@ main { flex: 1; }
 .hero-model figcaption a::after { content: " →"; }
 .hero-model figcaption a:hover { text-decoration: underline; }
 @media (min-width: 1101px) {
-  /* The model may reach into the right margin, which the protractor leaves to it. */
-  .hero-model { margin-right: calc(-1 * min(130px, max(0px, (100vw - 1240px) / 2 - 20px))); }
+  /* The model may reach into the right gutter, which the protractor leaves to it. */
+  .hero-model { margin-right: calc(16px - var(--gutter)); }
 }
 .massing {
   --m-base: #15305a; --m-base-line: #2b4a78; --m-base-left: #0a1f3d; --m-base-right: #06142a; --m-zone: #6f8db8;
@@ -366,6 +372,7 @@ main { flex: 1; }
 @keyframes m-rise { from { transform: scaleY(.06); } to { transform: none; } }
 @keyframes m-fade { from { opacity: 0; } }
 @media (max-width: 1100px) {
+  .plan-start { --gutter: 0px; }
   .hero-grid { grid-template-columns: minmax(0, 1fr); max-width: 800px; margin-inline: auto; width: 100%; }
   .hero-model { max-width: 640px; }
 }
@@ -873,16 +880,17 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .cost-line > summary .tag { display: none; }
   .cost-items .num:nth-child(2) { display: none; }
 }
-/* The header holds the brand, its tag, six sheets and the engine chip on one row from
-   1120px; down to 900px without the tag; below that the sheets get a row of their own. */
-@media (max-width: 1120px) {
+/* The header holds the brand, its tag, four sections and the Start a plan button on one
+   row from 960px; down to 760px without the tag; below that the sections get a row of
+   their own. About, Blog, Privacy and Terms are in the footer. */
+@media (max-width: 960px) {
   .brand-tag { display: none; }
 }
-@media (max-width: 900px) {
+@media (max-width: 760px) {
   .topbar { padding: 10px 24px 0; gap: 4px 12px; position: static; }
   .main-nav { width: 100%; order: 3; height: 44px; gap: 0; }
   .main-link { flex: 1; justify-content: center; padding: 0 6px; }
-  .engine-chip { order: 2; }
+  .nav-cta { order: 2; height: 34px; padding: 0 12px; font-size: 13.5px; }
 }
 @media (max-width: 700px) {
   .page { padding: 20px 16px 36px; }
@@ -958,7 +966,8 @@ main { overflow-x: clip; }
 .scale-svg .num { font: 500 10px var(--font-mono); fill: var(--faint); }
 .scale-marker { position: absolute; left: 0; top: 20px; width: 50px; height: 0; border-top: 2px solid var(--accent); transition: transform .2s linear; }
 .scale-marker::after { content: ""; position: absolute; right: -9px; top: -6px; border: 5px solid transparent; border-right: 8px solid var(--accent); }
-@media (max-width: 1180px) { .scale-rule { display: none; } }
+/* The scale stands in the left gutter; where the gutter is too narrow for it, it goes. */
+@media (max-width: 1399px) { .scale-rule { display: none; } }
 /* Below 1280px there is no free margin beside the column, so the dial becomes a watermark. */
 @media (max-width: 1279px) { .instruments.ready { opacity: .45; } .protractor .reading { display: none; } }
 @media (max-width: 700px) { .instruments.ready { opacity: .45; } .needle-svg { display: none; } .protractor { top: 330px; } }
@@ -1205,8 +1214,8 @@ main { overflow-x: clip; }
 }
 @media (max-width: 700px) {
   .main-link { padding: 0 2px; font-size: 13.5px; white-space: nowrap; }
-  /* Six sheets fit a phone; on the narrowest ones the row scrolls rather than wrapping,
-     so the current sheet's underline is drawn inside the link instead of over the rule. */
+  /* The sections fit a phone; on the narrowest ones the row scrolls rather than wrapping,
+     so the current section's underline is drawn inside the link instead of over the rule. */
   .main-nav { overflow-x: auto; scrollbar-width: none; }
   .main-nav::-webkit-scrollbar { display: none; }
   .main-link { margin-bottom: 0; border-bottom: 0; }

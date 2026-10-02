@@ -334,3 +334,45 @@ def test_contrast_and_focus_fixes_hold():
     assert 'el("h3"' not in js
     # A diagram whose services are buttons is announced as a group, not a single image.
     assert 'svg.setAttribute("role", "group")' in js
+
+
+def test_the_cookie_policy_lists_everything_the_scripts_store(built):
+    """The Privacy page's storage table must cover every key the front end keeps, and the
+    site must set no cookies and load no third-party scripts of its own."""
+    out, _content, _pages = built
+    static = resources.files("clarchy").joinpath("static")
+    scripts = {f.name: f.read_text() for f in static.iterdir() if f.name.endswith(".js")}
+    privacy = (out / "privacy" / "index.html").read_text()
+    policy = privacy[privacy.index('id="cookies"') :]
+    keys = set()
+    for js in scripts.values():
+        keys |= set(re.findall(r'const \w+_KEY = "([^"]+)"', js))
+        keys |= set(re.findall(r'CA\.store\("([^"]+)", (?!null)', js))
+    assert keys, "the scripts keep something in storage"
+    for key in keys:
+        assert f"<code>{key}</code>" in policy, f"{key} is stored but not in the cookie policy"
+    assert not any("document.cookie" in js for js in scripts.values())
+    # The draft of a brief is kept for the tab only; local storage only sees old drafts removed.
+    assert re.findall(r"CA\.store\(DRAFT_KEY, ([^)]+)\)", scripts["plan.js"]) == ["null"]
+    assert "sessionStorage.setItem(DRAFT_KEY" in scripts["plan.js"]
+    for page in out.rglob("*.html"):
+        text = page.read_text()
+        assert not re.search(r'<script[^>]+src="https?://', text), f"{page}: third-party script"
+        assert "<iframe" not in text, f"{page}: embedded third-party content"
+        assert 'href="/privacy/#cookies"' in text or page.name == "404.html"
+
+
+def test_no_claim_says_more_than_the_site_does(built):
+    """Open source has no price estimate and Google Cloud's prices are compiled by hand, so
+    nothing may say every design is priced on four clouds or that all prices update daily."""
+    out, _content, _pages = built
+    text = "\n".join(p.read_text() for p in out.rglob("*.html")).lower()
+    for claim in (
+        "priced on four clouds",
+        "priced on every cloud",
+        "four clouds ·",
+        "drawn and priced on aws, azure, google cloud and open source",
+    ):
+        assert claim not in text, claim
+    home = (out / "index.html").read_text()
+    assert "with the rule-based planner nothing leaves your browser" in home

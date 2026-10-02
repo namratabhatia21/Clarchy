@@ -69,11 +69,11 @@
             <h1 class="poster-title lettered" id="poster-title"><span class="pt-in"><span style="--w:0">Brief</span> <span style="--w:1">in</span></span><span class="sr-only">,</span> <span class="pt-out"><span style="--w:2">drawing</span> <span style="--w:3">out</span></span></h1>
             <div class="poster-dial" aria-hidden="true"><!-- render:poster-dial --></div>
             <!-- render:poster-art -->
-            <div class="poster-stamp" aria-hidden="true"><div><b>Priced daily</b><small>8 regions · Rev. C</small></div></div>
+            <div class="poster-stamp" aria-hidden="true"><div><b>Priced daily</b><small>AWS · Azure · 8 regions</small></div></div>
             <button type="button" class="poster-tag" data-to-brief aria-label="Drop a PDF in the brief box">Drop a PDF</button>
             <div class="poster-cta">
               <button type="button" class="poster-btn" data-to-brief>Design architecture</button>
-              <p>A cloud architecture from your brief, priced on four clouds. Free, in your browser.</p>
+              <p>A cloud architecture from your brief, drawn for AWS, Azure, Google Cloud and open source. Free, in your browser.</p>
             </div>
           </div>
         </section>
@@ -131,7 +131,7 @@
               <label class="field"><span>OpenAI-compatible endpoint</span><input type="url" id="hf-endpoint" autocomplete="off" spellcheck="false" placeholder="https://router.huggingface.co/v1"></label>
               <p class="hint">For a model on your own machine, run Ollama with <code>OLLAMA_ORIGINS=*</code> and use <code>http://localhost:11434/v1</code> with a model such as <code>qwen2.5:7b</code>; leave the token empty.</p>
             </details>
-            <p class="hint">The token goes only to the model provider, straight from this browser, and is forgotten when you close the tab. <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">Create a free Hugging Face token ↗</a> with permission to make calls to Inference Providers.</p>
+            <p class="hint">Your brief and this token go straight from this browser to the model provider, whose terms apply; Clarchy receives neither. The token is forgotten when you close the tab. <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">Create a free Hugging Face token ↗</a> with permission to make calls to Inference Providers.</p>
           </div>
           <p class="composer-error" id="composer-error" role="alert" hidden></p>
           <div class="drop-hint" aria-hidden="true">Drop your document here</div>
@@ -156,7 +156,7 @@
           </div>
           <div class="story-grid">
             <div class="story-steps">
-              <article class="story-step"><span class="step-no">1</span><div><h3>Read the brief</h3><p>Type it, or drop in a Word, PDF or Excel file. Paragraphs and tables are read alike, and nothing leaves your browser.</p></div></article>
+              <article class="story-step"><span class="step-no">1</span><div><h3>Read the brief</h3><p>Type it, or drop in a Word, PDF or Excel file. Paragraphs and tables are read alike, and with the rule-based planner nothing leaves your browser.</p></div></article>
               <article class="story-step"><span class="step-no">2</span><div><h3>Mark up what matters</h3><p>The numbers that size a design are picked out: users, traffic, data, uptime, region, compliance and budget. Anything missing becomes a question for you.</p></div></article>
               <article class="story-step"><span class="step-no">3</span><div><h3>Draw the architecture</h3><p>Each service is chosen, from the edge to the data, with the reason for it in your own words.</p></div></article>
               <article class="story-step"><span class="step-no">4</span><div><h3>Add build and deploy</h3><p>Source control, CI, a registry, a release pipeline and infrastructure as code come with every design.</p></div></article>
@@ -292,7 +292,7 @@
               <div class="coda-sheet">
                 <p class="coda-head"><span>Drawing register</span><span><!-- render:example-count --> designs</span></p>
                 <!-- render:coda-register -->
-                <p class="coda-note">Each one drawn and priced on AWS, Azure, Google Cloud and open source.</p>
+                <p class="coda-note">Each one drawn for AWS, Azure, Google Cloud and open source, and priced on the three clouds.</p>
               </div>
               <a class="poster-btn coda-btn" href="/examples/">See examples</a>
             </div>
@@ -607,7 +607,7 @@
         </section>
         <section>
           <h2>What happens to your brief</h2>
-          <p>On clarchy.com the planner runs in your browser, so your brief and documents are not uploaded anywhere. If you choose an AI model, your brief goes from your browser straight to that model's provider, with your own access token. The <a href="/privacy/">privacy page</a> has the details.</p>
+          <p>On clarchy.com the rule-based planner runs in your browser, so your brief and documents are not uploaded anywhere. If you choose an AI model, your brief goes from your browser straight to that model's provider, with your own access token. The <a href="/privacy/">privacy page</a> has the details.</p>
         </section>
         <section class="author-bio" id="author">
           <h2>Built by Namrata Bhatia</h2>
@@ -631,12 +631,12 @@
         <!-- crumbs -->
         <div class="page-head">
           <h1>Privacy</h1>
-          <p>Clarchy has no accounts and keeps no data about you. This page explains what happens to your data when you use clarchy.com.</p>
+          <p>Clarchy has no accounts, sets no cookies of its own and uses no analytics or advertising trackers. This page explains what happens to your data when you use clarchy.com, and what your browser stores.</p>
           <p class="updated">Updated 2 October 2026</p>
         </div>
         <section>
           <h2>Who runs Clarchy</h2>
-          <p>Clarchy is an open-source project run by Namrata Bhatia. For any question about your data, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>.</p>
+          <p>Clarchy is an open-source project run by Namrata Bhatia, who is responsible for how this site handles personal data. For any question about your data, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>.</p>
         </section>
         <section>
           <h2>Your briefs and documents</h2>
@@ -644,11 +644,23 @@
         </section>
         <section>
           <h2>If you use an AI model</h2>
-          <p>If you choose an open-source model through Hugging Face, or another endpoint you enter, your browser sends your brief to that provider together with the access token you paste. That provider's terms and privacy policy apply to the request. The token is kept only for the current browser tab and is never sent to Clarchy.</p>
+          <p>If you choose an open-source model through Hugging Face, or another endpoint you enter, your browser sends your brief to that provider together with the access token you paste. Clarchy receives neither. The provider's terms and privacy policy apply to the request, and it may process it outside your country. Only send a model a brief you are allowed to share with that provider, and leave out personal or confidential details it doesn't need.</p>
         </section>
-        <section>
-          <h2>What your browser keeps</h2>
-          <p>Your browser keeps your current draft and your model and endpoint choices in its local storage, so you don't have to retype them. The access token you paste is kept only for the current tab. Everything stays on your device, and you can clear it at any time in your browser's settings. Clarchy sets no cookies and uses no analytics or advertising trackers.</p>
+        <section id="cookies">
+          <h2>Cookies and browser storage</h2>
+          <p>Clarchy sets no cookies. To work, the planner keeps a few things in your browser's storage, on your device only:</p>
+          <div class="table-wrap">
+            <table class="howto-table">
+              <thead><tr><th scope="col">What</th><th scope="col">Stored in</th><th scope="col">Why</th><th scope="col">Kept until</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">The brief you are writing</th><td>Session storage (<code>clarchy.plan-draft</code>)</td><td>So a reload or a visit to another page doesn't lose it</td><td>You close the tab</td></tr>
+                <tr><th scope="row">The access token you paste</th><td>Session storage (<code>clarchy.hf</code>)</td><td>To send it to the model provider you chose</td><td>You close the tab</td></tr>
+                <tr><th scope="row">Your planner, model and endpoint choices</th><td>Local storage (<code>clarchy.hf</code>)</td><td>So the planner you picked stays picked</td><td>You clear the site's data</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Your browser also caches the planning engine it downloads, as it does any site's files, so the next plan starts faster. Cloudflare, which hosts the site, may set a strictly necessary security cookie (<code>__cf_bm</code>) when it checks for automated traffic.</p>
+          <p>Nothing is stored for analytics, advertising or tracking, and everything above only serves what you asked the site to do, so the site shows no cookie banner. You can delete all of it at any time in your browser's settings for clarchy.com.</p>
         </section>
         <section>
           <h2>Downloads from other services</h2>
@@ -656,11 +668,23 @@
         </section>
         <section>
           <h2>Hosting</h2>
-          <p>clarchy.com is hosted by Cloudflare. Like any web host, Cloudflare processes technical data such as your IP address and browser type to deliver the site and protect it from abuse, and it may set a strictly necessary security cookie when it checks for automated traffic. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare's privacy policy</a>.</p>
+          <p>clarchy.com is hosted by Cloudflare. Like any web host, Cloudflare processes technical data such as your IP address and browser type to deliver the site and protect it from abuse. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare's privacy policy</a>. If you use the copy of Clarchy on Hugging Face Spaces, Hugging Face hosts that page and its privacy policy applies there.</p>
         </section>
         <section>
-          <h2>Your choices</h2>
-          <p>Clarchy keeps no data about you to see or delete. If you email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>, your address and message are used only to reply to you.</p>
+          <h2>Links to other sites</h2>
+          <p>Links to GitHub, LinkedIn, the cloud providers' pricing pages and other sites take you to those sites, whose own privacy policies apply. Clarchy embeds no content from them.</p>
+        </section>
+        <section>
+          <h2>Emails</h2>
+          <p>If you email Clarchy, your address and message are used only to reply to you and to improve Clarchy, on the basis of a legitimate interest in answering you. They are not shared or used for marketing, and they are deleted if you ask.</p>
+        </section>
+        <section>
+          <h2>Your rights</h2>
+          <p>Clarchy keeps no personal data about you other than emails you send. Where data protection law such as the GDPR or the UK GDPR applies, you can ask to see, correct or delete personal data held about you, or object to its use, by emailing <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>. You can also complain to your local data protection authority.</p>
+        </section>
+        <section>
+          <h2>Children</h2>
+          <p>Clarchy is a tool for people who design software systems and is not directed at children.</p>
         </section>
         <section>
           <h2>Changes</h2>
@@ -677,12 +701,16 @@
         <!-- crumbs -->
         <div class="page-head">
           <h1>Terms of use</h1>
-          <p>By using clarchy.com you agree to these terms. They are short because the site is free and there is nothing to install.</p>
+          <p>By using clarchy.com you agree to these terms. They are short because the site is free, needs no account and has nothing to install.</p>
           <p class="updated">Updated 2 October 2026</p>
         </div>
         <section>
           <h2>What Clarchy gives you</h2>
-          <p>Clarchy produces suggested architectures, diagrams, cost estimates and policy checklists from the information you give it. They are a starting point for design work and review, not a finished design.</p>
+          <p>Clarchy produces suggested architectures, diagrams, cost estimates and policy checklists from the information you give it. They are a starting point for design work and review, not a finished design. Designs made with an AI model can be wrong or incomplete, like any AI output; check them as you would a colleague's draft.</p>
+        </section>
+        <section>
+          <h2>Free of charge</h2>
+          <p>Clarchy is free to use. There is nothing to buy, so there are no payments, subscriptions or refunds.</p>
         </section>
         <section>
           <h2>Estimates are not quotes</h2>
@@ -698,11 +726,15 @@
         </section>
         <section>
           <h2>Your content</h2>
-          <p>You keep all rights to the briefs and documents you use with Clarchy. Briefs planned in your browser are not sent to Clarchy.</p>
+          <p>You keep all rights to the briefs and documents you use with Clarchy. Briefs planned in your browser are not sent to Clarchy. If you send a brief to an AI model, you are responsible for being allowed to share it with that provider, whose terms apply to it.</p>
         </section>
         <section>
           <h2>Acceptable use</h2>
           <p>Don't try to disrupt or overload the site, or use it to break the law.</p>
+        </section>
+        <section>
+          <h2>The code</h2>
+          <p>Clarchy's source code is open source under the <a href="https://github.com/namratabhatia21/Clarchy/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Apache License 2.0</a>; that licence, not these terms, governs your use of the code. The icons, logos and fonts it ships stay under their owners' terms, listed in its <a href="https://github.com/namratabhatia21/Clarchy/blob/main/NOTICE" target="_blank" rel="noopener noreferrer">NOTICE</a> file.</p>
         </section>
         <section>
           <h2>Names and trademarks</h2>
@@ -710,7 +742,7 @@
         </section>
         <section>
           <h2>No warranty</h2>
-          <p>The site is provided as it is, without warranties of any kind. As far as the law allows, Clarchy is not liable for any loss arising from your use of the site or of the designs and estimates it produces.</p>
+          <p>The site is provided as it is, without warranties of any kind. As far as the law allows, Clarchy is not liable for any loss arising from your use of the site or of the designs and estimates it produces. Nothing in these terms limits any liability that the law does not allow to be limited.</p>
         </section>
         <section>
           <h2>Changes</h2>
@@ -729,7 +761,7 @@
       <div><dt>Prices</dt><dd id="prices-as-of"><!-- render:prices-as-of --></dd></div>
       <div class="notes"><dt>Notes</dt><dd>Estimates use public list prices. Service names and icons belong to their owners; Clarchy is not affiliated with any cloud provider.</dd></div>
     </dl>
-    <p class="footer-links"><span id="copyright"><!-- render:copyright --></span><a href="/about/">About</a><!-- render:blog-link --><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/namratabhatia21/Clarchy" target="_blank" rel="noopener noreferrer">GitHub</a><!-- render:engine-chip --></p>
+    <p class="footer-links"><span id="copyright"><!-- render:copyright --></span><a href="/about/">About</a><!-- render:blog-link --><a href="/privacy/">Privacy</a><a href="/privacy/#cookies">Cookies</a><a href="/terms/">Terms</a><a href="https://github.com/namratabhatia21/Clarchy" target="_blank" rel="noopener noreferrer">GitHub</a><!-- render:engine-chip --></p>
   </footer>
 
   <template id="workspace-template">

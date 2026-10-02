@@ -386,7 +386,9 @@ make examples    # regenerate examples/, which double as golden test files
 
 ## Licence
 
-Not chosen yet; until a licence is added, all rights are reserved.
+Clarchy is licensed under the [Apache License 2.0](LICENSE). The provider icons, project
+logos, fonts and service lists it ships stay under their owners' terms; [NOTICE](NOTICE)
+lists them.
 
 AWS, Azure, Google Cloud and all service names are trademarks of their owners.
 Clarchy is an independent project, not affiliated with or endorsed by any cloud

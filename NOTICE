@@ -1,0 +1,26 @@
+Clarchy
+Copyright 2026 Namrata Bhatia
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Clarchy also ships material that is not covered by that licence and stays under its
+owners' terms:
+
+- Cloud provider icons: the AWS Architecture Icons (src/clarchy/data/icons/aws/), the
+  Azure architecture icons (src/clarchy/data/icons/azure/) and the Google Cloud icons
+  (src/clarchy/data/icons/gcp/), used unchanged under each provider's icon terms. The
+  NOTICE.md in each folder gives the source and the terms.
+- Open-source project logos (src/clarchy/data/icons/oss/), trademarks of their projects,
+  mostly from Simple Icons. Its NOTICE.md lists each logo and its source.
+- Fonts (src/clarchy/static/fonts/): Archivo, IBM Plex Sans, IBM Plex Mono, Open Sans and
+  Roboto, under the SIL Open Font License 1.1, in the LICENSE-*.txt files beside them.
+- The Azure service list (src/clarchy/data/directory/azure.yaml) keeps product names and
+  summaries from the product directory of Microsoft's Azure documentation
+  (https://github.com/MicrosoftDocs/azure-docs, articles/index.yml), licensed under
+  Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/).
+  Clarchy reduces it to a name, category, summary and link per product.
+- The Google Cloud service list (src/clarchy/data/directory/gcp.yaml) keeps product names
+  and one-line descriptions from https://cloud.google.com/products/.
+
+AWS, Azure, Google Cloud and all service and product names are trademarks of their owners.
+Clarchy is an independent project, not affiliated with or endorsed by any cloud provider.

@@ -1,12 +1,14 @@
 name: Pages
 
 # Publishes the site (clarchy export-site) to GitHub Pages and, when the repository has
-# Cloudflare secrets, to the Cloudflare Worker "clarchy" (static assets, wrangler.jsonc).
-# AWS prices are refreshed from the AWS Price List API on every deploy and every Monday.
+# Cloudflare secrets, to the Cloudflare Worker "clarchy" (site, API and D1 database, all in
+# wrangler.jsonc). AWS prices are refreshed from the AWS Price List API on every run.
 #
-# Cloudflare: either connect the Worker to this repository in Cloudflare (Workers Builds,
-# build command "make prices site"), or add the secrets CLOUDFLARE_API_TOKEN (permission
-# "Workers Scripts: Edit") and CLOUDFLARE_ACCOUNT_ID so this workflow deploys it. Not both.
+# Cloudflare: Workers Builds (the Worker connected to this repository, build command
+# "make prices site") deploys every push. This workflow deploys to Cloudflare only on the
+# Monday schedule and on manual runs, so fresh AWS prices reach clarchy.com every week.
+# That needs the secrets CLOUDFLARE_API_TOKEN (permissions "Workers Scripts: Edit" and
+# "D1: Edit") and CLOUDFLARE_ACCOUNT_ID.
 # To stop publishing to GitHub Pages, set the repository variable GITHUB_PAGES to "off".
 # Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
 # set in Settings → Pages too; workflow deployments ignore a CNAME file.
@@ -41,11 +43,14 @@ jobs:
       - name: Refresh AWS prices and build the site
         run: make prices site
       - name: Deploy to Cloudflare (Worker "clarchy")
-        if: env.HAS_CLOUDFLARE == 'true'
+        # Pushes are deployed by Workers Builds; this covers the weekly price refresh.
+        if: env.HAS_CLOUDFLARE == 'true' && github.event_name != 'push'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # The action's default (wrangler 3.90) can't read wrangler.jsonc.
+          wranglerVersion: "4.147.0"
           command: deploy
       - uses: actions/configure-pages@v5
         if: vars.GITHUB_PAGES != 'off'

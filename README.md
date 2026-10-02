@@ -294,17 +294,16 @@ Settings → Pages. The page uses only relative links, so the same build works o
 domain or under a `github.io` path.
 
 **Hosting on Cloudflare.** A Cloudflare Worker named `clarchy` serves the built files as
-static assets (`wrangler.jsonc`). `make prices site` builds them into `site/`. Deploy it
-one of two ways, not both:
+static assets (`wrangler.jsonc`), and its API on `/api/*`. `make prices site` builds the
+files into `site/`. Two things deploy it:
 
-- **Cloudflare builds it (Workers Builds).** Connect the Worker to this repository
+- **Workers Builds, on every push.** Connect the Worker to this repository
   (Worker → Settings → Build). Set the build command to `make prices site`, keep the
-  deploy command `npx wrangler deploy`, and pick the branch the site is built from. Every
-  push to that branch deploys.
-- **GitHub builds it.** Create an API token with the *Workers Scripts: Edit* permission
-  (the "Edit Cloudflare Workers" template), and add the repository secrets
-  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The `Pages` workflow then deploys
-  on every push and every Monday, with fresh AWS prices.
+  deploy command `npx wrangler deploy`, and pick the branch the site is built from.
+- **The `Pages` workflow, every Monday** (and when run by hand), so fresh AWS prices reach
+  the site even without a push. It needs an API token with the *Workers Scripts: Edit*
+  and *D1: Edit* permissions, saved as the repository secrets `CLOUDFLARE_API_TOKEN` and
+  `CLOUDFLARE_ACCOUNT_ID`. Without those secrets it skips the Cloudflare step.
 
 The site is then live at `clarchy.<your-subdomain>.workers.dev`. To move clarchy.com:
 

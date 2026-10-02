@@ -176,6 +176,9 @@ def test_pages_carry_their_lists_for_the_first_paint(built):
         assert f'data-sample="{sample["id"]}"' in home
     files, _designs = build_pages(engine=engine_config())
     assert "credit-line" not in home and "credit-line" not in files["index.html"]
+    note = "Samples replay a recorded rule-based run; your own brief is planned live."
+    assert note in files["index.html"], "the static site says its samples are recorded"
+    assert note not in home, "a replay-only copy can't plan a brief live"
     examples = (out / "examples" / "index.html").read_text()
     for pattern in content.patterns:
         assert f'href="/examples/{pattern["id"]}/"' in examples

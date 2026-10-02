@@ -628,6 +628,16 @@ def _composer_foot(shell: Shell) -> str:
     return f'<p class="composer-foot" id="composer-foot"{hidden}>{text}</p>'
 
 
+def _samples_note(shell: Shell) -> str:
+    """On the static site a sample replays a run recorded at build time; say so."""
+    if shell.mode != "static":
+        return ""
+    return (
+        '<p class="samples-note">Samples replay a recorded rule-based run; your own brief is '
+        "planned live.</p>"
+    )
+
+
 def _samples(c: Content) -> str:
     items = []
     for s in c.samples:
@@ -966,6 +976,7 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "static-note-hidden": "" if shell.mode == "replay" else " hidden",
         "regions": _regions(c),
         "samples": _samples(c),
+        "samples-note": _samples_note(shell),
         "hero-model": c.model["figure"] if c.model else "",
         "model-kicker": c.model["kicker"] if c.model else "",
         "model-facts": c.model["facts"] if c.model else "",

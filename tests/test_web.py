@@ -52,6 +52,7 @@ def test_pages_and_assets_served(client):
         page.status_code == 200
         and "<title>Clarchy · Cloud architecture from your requirements</title>" in page.text
     )
+    assert "Samples replay a recorded" not in page.text, "a server plans every sample live"
     howto = client.get("/how-to/")
     assert howto.status_code == 200 and 'id="page-howto"' in howto.text
     assert 'id="page-plan"' not in howto.text

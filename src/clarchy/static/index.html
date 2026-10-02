@@ -142,6 +142,7 @@
         <section class="samples" aria-labelledby="samples-title">
           <h2 class="label" id="samples-title">Try a sample</h2>
           <ul class="sample-list" id="sample-list"><!-- render:samples --></ul>
+          <!-- render:samples-note -->
         </section>
         </div>
         <!-- render:hero-model -->
@@ -489,7 +490,7 @@
               <li>Click <b>Design architecture</b>, or press <kbd>Ctrl</kbd>+<kbd>Enter</kbd>. The first plan downloads the planning engine, about 15&nbsp;MB; after that, plans take seconds.</li>
               <li>Six steps run: read, understand, design, add build and deploy, describe the workflows and map to every cloud. <b>Show steps</b> lists what was found at each one.</li>
             </ol>
-            <p class="howto-tip"><span class="label">Tip</span><span>No brief yet? <b>Try a sample</b>, under the box, runs a ready-made one.</span></p>
+            <p class="howto-tip"><span class="label">Tip</span><span>No brief yet? A sample, under the box, replays a recorded run of the rule-based planner.</span></p>
           </section>
 
           <section class="howto-step" id="howto-drawing" data-section="drawing" aria-labelledby="howto-drawing-title">
@@ -507,7 +508,7 @@
             <p>The tabs next to the cloud names show the rest of the design.</p>
             <dl class="principles howto-tabs">
               <div><dt>Services</dt><dd>Every part of the design with the service it uses on this cloud, grouped by stage, and why it is there.</dd></div>
-              <div><dt>Cost</dt><dd>The monthly estimate, and totals for 1 month, 6 months, 1 year and 3 years, on demand and with commitments. AWS prices come from the AWS Price List API; Azure, Google Cloud and third-party prices are marked approximate.</dd></div>
+              <div><dt>Cost</dt><dd>The monthly estimate, and totals for 1 month, 6 months, 1 year and 3 years, on demand and with commitments. AWS and Azure prices come from their official price APIs and are refreshed daily; Google Cloud and third-party prices are marked approximate.</dd></div>
               <div><dt>Policies</dt><dd>The AI and data rules that apply, such as the EU AI Act, GDPR or HIPAA. Each obligation is covered by a component, a gap with a suggestion, or an action for your team. A checklist for design reviews, not legal advice.</dd></div>
               <div><dt>Workflows</dt><dd>Numbered paths through the drawing: a user's request, a release, a background job. Press <b>Play</b> to walk through one step by step.</dd></div>
               <div><dt>Spec</dt><dd>The YAML behind the drawing. Edit it and the drawing, services and costs update as you type; <b>Reset</b> brings back the plan.</dd></div>
@@ -539,6 +540,7 @@
               <li>In <b>Planner</b>, choose <i>Open-source model (Hugging Face)</i>.</li>
               <li>Paste a Hugging Face token that may make calls to Inference Providers (<a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">create one free ↗</a>), and keep or change the model.</li>
               <li>For a model on your own machine, open <b>Use another endpoint</b>: run Ollama with <code>OLLAMA_ORIGINS=*</code>, enter <code>http://localhost:11434/v1</code> and a model such as <code>qwen2.5:7b</code>, and leave the token empty.</li>
+              <li>To use Claude, or the agent with other MCP servers, run Clarchy on your own machine with <code>clarchy serve</code>; the <a href="https://github.com/namratabhatia21/Clarchy#run-it-yourself" target="_blank" rel="noopener noreferrer">README on GitHub</a> shows how.</li>
             </ol>
             <p class="howto-tip"><span class="label">Privacy</span><span>The token goes from your browser straight to the model provider and is forgotten when you close the tab. With the rule-based planner, nothing leaves your browser.</span></p>
           </section>
@@ -585,15 +587,23 @@
         <!-- crumbs -->
         <div class="page-head">
           <h1>About Clarchy</h1>
-          <p>Clarchy turns a requirements brief into a cloud architecture you can question, price and compare across AWS, Azure, Google Cloud and open source.</p>
+          <p>Clarchy is an open-source side project that turns a requirements brief into a cloud architecture you can question, price and compare across AWS, Azure, Google Cloud and open source.</p>
         </div>
         <section>
           <h2>What it does</h2>
           <p>You describe a system in plain language: who uses it and how many, where they are, how much data it keeps and which rules apply. Clarchy turns that into an architecture: the services, how they connect, how changes reach production and the main workflows through it. It draws the same design for AWS, Azure, Google Cloud and open source, so you can compare them side by side, and every service links back to the sentence of your brief that called for it.</p>
         </section>
         <section>
+          <h2>How it plans</h2>
+          <p>Clarchy reads the brief before it designs anything: users, traffic, data, uptime, region, rules and the features asked for, each kept with the sentence it came from. Then it designs. The rule-based planner wires a standard design. An AI agent works through Clarchy's tools, and its design is accepted only once it passes a validator; quotes that don't appear in the brief are removed. Build and deploy and the mapping to every cloud are deterministic, the same for both.</p>
+        </section>
+        <section>
+          <h2>What runs live on this site</h2>
+          <p>The samples under the brief replay a run of the rule-based planner, recorded when the site was built, so they appear at once. A brief you type or upload, or a sample with a model chosen, is planned live in your browser: by the rule-based planner, or by an open-source model on Hugging Face or any OpenAI-compatible endpoint (such as Ollama on your machine), with your own access token. To plan with Claude, or to connect the agent to other MCP servers, run Clarchy on your own machine; the code and instructions are on <a href="https://github.com/namratabhatia21/Clarchy#run-it-yourself" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+        </section>
+        <section>
           <h2>Where the numbers come from</h2>
-          <p>AWS prices come from the AWS Price List API and are refreshed every week. Azure, Google Cloud and third-party prices are compiled from their public pricing pages and marked approximate. Each estimate lists the sizing it assumes, so you can check it against your own figures. Estimates use list prices: your provider's calculator and your own discounts give the final number.</p>
+          <p>AWS and Azure prices come from each provider's own price API (the AWS Price List API and the Azure Retail Prices API), refreshed every day for each of the eight regions Clarchy offers. Google Cloud prices are compiled by hand from Google's pricing pages for one region (Iowa) and marked approximate, as are third-party services such as GitHub. Each estimate lists the sizing it assumes and uses list prices: your provider's calculator and your own discounts give the final number.</p>
         </section>
         <section>
           <h2>What happens to your brief</h2>
@@ -626,7 +636,7 @@
         </div>
         <section>
           <h2>Who runs Clarchy</h2>
-          <p>Clarchy is run by Namrata Bhatia. For any question about your data, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>.</p>
+          <p>Clarchy is an open-source project run by Namrata Bhatia. For any question about your data, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>.</p>
         </section>
         <section>
           <h2>Your briefs and documents</h2>

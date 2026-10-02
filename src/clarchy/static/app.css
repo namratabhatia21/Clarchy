@@ -556,6 +556,7 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .samples { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
 .sample-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .sample-list .chip { height: 32px; }
+.samples-note { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--muted); }
 
 /* "How it works" as a chain dimension: one segment per stage, slash ticks between. */
 .how-line {

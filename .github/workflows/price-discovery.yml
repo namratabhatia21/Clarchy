@@ -1,0 +1,40 @@
+name: Price discovery
+
+# Run by hand: lists the provider price-API meters behind each price Clarchy uses, so they
+# can be chosen by name (python -m clarchy.azure_prices --discover). Read-only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: Azure region (armRegionName)
+        default: eastus
+      keys:
+        description: Comma-separated price keys (empty for all)
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  azure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Azure meters
+        env:
+          REGION: ${{ inputs.region }}
+          KEYS: ${{ inputs.keys }}
+        run: |
+          args="--discover --region $REGION"
+          if [ -n "$KEYS" ]; then args="$args --keys $KEYS"; fi
+          python -m clarchy.azure_prices $args | tee discovery.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: azure-discovery
+          path: discovery.txt

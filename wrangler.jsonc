@@ -1,12 +1,31 @@
-// Cloudflare Worker that serves the static site built by `clarchy export-site -o site`.
-// The Pages workflow builds the site and runs `wrangler deploy` when the repository has
-// the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets.
+// Cloudflare Worker "clarchy": serves the static site built by `clarchy export-site -o site`
+// and a small API on /api/* (worker/index.mjs) for sign-ups, free-diagram credits and the
+// Pro waitlist, stored in the D1 database "clarchy". Everything here fits Cloudflare's free
+// plan. Workers Builds deploys it on every push (build command: make prices site).
 {
   "name": "clarchy",
+  "main": "worker/index.mjs",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./site",
+    "binding": "ASSETS",
+    // Only API calls run the Worker first; pages, fonts and diagrams are served directly.
+    "run_worker_first": ["/api/*"],
     // Unknown paths get site/404.html (written by export-site) with a 404 status.
     "not_found_handling": "404-page"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "clarchy",
+      "database_id": "4496a0e5-f785-4bfc-b9b8-a16115c83361",
+      "migrations_dir": "worker/migrations"
+    }
+  ],
+  "vars": {
+    // Diagrams from a visitor's own brief before the Pro waitlist prompt.
+    "FREE_DIAGRAMS": "3"
   }
+  // Optional secret, set in the dashboard (Worker > Settings > Variables and Secrets):
+  // ADMIN_TOKEN turns on GET /api/admin/leads.csv with "Authorization: Bearer <token>".
 }

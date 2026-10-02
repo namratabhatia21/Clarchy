@@ -20,6 +20,7 @@ SCRIPTS = (
     "examples.js",
     "services.js",
     "howto.js",
+    "access.js",
     "app.js",
 )
 

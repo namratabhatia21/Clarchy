@@ -42,7 +42,7 @@ def test_full_page_is_self_contained():
     assert page.startswith("<!doctype html>")
     assert "/static/" not in page
     # One data script plus every app script, and embedded SVG never ends a script early.
-    assert page.count("<script>") == page.count("</script>") == 10
+    assert page.count("<script>") == page.count("</script>") == 11
     data = embedded_data(page)
     assert data["designs"]["rag-chatbot.aws"]["svg"].startswith("<svg")
     assert "official_icons" in data["meta"]
@@ -65,6 +65,23 @@ def test_fragment_has_no_document_skeleton():
     for tag in ("<!doctype", "<html", "<head>", "<body>"):
         assert tag not in page.lower()
     assert embedded_data(page)["clipboard_only"] is True  # sandboxed hosts block downloads
+
+
+def test_page_has_pricing_and_sign_up_with_the_consent_wording_the_api_stores():
+    from pathlib import Path
+
+    page = build_site()
+    for part in ('id="page-pricing"', 'id="signup-dialog"', 'id="limit-dialog"'):
+        assert part in page
+    # The updates box is unticked by default, and its words are exactly what the Worker
+    # records as consent (worker/consent.mjs).
+    box = re.search(
+        r'<label class="check"><input type="checkbox" name="updates"><span>(.*?)</span>', page
+    )
+    assert box, "the updates box must be present and unticked"
+    consent = Path(__file__).resolve().parents[1] / "worker" / "consent.mjs"
+    stored = re.search(r'CONSENT_TEXT = "(.*?)";', consent.read_text()).group(1)
+    assert box.group(1) == stored
 
 
 def test_fragment_export_keeps_drawings_inline(tmp_path):
@@ -97,6 +114,7 @@ def test_index_scripts_are_all_found():
         "services.js",
         "blog.js",
         "howto.js",
+        "access.js",
         "app.js",
     ]
 

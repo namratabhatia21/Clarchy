@@ -1059,6 +1059,43 @@ main { overflow-x: clip; }
 .about-contact dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
 .sheet-title dd a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
 
+/* ---------- pricing, sign-up and credits (access.js) ---------- */
+.credit-line { color: var(--faint); font-size: 12.5px; margin-top: -14px; }
+.credit-line a { color: var(--muted); }
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; max-width: 1080px; }
+.plan-card { background: var(--surface); border: 1px solid var(--border-strong); padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.plan-card.featured { border: 1.5px solid var(--rule); box-shadow: inset 0 3px 0 var(--accent); }
+.plan-card h2 { font: 700 22px/1.2 var(--font-display); font-stretch: 87.5%; }
+.plan-price { display: flex; flex-direction: column; gap: 2px; }
+.plan-price b { font: 700 30px/1.1 var(--font-display); font-stretch: 87.5%; }
+.plan-price span { color: var(--muted); font-size: 13.5px; }
+.plan-for { color: var(--muted); font-size: 14px; }
+.plan-list { margin: 4px 0 8px; padding: 12px 0 0 18px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 6px; font-size: 14px; flex: 1; }
+.plan-card .btn { align-self: flex-start; }
+.plan-status { color: var(--ok); font-weight: 600; font-size: 14px; }
+.faq { margin-top: 40px; }
+.faq dl { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.faq dt { font-weight: 600; margin-top: 10px; }
+.faq dd { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+.modal { width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.modal::backdrop { background: rgba(18, 24, 30, .45); }
+.modal-body { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 24px 24px 20px; }
+.modal-body h2 { font: 700 24px/1.15 var(--font-display); font-stretch: 87.5%; padding-right: 28px; }
+.modal-lead { color: var(--muted); font-size: 14.5px; }
+.modal-close { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; border-radius: var(--radius); }
+.modal-close:hover { background: var(--hover); color: var(--text); }
+.modal .field input { height: 38px; font-size: 14.5px; }
+.modal .btn-primary { align-self: stretch; }
+.modal-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.modal-actions .btn-primary { align-self: auto; }
+.modal-fine { color: var(--faint); font-size: 12.5px; }
+.check { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.check input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--accent); }
+.form-error { color: var(--err); font-size: 13.5px; }
+/* A field people never see; automated form fillers do. */
+.trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
 /* ---------- how to ---------- */
 .howto { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; align-items: start; }
 .howto-index { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 10px; }
@@ -1113,6 +1150,7 @@ main { overflow-x: clip; }
 }
 
 @media (max-width: 900px) {
+  .plans { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
   .principles > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .obligation { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .howto { grid-template-columns: minmax(0, 1fr); gap: 28px; }

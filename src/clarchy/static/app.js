@@ -1,7 +1,7 @@
 "use strict";
 
 // Boot and routing: #plan (default), #examples, #examples/<id>, #services[?filters],
-// #howto, #howto/<section>, #blog, #blog/<id>, #about, #privacy and #terms.
+// #pricing, #howto, #howto/<section>, #blog, #blog/<id>, #about, #privacy and #terms.
 
 (async function main() {
   const { $, api } = CA;
@@ -13,15 +13,15 @@
     const aliases = { catalog: "services", designer: "examples", "how-to": "howto", help: "howto", "": "plan" };
     const page = aliases[first] ?? first;
     return {
-      page: ["plan", "examples", "services", "howto", "blog", "about", "privacy", "terms"].includes(page) ? page : "plan",
+      page: ["plan", "examples", "services", "pricing", "howto", "blog", "about", "privacy", "terms"].includes(page) ? page : "plan",
       sub,
       params: new URLSearchParams(query),
     };
   }
 
   const SHEETS = {
-    plan: "01 · Plan", examples: "02 · Examples", services: "03 · Services",
-    howto: "04 · How to", blog: "05 · Blog", about: "06 · About", privacy: "Privacy", terms: "Terms",
+    plan: "01 · Plan", examples: "02 · Examples", services: "03 · Services", pricing: "04 · Pricing",
+    howto: "05 · How to", blog: "06 · Blog", about: "07 · About", privacy: "Privacy", terms: "Terms",
   };
 
   function route() {
@@ -37,10 +37,10 @@
     if (page === "services") Services.show(params);
     if (page === "howto") HowTo.show(sub);
     if (page === "blog") Blog.show(sub);
-    if (["about", "privacy", "terms"].includes(page)) window.scrollTo({ top: 0 });
+    if (["pricing", "about", "privacy", "terms"].includes(page)) window.scrollTo({ top: 0 });
   }
 
-  const [meta, samples, patterns] = await Promise.all([api.meta(), api.samples(), api.patterns()]);
+  const [meta, samples, patterns] = await Promise.all([api.meta(), api.samples(), api.patterns(), Access.init()]);
   CA.meta = meta;
   $("project-name").title = `Clarchy ${meta.version}`;
   $("copyright").textContent = `© ${new Date().getFullYear()} Clarchy`;

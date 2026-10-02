@@ -286,19 +286,25 @@ GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` 
 Settings → Pages. The page uses only relative links, so the same build works on a custom
 domain or under a `github.io` path.
 
-**Hosting on Cloudflare.** The same workflow also deploys the site to a Cloudflare Worker
-named `clarchy`, which serves the built files as static assets (`wrangler.jsonc`), once
-the repository has two secrets:
+**Hosting on Cloudflare.** A Cloudflare Worker named `clarchy` serves the built files as
+static assets (`wrangler.jsonc`). `make prices site` builds them into `site/`. Deploy it
+one of two ways, not both:
 
-1. In Cloudflare, create an API token with the *Workers Scripts: Edit* permission (the
-   "Edit Cloudflare Workers" template works), and copy your account ID.
-2. In GitHub, add the repository secrets `CLOUDFLARE_API_TOKEN` and
-   `CLOUDFLARE_ACCOUNT_ID`, then run the `Pages` workflow. The Worker is created or
-   updated and is live at `clarchy.<your-subdomain>.workers.dev`.
-3. In the Worker's Settings → Domains & Routes, add the custom domains `clarchy.com` and
+- **Cloudflare builds it (Workers Builds).** Connect the Worker to this repository
+  (Worker → Settings → Build). Set the build command to `make prices site`, keep the
+  deploy command `npx wrangler deploy`, and pick the branch the site is built from. Every
+  push to that branch deploys.
+- **GitHub builds it.** Create an API token with the *Workers Scripts: Edit* permission
+  (the "Edit Cloudflare Workers" template), and add the repository secrets
+  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The `Pages` workflow then deploys
+  on every push and every Monday, with fresh AWS prices.
+
+The site is then live at `clarchy.<your-subdomain>.workers.dev`. To move clarchy.com:
+
+1. In the Worker's Settings → Domains & Routes, add the custom domains `clarchy.com` and
    `www.clarchy.com` (the domain must be on Cloudflare DNS; remove old records that
    point to GitHub).
-4. Remove the custom domain from GitHub's Settings → Pages and set the repository variable
+2. Remove the custom domain from GitHub's Settings → Pages and set the repository variable
    `GITHUB_PAGES` to `off`, so only Cloudflare serves the site.
 
 ## Official provider icons

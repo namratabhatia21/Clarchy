@@ -4,8 +4,9 @@ name: Pages
 # Cloudflare secrets, to the Cloudflare Worker "clarchy" (static assets, wrangler.jsonc).
 # AWS prices are refreshed from the AWS Price List API on every deploy and every Monday.
 #
-# Cloudflare: add the secrets CLOUDFLARE_API_TOKEN (permission "Workers Scripts: Edit")
-# and CLOUDFLARE_ACCOUNT_ID.
+# Cloudflare: either connect the Worker to this repository in Cloudflare (Workers Builds,
+# build command "make prices site"), or add the secrets CLOUDFLARE_API_TOKEN (permission
+# "Workers Scripts: Edit") and CLOUDFLARE_ACCOUNT_ID so this workflow deploys it. Not both.
 # To stop publishing to GitHub Pages, set the repository variable GITHUB_PAGES to "off".
 # Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
 # set in Settings → Pages too; workflow deployments ignore a CNAME file.
@@ -37,13 +38,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Refresh AWS prices from the AWS Price List API
-        run: |
-          pip install pyyaml
-          PYTHONPATH=src python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml \
-            || echo "::warning::Could not refresh AWS prices; publishing the committed price book"
-      - run: pip install .
-      - run: clarchy export-site -o site
+      - name: Refresh AWS prices and build the site
+        run: make prices site
       - name: Deploy to Cloudflare (Worker "clarchy")
         if: env.HAS_CLOUDFLARE == 'true'
         uses: cloudflare/wrangler-action@v3

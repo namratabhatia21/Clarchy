@@ -83,24 +83,24 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 
 ## Estimated cost
 
-About **$658 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$693 a month** on demand (Central India list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $658 | – |
-| 6 months | $3,967 | – |
-| 1 year | $7,974 | – |
-| 3 years | $24,398 | – |
+| 1 month | $693 | – |
+| 6 months | $4,176 | – |
+| 1 year | $8,395 | – |
+| 3 years | $25,704 | – |
 
 | Service | Per month |
 |---|---:|
-| Azure Logic Apps (Processing steps) | $473 |
+| Azure Logic Apps (Processing steps) | $492 |
 | Azure Functions (Workers) | $110 |
-| Azure Monitor + Application Insights (Logs, metrics, alarms) | $35.50 |
-| Azure Service Bus (queues) (Job queue) | $13.86 |
-| Azure Cosmos DB (Job status) | $11.25 |
-| Azure Blob Storage (Raw + processed files) | $9.74 |
-| Azure API Management (Ingest API) | $4.20 |
+| Azure Monitor + Application Insights (Logs, metrics, alarms) | $49.30 |
+| Azure Service Bus (queues) (Job queue) | $14.00 |
+| Azure Cosmos DB (Job status) | $12.82 |
+| Azure Blob Storage (Raw + processed files) | $10.59 |
+| Azure API Management (Ingest API) | $3.50 |
 | Azure Event Grid (Domain events) | $0.41 |
 | Azure Functions (Validate + enqueue) | $0.20 |
 | Azure Pipelines (Build and test) | $0.00 |
@@ -108,7 +108,6 @@ About **$658 a month** on demand (East US list prices as of 2026-10-01; Azure pr
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for East US; your region (Pune (centralindia)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

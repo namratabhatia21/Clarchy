@@ -118,32 +118,32 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$1,572 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$1,510 a month** on demand (East US list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $1,572 | – |
-| 6 months | $9,434 | – |
-| 1 year | $18,871 | $18,588 |
-| 3 years | $56,654 | $55,689 |
+| 1 month | $1,510 | – |
+| 6 months | $9,064 | – |
+| 1 year | $18,132 | $17,610 |
+| 3 years | $54,442 | $52,762 |
 
 | Service | Per month |
 |---|---:|
-| Azure AI Content Safety (Prompt Shields) (AI guardrails) | $513 |
+| Azure AI Content Safety (Prompt Shields) (AI guardrails) | $506 |
 | Azure AI Foundry (incl. Azure OpenAI) (Models + embeddings) | $210 |
-| Azure Application Gateway (HTTPS load balancer) | $185 |
 | Azure Container Apps (Chat API (streaming)) | $158 |
+| Azure Application Gateway (HTTPS load balancer) | $152 |
 | Azure API Management (AI gateway) (LLM gateway (LiteLLM)) | $150 |
-| Azure Database for PostgreSQL (Flexible Server) (Agent state + history) | $132 |
+| Azure Database for PostgreSQL (Flexible Server) (Agent state + history) | $111 |
 | Azure AI Search (Knowledge index) | $73.73 |
 | Microsoft Entra ID + Privileged Identity Management (Cloud access governance) | $45.00 |
-| Azure Front Door (Web front end) | $38.84 |
+| Azure Front Door (Web front end) | $38.83 |
 | Azure Monitor + Application Insights (Logs, metrics, alarms) | $35.50 |
 | Azure Key Vault (keys) (Encryption keys) | $9.73 |
 | Application Insights (Foundry tracing) (LLM tracing (Langfuse)) | $8.62 |
 | Azure Monitor activity log + Log Analytics (Audit trail) | $5.44 |
-| Azure Container Registry (Container images) | $5.00 |
-| Azure Blob Storage (Source documents) | $1.88 |
+| Azure Container Registry (Container images) | $5.07 |
+| Azure Blob Storage (Source documents) | $2.12 |
 | Azure Key Vault (Model and tool credentials) | $0.24 |
 | Azure Functions (Tool functions) | $0.00 |
 | Azure Functions (Chunk + embed documents) | $0.00 |
@@ -151,6 +151,7 @@ About **$1,572 a month** on demand (East US list prices as of 2026-10-01; Azure 
 | Azure Pipelines (Build, test and evaluate) | $0.00 |
 
 - Azure savings plan for compute: 1- or 3-year hourly spend commitment; about 15% (1 year) or 17% (3 years) off Container Apps.
+- Reserved capacity: 1 or 3 years for Azure Database for PostgreSQL (General Purpose); burstable servers are not eligible.
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.

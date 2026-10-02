@@ -85,25 +85,25 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Estimated cost
 
-About **$914 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$934 a month** on demand (North Europe list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $914 | – |
-| 6 months | $5,488 | – |
-| 1 year | $10,985 | $9,468 |
-| 3 years | $33,075 | $26,482 |
+| 1 month | $934 | – |
+| 6 months | $5,609 | – |
+| 1 year | $11,231 | $9,412 |
+| 3 years | $33,835 | $26,132 |
 
 | Service | Per month |
 |---|---:|
-| Azure Database for PostgreSQL (Flexible Server) (PostgreSQL) | $306 |
+| Azure Database for PostgreSQL (Flexible Server) (PostgreSQL) | $340 |
 | Azure Container Apps (API containers) | $237 |
-| Azure Application Gateway (HTTPS load balancer) | $185 |
-| Azure Managed Redis (Session + query cache) | $73.00 |
-| Azure Monitor + Application Insights (Logs, metrics, alarms) | $58.50 |
+| Azure Application Gateway (HTTPS load balancer) | $181 |
+| Azure Monitor + Application Insights (Logs, metrics, alarms) | $70.00 |
+| Azure Managed Redis (Session + query cache) | $51.10 |
 | Azure Web Application Firewall (Web firewall) | $40.00 |
-| Azure Blob Storage (Uploads) | $5.65 |
-| Azure Container Registry (Container images) | $5.00 |
+| Azure Blob Storage (Uploads) | $6.73 |
+| Azure Container Registry (Container images) | $5.07 |
 | Azure Key Vault (DB credentials) | $2.84 |
 | Azure DNS (Domain) | $1.10 |
 | Azure Pipelines (Build and test) | $0.00 |
@@ -113,7 +113,6 @@ About **$914 a month** on demand (East US list prices as of 2026-10-01; Azure pr
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for East US; your region (Ireland (northeurope)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

@@ -108,29 +108,29 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Estimated cost
 
-About **$6,103 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$2,304 a month** on demand (North Europe list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $6,103 | – |
-| 6 months | $36,625 | – |
-| 1 year | $73,267 | $70,931 |
-| 3 years | $219,999 | $208,851 |
+| 1 month | $2,304 | – |
+| 6 months | $13,835 | – |
+| 1 year | $27,689 | $25,373 |
+| 3 years | $83,306 | $71,632 |
 
 | Service | Per month |
 |---|---:|
-| Microsoft Entra External ID (Customer accounts) | $4,500 |
-| Azure Database for PostgreSQL (Flexible Server) (Orders and catalogue) | $329 |
-| Azure Monitor + Application Insights (Logs, metrics, traces) | $266 |
-| Azure Kubernetes Service (AKS) (API microservices) | $213 |
-| Azure Application Gateway (Cluster ingress) | $197 |
+| Microsoft Entra External ID (Customer accounts) | $488 |
+| Azure Database for PostgreSQL (Flexible Server) (Orders and catalogue) | $365 |
+| Azure Monitor + Application Insights (Logs, metrics, traces) | $318 |
+| Azure Managed Redis (Sessions and hot catalogue) | $251 |
+| Azure Kubernetes Service (AKS) (API microservices) | $229 |
+| Azure Application Gateway (Cluster ingress) | $193 |
 | Azure Web Application Firewall (Web firewall) | $190 |
-| Azure Managed Redis (Sessions and hot catalogue) | $146 |
-| Azure Kubernetes Service (AKS) (Order workers) | $140 |
-| Azure Service Bus (queues) (Order queue) | $95.46 |
+| Azure Kubernetes Service (AKS) (Order workers) | $156 |
+| Azure Service Bus (queues) (Order queue) | $85.61 |
+| Azure Blob Storage (Product images) | $11.22 |
 | Azure Key Vault (Service credentials) | $9.46 |
-| Azure Blob Storage (Product images) | $9.42 |
-| Azure Container Registry (Container images) | $5.00 |
+| Azure Container Registry (Container images) | $5.07 |
 | Azure DNS (Domain) | $2.90 |
 | Azure Pipelines (Build and test) | $0.00 |
 
@@ -139,7 +139,6 @@ About **$6,103 a month** on demand (East US list prices as of 2026-10-01; Azure 
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for East US; your region (Ireland (northeurope)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

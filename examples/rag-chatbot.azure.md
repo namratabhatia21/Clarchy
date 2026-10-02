@@ -93,24 +93,24 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Estimated cost
 
-About **$507 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$537 a month** on demand (West US 2 list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $507 | – |
-| 6 months | $3,043 | – |
-| 1 year | $6,090 | $5,806 |
-| 3 years | $18,309 | $17,344 |
+| 1 month | $537 | – |
+| 6 months | $3,220 | – |
+| 1 year | $6,444 | $6,047 |
+| 3 years | $19,373 | $18,022 |
 
 | Service | Per month |
 |---|---:|
-| Azure Application Gateway (HTTPS load balancer) | $185 |
-| Azure Container Apps (Chat API (streaming)) | $158 |
+| Azure Container Apps (Chat API (streaming)) | $221 |
+| Azure Application Gateway (HTTPS load balancer) | $152 |
 | Azure AI Search (Embeddings index) | $73.73 |
-| Azure Front Door (Web front end) | $37.20 |
+| Azure Front Door (Web front end) | $37.19 |
 | Azure Monitor + Application Insights (Logs, traces, cost alarms) | $24.00 |
 | Azure AI Foundry (incl. Azure OpenAI) (LLM + embeddings) | $18.72 |
-| Azure Container Registry (Container images) | $5.00 |
+| Azure Container Registry (Container images) | $5.07 |
 | Azure Cosmos DB (Chat history) | $4.25 |
 | Azure Blob Storage (Source documents) | $0.96 |
 | Azure Functions (Chunk + embed documents) | $0.00 |
@@ -121,7 +121,7 @@ About **$507 a month** on demand (East US list prices as of 2026-10-01; Azure pr
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for East US; your region (Washington (westus2)) may differ.
+- Azure AI Foundry (incl. Azure OpenAI) has no list price in West US 2, so it is priced at East US rates.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

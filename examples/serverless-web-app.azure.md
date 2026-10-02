@@ -79,20 +79,20 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Estimated cost
 
-About **$66.13 a month** on demand (East US list prices as of 2026-10-01; Azure pricing pages, compiled manually, approximate).
+About **$64.68 a month** on demand (East US list prices as of 2026-10-02; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $66.13 | – |
-| 6 months | $397 | – |
-| 1 year | $796 | – |
-| 3 years | $2,404 | – |
+| 1 month | $64.68 | – |
+| 6 months | $389 | – |
+| 1 year | $779 | – |
+| 3 years | $2,355 | – |
 
 | Service | Per month |
 |---|---:|
-| Azure Front Door (Static site + API edge) | $47.80 |
-| Azure API Management (REST API) | $8.40 |
+| Azure Front Door (Static site + API edge) | $47.75 |
 | Azure Cosmos DB (App data) | $7.75 |
+| Azure API Management (REST API) | $7.00 |
 | Azure Monitor + Application Insights (Logs, metrics, alarms) | $1.00 |
 | Azure DNS (Domain) | $0.74 |
 | Azure Functions (Business logic) | $0.40 |

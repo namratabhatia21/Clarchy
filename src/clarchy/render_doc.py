@@ -143,7 +143,7 @@ LOOKS: dict[str, Look] = {
                 "fill": "#F3F9FD",
                 "label": "#323130",
                 "icon": "icon-service-Subnet",
-                "text": "Application Gateway subnet",
+                "text": "App Gateway subnet",
             },
             "private": {
                 "stroke": "#0078D4",

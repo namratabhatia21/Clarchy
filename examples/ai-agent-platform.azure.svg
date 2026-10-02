@@ -39,7 +39,7 @@
 <text class="ca-group-label ca-group-vpc-label" x="524" y="757">Virtual network</text>
 <rect class="ca-group ca-group-public" x="502" y="774" width="178" height="158" rx="4"/>
 <rect x="512" y="784" width="20" height="20" fill="#0078D4"/>
-<text class="ca-group-label ca-group-public-label" x="540" y="799">Application Gateway subnet</text>
+<text class="ca-group-label ca-group-public-label" x="540" y="799">App Gateway subnet</text>
 <rect class="ca-group ca-group-private" x="722" y="774" width="674" height="158" rx="4"/>
 <rect x="732" y="784" width="20" height="20" fill="#0078D4"/>
 <text class="ca-group-label ca-group-private-label" x="760" y="799">Workload subnet</text>

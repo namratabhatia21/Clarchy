@@ -59,3 +59,20 @@ up (drafting.js; with reduced motion it is shown finished). site.py solves the l
 (two equal bars from a fixed pivot, a parallelogram holding the tracer halfway) and draws
 it finished, so the frame needs no script to read; drafting.js runs the same sums. The massing model above already shows a real
 design, priced, so the drawing no longer needs repeating.
+
+## Amendment, 2026-10-02: the hero says what to do
+
+The author asked for the first frame to tell a visitor, in five seconds, what Clarchy
+does, that it is free and runs in the browser, and what to click. It is now two columns
+on a fluid grid instead of a 1440 x 820 sheet: a line naming the clouds, the headline
+(still the page's only h1, with "cloud architecture drawings from your requirements" for
+screen readers), one sentence, "Design my architecture" (to the brief, cursor in it) and
+"See an example" (runs the CareSlot sample), then "No sign-up · Runs in your browser". On
+the right a card draws the RAG chatbot's request path on AWS, taken from the example's
+edges (site.py), with its monthly price, in front of the protractor at low opacity. Two
+stamps remain; the pencil loop and the Drop a PDF sticker are gone, and a document dropped
+anywhere on the hero is attached to the brief. The hero's orange is darker (#b83c0c) so
+that its small cream text passes WCAG AA (5.1:1); the closing frame keeps #d9480f. A navy
+scale rule marks where the hero ends and the brief begins. The header shows "Try it free"
+once the hero's button has gone under it. Tablets put the card under the buttons; phones
+show one stamp and full-width buttons.

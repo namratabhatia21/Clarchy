@@ -11,10 +11,14 @@ blue-white blueprint paper, navy ink lines, one signal-orange accent, a title bl
 footer, sheet numbers, crop marks and dimension lines. The proof of the product is a real
 drawing that Clarchy made, not an illustration of one.
 
-The home page is three frames. First a poster: "Brief in, drawing out" in huge condensed
-type on a signal-orange field, round a protractor that turns as the page scrolls, with
-architect's stamps in place of stickers; the header sits on it until it scrolls away.
-Then the brief beside a model of a real design, then how it works. The page closes on
+The home page is three frames. First the hero: "Brief in, drawing out" in huge condensed
+type on a burnt-orange field, one sentence on what Clarchy does, two buttons (Design my
+architecture, See an example) and a line saying it needs no sign-up and runs in the
+browser. Beside them a card draws a real design and its monthly price, in front of a
+protractor that turns as the page scrolls, with two architect's stamps in place of
+stickers. The header sits on it until it scrolls away, then offers "Try it free". The
+hero's orange (#b83c0c) is darker than the closing frame's so that its small cream text
+passes AA (5.1:1). Then the brief beside a model of a real design, then how it works. The page closes on
 the poster's orange again: "See the examples" in the same huge type, a drawing register of
 real examples on a paper sheet, and a pantograph (plate K of Bion's book of drawing
 instruments) that traces a small sketch and draws it again at twice the size as the frame

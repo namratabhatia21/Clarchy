@@ -1,6 +1,8 @@
 """Static site export: the web UI as a set of pages and the files they load.
 
     clarchy export-site -o site/                       # a page per address, host anywhere
+    clarchy export-site -o site/ --single-file         # one index.html with #hash links, for
+                                                           # hosts that only serve plain files
     clarchy export-site -o site/ --fragment            # one body-only page for hosts that
                                                            # add their own <html>/<head>
     clarchy export-site -o site/ --api-base URL        # front end for a hosted API
@@ -15,12 +17,14 @@ CDN on first use). The data holds the service catalog and a recorded rule-based 
 each sample, so samples and examples appear without loading the engine, and every
 built-in pattern is pre-rendered on every provider in designs/<key>.<provider>.json,
 fetched when shown. The site also gets its fonts (fonts/), sharing images and a 404 page.
---no-engine builds a replay-only site. Fragment builds are one file with every page and
-#hash links, for sandboxed hosts that block downloads, so their download buttons copy to
-the clipboard instead and they keep the drawings inline.
+--no-engine builds a replay-only site. Single-file builds put every page in one
+index.html with #hash links and the drawings inline, beside the engine and the fonts, for
+hosts that serve files as they are (a Hugging Face static Space) with no addresses of their
+own. Fragment builds are the same page without <html>, <head> and <body>, for sandboxed
+hosts that add their own and block downloads, so their download buttons copy to the
+clipboard instead.
 
-AWS designs use the AWS Architecture Icons that ship with the package (ADR 0012); the
-other clouds keep lettered badges.
+Diagrams use the providers' official icons, which ship with the package (ADR 0012, 0016).
 """
 
 from __future__ import annotations
@@ -244,13 +248,14 @@ def export_site(
     api_base: str | None = None,
     with_engine: bool = True,
     pyodide_base: str = PYODIDE_BASE,
+    single: bool = False,
 ) -> Path:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     engine = engine_config(pyodide_base) if with_engine and not api_base else None
     path = out / "index.html"
-    if fragment:
-        path.write_text(build_site(True, api_base, engine), encoding="utf-8")
+    if fragment or single:
+        path.write_text(build_site(fragment, api_base, engine), encoding="utf-8")
     else:
         files, designs = build_pages(api_base, engine)
         for name, text in files.items():
@@ -272,6 +277,6 @@ def export_site(
         (fonts / item.name).write_bytes(item.read_bytes())
     for item in static.joinpath("brand").iterdir():
         (out / item.name).write_bytes(item.read_bytes())
-    if not fragment:
+    if not (fragment or single):
         (out / "404.html").write_bytes(static.joinpath("404.html").read_bytes())
     return path

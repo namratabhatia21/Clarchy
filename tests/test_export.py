@@ -98,6 +98,20 @@ def test_fragment_export_keeps_drawings_inline(tmp_path):
     assert not (tmp_path / "designs").exists() and not (tmp_path / "404.html").exists()
 
 
+def test_single_file_export_needs_no_addresses(tmp_path):
+    from clarchy.export import export_site
+
+    # A Hugging Face static Space serves files as they are: one page, relative links.
+    export_site(tmp_path, single=True, with_engine=False)
+    page = (tmp_path / "index.html").read_text()
+    assert page.startswith("<!doctype html>") and 'data-routing="hash"' in page
+    assert 'href="/' not in page and 'src="/' not in page, "every link is relative or #hash"
+    assert embedded_data(page)["designs"], "drawings are inline"
+    assert (tmp_path / "fonts" / "archivo.woff2").exists()
+    assert not (tmp_path / "designs").exists() and not (tmp_path / "404.html").exists()
+    assert not list(tmp_path.glob("*/index.html")), "no page folders"
+
+
 def test_api_base_build_embeds_no_demo_data():
     page = build_site(api_base="https://api.example.org/")
     assert 'window.CLARCHY_API_BASE = "https://api.example.org";' in page

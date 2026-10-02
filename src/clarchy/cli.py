@@ -9,7 +9,7 @@ clarchy icons    --provider aws [--icons DIR]
 clarchy serve    [--host 127.0.0.1] [--port 8000]   web UI (needs the "web" extra)
 clarchy mcp      [--transport stdio]                MCP server for AI clients
 clarchy prices   update | lookup <Service> <words>  latest AWS prices (Price List API)
-clarchy export-site -o site/ [--fragment] [--api-base URL]   static site, no server needed
+clarchy export-site -o site/ [--single-file] [--api-base URL]   static site, no server needed
 """
 
 from __future__ import annotations
@@ -118,6 +118,7 @@ def cmd_export_site(args: argparse.Namespace) -> int:
         api_base=args.api_base,
         with_engine=not args.no_engine,
         pyodide_base=args.pyodide_base or PYODIDE_BASE,
+        single=args.single_file,
     )
     pages = sorted(path.parent.rglob("index.html"))
     print(f"wrote {len(pages)} page(s) to {path.parent}", file=sys.stderr)
@@ -261,6 +262,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("export-site", help="export the web UI as a static site")
     p.add_argument("-o", "--output", default="site", help="output folder (default: site)")
+    p.add_argument(
+        "--single-file",
+        action="store_true",
+        help="every page in one index.html with #hash links, for hosts that only serve "
+        "plain files (a Hugging Face static Space)",
+    )
     p.add_argument(
         "--fragment",
         action="store_true",

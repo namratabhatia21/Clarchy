@@ -25,7 +25,7 @@ protractor turns as you scroll the home page and a detail drawing assembles stag
 
 | Page | What it does |
 |---|---|
-| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt), or start from a realistic sample (a field service agent for wind turbine technicians, a claims triage agent, clinic booking under HIPAA, fleet telemetry, supplier invoice processing). Watch the pipeline work stage by stage, then explore the result: a diagram per provider, every service grouped by lifecycle stage, the cost over time with prepaid credits, the AI and data policies that apply, step-by-step workflows that light up the diagram, and the editable YAML spec. Answer the open questions and plan again. |
+| **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt), or start from a realistic sample (a field service agent for wind turbine technicians, a claims triage agent, clinic booking under HIPAA, fleet telemetry, supplier invoice processing). Watch the pipeline work stage by stage, then explore the result: a diagram per provider, every service grouped by lifecycle stage, the cost over time, the AI and data policies that apply, step-by-step workflows that light up the diagram, and the editable YAML spec. Answer the open questions and plan again. |
 | **Examples** | Seven reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes, AI agent platform) on every provider. |
 | **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "LangGraph", "Glacier", "Copilot"). |
 | **Pricing** | Free: 3 diagrams from your own briefs (samples, examples and re-planning are free). Pro: unlimited, in early access through a waitlist. On clarchy.com the first action on the home page asks for name, company, email and whether to send product updates. |
@@ -123,9 +123,6 @@ periods cost more than a multiple of the first month.
   **approximate** in the UI until they are read from those providers' price APIs too.
   Services from outside the three clouds, such as GitHub Codespaces and Copilot, come from
   a third-party price book and are tagged approximate line by line.
-- **Prepaid credits** (cloud credits for the whole bill, model credits from OpenAI, Hugging
-  Face or Anthropic for model spend) can be entered on the cost view to see what you
-  actually pay and how many months they cover.
 - Usage comes from each component's `sizing` and the requirements, and every line says
   what it assumed. Edit the spec to see the effect. See
   [ADR 0007](docs/decisions/0007-cost-estimates-from-price-lists.md).

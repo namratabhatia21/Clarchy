@@ -999,17 +999,8 @@ main { overflow-x: clip; }
   .story-step p { font-size: 14.5px; }
 }
 
-/* ---------- cost: prepaid credits, approximate lines ---------- */
+/* ---------- cost: approximate lines ---------- */
 .line-tags { display: inline-flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
-.credits { display: flex; flex-direction: column; gap: 14px; }
-.credit-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 20px; padding: 12px 14px; border: 1px dashed var(--border-strong); }
-.credit-field { display: flex; flex-direction: column; gap: 4px; }
-.credit-label { font: 600 12.5px/1.4 var(--font-body); color: var(--muted); }
-.credit-input { display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 10px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--faint); }
-.credit-input:focus-within { border-color: var(--focus); }
-.credit-input input { width: 110px; border: 0; outline: none; background: transparent; color: var(--text); font: 13.5px var(--font-mono); }
-.credit-result { flex: 1 1 260px; color: var(--muted); font-size: 13px; }
-.cost-table .credit-cell { color: var(--accent-ink); font-weight: 600; }
 
 /* ---------- policies ---------- */
 .policies { display: flex; flex-direction: column; gap: 16px; }
@@ -1187,7 +1178,6 @@ main { overflow-x: clip; }
   .main-link { margin-bottom: 0; border-bottom: 0; }
   .main-link[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--accent); }
   .post-list { grid-template-columns: minmax(0, 1fr); }
-  .credit-input input { width: 90px; }
   .about-contact { grid-template-columns: minmax(0, 1fr); }
   .about-contact > div + div { border-left: 0; border-top: 1px solid var(--border); }
   .howto-body { gap: 40px; }

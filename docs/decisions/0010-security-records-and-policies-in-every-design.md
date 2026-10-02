@@ -22,7 +22,8 @@ bill (dev environments, AI coding assistants, model APIs) and often hold prepaid
 - A Policies view checks each design against the AI and data regulations that apply
   (data/policies.yaml): each obligation is covered by a component, a gap with a suggested
   capability, or an action for the team.
-- Prepaid credits are entered on the cost view and applied client-side.
+- Prepaid credits were entered on the cost view and applied client-side; removed on
+  2026-10-02 at the founder's request, to keep the cost view to list prices.
 
 ## Consequences
 

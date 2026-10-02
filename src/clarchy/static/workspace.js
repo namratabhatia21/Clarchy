@@ -54,8 +54,8 @@ class Workspace {
     this.state = {
       specYaml: "", originalYaml: "", provider: "aws", view: "diagram", design: null,
       selectedId: null, workflow: 0, step: -1, playing: null, seq: 0, zoomed: false, term: 12,
-      credits: CA.recall("clarchy.credits") || { cloud: 0, ai: 0 },
     };
+    CA.store("clarchy.credits", null); // credits entered before the Cost view dropped them
     root.dataset.provider = this.state.provider;
 
     for (const tab of this.qa(".ws-view-tab")) {
@@ -456,47 +456,14 @@ class Workspace {
               ? `A 1-year commitment pays off after about ${plural(cost.break_even_months, "month")}`
               : "Commitments start at 1 year" })]));
 
-    // Prepaid credits: cloud credits count against the whole bill, model credits (OpenAI,
-    // Hugging Face, Anthropic) only against spend on language models.
-    const credits = this.state.credits;
-    const aiMonthly = cost.lines.filter((l) => l.capability === "llm-inference").reduce((s, l) => s + l.monthly, 0);
-    const hasCredits = credits.cloud > 0 || credits.ai > 0;
-    const afterCredits = (amount, months) => Math.max(0, amount - credits.cloud - Math.min(credits.ai, aiMonthly * months));
-    const covered = credits.cloud + Math.min(credits.ai, aiMonthly * 36);
-    const coverMonths = cost.monthly > 0 ? covered / cost.monthly : 0;
-
     const table = el("table", { class: "cost-table" },
-      el("thead", {}, el("tr", {}, ["Period", "On demand", "With commitments", "You save", hasCredits && "After credits"]
-        .filter(Boolean).map((h) => el("th", { text: h })))),
+      el("thead", {}, el("tr", {}, ["Period", "On demand", "With commitments", "You save"]
+        .map((h) => el("th", { text: h })))),
       el("tbody", {}, terms.map((t) => el("tr", { class: t.months === this.state.term ? "current" : null },
         el("td", { text: t.label }),
         el("td", { text: money(t.on_demand) }),
         el("td", { text: t.committed != null ? money(t.committed) : "–" }),
-        el("td", { class: "good", text: t.committed != null ? money(t.on_demand - t.committed) : "–" }),
-        hasCredits && el("td", { class: "credit-cell", text: money(afterCredits(t.committed ?? t.on_demand, t.months)) })))));
-
-    const creditInput = (key, label, hint) => el("label", { class: "credit-field" },
-      el("span", { class: "credit-label", text: label }),
-      el("span", { class: "credit-input" }, "$", el("input", {
-        type: "number", min: "0", step: "100", inputmode: "numeric", value: credits[key] || "", placeholder: "0",
-        "aria-label": label, title: hint,
-        onchange: (e) => {
-          const value = Math.max(0, Number(e.target.value) || 0);
-          if (value === (this.state.credits[key] || 0)) return;
-          this.state.credits = { ...this.state.credits, [key]: value };
-          CA.store("clarchy.credits", this.state.credits);
-          // Re-render after the event: the input being changed is replaced by the render.
-          setTimeout(() => this.renderCost(this.state.design), 0);
-        },
-      })));
-    const creditPanel = el("div", { class: "credits" },
-      el("h3", { class: "cost-subhead", text: "Prepaid credits" }),
-      el("div", { class: "credit-row" },
-        creditInput("cloud", `${d.provider_name} credits`, "Startup or promotional credits that apply to the whole cloud bill"),
-        creditInput("ai", "Model credits", "OpenAI, Hugging Face or Anthropic credits; they count against language-model spend only"),
-        el("p", { class: "credit-result", text: hasCredits
-          ? `Credits cover about ${coverMonths >= 36 ? "the whole 3 years" : CA.plural(Math.round(coverMonths * 10) / 10, "month")} of this bill${credits.ai > 0 ? `; model credits apply to ${money(aiMonthly)} a month of model spend` : ""}.`
-          : "Add credits from your cloud provider, OpenAI, Hugging Face or Anthropic to see what you actually pay." })));
+        el("td", { class: "good", text: t.committed != null ? money(t.on_demand - t.committed) : "–" })))));
 
     const lines = [...cost.lines].sort((a, b) => b.monthly - a.monthly);
     const breakdown = el("div", { class: "cost-lines" }, lines.map((line) => el("details", { class: "cost-line" },
@@ -517,7 +484,6 @@ class Workspace {
         el("span", { class: `cost-source ${cost.verified ? "verified" : ""}`, text: cost.verified ? "Prices from the provider's price list" : "Approximate list prices" })),
       stats,
       table,
-      creditPanel,
       el("h3", { class: "cost-subhead", text: "Monthly breakdown" }),
       breakdown,
       el("div", { class: "cost-notes" },

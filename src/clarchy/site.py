@@ -27,7 +27,12 @@ from typing import Any
 
 SITE_URL = "https://clarchy.com"
 EMAIL = "namrata.bhatia@clarchy.com"
-FOUNDER = "Namrata Bhatia"
+AUTHOR = "Namrata Bhatia"
+REPOSITORY = "https://github.com/namratabhatia21/Clarchy"
+AUTHOR_PROFILES = (
+    "https://github.com/namratabhatia21",
+    "https://www.linkedin.com/in/namratabhatia21/",
+)
 
 HOME_TITLE = "Clarchy · Cloud architecture from your requirements"
 HOME_DESCRIPTION = (
@@ -470,7 +475,7 @@ def pages(c: Content) -> list[Page]:
             PATHS["about"],
             "About Clarchy",
             "Clarchy turns a requirements brief into a cloud architecture you can question, "
-            f"price and compare across clouds. Founded by {FOUNDER}.",
+            f"price and compare across clouds. An open-source project by {AUTHOR}.",
             (("About", PATHS["about"]),),
         ),
         Page(
@@ -778,7 +783,7 @@ def post_html(post: dict[str, Any]) -> str:
         f'<p class="post-byline"><a href="{PATHS["about"]}#author">{_e(post["author"])}</a>'
         f"{role} · {post['minutes']} min read</p>"
         f'<div class="post-body">{post["html"]}</div>'
-        f'<p class="post-author">{_e(post["author"])} is the founder of Clarchy.</p>'
+        f'<p class="post-author">{_e(post["author"])} builds Clarchy.</p>'
         '<div class="post-foot">'
         f'<a class="btn btn-primary" href="{PATHS["plan"]}">Try it with your brief</a>'
         f'<a class="btn btn-ghost" href="{PATHS["blog"]}">More posts</a></div>'
@@ -808,24 +813,23 @@ def _crumbs(page: Page | None, key: str) -> str:
 
 
 # ---------- structured data ----------
-def _organization() -> list[dict[str, Any]]:
+def _author() -> list[dict[str, Any]]:
     return [
         {
-            "@type": "Organization",
-            "@id": f"{SITE_URL}/#organization",
-            "name": "Clarchy",
-            "url": f"{SITE_URL}/",
-            "logo": f"{SITE_URL}/apple-touch-icon.png",
-            "email": EMAIL,
-            "founder": {"@id": f"{SITE_URL}/about/#founder"},
+            "@type": "Person",
+            "@id": f"{SITE_URL}/about/#author",
+            "name": AUTHOR,
+            "jobTitle": "AI/ML engineer",
+            "url": f"{SITE_URL}/about/#author",
+            "sameAs": list(AUTHOR_PROFILES),
         },
         {
-            "@type": "Person",
-            "@id": f"{SITE_URL}/about/#founder",
-            "name": FOUNDER,
-            "jobTitle": "Founder",
-            "url": f"{SITE_URL}/about/#author",
-            "worksFor": {"@id": f"{SITE_URL}/#organization"},
+            "@type": "SoftwareSourceCode",
+            "@id": f"{SITE_URL}/#code",
+            "name": "Clarchy",
+            "codeRepository": REPOSITORY,
+            "programmingLanguage": "Python",
+            "author": {"@id": f"{SITE_URL}/about/#author"},
         },
     ]
 
@@ -833,14 +837,14 @@ def _organization() -> list[dict[str, Any]]:
 def structured_data(page: Page, section: str = "") -> dict[str, Any]:
     graph: list[dict[str, Any]] = []
     if page.key == "plan":
-        graph += _organization()
+        graph += _author()
         graph += [
             {
                 "@type": "WebSite",
                 "@id": f"{SITE_URL}/#website",
                 "name": "Clarchy",
                 "url": f"{SITE_URL}/",
-                "publisher": {"@id": f"{SITE_URL}/#organization"},
+                "author": {"@id": f"{SITE_URL}/about/#author"},
             },
             {
                 "@type": "WebApplication",
@@ -850,7 +854,7 @@ def structured_data(page: Page, section: str = "") -> dict[str, Any]:
                 "applicationCategory": "DeveloperApplication",
                 "operatingSystem": "Any, in a web browser",
                 "isAccessibleForFree": True,
-                "publisher": {"@id": f"{SITE_URL}/#organization"},
+                "author": {"@id": f"{SITE_URL}/about/#author"},
             },
         ]
     else:
@@ -864,13 +868,13 @@ def structured_data(page: Page, section: str = "") -> dict[str, Any]:
             }
         )
     if page.key == "about":
-        graph += _organization()
+        graph += _author()
         graph.append(
             {
                 "@type": "AboutPage",
                 "url": page.url,
                 "name": page.title,
-                "mainEntity": {"@id": f"{SITE_URL}/#organization"},
+                "mainEntity": {"@id": f"{SITE_URL}/#code"},
             }
         )
     return {"@context": "https://schema.org", "@graph": graph}
@@ -974,6 +978,8 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "example-grid": _example_grid(c),
         "example-head": _example_head(c, page) if page and page.key == "example" else "",
         "post-list": _post_list(c),
+        # The footer links to the blog once it has posts.
+        "blog-link": f'<a href="{PATHS["blog"]}">Blog</a>' if c.posts else "",
         "post": post_html(next(p for p in c.posts if p["id"] == page.sub))
         if page and page.key == "post"
         else "",

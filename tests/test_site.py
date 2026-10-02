@@ -111,8 +111,13 @@ def test_structured_data_and_breadcrumbs(built):
         assert len(doc.json_ld) == 1
         graph = {item["@type"]: item for item in doc.json_ld[0]["@graph"]}
         if p.key == "plan":
-            assert {"Organization", "Person", "WebSite", "WebApplication"} <= set(graph)
-            assert graph["Person"]["name"] == "Namrata Bhatia"
+            assert {"SoftwareSourceCode", "Person", "WebSite", "WebApplication"} <= set(graph)
+            assert "Organization" not in graph
+            person = graph["Person"]
+            assert (person["name"], person["jobTitle"]) == ("Namrata Bhatia", "AI/ML engineer")
+            assert "https://www.linkedin.com/in/namratabhatia21/" in person["sameAs"]
+            code = graph["SoftwareSourceCode"]["codeRepository"]
+            assert code == "https://github.com/namratabhatia21/Clarchy"
             assert not doc.crumbs
             continue
         trail = [item["name"] for item in graph["BreadcrumbList"]["itemListElement"]]
@@ -233,11 +238,22 @@ def test_the_pantograph_keeps_its_bars_and_doubles_every_point():
         assert j["J"][1] < min(j["O"][1], j["P"][1]), "the bars stand like an A"
 
 
-def test_about_names_the_founder(built):
-    out, _content, _pages = built
+def test_about_credits_the_author_with_links(built):
+    out, _content, pages = built
     about = (out / "about" / "index.html").read_text()
-    assert "Namrata Bhatia is the founder of Clarchy." in about
-    assert 'href="mailto:namrata.bhatia@clarchy.com"' in about
+    assert "<h2>Built by Namrata Bhatia</h2>" in about
+    assert "Namrata Bhatia is an AI/ML engineer who builds production GenAI systems" in about
+    for link in (
+        "https://github.com/namratabhatia21/Clarchy",
+        "https://github.com/namratabhatia21",
+        "https://www.linkedin.com/in/namratabhatia21/",
+        "mailto:namrata.bhatia@clarchy.com",
+    ):
+        assert f'href="{link}"' in about
+    for p in pages:
+        text = _file(out, p.path).read_text()
+        assert "ounder" not in text, f"{p.path}: no founder title"
+        assert "<dt>Built by</dt>" in text
 
 
 def test_hash_links_for_single_file_builds():
@@ -279,15 +295,18 @@ def test_design_rules_that_can_be_checked(built):
     grids = re.findall(r"([^{}]+)\{[^}]*linear-gradient\(90deg", css)
     assert [g.strip() for g in grids] == [".canvas"], grids
     assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css
-    # Three sections in the header; the rest are in the footer.
+    # Three sections and the code on GitHub in the header; the rest are in the footer.
     header = re.search(r'<nav class="main-nav".*?</nav>', template, re.S).group(0)
-    assert header.count('class="main-link"') == 3
+    assert header.count('class="main-link"') == 4
+    assert 'href="https://github.com/namratabhatia21/Clarchy"' in header
     topbar = re.search(r'<header class="topbar">.*?</header>', template, re.S).group(0)
     assert "Start a plan" not in topbar and "account" not in topbar
     # Start a plan, on How to, opens the home page at the brief.
     assert re.findall(r'href="([^"]*)">Start a plan<', template) == ["/#brief"]
     footer = re.search(r'<p class="footer-links">.*?</p>', template, re.S).group(0)
-    for path in ("/about/", "/blog/", "/privacy/", "/terms/"):
+    for path in ("/about/", "/privacy/", "/terms/", "https://github.com/namratabhatia21/Clarchy"):
         assert f'href="{path}"' in footer
+    # Blog joins the footer once there are posts.
+    assert "<!-- render:blog-link -->" in footer and "mailto:" not in footer
     # The Services page is a two-column grid; its breadcrumbs take a row of their own.
     assert ".catalog-layout > .crumbs { grid-column: 1 / -1;" in css

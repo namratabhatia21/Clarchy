@@ -30,7 +30,7 @@ const Blog = (() => {
       el("p", { class: "post-byline" }, el("a", { href: about, text: post.author }),
         post.role ? `, ${post.role}` : "", ` · ${post.minutes} min read`),
       body,
-      el("p", { class: "post-author", text: `${post.author} is the founder of Clarchy.` }),
+      el("p", { class: "post-author", text: `${post.author} builds Clarchy.` }),
       el("div", { class: "post-foot" },
         el("a", { class: "btn btn-primary", href: CA.href("plan"), text: "Try it with your brief" }),
         el("a", { class: "btn btn-ghost", href: CA.href("blog"), text: "More posts" })));

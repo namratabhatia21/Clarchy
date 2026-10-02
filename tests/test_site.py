@@ -241,3 +241,5 @@ def test_design_rules_that_can_be_checked(built):
     pricing = (out / "pricing" / "index.html").read_text()
     assert pricing.count('<article class="plan-card') == 2, "two plans, not three tiers"
     assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css
+    # The Services page is a two-column grid; its breadcrumbs take a row of their own.
+    assert ".catalog-layout > .crumbs { grid-column: 1 / -1;" in css

@@ -7,7 +7,7 @@ site has and the patterns it never uses. The reasoning is in
 ## The idea
 
 Clarchy makes architecture drawings, so the site looks like an architect's drawing set:
-cream drafting paper, pencil and ink lines, one orange accent, a title block in the
+blue-white blueprint paper, navy ink lines, one signal-orange accent, a title block in the
 footer, sheet numbers, crop marks and dimension lines. The proof of the product is a real
 drawing that Clarchy made, not an illustration of one.
 
@@ -15,14 +15,14 @@ drawing that Clarchy made, not an illustration of one.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--bg` | `#f3f1ea` | `#121c26` | Paper. Never pure white. |
-| `--surface` | `#fbfaf6` | `#172431` | Sheets, cards, inputs |
-| `--text` | `#1b2127` | `#ebeff4` | Ink |
-| `--muted` | `#545d66` | `#aab6c3` | Secondary text |
-| `--faint` | `#62686d` | `#8191a2` | Labels; at least 4.5:1 on every surface |
-| `--rule` | `#1b2127` | `#c9d4df` | Frames and rules |
-| `--tick` | `#8e8775` | `#71859a` | Crop marks, contour lines |
-| `--accent` | `#c43e14` | `#ff7a3d` | The one accent: primary buttons, the current page, a trace |
+| `--bg` | `#edf1f7` | `#0c1829` | Blueprint paper. Never pure white. |
+| `--surface` | `#fafcff` | `#122237` | Sheets, cards, inputs |
+| `--text` | `#0a1f3d` | `#ebeff4` | Navy ink, the brand colour |
+| `--muted` | `#3c5272` | `#a9b8cb` | Secondary text |
+| `--faint` | `#4b5f80` | `#8698b2` | Labels; at least 4.5:1 on every surface |
+| `--rule` | `#0a1f3d` | `#c6d4e6` | Frames and rules |
+| `--tick` | `#8ca0bc` | `#6c84a5` | Crop marks, contour lines |
+| `--accent` | `#d4450c` | `#ff7a3d` | Signal orange, only for the main action, the current page and red lines |
 | `--radius` | `3px` | | Corners are nearly square |
 
 ## Type

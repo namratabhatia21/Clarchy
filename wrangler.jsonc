@@ -5,6 +5,8 @@
   "name": "clarchy",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "./site"
+    "directory": "./site",
+    // Unknown paths get site/404.html (written by export-site) with a 404 status.
+    "not_found_handling": "404-page"
   }
 }

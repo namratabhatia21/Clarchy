@@ -49,10 +49,16 @@ def test_index_and_assets_served(client):
     page = client.get("/")
     assert (
         page.status_code == 200
-        and "<title>Clarchy · cloud architecture drawings</title>" in page.text
+        and "<title>Clarchy · Cloud architecture from your requirements</title>" in page.text
     )
-    for asset in (*(f"/static/{name}" for name in SCRIPTS), "/static/app.css"):
-        assert client.get(asset).status_code == 200
+    assets = (
+        *(f"/static/{name}" for name in SCRIPTS),
+        "/static/app.css",
+        "/static/fonts/archivo.woff2",
+        "/static/brand/apple-touch-icon.png",
+    )
+    for asset in assets:
+        assert client.get(asset).status_code == 200, asset
 
 
 def test_meta_lists_providers(client):

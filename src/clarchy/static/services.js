@@ -80,7 +80,7 @@ const Services = (() => {
   }
 
   const item = (children, pressed, onclick) => el("button", { class: "filter-item", type: "button", "aria-pressed": String(pressed), onclick }, children);
-  const ACRONYMS = { iac: "IaC", ci: "CI", cd: "CD", dns: "DNS", cdn: "CDN", waf: "WAF", api: "API", llm: "LLM", etl: "ETL", db: "DB" };
+  const ACRONYMS = { ai: "AI", iac: "IaC", ci: "CI", cd: "CD", dns: "DNS", cdn: "CDN", waf: "WAF", api: "API", llm: "LLM", etl: "ETL", db: "DB" };
   const humanize = (id) => {
     const words = id.replace("key-value", "key‑value").split("-").map((w) => ACRONYMS[w] || w);
     return words[0].charAt(0).toUpperCase() + words[0].slice(1) + (words.length > 1 ? ` ${words.slice(1).join(" ")}` : "");

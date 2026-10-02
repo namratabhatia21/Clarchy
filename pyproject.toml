@@ -40,6 +40,8 @@ clarchy = [
     "data/samples/*.md",
     "data/blog/*.md",
     "static/*",
+    "static/fonts/*",
+    "static/brand/*",
 ]
 
 [tool.pytest.ini_options]

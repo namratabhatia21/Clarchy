@@ -67,6 +67,16 @@ def test_fragment_has_no_document_skeleton():
     assert embedded_data(page)["clipboard_only"] is True  # sandboxed hosts block downloads
 
 
+def test_fragment_export_keeps_drawings_inline(tmp_path):
+    from clarchy.export import export_site
+
+    # Fragment hosts can't serve extra files, so nothing is fetched separately.
+    export_site(tmp_path, fragment=True, with_engine=False)
+    data = embedded_data((tmp_path / "index.html").read_text())
+    assert data["designs"] and "design_files" not in data
+    assert not (tmp_path / "designs").exists() and not (tmp_path / "404.html").exists()
+
+
 def test_api_base_build_embeds_no_demo_data():
     page = build_site(api_base="https://api.example.org/")
     assert 'window.CLARCHY_API_BASE = "https://api.example.org";' in page
@@ -129,6 +139,31 @@ def test_site_ships_the_in_browser_engine(tmp_path):
         [sys.executable, "-c", code, str(unpacked)], capture_output=True, text=True
     )
     assert out.stdout.strip() == "True True", out.stderr
+
+
+def test_full_site_keeps_designs_fonts_and_sharing_files_beside_the_page(tmp_path):
+    from clarchy.export import design_file, export_site
+
+    export_site(tmp_path, with_engine=False)
+    page = (tmp_path / "index.html").read_text()
+    data = embedded_data(page)
+    # The drawings load on demand, so the page stays small.
+    assert "designs" not in data and data["design_files"] is True
+    assert len(page) < 700_000
+    for key in data["spec_index"].values():
+        for provider in catalog.providers():
+            body = json.loads((tmp_path / "designs" / design_file(f"{key}.{provider}")).read_text())
+            assert body["svg"].startswith("<svg")
+    # Fonts are served with the site, under their licences.
+    assert "fonts.googleapis" not in page and 'url("fonts/archivo.woff2")' in page
+    assert (tmp_path / "fonts" / "archivo.woff2").exists()
+    assert (tmp_path / "fonts" / "LICENSE-archivo.txt").exists()
+    # Search and link previews: the head keeps its description and sharing tags.
+    assert '<meta name="description"' in page
+    assert '<meta property="og:image" content="https://clarchy.com/og.png">' in page
+    assert 'href="apple-touch-icon.png"' in page
+    assert (tmp_path / "og.png").exists() and (tmp_path / "apple-touch-icon.png").exists()
+    assert (tmp_path / "404.html").read_text().startswith("<!doctype html>")
 
 
 def test_replay_only_build(tmp_path):

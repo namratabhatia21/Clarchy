@@ -1,6 +1,6 @@
 # 0009: Clarchy looks like an architect's drawing set
 
-**Status:** accepted · 2026-10-01 · works with [0006](0006-provider-themes-and-scoped-diagram-styles.md)
+**Status:** accepted · 2026-10-01 · amended 2026-10-02 (see the end) · works with [0006](0006-provider-themes-and-scoped-diagram-styles.md)
 
 ## Context
 
@@ -43,4 +43,26 @@ made, without changing how the site works.
 - One consistent identity across the three pages and both themes, with the cloud
   providers' own looks still applied to results.
 - The headline fonts come from Google Fonts; when they cannot load, the fallback is wider,
-  so headline sizes leave room for it on phones.
+  so headline sizes leave room for it on phones. (Superseded: fonts are now served with
+  the site; see the amendment.)
+
+## Amendment, 2026-10-02: restraint
+
+Applied everywhere, the conventions read as a template rather than a drawing set: a
+spaced-capitals label above every section, numbered sheets in the menu, upper-case titles
+on every page and grid paper behind everything. The drawing look now appears where it
+means something.
+
+- **Where it stays.** The Plan page keeps the grid, the instruments and the crop-marked
+  composer; diagrams keep their sheets and title blocks; the footer keeps its title block,
+  which is now the only place sheet numbers appear.
+- **Lettering.** Titles are Archivo in sentence case. Spaced monospace capitals are kept
+  for drawing annotation only: title blocks, table column headers, tags, and the "Detail A"
+  callout of the scroll story. Interface labels are IBM Plex Sans in sentence case.
+- **Plain paper elsewhere.** Examples, Services, How to, Blog, About, Privacy and Terms
+  sit on plain paper, without section eyebrows.
+- **Quieter instruments.** The protractor's lines are lighter, and its size follows the
+  free margin beside the content so it never sits behind text; below 1280px it is a
+  faint watermark.
+- **Fonts served with the site** (`static/fonts/`, SIL Open Font License), so pages
+  render without a request to Google and nothing about visitors goes to a font service.

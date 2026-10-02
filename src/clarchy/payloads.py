@@ -35,8 +35,11 @@ def provider_info(provider: str) -> dict[str, Any]:
 def meta_payload(
     icons: dict[str, IconLibrary], engine: dict[str, Any] | None = None
 ) -> dict[str, Any]:
+    aws_book = pricing.price_book("aws")
     return {
         "version": __version__,
+        # The date of the AWS price book behind every estimate, shown in the page footer.
+        "prices_as_of": str(aws_book["as_of"]) if aws_book else None,
         "providers": [provider_info(p) for p in catalog.providers_in_display_order()],
         "official_icons": {p: lib.root is not None for p, lib in icons.items()},
         "capabilities": {

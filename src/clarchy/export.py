@@ -1,4 +1,4 @@
-"""Static site export: the web UI as one self-contained HTML file.
+"""Static site export: the web UI as one HTML page and the files it loads.
 
     clarchy export-site -o site/                       # site/index.html, host anywhere
     clarchy export-site -o site/ --fragment            # body-only page for hosts that add
@@ -9,9 +9,11 @@ The page plans in the visitor's browser: next to index.html goes clarchy-engine.
 this package, which the page runs with Pyodide (Python compiled to WebAssembly, loaded
 from its CDN on first use). It also embeds every built-in pattern rendered on every
 provider, the service catalog and a recorded rule-based run of each sample, so the
-examples and samples appear instantly without loading the engine. --no-engine builds a
+examples and samples appear without loading the engine. Full pages keep those drawings in
+designs/<key>.<provider>.json beside index.html and fetch each one when it is shown; the
+site also gets its fonts (fonts/), sharing images and a 404 page. --no-engine builds a
 replay-only page. Fragment builds target sandboxed hosts that block downloads, so their
-download buttons copy to the clipboard instead.
+download buttons copy to the clipboard instead, and they keep the drawings inline.
 
 Official provider icons are never embedded: hosting them is a separate licensing question
 (see docs/decisions/0002-no-bundled-provider-icons.md).
@@ -132,9 +134,19 @@ def _script_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 
 
+def design_file(key: str) -> str:
+    """The file name of one pre-rendered design: "sample:x.aws" -> "sample-x.aws.json"."""
+    return key.replace(":", "-") + ".json"
+
+
 def build_site(
-    fragment: bool = False, api_base: str | None = None, engine: dict[str, Any] | None = None
+    fragment: bool = False,
+    api_base: str | None = None,
+    engine: dict[str, Any] | None = None,
+    designs_out: dict[str, Any] | None = None,
 ) -> str:
+    """The page. With designs_out, the pre-rendered designs go there instead of inline, and
+    the page fetches them from designs/ (see design_file)."""
     static = resources.files("clarchy").joinpath("static")
     index = static.joinpath("index.html").read_text(encoding="utf-8")
     css = static.joinpath("app.css").read_text(encoding="utf-8")
@@ -149,6 +161,9 @@ def build_site(
         config = f"window.CLARCHY_API_BASE = {_script_json(api_base.rstrip('/'))};"
     else:
         data = site_data(clipboard_only=fragment, engine=engine)
+        if designs_out is not None:
+            designs_out.update(data.pop("designs"))
+            data["design_files"] = True
         config = f"window.CLARCHY_DATA = {_script_json(data)};"
     inlined = [f"<script>{config}</script>"]
     for name in scripts:
@@ -165,8 +180,15 @@ def build_site(
         for line in head.splitlines()
         if line.strip().startswith("<link") and STYLESHEET_TAG not in line
     ]
+    metas = [
+        line.strip()
+        for line in head.splitlines()
+        if line.strip().startswith("<meta") and "charset" not in line and "viewport" not in line
+    ]
     if fragment:
-        links = [link for link in links if 'rel="icon"' not in link]
+        # The host supplies the head, the icons and the address; only the page's own links stay.
+        page_only = ('rel="icon"', 'rel="apple-touch-icon"', 'rel="canonical"', 'rel="preload"')
+        links = [link for link in links if not any(rel in link for rel in page_only)]
         page = "\n".join([title, *links, f"<style>\n{css}</style>", body.strip()]) + "\n"
     else:
         page = "\n".join(
@@ -177,6 +199,7 @@ def build_site(
                 '<meta charset="utf-8">',
                 '<meta name="viewport" content="width=device-width, initial-scale=1">',
                 title,
+                *metas,
                 *links,
                 f"<style>\n{css}</style>",
                 "</head>",
@@ -186,6 +209,8 @@ def build_site(
                 "</html>",
             ]
         )
+    # Fonts sit in fonts/ next to the page and the brand images at the site root.
+    page = page.replace("/static/fonts/", "fonts/").replace("/static/brand/", "")
     if "/static/" in page:
         raise ValueError("exported page still references /static/ assets")
     return page
@@ -201,8 +226,24 @@ def export_site(
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     engine = engine_config(pyodide_base) if with_engine and not api_base else None
+    designs: dict[str, Any] | None = None if fragment or api_base else {}
     path = out / "index.html"
-    path.write_text(build_site(fragment, api_base, engine), encoding="utf-8")
+    path.write_text(build_site(fragment, api_base, engine, designs_out=designs), encoding="utf-8")
     if engine:
         (out / ENGINE_BUNDLE).write_bytes(engine_bundle())
+    if designs:
+        folder = out / "designs"
+        folder.mkdir(exist_ok=True)
+        for key, body in designs.items():
+            text = json.dumps(body, ensure_ascii=False, separators=(",", ":"))
+            (folder / design_file(key)).write_text(text, encoding="utf-8")
+    static = resources.files("clarchy").joinpath("static")
+    fonts = out / "fonts"
+    fonts.mkdir(exist_ok=True)
+    for item in static.joinpath("fonts").iterdir():
+        (fonts / item.name).write_bytes(item.read_bytes())
+    for item in static.joinpath("brand").iterdir():
+        (out / item.name).write_bytes(item.read_bytes())
+    if not fragment:
+        (out / "404.html").write_bytes(static.joinpath("404.html").read_bytes())
     return path

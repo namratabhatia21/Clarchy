@@ -74,6 +74,21 @@ const CA = (() => {
     return DATA && DATA.spec_index ? DATA.spec_index[specYaml] : undefined;
   }
 
+  // Pre-rendered designs are inline in fragment builds; full pages fetch each from designs/
+  // the first time it is shown (export.design_file names the files).
+  const designFiles = new Map();
+  function staticDesign(key, provider) {
+    const id = `${key}.${provider}`;
+    if (DATA.designs) return Promise.resolve(DATA.designs[id] || null);
+    if (!DATA.design_files) return Promise.resolve(null);
+    if (!designFiles.has(id)) {
+      designFiles.set(id, fetch(`designs/${id.replace(":", "-")}.json`)
+        .then((res) => (res.ok ? res.json() : null))
+        .catch(() => null));
+    }
+    return designFiles.get(id);
+  }
+
   // Reads a text/event-stream response body and calls onEvent for every event.
   async function readEvents(res, onEvent) {
     const reader = res.body.getReader();
@@ -172,7 +187,7 @@ const CA = (() => {
     async design(specYaml, provider) {
       if (MODE === "static") {
         const key = staticSpecKey(specYaml);
-        const body = key && DATA.designs[`${key}.${provider}`];
+        const body = key && await staticDesign(key, provider);
         if (body) return { ok: true, body };
         if (!DATA.engine) {
           return { ok: false, body: { errors: [{ where: "demo", message: "This build shows the built-in examples and samples only. Run clarchy serve to edit specs." }] } };

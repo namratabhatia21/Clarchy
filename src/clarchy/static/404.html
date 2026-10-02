@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found · Clarchy</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231b2127'/%3E%3Cg fill='none'%3E%3Cpath d='M4 26.5h24' stroke='%23f3f1ea' stroke-width='2'/%3E%3Cpath d='M8.5 26.5V15a7.5 7.5 0 0 1 15 0v11.5' stroke='%23ff7a3d' stroke-width='2.6'/%3E%3Cpath d='M12.5 26.5V15.5a3.5 3.5 0 0 1 7 0v11' stroke='%23f3f1ea' stroke-width='1.4'/%3E%3C/g%3E%3C/svg%3E">
+  <style>
+    /* Served by the host for any path the site doesn't have (wrangler.jsonc: 404-page). */
+    @font-face { font-family: "Archivo"; src: url("/fonts/archivo.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; }
+    @font-face { font-family: "IBM Plex Sans"; src: url("/fonts/ibm-plex-sans-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "IBM Plex Sans"; src: url("/fonts/ibm-plex-sans-600.woff2") format("woff2"); font-weight: 600; }
+    :root { --bg: #f3f1ea; --surface: #fbfaf6; --text: #1b2127; --muted: #545d66; --rule: #1b2127; --accent: #c43e14; --on-accent: #fff; color-scheme: light; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #121c26; --surface: #172431; --text: #ebeff4; --muted: #a7b3c0; --rule: #ebeff4; --accent: #ff7a3d; --on-accent: #121c26; color-scheme: dark; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+      background: var(--bg); color: var(--text); font: 15.5px/1.6 "IBM Plex Sans", system-ui, sans-serif;
+    }
+    main { max-width: 520px; display: flex; flex-direction: column; gap: 14px; }
+    .mark { width: 40px; height: 40px; color: var(--text); }
+    .mark .arch { stroke: var(--accent); }
+    h1 { margin: 0; font: 700 clamp(30px, 6vw, 40px)/1.1 "Archivo", system-ui, sans-serif; font-stretch: 87.5%; letter-spacing: -.01em; text-wrap: balance; }
+    p { margin: 0; color: var(--muted); }
+    a.home {
+      align-self: flex-start; margin-top: 6px; padding: 10px 18px; border-radius: 3px; text-decoration: none;
+      background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 27.5h28M3.5 29.5l2-4M26.5 29.5l2-4"/>
+        <path class="arch" d="M8.5 27.5V15a7.5 7.5 0 0 1 15 0v12.5" stroke-width="2.2"/>
+        <path d="M12.5 27.5V15.5a3.5 3.5 0 0 1 7 0v12"/>
+      </g>
+    </svg>
+    <h1>This page isn't in the drawing set</h1>
+    <p>The address may be mistyped, or the page may have moved. Everything in Clarchy starts from the home page.</p>
+    <a class="home" href="/">Go to Clarchy</a>
+  </main>
+</body>
+</html>

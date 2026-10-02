@@ -136,7 +136,7 @@ const Plan = (() => {
     let list = details.querySelector(".trace");
     if (!list) {
       details.open = true;
-      details.querySelector("summary").textContent = "Agent trace";
+      details.querySelector("summary").textContent = "Planner steps";
       list = el("ol", { class: "trace" });
       details.append(list);
     }

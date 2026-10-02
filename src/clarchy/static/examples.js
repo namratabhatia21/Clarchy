@@ -16,24 +16,57 @@ const Examples = (() => {
   let patterns = [];
   let filter = "All";
   let workspace = null;
-  const thumbs = {};
+  const designs = {}; // pattern id -> promise of its AWS design
 
   function tagsFor(pattern) {
     const caps = new Set(pattern.capabilities || []);
     return TAG_RULES.filter(([, list]) => list.some((c) => caps.has(c))).map(([tag]) => tag);
   }
 
-  async function thumbnail(pattern, img) {
-    if (!thumbs[pattern.id]) {
-      thumbs[pattern.id] = (async () => {
-        const found = await api.pattern(pattern.id);
+  function awsDesign(id) {
+    if (!designs[id]) {
+      designs[id] = (async () => {
+        const found = await api.pattern(id);
         if (!found) return null;
         const result = await api.design(found.spec_yaml, "aws");
-        return result.ok ? result.body.svg : null;
+        return result.ok ? result.body : null;
       })();
     }
-    const svg = await thumbs[pattern.id];
-    if (svg) img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CA.croppedSvgText(svg, { transparent: true }))}`;
+    return designs[id];
+  }
+
+  const svgSource = (svg) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CA.croppedSvgText(svg, { transparent: true }))}`;
+
+  // Diagrams load when they come into view, so pages that don't show them never fetch them.
+  function whenVisible(node, load) {
+    if (!("IntersectionObserver" in window)) { load(); return; }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { observer.disconnect(); load(); }
+    }, { rootMargin: "300px" });
+    observer.observe(node);
+  }
+
+  function thumbnail(pattern, frame, img) {
+    whenVisible(frame, async () => {
+      const design = await awsDesign(pattern.id);
+      if (design) img.src = svgSource(design.svg);
+    });
+  }
+
+  // The home page's real result: a reference example drawn on AWS, with its size and cost.
+  function preview(figure) {
+    whenVisible(figure, async () => {
+      const design = await awsDesign(figure.dataset.example);
+      if (!design) { figure.hidden = true; return; }
+      figure.querySelector("img").src = svgSource(design.svg);
+      const monthly = design.cost && design.cost.available ? design.cost.monthly : null;
+      figure.querySelector(".proof-title").textContent = `${design.name} on AWS`;
+      figure.querySelector(".proof-meta").textContent = [
+        CA.plural(design.components.length, "service"),
+        monthly !== null && `about ${CA.money(monthly)} a month`,
+        design.policies.length > 0 && `${CA.plural(design.policies.length, "policy", "policies")} checked`,
+      ].filter(Boolean).join(" · ");
+    });
   }
 
   function renderFilters() {
@@ -47,10 +80,11 @@ const Examples = (() => {
   function renderGrid() {
     const shown = patterns.filter((p) => filter === "All" || tagsFor(p).includes(filter));
     fill($("example-grid"), shown.map((p) => {
-      const img = el("img", { alt: `${p.name} on AWS`, loading: "lazy" });
-      thumbnail(p, img);
+      const img = el("img", { alt: `${p.name} on AWS` });
+      const frame = el("div", { class: "example-thumb" }, img);
+      thumbnail(p, frame, img);
       return el("li", {}, el("a", { class: "example-card", href: `#examples/${p.id}` },
-        el("div", { class: "example-thumb" }, img),
+        frame,
         el("div", { class: "example-body" },
           el("h2", { text: p.name }),
           el("p", { text: p.summary || "" })),
@@ -81,5 +115,5 @@ const Examples = (() => {
     renderGrid();
   }
 
-  return { init, show };
+  return { init, show, preview };
 })();

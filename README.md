@@ -268,15 +268,19 @@ Design decisions are recorded in [docs/decisions/](docs/decisions/).
 ## Static site
 
 ```bash
-clarchy export-site -o site/                          # index.html + clarchy-engine.zip
+clarchy export-site -o site/                          # the whole site (see below)
 clarchy export-site -o site/ --no-engine              # replay-only page
 clarchy export-site -o site/ --api-base https://...   # a front end for a hosted API
 ```
 
 The page plans in the visitor's browser: it loads Pyodide from its CDN on first use (about
 15 MB, then cached) and runs this package from `clarchy-engine.zip` next to the page.
-Examples, the catalog and recorded runs of the samples are embedded, so they appear
-instantly ([ADR 0008](docs/decisions/0008-plans-run-in-the-browser.md)). The `Pages`
+The catalog and recorded runs of the samples are embedded; the pre-drawn examples sit in
+`designs/` and load when shown
+([ADR 0008](docs/decisions/0008-plans-run-in-the-browser.md)). The folder also holds the
+fonts (`fonts/`, served with the site under the SIL Open Font License), the sharing
+image (`og.png`), the touch icon and `404.html`, so serve it over HTTP rather than opening
+`index.html` from disk. The `Pages`
 workflow refreshes the AWS prices and publishes the site on every push to the default
 branch and every Monday. With `--api-base` the page talks to a Clarchy server instead,
 which needs `CLARCHY_CORS_ORIGINS` set.

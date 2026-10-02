@@ -12,8 +12,7 @@ const Blog = (() => {
   }
 
   function renderIndex() {
-    fill($("post-list"), posts.map((p, i) => el("li", {}, el("a", { class: "post-card", href: `#blog/${p.id}` },
-      el("span", { class: "post-no", text: `Note ${String(i + 1).padStart(2, "0")}` }),
+    fill($("post-list"), posts.map((p) => el("li", {}, el("a", { class: "post-card", href: `#blog/${p.id}` },
       el("h2", { text: p.title }),
       el("p", { text: p.summary }),
       el("span", { class: "post-meta", text: `${longDate(p.date)} · ${p.author} · ${p.minutes} min read` })))));
@@ -29,7 +28,7 @@ const Blog = (() => {
     body.innerHTML = post.html; // rendered by Clarchy from its own posts, with all text HTML-escaped
     fill($("post"),
       el("a", { class: "back-link", href: "#blog", text: "← All posts" }),
-      el("p", { class: "eyebrow", text: longDate(post.date) }),
+      el("p", { class: "post-date", text: longDate(post.date) }),
       el("h1", { class: "post-title", text: post.title }),
       el("p", { class: "post-byline" }, el("a", { href: "#about", text: post.author }),
         post.role ? `, ${post.role}` : "", ` · ${post.minutes} min read`),

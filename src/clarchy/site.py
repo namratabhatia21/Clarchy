@@ -750,8 +750,8 @@ def _json_ld(data: dict[str, Any]) -> str:
 # ---------- assembling a document ----------
 def _split(template_text: str) -> tuple[str, str]:
     head = template_text[template_text.index("<head>") + 6 : template_text.index("</head>")]
-    body = template_text[template_text.index("<body") : template_text.index("</body>")]
-    body = body[body.index(">") + 1 :]
+    opening = re.search(r"<body(?:<!-- render:body-attrs -->)?[^>]*>", template_text)
+    body = template_text[opening.end() : template_text.index("</body>")]
     return head, body
 
 

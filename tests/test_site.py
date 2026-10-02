@@ -86,6 +86,8 @@ def test_every_address_is_its_own_page(built):
         assert f'<meta property="og:url" content="{p.url}">' in text
         assert 'name="robots"' not in text, "nothing is kept out of search"
         assert f'data-page="{p.key}" data-routing="path"' in text
+        opening = re.search(r"<body[^>]*>", text)
+        assert text[opening.end() :].lstrip().startswith("<a class=\"skip-link\""), p.path
         # The menu marks where the visitor is.
         menu = site.PARENT.get(p.key, p.key)
         if menu in {"plan", "examples", "services", "pricing", "howto", "blog", "about"}:

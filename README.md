@@ -11,8 +11,8 @@ or open source**, each in its own look, explains every choice and estimates the 
 right in your browser, with no server: the page runs Clarchy's Python engine with
 [Pyodide](https://pyodide.org). Planning is rule-based by default; for the AI agent, use an
 open-source model on Hugging Face with your own free token, or a model on your machine
-through Ollama. AWS prices are refreshed from the AWS Price List API on every deploy and
-every week.
+through Ollama. AWS prices for every region Clarchy offers are refreshed from the AWS
+Price List API every day.
 
 The site looks like an architect's drawing set: trace paper by day, a drafting table at
 night, redline orange for what matters, sheet numbers, title blocks and dimension lines. A
@@ -115,10 +115,12 @@ periods cost more than a multiple of the first month.
 
 - **AWS prices come from the [AWS Price List API](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html)**,
   AWS's official machine-readable source behind its pricing pages, with the SKU and AWS's
-  description for every price, including Savings Plans and reserved-instance rates.
-  `clarchy prices update` refreshes them; the public site refreshes them on every
-  deploy and every Monday. `clarchy prices lookup AmazonS3 storage` searches any
-  service's current prices live.
+  description for every price, including Savings Plans and reserved-instance rates, in
+  each of the eight AWS regions Clarchy offers; a design is priced in its own region.
+  The `Prices` workflow refreshes them every day and commits them when a price changes
+  ([ADR 0014](docs/decisions/0014-daily-prices-for-every-region.md)).
+  `clarchy prices update` refreshes them on your machine, and
+  `clarchy prices lookup AmazonS3 storage` searches any service's current prices live.
 - Azure and Google Cloud prices are compiled by hand from their pricing pages and marked
   **approximate** in the UI until they are read from those providers' price APIs too.
   Services from outside the three clouds, such as GitHub Codespaces and Copilot, come from
@@ -308,10 +310,15 @@ files into `site/`. Two things deploy it:
 - **Workers Builds, on every push.** Connect the Worker to this repository
   (Worker → Settings → Build). Set the build command to `make prices site`, keep the
   deploy command `npx wrangler deploy`, and pick the branch the site is built from.
-- **The `Pages` workflow, every Monday** (and when run by hand), so fresh AWS prices reach
-  the site even without a push. It needs an API token with the *Workers Scripts: Edit*
-  and *D1: Edit* permissions, saved as the repository secrets `CLOUDFLARE_API_TOKEN` and
-  `CLOUDFLARE_ACCOUNT_ID`. Without those secrets it skips the Cloudflare step.
+- **The `Pages` workflow, when run by hand**, as a fallback. It needs an API token with
+  the *Workers Scripts: Edit* and *D1: Edit* permissions, saved as the repository
+  secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Without those secrets it
+  skips the Cloudflare step.
+
+The `Prices` workflow refreshes the price books every morning and commits them when a
+price has changed (as github-actions[bot]); Workers Builds deploys that commit like any
+other. `make prices` refreshes them only when `CLARCHY_REFRESH_PRICES=1`, so builds use the
+committed books and stay quick.
 
 The site is then live at `clarchy.<your-subdomain>.workers.dev`. To move clarchy.com:
 
@@ -381,7 +388,7 @@ make examples    # regenerate examples/, which double as golden test files
 | ✅ 1 | Neutral spec, patterns, AWS/Azure/GCP/OSS mappings, SVG renderer, CLI, web UI and service catalog |
 | ✅ 2 | Requirements documents in, agentic planning with MCP tools, build-and-deploy toolchain, workflows, provider-themed results |
 | ✅ 3 | Cost estimates for 1 month to 3 years with commitments; AWS from the Price List API; plans in the browser; open-source models |
-| 4 | Azure and Google Cloud prices from their price APIs; prices for the design's own region; low/expected/high ranges checked against the official calculators |
+| 4 | AWS prices for the design's own region, refreshed daily (done); Azure and Google Cloud prices from their price APIs; low/expected/high ranges checked against the official calculators |
 | 5 | Spot and data-transfer costs; Well-Architected checks; PDF report |
 | 6+ | Open-source cost model including operations effort; specialist review of every mapping |
 
@@ -391,8 +398,8 @@ make examples    # regenerate examples/, which double as golden test files
   against live Claude or Hugging Face here; real-model quality depends on the model and
   the prompts in `planner/prompts.py`. Smaller open models follow tool calls less
   reliably; when they fail, the run falls back to the rule-based draft.
-- Prices are for one reference region per cloud (US East, East US, Iowa); the cost view
-  says so when your design is elsewhere. Azure and Google Cloud prices are approximate.
+- AWS prices are for the design's own region. Azure and Google Cloud prices are still for
+  one reference region (East US, Iowa) and approximate; the cost view says so.
 - Scanned PDFs without a text layer cannot be read; paste the text instead.
 - Long edges in large diagrams can cross other lines; links to shared services
   (identity, secrets, monitoring) are listed in the explanation rather than drawn.

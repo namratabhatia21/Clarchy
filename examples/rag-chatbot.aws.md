@@ -92,7 +92,7 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Estimated cost
 
-About **$464 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$464 a month** on demand (US West (Oregon) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
@@ -121,7 +121,6 @@ About **$464 a month** on demand (US East (N. Virginia) list prices as of 2026-1
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for US East (N. Virginia); your region (Oregon (us-west-2)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

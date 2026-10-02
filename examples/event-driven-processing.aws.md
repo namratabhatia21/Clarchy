@@ -80,24 +80,24 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 
 ## Estimated cost
 
-About **$251 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$268 a month** on demand (Asia Pacific (Mumbai) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $251 | – |
-| 6 months | $1,524 | – |
-| 1 year | $3,098 | $2,937 |
-| 3 years | $9,891 | $9,408 |
+| 1 month | $268 | – |
+| 6 months | $1,631 | – |
+| 1 year | $3,316 | $3,155 |
+| 3 years | $10,595 | $10,113 |
 
 | Service | Per month |
 |---|---:|
 | AWS Lambda (Workers) | $115 |
-| AWS Step Functions (Processing steps) | $94.51 |
-| Amazon S3 (Raw + processed files) | $12.04 |
-| Amazon CloudWatch (Logs, metrics, alarms) | $7.50 |
+| AWS Step Functions (Processing steps) | $108 |
+| Amazon S3 (Raw + processed files) | $13.04 |
+| Amazon CloudWatch (Logs, metrics, alarms) | $10.05 |
 | Amazon API Gateway (Ingest API) | $7.00 |
 | Amazon SQS (Job queue) | $6.80 |
-| Amazon DynamoDB (Job status) | $5.00 |
+| Amazon DynamoDB (Job status) | $5.68 |
 | AWS CodeBuild (Build and test) | $1.00 |
 | AWS CodePipeline (Release pipeline) | $1.00 |
 | Amazon EventBridge (Domain events) | $0.79 |
@@ -107,7 +107,6 @@ About **$251 a month** on demand (US East (N. Virginia) list prices as of 2026-1
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for US East (N. Virginia); your region (Mumbai (ap-south-1)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

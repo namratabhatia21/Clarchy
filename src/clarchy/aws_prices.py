@@ -1,15 +1,20 @@
-"""Latest AWS prices, straight from the AWS Price List API.
+"""Latest AWS prices for every region Clarchy offers, from the AWS Price List API.
 
     clarchy prices update                 # refresh the AWS price book for this machine
     python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml
 
 The Price List API is AWS's official, machine-readable source for the prices on its
-pricing pages; it is public and needs no credentials. This module downloads the
-US East (N. Virginia) offer files Clarchy prices from, picks every price below by
-its attributes and writes a price book with AWS's SKU and description for each one, so
-every number can be traced back. The EC2 and Compute Savings Plans files are about
-450 MB each; --cache keeps downloads between runs. The GitHub Pages build runs this
-before every deploy (and weekly), so the public site always shows current prices.
+pricing pages; it is public and needs no credentials. This module downloads the offer
+files Clarchy prices from, for each AWS region in data/regions.yaml, picks every price
+below by its attributes and writes a price book with AWS's SKU for each one, so every
+number can be traced back. US East (N. Virginia) is the reference region, with AWS's
+description of each price; the other regions list what they offer, and an estimate falls
+back to the reference price, saying so, for a service a region doesn't have.
+
+EC2 and Compute Savings Plans are about 200 MB of CSV per region, read line by line as
+they download; the other offers are small JSON files. --cache keeps downloads between
+runs. A daily GitHub workflow (.github/workflows/prices.yml) runs this and commits the
+book when a price has changed.
 
 Commitment prices are effective hourly or unit rates: Compute Savings Plans (no upfront)
 for Fargate, Lambda and EC2 nodes; reserved instances and nodes for RDS and ElastiCache
@@ -22,6 +27,9 @@ upfront fee spread over the term); Redshift Serverless capacity reservations.
 from __future__ import annotations
 
 import argparse
+import csv
+import hashlib
+import io
 import json
 import urllib.request
 from datetime import date
@@ -32,431 +40,518 @@ import yaml
 
 BASE = "https://pricing.us-east-1.amazonaws.com"
 BUNDLED = Path(__file__).resolve().parent / "data" / "prices" / "aws.yaml"
-HOURS_3YR = 3 * 8760
+REFERENCE = "us-east-1"
 
-# key: (offer, region file, attribute filters, unit shown, multiplier to that unit)
-ON_DEMAND: dict[str, tuple[str, str, dict[str, str], str, float]] = {
-    "lambda.requests": ("AWSLambda", "us-east-1", {"usagetype": "Request"}, "1M requests", 1e6),
+# Every AWS region in data/regions.yaml, with the name AWS gives it and the prefix AWS puts
+# on usage types there (US East has none on most). A test checks the two lists agree.
+REGION_NAMES = {
+    "us-east-1": "US East (N. Virginia)",
+    "us-west-2": "US West (Oregon)",
+    "eu-west-1": "Europe (Ireland)",
+    "eu-central-1": "Europe (Frankfurt)",
+    "eu-west-2": "Europe (London)",
+    "ap-south-1": "Asia Pacific (Mumbai)",
+    "ap-southeast-1": "Asia Pacific (Singapore)",
+    "ap-southeast-2": "Asia Pacific (Sydney)",
+}
+USAGE_PREFIXES = {
+    "us-east-1": "USE1",
+    "us-west-2": "USW2",
+    "eu-west-1": "EU",
+    "eu-central-1": "EUC1",
+    "eu-west-2": "EUW2",
+    "ap-south-1": "APS3",
+    "ap-southeast-1": "APS1",
+    "ap-southeast-2": "APS2",
+}
+# CloudFront bills by the edge locations that serve visitors: those near each region.
+EDGES = {
+    "us-east-1": "US",
+    "us-west-2": "US",
+    "eu-west-1": "EU",
+    "eu-central-1": "EU",
+    "eu-west-2": "EU",
+    "ap-south-1": "IN",
+    "ap-southeast-1": "AP",
+    "ap-southeast-2": "AU",
+}
+
+# key: (offer, scope, attribute filters, unit shown, multiplier to that unit). Scope is
+# "region" (the design's region; usage types are given without AWS's region prefix, with
+# alternatives where AWS names the same usage differently in some regions), "global" (one
+# price everywhere) or "edge" (CloudFront, priced where its visitors are).
+ON_DEMAND: dict[str, tuple[str, str, dict[str, Any], str, float]] = {
+    "lambda.requests": ("AWSLambda", "region", {"usagetype": "Request"}, "1M requests", 1e6),
     "lambda.gb_seconds": (
         "AWSLambda",
-        "us-east-1",
+        "region",
         {"usagetype": "Lambda-GB-Second"},
         "GB-second",
         1,
     ),
     "apigw.requests": (
         "AmazonApiGateway",
-        "us-east-1",
-        {"usagetype": "USE1-ApiGatewayRequest"},
+        "region",
+        {"usagetype": "ApiGatewayRequest"},
         "1M requests",
         1e6,
     ),
     "cloudfront.egress_gb": (
         "AmazonCloudFront",
-        "aws-other",
-        {"usagetype": "US-DataTransfer-Out-Bytes"},
+        "edge",
+        {"usagetype": "{edge}-DataTransfer-Out-Bytes"},
         "GB",
         1,
     ),
     "cloudfront.requests": (
         "AmazonCloudFront",
-        "aws-other",
-        {"usagetype": "US-Requests-Tier2-HTTPS"},
+        "edge",
+        {"usagetype": "{edge}-Requests-Tier2-HTTPS"},
         "10K requests",
         1e4,
     ),
-    "route53.zones": ("AmazonRoute53", "aws-other", {"usagetype": "HostedZone"}, "hosted zone", 1),
+    "route53.zones": ("AmazonRoute53", "global", {"usagetype": "HostedZone"}, "hosted zone", 1),
     "route53.queries": (
         "AmazonRoute53",
-        "aws-other",
+        "global",
         {"usagetype": "DNS-Queries"},
         "1M queries",
         1e6,
     ),
-    "waf.acls": ("awswaf", "aws-other", {"usagetype": "WebACL"}, "web ACL", 1),
-    "waf.rules": ("awswaf", "aws-other", {"usagetype": "Rule"}, "rule", 1),
-    "waf.requests": ("awswaf", "aws-other", {"usagetype": "Request"}, "1M requests", 1e6),
+    "waf.acls": ("awswaf", "global", {"usagetype": "WebACL"}, "web ACL", 1),
+    "waf.rules": ("awswaf", "global", {"usagetype": "Rule"}, "rule", 1),
+    "waf.requests": ("awswaf", "global", {"usagetype": "Request"}, "1M requests", 1e6),
     "alb.hours": (
         "AWSELB",
-        "us-east-1",
+        "region",
         {"usagetype": "LoadBalancerUsage", "operation": "LoadBalancing:Application"},
         "hour",
         1,
     ),
     "alb.lcu_hours": (
         "AWSELB",
-        "us-east-1",
+        "region",
         {"usagetype": "LCUUsage", "operation": "LoadBalancing:Application"},
         "LCU-hour",
         1,
     ),
     "fargate.vcpu_hours": (
         "AmazonECS",
-        "us-east-1",
-        {"usagetype": "USE1-Fargate-vCPU-Hours:perCPU"},
+        "region",
+        {"usagetype": "Fargate-vCPU-Hours:perCPU"},
         "vCPU-hour",
         1,
     ),
     "fargate.gb_hours": (
         "AmazonECS",
-        "us-east-1",
-        {"usagetype": "USE1-Fargate-GB-Hours"},
+        "region",
+        {"usagetype": "Fargate-GB-Hours"},
         "GB-hour",
         1,
     ),
     "agentcore.vcpu_hours": (
         "AmazonBedrockAgentCore",
-        "us-east-1",
-        {"usagetype": "USE1-Runtime:Consumption-based:vCPU"},
+        "region",
+        {"usagetype": "Runtime:Consumption-based:vCPU"},
         "vCPU-hour (active)",
         1,
     ),
     "agentcore.gb_hours": (
         "AmazonBedrockAgentCore",
-        "us-east-1",
-        {"usagetype": "USE1-Runtime:Consumption-based:Memory"},
+        "region",
+        {"usagetype": "Runtime:Consumption-based:Memory"},
         "GB-hour",
         1,
     ),
     "guardrails.content_units": (
         "AmazonBedrock",
-        "us-east-1",
-        {"usagetype": "USE1-Guardrail-ContentPolicyUnitsConsumed"},
+        "region",
+        {"usagetype": "Guardrail-ContentPolicyUnitsConsumed"},
         "1K text units",
         1e3,
     ),
     "guardrails.pii_units": (
         "AmazonBedrock",
-        "us-east-1",
-        {"usagetype": "USE1-Guardrail-SensitiveInformationPolicyPaidUnitsConsumed"},
+        "region",
+        {"usagetype": "Guardrail-SensitiveInformationPolicyPaidUnitsConsumed"},
         "1K text units",
         1e3,
     ),
     "glacier.deep_archive_gb": (
         "AmazonS3GlacierDeepArchive",
-        "us-east-1",
+        "region",
         {"usagetype": "TimedStorage-GDA-ByteHrs"},
         "GB-month",
         1,
     ),
     "backup.rds_gb": (
         "AmazonRDS",
-        "us-east-1",
+        "region",
         {"usagetype": "RDS:ChargedBackupUsage"},
         "GB-month (database backups)",
         1,
     ),
     "backup.s3_gb": (
         "AWSBackup",
-        "us-east-1",
-        {"usagetype": "USE1-WarmStorage-ByteHrs-S3"},
+        "region",
+        {"usagetype": "WarmStorage-ByteHrs-S3"},
         "GB-month (S3 backups)",
         1,
     ),
     "kms.keys": (
         "awskms",
-        "us-east-1",
-        {"usagetype": "us-east-1-KMS-Keys"},
+        "region",
+        {"usagetype": "KMS-Keys"},
         "key-month",
         1,
     ),
     "kms.requests": (
         "awskms",
-        "us-east-1",
-        {"usagetype": "us-east-1-KMS-Requests"},
+        "region",
+        {"usagetype": "KMS-Requests"},
         "10K requests",
         1e4,
     ),
     "cloudtrail.data_events": (
         "AWSCloudTrail",
-        "us-east-1",
-        {"usagetype": "USE1-DataEventsRecorded"},
+        "region",
+        {"usagetype": "DataEventsRecorded"},
         "1M data events",
         1e6,
     ),
     "q.developer_seats": (
         "AmazonQ",
-        "us-east-1",
-        {"usagetype": "USE1-Amazon-Q-Developer-Pro-subscription-monthly"},
+        "region",
+        {"usagetype": "Amazon-Q-Developer-Pro-subscription-monthly"},
         "user-month (Pro)",
         1,
     ),
     "eks.cluster_hours": (
         "AmazonEKS",
-        "us-east-1",
-        {"usagetype": "USE1-AmazonEKS-Hours:perCluster"},
+        "region",
+        {"usagetype": "AmazonEKS-Hours:perCluster"},
         "cluster-hour",
-        1,
-    ),
-    "ec2.node_hours": (
-        "AmazonEC2",
-        "us-east-1",
-        {
-            "usagetype": "BoxUsage:m7g.large",
-            "operatingSystem": "Linux",
-            "tenancy": "Shared",
-            "preInstalledSw": "NA",
-            "capacitystatus": "Used",
-        },
-        "m7g.large node-hour",
         1,
     ),
     "bedrock.input_tokens": (
         "AmazonBedrock",
-        "us-east-1",
-        {"usagetype": "USE1-NovaLite-input-tokens"},
+        "region",
+        {"usagetype": "NovaLite-input-tokens"},
         "1M tokens",
         1e3,
     ),
     "bedrock.output_tokens": (
         "AmazonBedrock",
-        "us-east-1",
-        {"usagetype": "USE1-NovaLite-output-tokens"},
+        "region",
+        {"usagetype": "NovaLite-output-tokens"},
         "1M tokens",
         1e3,
     ),
     "bedrock.embedding_tokens": (
         "AmazonBedrock",
-        "us-east-1",
-        {"usagetype": "USE1-TitanEmbeddingV2-Text-input-tokens"},
+        "region",
+        {"usagetype": "TitanEmbeddingV2-Text-input-tokens"},
         "1M tokens",
         1e3,
     ),
     "sqs.requests": (
         "AWSQueueService",
-        "us-east-1",
-        {"usagetype": "Requests-RBP"},
+        "region",
+        {"usagetype": ("Requests-RBP", "Requests-Tier1")},
         "1M requests",
         1e6,
     ),
     "eventbridge.events": (
         "AWSEvents",
-        "us-east-1",
-        {"usagetype": "USE1-Event-64K-Chunks"},
+        "region",
+        {"usagetype": "Event-64K-Chunks"},
         "1M events",
         1e6,
     ),
     "kinesis.shard_hours": (
         "AmazonKinesis",
-        "us-east-1",
+        "region",
         {"usagetype": "Storage-ShardHour"},
         "shard-hour",
         1,
     ),
     "kinesis.put_units": (
         "AmazonKinesis",
-        "us-east-1",
+        "region",
         {"usagetype": "PutRequestPayloadUnits"},
         "1M PUT units",
         1e6,
     ),
     "stepfunctions.transitions": (
         "AmazonStates",
-        "us-east-1",
-        {"usagetype": "USE1-StateTransition"},
+        "region",
+        {"usagetype": "StateTransition"},
         "1K transitions",
         1e3,
     ),
-    "glue.dpu_hours": ("AWSGlue", "us-east-1", {"usagetype": "USE1-ETL-DPU-Hour"}, "DPU-hour", 1),
+    "glue.dpu_hours": ("AWSGlue", "region", {"usagetype": "ETL-DPU-Hour"}, "DPU-hour", 1),
     "s3.storage_gb": (
         "AmazonS3",
-        "us-east-1",
+        "region",
         {"usagetype": "TimedStorage-ByteHrs"},
         "GB-month",
         1,
     ),
     "s3.put_requests": (
         "AmazonS3",
-        "us-east-1",
+        "region",
         {"usagetype": "Requests-Tier1"},
         "1K requests",
         1e3,
     ),
     "s3.get_requests": (
         "AmazonS3",
-        "us-east-1",
+        "region",
         {"usagetype": "Requests-Tier2"},
         "1K requests",
         1e3,
     ),
     "rds.storage_gb.single": (
         "AmazonRDS",
-        "us-east-1",
+        "region",
         {"usagetype": "RDS:GP3-Storage", "databaseEngine": "PostgreSQL"},
         "GB-month",
         1,
     ),
     "rds.storage_gb.multi": (
         "AmazonRDS",
-        "us-east-1",
+        "region",
         {"usagetype": "RDS:Multi-AZ-GP3-Storage", "databaseEngine": "PostgreSQL"},
         "GB-month",
         1,
     ),
     "dynamodb.write_units": (
         "AmazonDynamoDB",
-        "us-east-1",
+        "region",
         {"usagetype": "WriteRequestUnits"},
         "1M write units",
         1e6,
     ),
     "dynamodb.read_units": (
         "AmazonDynamoDB",
-        "us-east-1",
+        "region",
         {"usagetype": "ReadRequestUnits"},
         "1M read units",
         1e6,
     ),
     "dynamodb.storage_gb": (
         "AmazonDynamoDB",
-        "us-east-1",
+        "region",
         {"usagetype": "TimedStorage-ByteHrs"},
         "GB-month",
         1,
     ),
     "opensearch.ocu_hours": (
         "AmazonES",
-        "us-east-1",
-        {"usagetype": "USE1-SearchOCU"},
+        "region",
+        {"usagetype": "SearchOCU"},
         "OCU-hour",
         1,
     ),
     "redshift.rpu_hours": (
         "AmazonRedshift",
-        "us-east-1",
-        {"usagetype": "USE1-Redshift:ServerlessUsage"},
+        "region",
+        {"usagetype": "Redshift:ServerlessUsage"},
         "RPU-hour",
         1,
     ),
     "redshift.storage_gb": (
         "AmazonRedshift",
-        "us-east-1",
-        {"usagetype": "USE1-RMS:Serverless"},
+        "region",
+        {"usagetype": "RMS:Serverless"},
         "GB-month",
         1,
     ),
     "cognito.mau": (
         "AmazonCognito",
-        "us-east-1",
-        {"usagetype": "USE1-CognitoUserPoolsMAU"},
+        "region",
+        {"usagetype": "CognitoUserPoolsMAU"},
         "monthly active user",
         1,
     ),
     "secrets.secrets": (
         "AWSSecretsManager",
-        "us-east-1",
-        {"usagetype": "USE1-AWSSecretsManager-Secrets"},
+        "region",
+        {"usagetype": ("AWSSecretsManager-Secrets", "AWSSecretsManager-Secret")},
         "secret",
         1,
     ),
     "secrets.api_calls": (
         "AWSSecretsManager",
-        "us-east-1",
-        {"usagetype": "USE1-AWSSecretsManagerAPIRequest"},
+        "region",
+        {"usagetype": ("AWSSecretsManagerAPIRequest", "AWSSecretsManager-APIRequests")},
         "10K calls",
         1e4,
     ),
     "cloudwatch.logs_gb": (
         "AmazonCloudWatch",
-        "us-east-1",
-        {"usagetype": "USE1-DataProcessing-Bytes"},
+        "region",
+        {"usagetype": "DataProcessing-Bytes"},
         "GB ingested",
         1,
     ),
     "cloudwatch.alarms": (
         "AmazonCloudWatch",
-        "us-east-1",
+        "region",
         {"usagetype": "CW:AlarmMonitorUsage"},
         "alarm",
         1,
     ),
     "ecr.storage_gb": (
         "AmazonECR",
-        "us-east-1",
+        "region",
         {"usagetype": "TimedStorage-ByteHrs"},
         "GB-month",
         1,
     ),
     "codebuild.minutes": (
         "CodeBuild",
-        "us-east-1",
-        {"usagetype": "USE1-Build-Min:Linux:g1.small"},
+        "region",
+        {"usagetype": "Build-Min:Linux:g1.small"},
         "build minute",
         1,
     ),
     "codepipeline.action_minutes": (
         "AWSCodePipeline",
-        "us-east-1",
-        {"usagetype": "USE1-actionExecutionMinute"},
+        "region",
+        {"usagetype": "actionExecutionMinute"},
         "action minute",
         1,
     ),
 }
 
+
+EC2_NODE = {
+    "Instance Type": "m7g.large",
+    "Operating System": "Linux",
+    "Tenancy": "Shared",
+    "Pre Installed S/W": "NA",
+    "CapacityStatus": "Used",
+}
 RDS_CLASSES = {"small": "db.t4g.medium", "medium": "db.m7g.large", "large": "db.m7g.xlarge"}
 CACHE_CLASSES = {"small": "cache.t4g.medium", "large": "cache.m7g.large"}
 SAVINGS_PLAN_USAGE = {
-    "fargate.vcpu_hours": "USE1-Fargate-vCPU-Hours:perCPU",
-    "fargate.gb_hours": "USE1-Fargate-GB-Hours",
+    "fargate.vcpu_hours": "Fargate-vCPU-Hours:perCPU",
+    "fargate.gb_hours": "Fargate-GB-Hours",
     "lambda.gb_seconds": "Lambda-GB-Second",
     "ec2.node_hours": "BoxUsage:m7g.large",
 }
+REDSHIFT_RESERVATION = "Redshift:ServerlessUsage-CR-1YR-NU"
+
+
+def usage_names(usagetype: str, region: str) -> set[str]:
+    """The ways AWS writes a usage type in `region`'s offer files: with the region's prefix
+    (USW2-Fargate-GB-Hours), its code (us-west-2-KMS-Keys), or, in US East, bare."""
+    names = {f"{USAGE_PREFIXES[region]}-{usagetype}", f"{region}-{usagetype}"}
+    return names | {usagetype} if region == REFERENCE else names
 
 
 class Offers:
+    """Downloads offer files, once each; with a cache folder, keeps them between runs."""
+
     def __init__(self, cache: Path | None):
         self.cache = cache
         self.loaded: dict[str, Any] = {}
+        self.indexes: dict[str, Any] = {}
 
-    def _download(self, url: str, name: str) -> Any:
-        path = self.cache / name if self.cache else None
-        if path and path.exists():
-            return json.loads(path.read_bytes())
-        print(f"downloading {url}")
-        data = urllib.request.urlopen(url, timeout=900).read()
-        if path:
-            path.write_bytes(data)
-        return json.loads(data)
+    def _get(self, url: str, timeout: int = 120) -> Any:
+        return json.load(urllib.request.urlopen(url, timeout=timeout))
 
-    def _cached(self, name: str) -> bool:
-        return bool(self.cache and (self.cache / name).exists())
+    def _cached(self, name: str) -> Path | None:
+        return self.cache / name if self.cache and (self.cache / name).exists() else None
 
-    def offer(self, offer: str, region: str) -> Any:
+    def _index(self, offer: str) -> dict[str, Any]:
+        if offer not in self.indexes:
+            if offer == "savingsplan":
+                url = f"{BASE}/savingsPlan/v1.0/aws/AWSComputeSavingsPlan/current/region_index.json"
+                regions = self._get(url)["regions"]
+                self.indexes[offer] = {r["regionCode"]: r["versionUrl"] for r in regions}
+            else:
+                url = f"{BASE}/offers/v1.0/aws/{offer}/current/region_index.json"
+                regions = self._get(url)["regions"]
+                self.indexes[offer] = {k: r["currentVersionUrl"] for k, r in regions.items()}
+        return self.indexes[offer]
+
+    def offer(self, offer: str, region: str) -> Any | None:
+        """One offer's JSON file for one region, or None if AWS doesn't offer it there."""
         key = f"{offer}-{region}"
         if key not in self.loaded:
-            url = ""
-            if not self._cached(f"{key}.json"):
-                index_url = f"{BASE}/offers/v1.0/aws/{offer}/current/region_index.json"
-                index = json.load(urllib.request.urlopen(index_url, timeout=120))
-                url = BASE + index["regions"][region]["currentVersionUrl"]
-            self.loaded[key] = self._download(url, f"{key}.json")
+            cached = self._cached(f"{key}.json")
+            if cached:
+                self.loaded[key] = json.loads(cached.read_bytes())
+            elif region not in self._index(offer):
+                self.loaded[key] = None
+            else:
+                url = BASE + self._index(offer)[region]
+                print(f"downloading {url}")
+                data = urllib.request.urlopen(url, timeout=900).read()
+                if self.cache:
+                    (self.cache / f"{key}.json").write_bytes(data)
+                self.loaded[key] = json.loads(data)
         return self.loaded[key]
 
-    def savings_plans(self) -> Any:
-        key = "savingsplan-AWSComputeSavingsPlan-us-east-1"
+    def csv_rows(self, offer: str, region: str, needles: list[str]) -> tuple[str, list[dict]]:
+        """The publication date and the rows of an offer's CSV file (AmazonEC2, or
+        "savingsplan" for Compute Savings Plans) whose line contains any of `needles`,
+        read as the file downloads, so the whole file is never held in memory."""
+        tag = hashlib.sha1("|".join(sorted(needles)).encode()).hexdigest()[:8]
+        key = f"{offer}-{region}-{tag}"
         if key not in self.loaded:
-            url = ""
-            if not self._cached(f"{key}.json"):
-                index_url = (
-                    f"{BASE}/savingsPlan/v1.0/aws/AWSComputeSavingsPlan/current/region_index.json"
-                )
-                index = json.load(urllib.request.urlopen(index_url, timeout=120))
-                region = next(r for r in index["regions"] if r["regionCode"] == "us-east-1")
-                url = BASE + region["versionUrl"]
-            self.loaded[key] = self._download(url, f"{key}.json")
+            cached = self._cached(f"{key}.rows.json")
+            if cached:
+                self.loaded[key] = tuple(json.loads(cached.read_bytes()))
+            elif region not in self._index(offer):
+                self.loaded[key] = ("", [])
+            else:
+                url = BASE + self._index(offer)[region].removesuffix(".json") + ".csv"
+                print(f"reading {url}")
+                self.loaded[key] = _filter_csv(urllib.request.urlopen(url, timeout=900), needles)
+                if self.cache:
+                    (self.cache / f"{key}.rows.json").write_text(json.dumps(self.loaded[key]))
         return self.loaded[key]
 
 
-def _match(product: dict, wanted: dict[str, str]) -> bool:
-    attrs = product.get("attributes", {})
-    return all(attrs.get(k) == v for k, v in wanted.items())
+def _filter_csv(stream, needles: list[str]) -> tuple[str, list[dict]]:
+    """AWS's offer CSVs start with five lines of metadata, then a header row."""
+    lines = io.TextIOWrapper(stream, encoding="utf-8", newline="")
+    meta = dict(next(csv.reader([lines.readline()])) for _ in range(5))
+    header = next(csv.reader([lines.readline()]))
+    rows = [
+        dict(zip(header, next(csv.reader([line])), strict=False))
+        for line in lines
+        if any(n in line for n in needles)
+    ]
+    return meta.get("Publication Date", "")[:10], rows
 
 
-def on_demand(offers: Offers, offer: str, region: str, wanted: dict[str, str]) -> dict[str, Any]:
-    data = offers.offer(offer, region)
+def _match(attrs: dict, wanted: dict[str, Any], region: str, scope: str) -> bool:
+    for name, value in wanted.items():
+        if name == "usagetype" and scope == "region":
+            options = (value,) if isinstance(value, str) else value
+            if not any(attrs.get(name) in usage_names(v, region) for v in options):
+                return False
+        elif attrs.get(name) != value:
+            return False
+    return True
+
+
+def on_demand(
+    offers: Offers, offer: str, region: str, wanted: dict[str, Any], scope: str = "region"
+) -> dict[str, Any] | None:
+    """The first paid tier of the matching on-demand price, or None if there isn't one."""
+    if scope == "edge":
+        wanted = {k: v.format(edge=EDGES[region]) for k, v in wanted.items()}
+    data = offers.offer(offer, region if scope == "region" else "aws-other")
+    if data is None:
+        return None
     found = []
     for sku, product in data["products"].items():
-        if not _match(product, wanted):
+        if not _match(product.get("attributes", {}), wanted, region, scope):
             continue
         for term in data["terms"]["OnDemand"].get(sku, {}).values():
             for dim in term["priceDimensions"].values():
@@ -467,17 +562,21 @@ def on_demand(offers: Offers, offer: str, region: str, wanted: dict[str, str]) -
                         (begin, {"sku": sku, "price": price, "description": dim["description"]})
                     )
     if not found:
-        raise SystemExit(f"no price for {offer} {region} {wanted}")
+        return None
     # The first paid tier; later volume tiers are cheaper and rarely reached.
     first = min(found, key=lambda item: item[0])[1]
     return first | {"published": data.get("publicationDate", "")[:10]}
 
 
-def reserved(offers: Offers, offer: str, wanted: dict[str, str], years: int) -> float | None:
-    data = offers.offer(offer, "us-east-1")
+def reserved(
+    offers: Offers, offer: str, region: str, wanted: dict[str, str], years: int
+) -> float | None:
+    data = offers.offer(offer, region)
+    if data is None:
+        return None
     best = None
     for sku, product in data["products"].items():
-        if not _match(product, wanted):
+        if not _match(product.get("attributes", {}), wanted, region, "region"):
             continue
         for term in data["terms"].get("Reserved", {}).get(sku, {}).values():
             attrs = term["termAttributes"]
@@ -497,36 +596,68 @@ def reserved(offers: Offers, offer: str, wanted: dict[str, str], years: int) -> 
     return best
 
 
-def savings_plan_rates(offers: Offers) -> dict[str, dict[int, float]]:
-    data = offers.savings_plans()
-    plans = {p["sku"]: p for p in data["products"]}
+def ec2_node(offers: Offers, region: str) -> dict[str, Any] | None:
+    """The on-demand price of the m7g.large Linux node Kubernetes designs run on."""
+    published, rows = offers.csv_rows("AmazonEC2", region, [SAVINGS_PLAN_USAGE["ec2.node_hours"]])
+    names = usage_names(SAVINGS_PLAN_USAGE["ec2.node_hours"], region)
+    for row in rows:
+        if (
+            row.get("TermType") == "OnDemand"
+            and row.get("usageType") in names
+            and all(row.get(k) == v for k, v in EC2_NODE.items())
+            and float(row.get("PricePerUnit") or 0) > 0
+        ):
+            return {
+                "sku": row["SKU"],
+                "price": float(row["PricePerUnit"]),
+                "description": row["PriceDescription"],
+                "published": published,
+            }
+    return None
+
+
+def savings_plan_rates(offers: Offers, region: str) -> dict[str, dict[int, float]]:
+    """Compute Savings Plans rates (no upfront, 1 and 3 years) for the usage they cover."""
+    _published, rows = offers.csv_rows("savingsplan", region, list(SAVINGS_PLAN_USAGE.values()))
+    wanted = {
+        name: key
+        for key, usage in SAVINGS_PLAN_USAGE.items()
+        for name in usage_names(usage, region)
+    }
     rates: dict[str, dict[int, float]] = {}
-    wanted = {usage: key for key, usage in SAVINGS_PLAN_USAGE.items()}
-    for term in data["terms"]["savingsPlan"]:
-        plan = plans.get(term["sku"], {})
-        if plan.get("productFamily") != "ComputeSavingsPlans":
+    for row in rows:
+        if row.get("Product Family") != "ComputeSavingsPlans":
             continue
-        if plan.get("attributes", {}).get("purchaseOption") != "No Upfront":
+        if row.get("PurchaseOption") != "No Upfront":
             continue
-        years = term["leaseContractLength"]["duration"]
-        for rate in term["rates"]:
-            key = wanted.get(rate["discountedUsageType"])
-            if key and rate.get("discountedOperation", "") in ("", "RunInstances", "Invoke"):
-                rates.setdefault(key, {})[years] = float(rate["discountedRate"]["price"])
+        key = wanted.get(row.get("DiscountedUsageType", ""))
+        if key and row.get("DiscountedOperation", "") in ("", "RunInstances", "Invoke"):
+            years = int(row["LeaseContractLength"])
+            rates.setdefault(key, {})[years] = float(row["DiscountedRate"])
     return rates
 
 
-def build(offers: Offers) -> dict[str, Any]:
-    prices: dict[str, Any] = {}
-    published = set()
+def expected_keys() -> set[str]:
+    """Every price the reference region must have."""
+    sizes = {f"rds.{s}.{az}" for s in RDS_CLASSES for az in ("single", "multi")}
+    return set(ON_DEMAND) | {"ec2.node_hours"} | sizes | {f"elasticache.{s}" for s in CACHE_CLASSES}
 
-    def put(key: str, unit: str, multiplier: float, found: dict[str, Any]) -> None:
+
+def region_prices(offers: Offers, region: str) -> tuple[dict[str, Any], set[str]]:
+    """Every price Clarchy uses that AWS offers in `region`, and the offers' dates."""
+    prices: dict[str, Any] = {}
+    published: set[str] = set()
+
+    def put(key: str, unit: str, multiplier: float, found: dict[str, Any] | None) -> None:
+        if found is None:
+            return
         published.add(found.pop("published"))
         price = round(found.pop("price") * multiplier, 8)
         prices[key] = {"price": price, "unit": unit, **found}
 
-    for key, (offer, region, wanted, unit, multiplier) in ON_DEMAND.items():
-        put(key, unit, multiplier, on_demand(offers, offer, region, wanted))
+    for key, (offer, scope, wanted, unit, multiplier) in ON_DEMAND.items():
+        put(key, unit, multiplier, on_demand(offers, offer, region, wanted, scope))
+    put("ec2.node_hours", "m7g.large node-hour", 1, ec2_node(offers, region))
 
     for size, instance in RDS_CLASSES.items():
         for az, option in (("single", "Single-AZ"), ("multi", "Multi-AZ")):
@@ -536,51 +667,67 @@ def build(offers: Offers) -> dict[str, Any]:
                 "deploymentOption": option,
             }
             key = f"rds.{size}.{az}"
-            put(
-                key,
-                f"{instance} {option} hour",
-                1,
-                on_demand(offers, "AmazonRDS", "us-east-1", wanted),
-            )
+            unit = f"{instance} {option} hour"
+            put(key, unit, 1, on_demand(offers, "AmazonRDS", region, wanted))
             for years in (1, 3):
-                rate = reserved(offers, "AmazonRDS", wanted, years)
-                if rate is not None:
+                rate = reserved(offers, "AmazonRDS", region, wanted, years)
+                if rate is not None and key in prices:
                     prices[key][f"commit_{years}yr"] = rate
 
     for size, node in CACHE_CLASSES.items():
         wanted = {"instanceType": node, "cacheEngine": "Valkey", "usagetype": f"NodeUsage:{node}"}
         key = f"elasticache.{size}"
-        put(
-            key, f"{node} node-hour", 1, on_demand(offers, "AmazonElastiCache", "us-east-1", wanted)
-        )
+        put(key, f"{node} node-hour", 1, on_demand(offers, "AmazonElastiCache", region, wanted))
         for years in (1, 3):
-            rate = reserved(offers, "AmazonElastiCache", wanted, years)
-            if rate is not None:
+            rate = reserved(offers, "AmazonElastiCache", region, wanted, years)
+            if rate is not None and key in prices:
                 prices[key][f"commit_{years}yr"] = rate
 
-    for key, by_years in savings_plan_rates(offers).items():
-        multiplier = ON_DEMAND[key][4]
+    for key, by_years in savings_plan_rates(offers, region).items():
+        multiplier = ON_DEMAND[key][4] if key in ON_DEMAND else 1
         for years, rate in by_years.items():
-            prices[key][f"commit_{years}yr"] = round(rate * multiplier, 8)
+            if key in prices:
+                prices[key][f"commit_{years}yr"] = round(rate * multiplier, 8)
 
     # Redshift Serverless capacity reservations (1 year, no upfront).
-    redshift = offers.offer("AmazonRedshift", "us-east-1")
-    for sku, product in redshift["products"].items():
-        if product["attributes"].get("usagetype") == "USE1-Redshift:ServerlessUsage-CR-1YR-NU":
-            for term in redshift["terms"]["OnDemand"][sku].values():
-                for dim in term["priceDimensions"].values():
-                    prices["redshift.rpu_hours"]["commit_1yr"] = float(dim["pricePerUnit"]["USD"])
+    reservation = on_demand(offers, "AmazonRedshift", region, {"usagetype": REDSHIFT_RESERVATION})
+    if reservation and "redshift.rpu_hours" in prices:
+        prices["redshift.rpu_hours"]["commit_1yr"] = reservation["price"]
 
+    return dict(sorted(prices.items())), published
+
+
+def build(offers: Offers, regions: list[str] | None = None) -> dict[str, Any]:
+    regions = regions or list(REGION_NAMES)
+    reference, published = region_prices(offers, REFERENCE)
+    missing = expected_keys() - set(reference)
+    if missing:
+        raise SystemExit(f"no {REFERENCE} price for: {', '.join(sorted(missing))}")
+    elsewhere: dict[str, Any] = {}
+    for region in regions:
+        if region == REFERENCE:
+            continue
+        prices, dates = region_prices(offers, region)
+        published |= dates
+        # The reference region keeps AWS's descriptions; the others keep what differs.
+        elsewhere[region] = {
+            "price_region": REGION_NAMES[region],
+            "prices": {
+                key: {k: v for k, v in entry.items() if k not in ("unit", "description")}
+                for key, entry in prices.items()
+            },
+        }
     return {
         "provider": "aws",
         "currency": "USD",
-        "price_region": "US East (N. Virginia)",
-        "region_code": "us-east-1",
-        "as_of": max(published) if published else date.today().isoformat(),
+        "price_region": REGION_NAMES[REFERENCE],
+        "region_code": REFERENCE,
+        "as_of": max(published - {""}) if published - {""} else date.today().isoformat(),
         "source": "AWS Price List API",
         "verified": True,
         "calculator": "https://calculator.aws/",
-        "prices": dict(sorted(prices.items())),
+        "prices": reference,
+        "regions": elsewhere,
     }
 
 
@@ -589,15 +736,30 @@ def user_price_dir() -> Path:
     return Path.home() / ".cache" / "clarchy" / "prices"
 
 
-def write_book(output: Path, cache: Path | None = None) -> dict[str, Any]:
-    book = build(Offers(cache))
+def dump_book(book: dict[str, Any], header: str) -> str:
+    """The reference prices one field per line; each other region's prices one per line."""
+    top = {k: v for k, v in book.items() if k != "regions"}
+    text = header + yaml.safe_dump(top, sort_keys=False, width=100)
+    if book.get("regions"):
+        regions = yaml.safe_dump(
+            {"regions": book["regions"]}, sort_keys=False, width=200, default_flow_style=None
+        )
+        text += regions
+    return text
+
+
+def write_book(
+    output: Path, cache: Path | None = None, regions: list[str] | None = None
+) -> dict[str, Any]:
+    book = build(Offers(cache), regions)
     header = (
         "# Generated by clarchy.aws_prices from the AWS Price List API. Do not edit; rerun\n"
         "# `clarchy prices update` to refresh. Prices are per `unit`; commit_1yr /\n"
-        "# commit_3yr are effective rates with Savings Plans or reservations.\n"
+        "# commit_3yr are effective rates with Savings Plans or reservations. `regions` has\n"
+        "# the same prices in each other region Clarchy offers, where AWS sells them.\n"
     )
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(header + yaml.safe_dump(book, sort_keys=False, width=100), encoding="utf-8")
+    output.write_text(dump_book(book, header), encoding="utf-8")
     return book
 
 
@@ -658,12 +820,24 @@ def main(argv: list[str] | None = None) -> int:
         help=f"price book to write (default: {user_price_dir() / 'aws.yaml'})",
     )
     parser.add_argument("--cache", type=Path, help="folder to keep downloaded offer files")
+    parser.add_argument(
+        "--regions",
+        help=f"comma-separated region codes (default: all {len(REGION_NAMES)})",
+    )
     args = parser.parse_args(argv)
     if args.cache:
         args.cache.mkdir(parents=True, exist_ok=True)
+    regions = args.regions.split(",") if args.regions else None
+    unknown = set(regions or ()) - set(REGION_NAMES)
+    if unknown:
+        parser.error(f"unknown region(s): {', '.join(sorted(unknown))}")
     output = args.output or user_price_dir() / "aws.yaml"
-    book = write_book(output, args.cache)
-    print(f"wrote {output} ({len(book['prices'])} prices, AWS data published {book['as_of']})")
+    book = write_book(output, args.cache, regions)
+    count = len(book["prices"]) + sum(len(r["prices"]) for r in book["regions"].values())
+    print(
+        f"wrote {output} ({count} prices in {1 + len(book['regions'])} regions, "
+        f"AWS data published {book['as_of']})"
+    )
     return 0
 
 

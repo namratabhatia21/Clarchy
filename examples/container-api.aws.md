@@ -85,23 +85,23 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Estimated cost
 
-About **$568 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$606 a month** on demand (Europe (Ireland) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $568 | – |
-| 6 months | $3,414 | – |
-| 1 year | $6,841 | $5,608 |
-| 3 years | $20,672 | $13,632 |
+| 1 month | $606 | – |
+| 6 months | $3,640 | – |
+| 1 year | $7,292 | $6,043 |
+| 3 years | $22,025 | $14,687 |
 
 | Service | Per month |
 |---|---:|
-| Amazon RDS for PostgreSQL (PostgreSQL) | $292 |
+| Amazon RDS for PostgreSQL (PostgreSQL) | $322 |
 | Amazon ECS on AWS Fargate (API containers) | $108 |
-| Amazon ElastiCache (Redis OSS / Valkey) (Session + query cache) | $75.92 |
+| Amazon ElastiCache (Redis OSS / Valkey) (Session + query cache) | $79.42 |
 | AWS WAF (Web firewall) | $40.00 |
-| Application Load Balancer (HTTPS load balancer) | $22.27 |
-| Amazon CloudWatch (Logs, metrics, alarms) | $12.50 |
+| Application Load Balancer (HTTPS load balancer) | $24.24 |
+| Amazon CloudWatch (Logs, metrics, alarms) | $14.25 |
 | Amazon S3 (Uploads) | $7.03 |
 | AWS Secrets Manager (DB credentials) | $6.73 |
 | Amazon Route 53 (Domain) | $1.10 |
@@ -115,7 +115,6 @@ About **$568 a month** on demand (US East (N. Virginia) list prices as of 2026-1
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for US East (N. Virginia); your region (Ireland (eu-west-1)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

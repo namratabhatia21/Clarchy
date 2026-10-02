@@ -2,13 +2,14 @@ name: Pages
 
 # Publishes the site (clarchy export-site) to GitHub Pages and, when the repository has
 # Cloudflare secrets, to the Cloudflare Worker "clarchy" (site, API and D1 database, all in
-# wrangler.jsonc). AWS prices are refreshed from the AWS Price List API on every run.
+# wrangler.jsonc). Prices come from the committed price books, which the Prices workflow
+# (prices.yml) refreshes every day.
 #
 # Cloudflare: Workers Builds (the Worker connected to this repository, build command
-# "make prices site") deploys every push. This workflow deploys to Cloudflare only on the
-# Monday schedule and on manual runs, so fresh AWS prices reach clarchy.com every week.
-# That needs the secrets CLOUDFLARE_API_TOKEN (permissions "Workers Scripts: Edit" and
-# "D1: Edit") and CLOUDFLARE_ACCOUNT_ID.
+# "make prices site") deploys every push, including the daily price commits. This workflow
+# deploys to Cloudflare only on manual runs, as a fallback. That needs the secrets
+# CLOUDFLARE_API_TOKEN (permissions "Workers Scripts: Edit" and "D1: Edit") and
+# CLOUDFLARE_ACCOUNT_ID.
 # GitHub Pages is optional: the copy there is published only when Settings → Pages → Source
 # is "GitHub Actions" (private repositories need a paid GitHub plan for Pages). When Pages
 # is off, those steps are skipped and the run still passes. To skip them on purpose, set
@@ -16,8 +17,6 @@ name: Pages
 
 on:
   push:
-  schedule:
-    - cron: "17 6 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -43,11 +42,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Refresh AWS prices and build the site
+      - name: Build the site
         run: make prices site
       - name: Deploy to Cloudflare (Worker "clarchy")
-        # Pushes are deployed by Workers Builds; this covers the weekly price refresh.
-        if: env.HAS_CLOUDFLARE == 'true' && github.event_name != 'push'
+        # Pushes are deployed by Workers Builds; this is for manual runs.
+        if: env.HAS_CLOUDFLARE == 'true' && github.event_name == 'workflow_dispatch'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

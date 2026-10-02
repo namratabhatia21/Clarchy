@@ -4,8 +4,9 @@
 Three parts, kept apart so each can be checked on its own:
 - usage (here): provider-neutral quantities per component, from the design's sizing and
   requirements, each with a sentence saying where it came from;
-- price books (data/prices/<provider>.yaml): unit prices. AWS comes from the AWS Price
-  List API with SKUs (see aws_prices.py); Azure and Google Cloud are compiled by hand
+- price books (data/prices/<provider>.yaml): unit prices for a reference region, and under
+  `regions` the same prices in each other region Clarchy offers. AWS comes from the AWS
+  Price List API with SKUs (see aws_prices.py); Azure and Google Cloud are compiled by hand
   and marked approximate;
 - billing models (data/prices/models.yaml): which priced items each capability has on
   each provider.
@@ -53,13 +54,43 @@ def _load_yaml(source) -> dict[str, Any]:
     return _LOADED[key]
 
 
-def price_book(provider: str) -> dict[str, Any] | None:
+def _book_file(provider: str):
     for folder in _override_dirs():
         candidate = folder / f"{provider}.yaml"
         if candidate.is_file():
-            return _load_yaml(candidate)
+            return candidate
     bundled = catalog.data_path("prices", f"{provider}.yaml")
-    return _load_yaml(bundled) if bundled.is_file() else None
+    return bundled if bundled.is_file() else None
+
+
+def price_book(provider: str, region: str | None = None) -> dict[str, Any] | None:
+    """A provider's price book, for one of its regions when given. A region's book has that
+    region's prices; where the region has no price for an item, the reference region's
+    price stands in, marked `elsewhere`. A book with no prices for the region is returned
+    as it is, for its reference region."""
+    source = _book_file(provider)
+    if source is None:
+        return None
+    book = _load_yaml(source)
+    regional = (book.get("regions") or {}).get(region) if region else None
+    if regional is None:
+        return book
+    key = f"{source}#{region}"
+    if key not in _LOADED:
+        prices = {}
+        for name, entry in book["prices"].items():
+            local = regional["prices"].get(name)
+            prices[name] = (
+                {"unit": entry["unit"], **local} if local else entry | {"elsewhere": True}
+            )
+        _LOADED[key] = {
+            **{k: v for k, v in book.items() if k != "regions"},
+            "price_region": regional["price_region"],
+            "region_code": region,
+            "reference_region": book["price_region"],
+            "prices": prices,
+        }
+    return _LOADED[key]
 
 
 def billing_models() -> dict[str, Any]:
@@ -441,6 +472,7 @@ class Item:
     scale: float
     commit: dict[int, float] = field(default_factory=dict)
     approximate: bool = False
+    elsewhere: bool = False  # priced in the reference region: none listed in this one
 
     def billable(self, month: int) -> float:
         return max(0.0, (self.quantity + self.grows * self.scale * month) - self.free)
@@ -489,6 +521,7 @@ def _items(comp, model: dict[str, Any], book: dict[str, Any], ctx: Context) -> l
                 scale,
                 commit,
                 approximate,
+                bool(entry.get("elsewhere")),
             )
         )
     return items
@@ -497,7 +530,7 @@ def _items(comp, model: dict[str, Any], book: dict[str, Any], ctx: Context) -> l
 def estimate(arch: ProviderArchitecture) -> dict[str, Any]:
     """The cost payload for one design on one provider."""
     provider = arch.provider
-    book = price_book(provider)
+    book = price_book(provider, arch.region_code)
     models = billing_models().get(provider)
     if not book or not models:
         return {
@@ -571,6 +604,7 @@ def estimate(arch: ProviderArchitecture) -> dict[str, Any]:
                 "commitment": commitment,
                 "pricing_url": model.get("pricing_url"),
                 "approximate": any(i.approximate for i in items),
+                "elsewhere": any(i.elsewhere for i in items),
                 "items": [
                     {
                         "name": i.name,
@@ -584,10 +618,12 @@ def estimate(arch: ProviderArchitecture) -> dict[str, Any]:
                 ],
             }
         )
+    elsewhere = [line["service"] for line in payload_lines if line["elsewhere"]]
     return {
         "available": True,
         "currency": book["currency"],
         "price_region": book["price_region"],
+        "reference_region": book.get("reference_region"),
         "as_of": str(book["as_of"]),
         "source": book["source"],
         "verified": bool(book.get("verified")),
@@ -613,8 +649,21 @@ def estimate(arch: ProviderArchitecture) -> dict[str, Any]:
             [f"Prices are for {book['price_region']}; your region ({arch.region_text}) may differ."]
             if book.get("region_code") != arch.region_code
             else []
+        )
+        + (
+            [
+                f"{_and(elsewhere)} {'has' if len(elsewhere) == 1 else 'have'} no list price "
+                f"in {book['price_region']}, so {'it is' if len(elsewhere) == 1 else 'they are'} "
+                f"priced at {book['reference_region']} rates."
+            ]
+            if elsewhere
+            else []
         ),
     }
+
+
+def _and(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} and {names[-1]}"
 
 
 def summary_markdown(cost: dict[str, Any]) -> list[str]:

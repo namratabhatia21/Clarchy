@@ -1,0 +1,64 @@
+name: Prices
+
+# Refreshes the price books every day from the providers' own price APIs, for every region
+# Clarchy offers, and commits them when a price has changed. Workers Builds then deploys the
+# commit to clarchy.com, as it does every push. A day when only the publication date moved
+# commits nothing.
+#
+# - AWS: the AWS Price List API (public, no key). About 4 GB of offer files across eight
+#   regions, read as they download; the job takes a few minutes.
+#
+# Commits are made by github-actions[bot]. Pushes made with the workflow's own token don't
+# start other workflows, so this job runs the tests itself before it commits.
+
+on:
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: Refresh AWS prices
+        run: python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml
+      - name: Keep the books if only their dates moved
+        id: changed
+        run: |
+          changes=$(git diff --unified=0 -- src/clarchy/data/prices | grep -E '^[+-][^+-]' | grep -v 'as_of:' || true)
+          if [ -z "$changes" ]; then
+            git checkout -- src/clarchy/data/prices
+            echo "No price has changed."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$changes" | head -40
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Update the examples, whose explanations show prices
+        if: steps.changed.outputs.changed == 'true'
+        run: make examples
+      - name: Test
+        if: steps.changed.outputs.changed == 'true'
+        run: python -m pytest -q
+      - name: Commit and push
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/clarchy/data/prices examples
+          git commit -m "Refresh prices from the providers' price APIs ($(date -u +%F))"
+          git push

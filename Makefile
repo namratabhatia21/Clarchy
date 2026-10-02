@@ -29,13 +29,19 @@ SITE_VENV := build/site-venv
 $(SITE_VENV):
 	$(PYTHON) -m venv $(SITE_VENV)
 
-# Refreshes the AWS price book from the AWS Price List API, and keeps the committed one
-# when the API can't be reached.
+# Refreshes the price books from the providers' price APIs, for every region, when
+# CLARCHY_REFRESH_PRICES=1 (the daily workflow, .github/workflows/prices.yml, sets it and
+# commits the result). Otherwise the committed books are used, so site builds stay fast.
+# A provider whose API can't be reached keeps its committed book.
 prices: $(SITE_VENV)
+ifeq ($(CLARCHY_REFRESH_PRICES),1)
 	$(SITE_VENV)/bin/pip install -q pyyaml
 	PYTHONPATH=src $(SITE_VENV)/bin/python -m clarchy.aws_prices \
 		--output src/clarchy/data/prices/aws.yaml \
 		|| echo "warning: could not refresh AWS prices; using the committed price book"
+else
+	@echo "prices: using the committed price books (CLARCHY_REFRESH_PRICES=1 refreshes them)"
+endif
 
 # site/index.html and site/clarchy-engine.zip, served as static assets (wrangler.jsonc).
 site: $(SITE_VENV)

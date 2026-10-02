@@ -109,26 +109,26 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Estimated cost
 
-About **$2,220 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$2,309 a month** on demand (Europe (Ireland) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $2,220 | – |
-| 6 months | $13,327 | – |
-| 1 year | $26,675 | $24,521 |
-| 3 years | $80,274 | $68,867 |
+| 1 month | $2,309 | – |
+| 6 months | $13,861 | – |
+| 1 year | $27,742 | $25,440 |
+| 3 years | $83,474 | $71,008 |
 
 | Service | Per month |
 |---|---:|
 | Amazon Cognito (Customer accounts) | $1,045 |
-| Amazon RDS for PostgreSQL (Orders and catalogue) | $315 |
-| Amazon EKS (API microservices) | $192 |
+| Amazon RDS for PostgreSQL (Orders and catalogue) | $348 |
+| Amazon EKS (API microservices) | $206 |
+| Amazon ElastiCache (Redis OSS / Valkey) (Sessions and hot catalogue) | $203 |
 | AWS WAF (Web firewall) | $190 |
-| Amazon ElastiCache (Redis OSS / Valkey) (Sessions and hot catalogue) | $185 |
-| Amazon EKS (Order workers) | $119 |
-| Amazon CloudWatch (Logs, metrics, traces) | $57.50 |
+| Amazon EKS (Order workers) | $133 |
+| Amazon CloudWatch (Logs, metrics, traces) | $65.55 |
 | Amazon SQS (Order queue) | $47.60 |
-| Application Load Balancer (Cluster ingress) | $33.95 |
+| Application Load Balancer (Cluster ingress) | $35.92 |
 | AWS Secrets Manager (Service credentials) | $17.77 |
 | Amazon S3 (Product images) | $11.72 |
 | Amazon Route 53 (Domain) | $2.90 |
@@ -142,7 +142,6 @@ About **$2,220 a month** on demand (US East (N. Virginia) list prices as of 2026
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for US East (N. Virginia); your region (Ireland (eu-west-1)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

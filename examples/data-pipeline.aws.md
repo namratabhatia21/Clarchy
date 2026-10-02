@@ -72,23 +72,23 @@ Streams application events into a data lake, transforms them on a schedule and s
 
 ## Estimated cost
 
-About **$1,364 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$1,469 a month** on demand (Europe (Frankfurt) list prices as of 2026-10-01; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|
-| 1 month | $1,364 | – |
-| 6 months | $8,290 | – |
-| 1 year | $16,829 | $16,357 |
-| 3 years | $53,468 | $52,051 |
+| 1 month | $1,469 | – |
+| 6 months | $8,925 | – |
+| 1 year | $18,115 | $17,545 |
+| 3 years | $57,521 | $55,810 |
 
 | Service | Per month |
 |---|---:|
-| Amazon API Gateway (Event collector) | $1,050 |
-| Amazon Redshift Serverless (Reporting warehouse) | $192 |
+| Amazon API Gateway (Event collector) | $1,110 |
+| Amazon Redshift Serverless (Reporting warehouse) | $229 |
 | AWS Glue (Nightly transforms) | $52.80 |
-| Amazon S3 (Data lake (raw + curated)) | $48.70 |
-| Amazon Kinesis Data Streams (Event stream) | $16.47 |
-| Amazon CloudWatch (Pipeline monitoring) | $2.50 |
+| Amazon S3 (Data lake (raw + curated)) | $51.91 |
+| Amazon Kinesis Data Streams (Event stream) | $20.04 |
+| Amazon CloudWatch (Pipeline monitoring) | $3.15 |
 | AWS CodeBuild (Build and test) | $1.00 |
 | AWS CodePipeline (Release pipeline) | $1.00 |
 
@@ -96,7 +96,6 @@ About **$1,364 a month** on demand (US East (N. Virginia) list prices as of 2026
 - Usage comes from each component's sizing and the requirements; edit it in the Spec tab.
 - 730 hours a month. Always-free allowances are deducted where shown; trials are not.
 - Excludes tax, support plans, and data transfer not listed.
-- Prices are for US East (N. Virginia); your region (Frankfurt (eu-central-1)) may differ.
 
 ---
 Estimates use list prices and the usage stated above; check them with the provider's calculator. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.

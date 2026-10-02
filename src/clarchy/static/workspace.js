@@ -471,6 +471,7 @@ class Workspace {
         el("span", { class: "svc" }, el("b", { text: line.service }), el("span", { text: line.label })),
         el("span", { class: "line-tags" },
           line.approximate && el("span", { class: "tag close", title: "Priced from the vendor's pricing page, not the cloud provider's price list", text: "Approx." }),
+          line.elsewhere && el("span", { class: "tag neutral", title: `No list price in ${cost.price_region}; priced at ${cost.reference_region} rates`, text: "Other region" }),
           line.commitment && el("span", { class: "tag neutral", title: line.commitment, text: "Commitment eligible" })),
         el("span", { class: "amount", text: `${money(line.monthly)}/mo` })),
       el("table", { class: "cost-items" }, el("tbody", {}, line.items.map((item) => el("tr", {},

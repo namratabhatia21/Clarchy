@@ -1,6 +1,6 @@
 # 0007: Cost estimates come from price lists, not from the model
 
-**Status:** accepted · 2026-10-01 · applies [0003](0003-llm-proposes-code-calculates.md)
+**Status:** accepted · 2026-10-01 · applies [0003](0003-llm-proposes-code-calculates.md) · regions and daily refresh updated by [0014](0014-daily-prices-for-every-region.md)
 
 ## Context
 

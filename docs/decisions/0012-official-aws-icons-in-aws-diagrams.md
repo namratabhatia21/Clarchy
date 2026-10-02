@@ -1,6 +1,7 @@
-# 0012: AWS diagrams use the official AWS Architecture Icons, bundled
+# 0012: AWS and Azure diagrams use their providers' official icons, bundled
 
-**Status:** accepted · 2026-10-02 · supersedes [0002](0002-no-bundled-provider-icons.md) for AWS
+**Status:** accepted · 2026-10-02 · supersedes [0002](0002-no-bundled-provider-icons.md) for
+AWS and Azure · amended the same day to add Azure (see the end)
 
 ## Context
 
@@ -39,3 +40,21 @@ each icon standing for the AWS service it names.
   `data/icons/aws/` returns every diagram to badges with no other change.
 - AWS refreshes the set a few times a year. Updating means replacing the files from a new
   release and running the tests, which list any service whose icon is missing.
+
+## Amendment: Azure
+
+Microsoft's Azure Architecture Center publishes Azure's architecture icons with these
+terms: "Microsoft permits the use of these icons in architectural diagrams, training
+materials, or documentation. You can copy, distribute, and display the icons only for the
+permitted use", and asks that icons are not cropped, flipped, rotated, distorted or used
+for another product, with the product's name near the icon. Azure diagrams in Clarchy meet
+that in the same way as AWS ones, so the same decision applies:
+
+- `data/icons/azure/` holds one SVG per Azure service Clarchy draws (29 files, about
+  66 KB), saved byte for byte under Microsoft's file names (`10029-icon-service-Function-Apps.svg`);
+  `icon:` in `azure.yaml` is that name without `.svg`, so Microsoft's own download, passed
+  with `--icons`, is searched the same way. `NOTICE.md` records the terms and the source.
+- Services that are not Azure's (GitHub Codespaces, GitHub Copilot, KEDA, Bicep), and
+  those with no icon in the release used (Microsoft Fabric, Foundry Agent Service), keep
+  their badges. Azure DevOps services (Repos, Pipelines) use the Azure DevOps icon.
+- Google Cloud still has none (ADR 0002 holds), until its icon terms are reviewed.

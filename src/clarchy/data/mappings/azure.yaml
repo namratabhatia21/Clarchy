@@ -7,7 +7,9 @@ provider:
   kind: cloud
   reviewed: false
   # Diagram styling that follows Azure architecture-diagram conventions: a blue
-  # subscription boundary and Azure's blue-led palette. Colours only, no logos.
+  # subscription boundary and Azure's blue-led palette. Services are drawn with
+  # Microsoft's Azure architecture icons (data/icons/azure/, ADR 0012); no logos.
+  # icon: the icon's official file name without .svg.
   theme:
     font: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
     frame: { stroke: "#0078D4", fill: "#FFFFFF", label: "#0F548C", dash: "" }
@@ -31,12 +33,14 @@ services:
   dns:
     service: Azure DNS
     short: DNS
+    icon: 10064-icon-service-DNS-Zones
     fidelity: exact
     alternatives: [Cloudflare DNS]
     docs: https://learn.microsoft.com/azure/dns/
   cdn:
     service: Azure Front Door
     short: AFD
+    icon: 10073-icon-service-Front-Door-and-CDN-Profiles
     fidelity: exact
     alternatives: [Cloudflare]
     note: Front Door combines CDN, global HTTP load balancing and an optional WAF in one service.
@@ -44,6 +48,7 @@ services:
   waf:
     service: Azure Web Application Firewall
     short: WAF
+    icon: 10362-icon-service-Web-Application-Firewall-Policies(WAF)
     fidelity: exact
     alternatives: [Cloudflare WAF]
     note: Runs on Azure Front Door or Application Gateway rather than as a separate service.
@@ -51,27 +56,32 @@ services:
   load-balancer:
     service: Azure Application Gateway
     short: AGW
+    icon: 10076-icon-service-Application-Gateways
     fidelity: exact
     docs: https://learn.microsoft.com/azure/application-gateway/
   api-gateway:
     service: Azure API Management
     short: APIM
+    icon: 10042-icon-service-API-Management-Services
     fidelity: exact
     docs: https://learn.microsoft.com/azure/api-management/
   container-service:
     service: Azure Container Apps
     short: ACA
+    icon: 02989-icon-service-Container-Apps-Environments
     fidelity: exact
     alternatives: [Azure Kubernetes Service]
     docs: https://learn.microsoft.com/azure/container-apps/
   serverless-function:
     service: Azure Functions
     short: FN
+    icon: 10029-icon-service-Function-Apps
     fidelity: exact
     docs: https://learn.microsoft.com/azure/azure-functions/
   llm-inference:
     service: Azure AI Foundry (incl. Azure OpenAI)
     short: AIF
+    icon: 03513-icon-service-AI-Studio
     fidelity: exact
     alternatives: [OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     docs: https://learn.microsoft.com/azure/ai-foundry/
@@ -85,6 +95,7 @@ services:
   llm-gateway:
     service: Azure API Management (AI gateway)
     short: AIG
+    icon: 10042-icon-service-API-Management-Services
     fidelity: close
     alternatives: [LiteLLM on Azure Container Apps]
     note: Gateway policies for Azure OpenAI and other models, such as token limits, load balancing across deployments, semantic caching and token metrics. Teams that also call non-Azure models often run LiteLLM instead.
@@ -92,6 +103,7 @@ services:
   llm-observability:
     service: Application Insights (Foundry tracing)
     short: TRC
+    icon: 00012-icon-service-Application-Insights
     fidelity: close
     alternatives: [Langfuse on Azure]
     note: OpenTelemetry traces of agent runs and model calls, viewed in Foundry next to its evaluations.
@@ -99,22 +111,26 @@ services:
   message-queue:
     service: Azure Service Bus (queues)
     short: SB
+    icon: 10836-icon-service-Azure-Service-Bus
     fidelity: exact
     alternatives: [Azure Queue Storage]
     docs: https://learn.microsoft.com/azure/service-bus-messaging/
   event-bus:
     service: Azure Event Grid
     short: EG
+    icon: 10206-icon-service-Event-Grid-Topics
     fidelity: exact
     docs: https://learn.microsoft.com/azure/event-grid/
   stream:
     service: Azure Event Hubs
     short: EH
+    icon: 00039-icon-service-Event-Hubs
     fidelity: exact
     docs: https://learn.microsoft.com/azure/event-hubs/
   workflow:
     service: Azure Logic Apps
     short: LA
+    icon: 02631-icon-service-Logic-Apps
     fidelity: close
     alternatives: [Durable Functions]
     note: Logic Apps is low-code; Durable Functions is the code-first option closer to writing Step Functions logic in code.
@@ -122,6 +138,7 @@ services:
   batch-etl:
     service: Azure Data Factory
     short: ADF
+    icon: 10126-icon-service-Data-Factories
     fidelity: close
     alternatives: [Azure Databricks, Microsoft Fabric]
     note: Data Factory orchestrates and moves data; heavy transformations usually run in Databricks or Fabric Spark.
@@ -129,28 +146,33 @@ services:
   object-storage:
     service: Azure Blob Storage
     short: BLOB
+    icon: 10086-icon-service-Storage-Accounts
     fidelity: exact
     docs: https://learn.microsoft.com/azure/storage/blobs/
   relational-db:
     service: Azure Database for PostgreSQL (Flexible Server)
     short: PG
+    icon: 10131-icon-service-Azure-Database-PostgreSQL-Server
     fidelity: exact
     docs: https://learn.microsoft.com/azure/postgresql/flexible-server/
   key-value-db:
     service: Azure Cosmos DB
     short: CDB
+    icon: 10121-icon-service-Azure-Cosmos-DB
     fidelity: exact
     alternatives: [Azure Table Storage]
     docs: https://learn.microsoft.com/azure/cosmos-db/
   cache:
     service: Azure Managed Redis
     short: RED
+    icon: 03675-icon-service-Azure-Managed-Redis
     fidelity: exact
     alternatives: [Azure Cache for Redis]
     docs: https://learn.microsoft.com/azure/redis/
   vector-search:
     service: Azure AI Search
     short: AIS
+    icon: 10044-icon-service-Cognitive-Search
     fidelity: close
     alternatives: [Cosmos DB vector search, PostgreSQL with pgvector]
     note: Vector search is one feature of a full search service; small workloads may be cheaper in the database.
@@ -165,21 +187,25 @@ services:
   identity:
     service: Microsoft Entra External ID
     short: ENT
+    icon: 03425-icon-service-external-id
     fidelity: exact
     docs: https://learn.microsoft.com/entra/external-id/
   secrets:
     service: Azure Key Vault
     short: KV
+    icon: 10245-icon-service-Key-Vaults
     fidelity: exact
     docs: https://learn.microsoft.com/azure/key-vault/
   monitoring:
     service: Azure Monitor + Application Insights
     short: MON
+    icon: 00001-icon-service-Monitor
     fidelity: exact
     docs: https://learn.microsoft.com/azure/azure-monitor/
   kubernetes:
     service: Azure Kubernetes Service (AKS)
     short: AKS
+    icon: 10023-icon-service-Kubernetes-Services
     fidelity: exact
     docs: https://learn.microsoft.com/azure/aks/
   event-autoscaling:
@@ -191,23 +217,27 @@ services:
   source-control:
     service: Azure Repos
     short: REPO
+    icon: 10261-icon-service-Azure-DevOps
     fidelity: exact
     alternatives: [GitHub]
     docs: https://learn.microsoft.com/azure/devops/repos/
   ci-build:
     service: Azure Pipelines
     short: PIPE
+    icon: 10261-icon-service-Azure-DevOps
     fidelity: exact
     alternatives: [GitHub Actions]
     docs: https://learn.microsoft.com/azure/devops/pipelines/
   container-registry:
     service: Azure Container Registry
     short: ACR
+    icon: 10105-icon-service-Container-Registries
     fidelity: exact
     docs: https://learn.microsoft.com/azure/container-registry/
   cd-deploy:
     service: Azure Pipelines (release stages)
     short: REL
+    icon: 10261-icon-service-Azure-DevOps
     fidelity: exact
     alternatives: [GitHub Actions environments]
     note: The same Azure Pipelines definition usually builds and deploys.
@@ -235,6 +265,7 @@ services:
   ai-guardrails:
     service: Azure AI Content Safety (Prompt Shields)
     short: ACS
+    icon: 03390-icon-service-Content-Safety
     fidelity: exact
     alternatives: [NeMo Guardrails]
     note: Harm categories, prompt-injection shields and groundedness checks; Azure OpenAI deployments also apply default content filters.
@@ -242,6 +273,7 @@ services:
   archive-storage:
     service: Azure Blob Storage (Archive tier)
     short: ARC
+    icon: 10086-icon-service-Storage-Accounts
     fidelity: exact
     alternatives: [Blob Storage Cold tier]
     note: Rehydration takes hours; lifecycle management policies move blobs automatically.
@@ -249,6 +281,7 @@ services:
   access-governance:
     service: Microsoft Entra ID + Privileged Identity Management
     short: PIM
+    icon: 02251-icon-service-Entra-Privleged-Identity-Management
     fidelity: exact
     alternatives: [Azure Policy, Management groups]
     note: Just-in-time role activation with approval and access reviews need Entra ID P2 licences for the people who use them.
@@ -256,12 +289,14 @@ services:
   key-management:
     service: Azure Key Vault (keys)
     short: KV
+    icon: 10245-icon-service-Key-Vaults
     fidelity: exact
     alternatives: [Azure Managed HSM]
     docs: https://learn.microsoft.com/azure/key-vault/keys/about-keys
   audit-logging:
     service: Azure Monitor activity log + Log Analytics
     short: ACT
+    icon: 00007-icon-service-Activity-Log
     fidelity: exact
     alternatives: [Microsoft Sentinel]
     note: The activity log is kept 90 days for free; longer retention goes to a Log Analytics workspace or storage.
@@ -269,6 +304,7 @@ services:
   backup:
     service: Azure Backup
     short: BAK
+    icon: 02361-icon-service-Backup-Vault
     fidelity: exact
     alternatives: [Database point-in-time restore]
     docs: https://learn.microsoft.com/azure/backup/backup-overview

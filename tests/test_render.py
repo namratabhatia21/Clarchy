@@ -133,7 +133,27 @@ def test_aws_diagrams_embed_the_icon_files_unchanged():
     assert svg.count('class="ca-badge"') == badges, "every AWS service drew its icon"
 
 
-@pytest.mark.parametrize("provider", [p for p in catalog.providers() if p != "aws"])
+def test_every_drawn_azure_service_has_its_bundled_azure_icon():
+    library = bundled_library("azure")
+    services = catalog.provider_mapping("azure")["services"]
+    stems = [raw["icon"] for raw in services.values() if "icon" in raw]
+    assert len(stems) >= 30
+    assert not [s for s in stems if library.find(s) is None]
+    root = bundled_icon_dir("azure")
+    assert (root / "NOTICE.md").is_file()
+    used = {library.find(stem).name for stem in stems}
+    assert {p.name for p in root.glob("*.svg")} == used, "ship only the icons Clarchy draws"
+    # Not Azure's products, or not in this icon release: lettered badges.
+    no_icon = {raw["service"] for raw in services.values() if "icon" not in raw}
+    assert {"GitHub Copilot", "GitHub Codespaces", "KEDA add-on for AKS", "Bicep"} <= no_icon
+    a = arch("serverless-web-app", "azure")
+    svg = render_svg(a, icon_library("azure"))
+    functions = library.find("10029-icon-service-Function-Apps")
+    assert base64.b64encode(functions.read_bytes()).decode("ascii") in svg
+    assert "not affiliated with Azure" in svg
+
+
+@pytest.mark.parametrize("provider", [p for p in catalog.providers() if p not in ("aws", "azure")])
 def test_other_clouds_ship_no_icons(provider):
     assert bundled_icon_dir(provider) is None
     svg = render_svg(arch("serverless-web-app", provider), icon_library(provider))

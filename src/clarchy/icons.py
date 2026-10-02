@@ -1,12 +1,13 @@
 """Finds official provider icons for diagrams.
 
-The AWS Architecture Icons for the services Clarchy draws ship in data/icons/aws/ and are
-used, unchanged, in AWS diagrams (ADR 0012). Azure and Google Cloud icons are not
-bundled: users download a provider's package themselves and point Clarchy at the folder,
-which also works for a newer AWS release:
+The AWS and Azure architecture icons for the services Clarchy draws ship in
+data/icons/aws/ and data/icons/azure/ and are used, unchanged, in those providers'
+diagrams (ADR 0012). Google Cloud icons are not bundled: users download a provider's
+package themselves and point Clarchy at the folder, which also works for a newer AWS or
+Azure release:
 
-    export CLARCHY_ICONS_AZURE=~/Downloads/Azure_Public_Service_Icons
-    clarchy render serverless-web-app --provider azure -o out.svg
+    export CLARCHY_ICONS_GCP=~/Downloads/gcp-icons
+    clarchy render serverless-web-app --provider gcp -o out.svg
 
 Without icons the renderer draws neutral lettered badges instead.
 """
@@ -31,7 +32,7 @@ def icon_dir_from_env(provider: str) -> Path | None:
 
 
 def bundled_icon_dir(provider: str) -> Path | None:
-    """The icons that ship with Clarchy for this provider (only AWS has any)."""
+    """The icons that ship with Clarchy for this provider (AWS and Azure)."""
     path = Path(str(resources.files("clarchy").joinpath("data", "icons", provider)))
     return path if path.is_dir() else None
 

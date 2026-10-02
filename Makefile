@@ -45,5 +45,7 @@ endif
 
 # site/index.html and site/clarchy-engine.zip, served as static assets (wrangler.jsonc).
 site: $(SITE_VENV)
+	# setuptools keeps files in build/lib that were since deleted from src/; start clean.
+	rm -rf build/lib
 	$(SITE_VENV)/bin/pip install -q .
 	$(SITE_VENV)/bin/python -m clarchy.cli export-site -o site

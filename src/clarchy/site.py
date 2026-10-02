@@ -138,6 +138,7 @@ class Content:
     catalog: dict[str, Any]
     posts: list[dict[str, Any]]
     proof: dict[str, Any] | None = None  # the home page's example drawing: name, size, cost
+    model: str | None = None  # the home page's massing model of that example, as HTML
     example_meta: dict[str, str] | None = None  # each example's facts line, as HTML
 
 
@@ -179,7 +180,29 @@ def content(meta: dict[str, Any]) -> Content:
         catalog=payloads.catalog_payload(),
         posts=blog.posts(),
         proof=proof,
+        model=_model("rag-chatbot") if "rag-chatbot" in designs else None,
         example_meta={pid: design_meta(d) for pid, d in designs.items()},
+    )
+
+
+def _model(example: str) -> str:
+    """The home page's massing model of an example on AWS, at today's prices (ADR 0015)."""
+    from clarchy import massing, pricing
+    from clarchy.icons import bundled_library
+    from clarchy.mapping import map_to_provider
+    from clarchy.spec import load_pattern
+
+    arch = map_to_provider(load_pattern(example), "aws")
+    cost = pricing.estimate(arch)
+    caption = (
+        f"<b>{_e(arch.spec.name)} on AWS</b> in {_e(cost['price_region'])}, about "
+        f"{_money(cost['monthly'])} a month. Each block is as tall as that service costs."
+    )
+    return (
+        f'<figure class="hero-model" id="hero-model">'
+        f"{massing.svg(arch, cost, bundled_library('aws'))}"
+        f'<figcaption>{caption} <a href="/examples/{example}/">Open it on every cloud</a>'
+        "</figcaption></figure>"
     )
 
 
@@ -830,6 +853,7 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "static-note-hidden": "" if shell.mode == "replay" else " hidden",
         "regions": _regions(c),
         "samples": _samples(c),
+        "hero-model": c.model or "",
         "example-count": _count_word(len(c.patterns)),
         "example-filters": _example_filters(c),
         "example-grid": _example_grid(c),

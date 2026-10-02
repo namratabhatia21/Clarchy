@@ -11,6 +11,12 @@ blue-white blueprint paper, navy ink lines, one signal-orange accent, a title bl
 footer, sheet numbers, crop marks and dimension lines. The proof of the product is a real
 drawing that Clarchy made, not an illustration of one.
 
+The home page leads with an architect's massing model of a real design (`massing.py`,
+[ADR 0015](docs/decisions/0015-a-massing-model-on-the-home-page.md)): each running service
+is a white block on a navy base, with its official icon on top and its height set by what
+it costs a month, and callouts name the costliest. It is made from the RAG chatbot example
+and the current price book every time the site is built, so it is never a mock-up.
+
 ## Tokens (app.css `:root`)
 
 | Token | Light | Dark | Use |
@@ -37,12 +43,14 @@ drawing that Clarchy made, not an illustration of one.
 Motion happens once, means something, and never loops on its own (only progress
 indicators turn, and only while a plan is being made):
 
-- the home headline is lettered in, word by word;
+- the home headline is lettered in, word by word, and the model's blocks rise to their
+  cost once the page opens;
 - the brief's frame is traced in pencil, then the trace lifts off;
 - diagrams draw their lines; drawings and plan cards are plotted top to bottom the first
   time they scroll into view;
 - cost totals are worked out to their value when the Cost view opens;
-- the protractor turns and the scale marks how far down the page you are.
+- the protractor turns and the scale marks how far down the page you are; while the
+  model is on screen the protractor waits, so the two never overlap.
 
 `prefers-reduced-motion` switches every animation off. Hover changes colour or a border,
 never position or size.

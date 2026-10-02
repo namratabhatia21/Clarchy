@@ -252,6 +252,7 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 |---|---|
 | `ingest.py` | Word, Excel, PDF and text to plain text, with limits |
 | `planner/` | `pipeline.py` (stages and events), `agent.py` (understand, design loop, workflows), `toolbox.py` (MCP client) and `local_toolbox.py` (the same tools in-process), `rules.py` (offline planner), `llm.py` (Claude API or Bedrock), `openai_compat.py` (open-source models), `prompts.py` |
+| `massing.py` | A design as an architect's massing model, block height by monthly cost; the home page's hero |
 | `pricing.py`, `aws_prices.py`, `data/prices/` | Usage model, price books and billing models; AWS prices from the Price List API |
 | `browser.py` | Entry points for the in-browser engine (Pyodide) |
 | `tools.py`, `mcp_server.py` | The tool functions and the MCP server that exposes them |

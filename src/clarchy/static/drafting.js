@@ -198,6 +198,15 @@ const Drafting = (() => {
     }
     if (reduced.matches) for (const el of document.querySelectorAll(".story-fig, .drafting-loader")) el.pauseAnimations?.();
 
+    // The massing model in the hero holds the right of the page: the protractor waits until
+    // it has scrolled away.
+    const model = document.getElementById("hero-model");
+    if (model && "IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        instruments.classList.toggle("yield", entry.isIntersecting);
+      }, { threshold: 0.15 }).observe(model);
+    }
+
     // The dial swings into place once, then follows the scroll closely.
     instruments.classList.add("intro");
     update();

@@ -196,6 +196,18 @@ def test_pages_carry_their_lists_for_the_first_paint(built):
     assert "The first posts are coming soon." in blog
 
 
+def test_the_home_page_shows_a_priced_massing_model(built):
+    out, _content, _pages = built
+    home = (out / "index.html").read_text()
+    figure = re.search(r'<figure class="hero-model" id="hero-model">.*?</figure>', home, re.S)
+    assert figure, "the hero's model is rendered with the page"
+    assert '<svg class="massing"' in figure.group(0) and 'role="img"' in figure.group(0)
+    assert re.search(r"about \$[\d,]+ a month", figure.group(0))
+    assert 'href="/examples/rag-chatbot/"' in figure.group(0)
+    # One headline, with "priced" as its one accented word.
+    assert home.count("<h1") == 1 and "<em>priced</em>" in home
+
+
 def test_about_names_the_founder(built):
     out, _content, _pages = built
     about = (out / "about" / "index.html").read_text()

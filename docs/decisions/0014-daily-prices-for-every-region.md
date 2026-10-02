@@ -29,9 +29,19 @@ gigabytes of offer files, and the site builds on every push.
   price has changed. Workers Builds deploys that commit. Days when only the publication
   date moved commit nothing. `make prices` refreshes only with `CLARCHY_REFRESH_PRICES=1`,
   so site builds use the committed books.
-- **Azure and Google Cloud** follow the same shape: the Azure Retail Prices API (public)
-  and the Cloud Billing Catalog API (needs a free API key, as the secret `GCP_API_KEY`).
-  Until then their books stay hand-compiled for one region and marked approximate.
+- **Azure** comes from the Azure Retail Prices API, which is public: 55 meters named by
+  product, SKU and meter name (chosen with `azure_prices.py --discover`, run on GitHub
+  Actions by the Price discovery workflow), in each of the eight regions. Pay-as-you-go
+  prices use the first paid tier; Container Apps and VM nodes carry their savings plan
+  rates, PostgreSQL its reservations per vCore (the standby server doubles both). Front
+  Door bills by the zone its visitors are in, and Azure DNS is the same everywhere.
+  Prices the API doesn't carry (Entra ID P2 licences, Azure DevOps parallel jobs, Front
+  Door WAF custom rules and requests) keep their hand-compiled value, marked `manual`,
+  and their lines are tagged approximate. A meter that disappears from the API keeps its
+  last price, marked manual, and the run names it.
+- **Google Cloud** will come from the Cloud Billing Catalog API, which needs a free API key
+  saved as the repository secret `GCP_API_KEY`; `gcp_prices.py --discover` is ready for
+  it. Until then the Google Cloud book stays hand-compiled for one region and approximate.
 
 ## Consequences
 

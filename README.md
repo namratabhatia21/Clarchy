@@ -121,8 +121,13 @@ periods cost more than a multiple of the first month.
   ([ADR 0014](docs/decisions/0014-daily-prices-for-every-region.md)).
   `clarchy prices update` refreshes them on your machine, and
   `clarchy prices lookup AmazonS3 storage` searches any service's current prices live.
-- Azure and Google Cloud prices are compiled by hand from their pricing pages and marked
-  **approximate** in the UI until they are read from those providers' price APIs too.
+- **Azure prices come from the Azure Retail Prices API**, for the same eight regions,
+  refreshed daily: each price names its meter. The few the API doesn't carry (Entra ID
+  P2, Azure DevOps parallel jobs, Front Door WAF rules) stay hand-compiled and are tagged
+  approximate line by line.
+- Google Cloud prices are compiled by hand from its pricing pages and marked
+  **approximate** until a `GCP_API_KEY` secret lets the daily job read the Cloud Billing
+  Catalog API.
   Services from outside the three clouds, such as GitHub Codespaces and Copilot, come from
   a third-party price book and are tagged approximate line by line.
 - Usage comes from each component's `sizing` and the requirements, and every line says
@@ -399,8 +404,8 @@ make examples    # regenerate examples/, which double as golden test files
   against live Claude or Hugging Face here; real-model quality depends on the model and
   the prompts in `planner/prompts.py`. Smaller open models follow tool calls less
   reliably; when they fail, the run falls back to the rule-based draft.
-- AWS prices are for the design's own region. Azure and Google Cloud prices are still for
-  one reference region (East US, Iowa) and approximate; the cost view says so.
+- AWS and Azure prices are for the design's own region. Google Cloud prices are still for
+  one reference region (Iowa) and approximate; the cost view says so.
 - Scanned PDFs without a text layer cannot be read; paste the text instead.
 - Long edges in large diagrams can cross other lines; links to shared services
   (identity, secrets, monitoring) are listed in the explanation rather than drawn.

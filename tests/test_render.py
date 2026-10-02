@@ -153,11 +153,32 @@ def test_every_drawn_azure_service_has_its_bundled_azure_icon():
     assert "not affiliated with Azure" in svg
 
 
-@pytest.mark.parametrize("provider", [p for p in catalog.providers() if p not in ("aws", "azure")])
-def test_other_clouds_ship_no_icons(provider):
-    assert bundled_icon_dir(provider) is None
-    svg = render_svg(arch("serverless-web-app", provider), icon_library(provider))
-    assert "data:image/" not in svg and 'class="ca-badge"' in svg
+@pytest.mark.parametrize("provider", catalog.providers())
+def test_every_provider_ships_exactly_the_icons_it_draws(provider):
+    library = bundled_library(provider)
+    root = bundled_icon_dir(provider)
+    assert (root / "NOTICE.md").is_file(), "the icons travel with their terms"
+    services = catalog.provider_mapping(provider)["services"]
+    stems = [raw["icon"] for raw in services.values() if "icon" in raw]
+    assert not [s for s in stems if library.find(s) is None], "every named icon exists"
+    own = {library.find(s).name for s in stems if not s.startswith("oss:")}
+    files = {p.name for p in root.iterdir() if p.suffix in (".svg", ".png")}
+    assert files == own, "ship only the icons Clarchy draws"
+
+
+def test_gcp_and_open_source_diagrams_draw_their_icons():
+    gcp = render_svg(arch("rag-chatbot", "gcp"), icon_library("gcp"))
+    run = bundled_library("gcp").find("cloudrun-512-color-rgb")
+    assert base64.b64encode(run.read_bytes()).decode("ascii") in gcp
+    oss = render_svg(arch("rag-chatbot", "oss"), icon_library("oss"))
+    postgres = bundled_library("oss").find("postgresql")
+    assert base64.b64encode(postgres.read_bytes()).decode("ascii") in oss
+    assert "not affiliated with these projects" in oss
+    # A cloud diagram can borrow a project's logo: LiteLLM on Cloud Run.
+    litellm = bundled_library("oss").find("litellm")
+    assert icon_library("gcp").find("oss:litellm") == litellm
+    # Without icons (golden files) nothing is borrowed either.
+    assert IconLibrary(None).find("oss:litellm") is None
 
 
 def test_an_icon_folder_given_by_the_user_wins(tmp_path, monkeypatch):

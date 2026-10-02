@@ -41,10 +41,12 @@ def test_invalid_spec_reports_error(tmp_path, capsys):
     assert "unknown capability" in capsys.readouterr().err
 
 
-def test_icons_without_directory(capsys, monkeypatch):
+def test_icons_for_gcp_and_open_source_come_bundled(capsys, monkeypatch):
     monkeypatch.delenv("CLARCHY_ICONS_GCP", raising=False)
-    assert main(["icons", "--provider", "gcp"]) == 1
-    assert "CLARCHY_ICONS_GCP" in capsys.readouterr().err
+    assert main(["icons", "--provider", "gcp"]) == 0
+    out = capsys.readouterr().out
+    assert "cloudrun-512-color-rgb.svg" in out and "litellm.png (open-source logos)" in out
+    assert main(["icons", "--provider", "oss"]) == 0
 
 
 def test_icons_for_aws_come_bundled(capsys, monkeypatch):

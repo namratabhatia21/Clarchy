@@ -40,6 +40,7 @@ clarchy = [
     "data/samples/*.md",
     "data/blog/*.md",
     "data/icons/*/*.svg",
+    "data/icons/*/*.png",
     "data/icons/*/*.md",
     "static/*",
     "static/fonts/*",

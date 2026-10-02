@@ -87,7 +87,12 @@ def cmd_icons(args: argparse.Namespace) -> int:
         else:
             found = library.find(raw["icon"])
             missing += found is None
-            where = found.relative_to(library.root).as_posix() if found else "NOT FOUND"
+            if found is None:
+                where = "NOT FOUND"
+            elif found.is_relative_to(library.root):
+                where = found.relative_to(library.root).as_posix()
+            else:
+                where = f"{found.name} (open-source logos)"
         print(f"{capability:20} {raw['service']:42} {where}")
     print(f"\n{len(drawn) - missing}/{len(drawn)} icons found", file=sys.stderr)
     return 0 if missing == 0 else 1

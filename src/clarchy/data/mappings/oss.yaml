@@ -47,6 +47,7 @@ services:
   waf:
     service: Coraza WAF + OWASP Core Rule Set
     short: CRZ
+    icon: owasp
     fidelity: close
     alternatives: [ModSecurity, Cloudflare WAF]
     note: You own rule updates, tuning and false positives.
@@ -61,6 +62,7 @@ services:
   api-gateway:
     service: Kong Gateway (OSS)
     short: KNG
+    icon: kong
     fidelity: close
     alternatives: [Apache APISIX]
     note: Feature-rich, but you operate, scale and upgrade it.
@@ -68,6 +70,7 @@ services:
   container-service:
     service: Kubernetes
     short: K8S
+    icon: kubernetes
     fidelity: close
     alternatives: [K3s, HashiCorp Nomad]
     note: You manage the cluster, nodes and upgrades; there is no per-second serverless billing.
@@ -75,6 +78,7 @@ services:
   serverless-function:
     service: Knative Serving
     short: KN
+    icon: knative
     fidelity: close
     alternatives: [OpenFaaS]
     note: Scale-to-zero on your Kubernetes cluster; the cluster itself keeps running and costing money.
@@ -82,6 +86,7 @@ services:
   llm-inference:
     service: vLLM (open-weight models)
     short: VLM
+    icon: vllm
     fidelity: close
     alternatives: [Ollama, Hugging Face TGI, OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     note: Needs GPUs you provision; limited to open-weight models.
@@ -89,6 +94,7 @@ services:
   agent-orchestration:
     service: LangGraph
     short: LG
+    icon: langgraph
     fidelity: exact
     alternatives: [CrewAI, LlamaIndex Workflows]
     note: A library that runs inside your own containers, with checkpoints in your database; LangGraph Platform is the hosted option.
@@ -96,6 +102,7 @@ services:
   llm-gateway:
     service: LiteLLM Proxy
     short: LTL
+    icon: litellm
     fidelity: exact
     alternatives: [Portkey Gateway, Kong AI Gateway]
     note: Self-hosted proxy with an OpenAI-compatible API for more than 100 model providers, virtual keys, budgets, fallbacks and caching.
@@ -103,6 +110,7 @@ services:
   llm-observability:
     service: Langfuse
     short: LF
+    icon: langfuse
     fidelity: exact
     alternatives: [Arize Phoenix, OpenLLMetry]
     note: Self-hosting needs Postgres, ClickHouse, Redis and object storage; Langfuse Cloud is the hosted option.
@@ -110,12 +118,14 @@ services:
   message-queue:
     service: RabbitMQ
     short: RMQ
+    icon: rabbitmq
     fidelity: exact
     alternatives: [NATS JetStream]
     docs: https://www.rabbitmq.com/docs
   event-bus:
     service: Knative Eventing
     short: KNE
+    icon: knative
     fidelity: partial
     alternatives: [NATS]
     note: Provides event routing on Kubernetes; rule-based routing across many sources needs more assembly than a managed event bus.
@@ -123,12 +133,14 @@ services:
   stream:
     service: Apache Kafka
     short: KFK
+    icon: apachekafka
     fidelity: exact
     alternatives: [Apache Pulsar]
     docs: https://kafka.apache.org/documentation/
   workflow:
     service: Temporal
     short: TMP
+    icon: temporal
     fidelity: close
     alternatives: [Apache Airflow]
     note: Code-first durable workflows; Airflow suits scheduled data pipelines more than application workflows.
@@ -136,6 +148,7 @@ services:
   batch-etl:
     service: Apache Spark
     short: SPK
+    icon: apachespark
     fidelity: close
     alternatives: [Apache Airflow + dbt]
     note: You run the cluster and a scheduler; managed ETL services hide both.
@@ -143,6 +156,7 @@ services:
   object-storage:
     service: Ceph Object Gateway
     short: CEPH
+    icon: ceph
     fidelity: close
     alternatives: [SeaweedFS, Garage, MinIO]
     note: S3-compatible API, but you operate durability, replication, capacity and upgrades.
@@ -150,12 +164,14 @@ services:
   relational-db:
     service: PostgreSQL
     short: PG
+    icon: postgresql
     fidelity: exact
     note: Backups, failover and upgrades are yours to run (tools such as Patroni help).
     docs: https://www.postgresql.org/docs/
   key-value-db:
     service: Apache Cassandra
     short: CAS
+    icon: apachecassandra
     fidelity: close
     alternatives: [FerretDB]
     note: Scales well but needs careful data modelling and cluster operations.
@@ -169,12 +185,14 @@ services:
   vector-search:
     service: pgvector (PostgreSQL)
     short: PGV
+    icon: postgresql
     fidelity: exact
     alternatives: [Qdrant, Milvus, OpenSearch]
     docs: https://github.com/pgvector/pgvector
   data-warehouse:
     service: ClickHouse
     short: CH
+    icon: clickhouse
     fidelity: close
     alternatives: [Apache Doris, DuckDB]
     note: Very fast analytical queries, but you size and operate the cluster.
@@ -182,17 +200,20 @@ services:
   identity:
     service: Keycloak
     short: KC
+    icon: keycloak
     fidelity: exact
     docs: https://www.keycloak.org/documentation
   secrets:
     service: OpenBao
     short: BAO
+    icon: openbao
     fidelity: exact
     alternatives: [HashiCorp Vault]
     docs: https://openbao.org/docs/
   monitoring:
     service: Prometheus + Grafana
     short: PRO
+    icon: prometheus
     fidelity: close
     alternatives: [OpenTelemetry Collector, Grafana Loki]
     note: You store and retain metrics and logs yourself.
@@ -200,6 +221,7 @@ services:
   kubernetes:
     service: Kubernetes
     short: K8S
+    icon: kubernetes
     fidelity: exact
     alternatives: [K3s]
     note: You run the control plane, nodes and upgrades yourself.
@@ -212,6 +234,7 @@ services:
   source-control:
     service: GitLab Community Edition
     short: GL
+    icon: gitlab
     fidelity: exact
     alternatives: [Forgejo, Gitea]
     note: You run, back up and upgrade the Git server yourself.
@@ -219,6 +242,7 @@ services:
   ci-build:
     service: Jenkins
     short: JNK
+    icon: jenkins
     fidelity: exact
     alternatives: [Tekton, GitLab CI/CD, Woodpecker CI]
     note: Build agents and plugins are yours to operate.
@@ -226,11 +250,13 @@ services:
   container-registry:
     service: Harbor
     short: HBR
+    icon: harbor
     fidelity: exact
     docs: https://goharbor.io/docs/
   cd-deploy:
     service: Argo CD
     short: ARGO
+    icon: argo
     fidelity: exact
     alternatives: [Flux]
     note: GitOps deployment to Kubernetes from the Git repository.
@@ -238,12 +264,14 @@ services:
   iac:
     service: OpenTofu
     short: TOFU
+    icon: opentofu
     fidelity: exact
     alternatives: [Pulumi, Crossplane]
     docs: https://opentofu.org/docs/
   dev-environment:
     service: Coder
     short: CDR
+    icon: coder
     fidelity: exact
     alternatives: [Dev Containers, Eclipse Che]
     note: Self-hosted cloud development environments on your own Kubernetes or VMs.
@@ -265,6 +293,7 @@ services:
   archive-storage:
     service: MinIO (lifecycle tiering)
     short: MIN
+    icon: minio
     fidelity: partial
     alternatives: [Ceph cold pools, Tape libraries]
     note: Archival durability depends on the cold storage you provide.
@@ -272,6 +301,7 @@ services:
   access-governance:
     service: Keycloak + Open Policy Agent
     short: OPA
+    icon: keycloak
     fidelity: close
     alternatives: [Teleport, HashiCorp Boundary]
     note: Approvals and access reviews are processes you build around them.
@@ -279,6 +309,7 @@ services:
   key-management:
     service: OpenBao Transit
     short: OBT
+    icon: openbao
     fidelity: close
     alternatives: [HashiCorp Vault Transit]
     note: Keys live in a cluster you run, unseal and back up yourself.

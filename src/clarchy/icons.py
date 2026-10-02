@@ -1,13 +1,13 @@
 """Finds official provider icons for diagrams.
 
-The AWS and Azure architecture icons for the services Clarchy draws ship in
-data/icons/aws/ and data/icons/azure/ and are used, unchanged, in those providers'
-diagrams (ADR 0012). Google Cloud icons are not bundled: users download a provider's
-package themselves and point Clarchy at the folder, which also works for a newer AWS or
-Azure release:
+Icons ship for every provider (ADR 0012): the AWS, Azure and Google Cloud architecture
+icons for the services Clarchy draws, in data/icons/<provider>/, used unchanged in that
+provider's diagrams; and open-source projects' own logos in data/icons/oss/. A mapping's
+`icon:` names a file stem; `oss:<stem>` borrows a project logo for a cloud diagram (LiteLLM
+on Cloud Run). A user can point Clarchy at a provider's newer package instead:
 
-    export CLARCHY_ICONS_GCP=~/Downloads/gcp-icons
-    clarchy render serverless-web-app --provider gcp -o out.svg
+    export CLARCHY_ICONS_AWS=~/Downloads/Asset-Package
+    clarchy render serverless-web-app --provider aws -o out.svg
 
 Without icons the renderer draws neutral lettered badges instead.
 """
@@ -32,7 +32,7 @@ def icon_dir_from_env(provider: str) -> Path | None:
 
 
 def bundled_icon_dir(provider: str) -> Path | None:
-    """The icons that ship with Clarchy for this provider (AWS and Azure)."""
+    """The icons that ship with Clarchy for this provider."""
     path = Path(str(resources.files("clarchy").joinpath("data", "icons", provider)))
     return path if path.is_dir() else None
 
@@ -61,7 +61,11 @@ class IconLibrary:
             )
 
     def find(self, stem: str | None) -> Path | None:
-        if not stem or not self._files:
+        if not stem or self.root is None:
+            return None
+        if stem.startswith("oss:"):  # an open-source project's logo, e.g. LiteLLM on GCP
+            return bundled_library("oss").find(stem.removeprefix("oss:"))
+        if not self._files:
             return None
         pattern = re.compile(rf"(^|_){re.escape(stem)}(_|\.)", re.IGNORECASE)
         matches = [p for p in self._files if pattern.search(p.name)]

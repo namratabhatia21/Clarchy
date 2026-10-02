@@ -31,12 +31,14 @@ services:
   dns:
     service: Cloud DNS
     short: DNS
+    icon: networking-512-color-rgb
     fidelity: exact
     alternatives: [Cloudflare DNS]
     docs: https://cloud.google.com/dns/docs
   cdn:
     service: Cloud CDN
     short: CDN
+    icon: networking-512-color-rgb
     fidelity: close
     alternatives: [Media CDN, Cloudflare]
     note: Cloud CDN is enabled on an external Application Load Balancer rather than deployed on its own.
@@ -44,17 +46,20 @@ services:
   waf:
     service: Google Cloud Armor
     short: ARM
+    icon: securityidentity-512-color
     fidelity: exact
     alternatives: [Cloudflare WAF]
     docs: https://cloud.google.com/armor/docs
   load-balancer:
     service: Cloud Load Balancing (Application LB)
     short: LB
+    icon: networking-512-color-rgb
     fidelity: exact
     docs: https://cloud.google.com/load-balancing/docs
   api-gateway:
     service: API Gateway
     short: APIG
+    icon: integrationservices-512-color
     fidelity: close
     alternatives: [Apigee]
     note: Lighter than Amazon API Gateway or Azure API Management; Apigee is the full-featured option.
@@ -62,23 +67,27 @@ services:
   container-service:
     service: Cloud Run
     short: RUN
+    icon: cloudrun-512-color-rgb
     fidelity: exact
     alternatives: [GKE Autopilot]
     docs: https://cloud.google.com/run/docs
   serverless-function:
     service: Cloud Run functions
     short: FN
+    icon: cloudrun-512-color-rgb
     fidelity: exact
     docs: https://cloud.google.com/functions/docs
   llm-inference:
     service: Vertex AI
     short: VAI
+    icon: vertexai-512-color
     fidelity: exact
     alternatives: [OpenAI API, Anthropic API (Claude), Hugging Face Inference Endpoints]
     docs: https://cloud.google.com/vertex-ai/docs
   agent-orchestration:
     service: Vertex AI Agent Engine
     short: AGE
+    icon: agents-512-color
     fidelity: close
     alternatives: [LangGraph on Cloud Run, Agent Development Kit]
     note: Deploys LangGraph, LangChain and ADK agents with managed sessions and memory, billed for the compute the agents use.
@@ -86,6 +95,7 @@ services:
   llm-gateway:
     service: LiteLLM on Cloud Run
     short: GW
+    icon: oss:litellm
     fidelity: close
     alternatives: [Apigee (AI gateway policies)]
     note: Google Cloud has no lightweight managed LLM gateway; Apigee adds token quotas and model routing at enterprise scale.
@@ -93,6 +103,7 @@ services:
   llm-observability:
     service: Cloud Trace (Vertex AI agent tracing)
     short: TRC
+    icon: observability-512-color
     fidelity: partial
     alternatives: [Langfuse on Cloud Run]
     note: OpenTelemetry traces of agent steps and model calls; prompt management and evaluations are separate (Vertex AI evaluation service).
@@ -100,6 +111,7 @@ services:
   message-queue:
     service: Pub/Sub
     short: PS
+    icon: integrationservices-512-color
     fidelity: close
     alternatives: [Cloud Tasks]
     note: Pub/Sub is publish/subscribe; a single subscription behaves like a queue. Cloud Tasks suits explicit task dispatch with rate limits.
@@ -107,12 +119,14 @@ services:
   event-bus:
     service: Eventarc
     short: EA
+    icon: integrationservices-512-color
     fidelity: close
     note: Routes events to Cloud Run, functions and Workflows; filtering is simpler than EventBridge rules.
     docs: https://cloud.google.com/eventarc/docs
   stream:
     service: Pub/Sub
     short: PS
+    icon: integrationservices-512-color
     fidelity: close
     alternatives: [Google Cloud Managed Service for Apache Kafka]
     note: Supports ordering keys and replay by seeking, but is not a partitioned log like Kinesis or Kafka.
@@ -120,11 +134,13 @@ services:
   workflow:
     service: Workflows
     short: WF
+    icon: integrationservices-512-color
     fidelity: exact
     docs: https://cloud.google.com/workflows/docs
   batch-etl:
     service: Dataflow
     short: DF
+    icon: dataanalytics-512-color
     fidelity: close
     alternatives: [Dataproc Serverless, Cloud Data Fusion]
     note: Dataflow runs Apache Beam pipelines; Spark jobs fit Dataproc Serverless better.
@@ -132,17 +148,20 @@ services:
   object-storage:
     service: Cloud Storage
     short: GCS
+    icon: cloud-storage-512-color
     fidelity: exact
     docs: https://cloud.google.com/storage/docs
   relational-db:
     service: Cloud SQL for PostgreSQL
     short: SQL
+    icon: cloudsql-512-color
     fidelity: exact
     alternatives: [AlloyDB for PostgreSQL]
     docs: https://cloud.google.com/sql/docs/postgres
   key-value-db:
     service: Firestore
     short: FS
+    icon: databases-512-color
     fidelity: close
     alternatives: [Bigtable]
     note: A document database with a different query and pricing model from DynamoDB; Bigtable suits very high-throughput wide-column data.
@@ -150,38 +169,45 @@ services:
   cache:
     service: Memorystore (Redis / Valkey)
     short: MS
+    icon: databases-512-color
     fidelity: exact
     docs: https://cloud.google.com/memorystore/docs
   vector-search:
     service: Vertex AI Vector Search
     short: VS
+    icon: vertexai-512-color
     fidelity: exact
     alternatives: [AlloyDB or Cloud SQL with pgvector]
     docs: https://cloud.google.com/vertex-ai/docs/vector-search/overview
   data-warehouse:
     service: BigQuery
     short: BQ
+    icon: bigquery-512-color
     fidelity: exact
     docs: https://cloud.google.com/bigquery/docs
   identity:
     service: Identity Platform
     short: IDP
+    icon: securityidentity-512-color
     fidelity: exact
     alternatives: [Firebase Authentication]
     docs: https://cloud.google.com/identity-platform/docs
   secrets:
     service: Secret Manager
     short: SM
+    icon: securityidentity-512-color
     fidelity: exact
     docs: https://cloud.google.com/secret-manager/docs
   monitoring:
     service: Cloud Monitoring + Cloud Logging
     short: MON
+    icon: observability-512-color
     fidelity: exact
     docs: https://cloud.google.com/monitoring/docs
   kubernetes:
     service: Google Kubernetes Engine (GKE)
     short: GKE
+    icon: gke-512-color
     fidelity: exact
     alternatives: [GKE Autopilot]
     docs: https://cloud.google.com/kubernetes-engine/docs
@@ -196,27 +222,32 @@ services:
   source-control:
     service: Secure Source Manager
     short: SSM
+    icon: developer-tools-512-color
     fidelity: exact
     alternatives: [GitHub or GitLab via Developer Connect]
     docs: https://cloud.google.com/secure-source-manager/docs
   ci-build:
     service: Cloud Build
     short: CB
+    icon: devops-512-color
     fidelity: exact
     docs: https://cloud.google.com/build/docs
   container-registry:
     service: Artifact Registry
     short: AR
+    icon: devops-512-color
     fidelity: exact
     docs: https://cloud.google.com/artifact-registry/docs
   cd-deploy:
     service: Cloud Deploy
     short: CD
+    icon: devops-512-color
     fidelity: exact
     docs: https://cloud.google.com/deploy/docs
   iac:
     service: Infrastructure Manager (Terraform)
     short: IM
+    icon: managementtools-512-color
     fidelity: exact
     alternatives: [Terraform or OpenTofu]
     note: A managed service that runs Terraform configurations.
@@ -224,18 +255,21 @@ services:
   dev-environment:
     service: Cloud Workstations
     short: CWS
+    icon: developer-tools-512-color
     fidelity: exact
     alternatives: [GitHub Codespaces]
     docs: https://cloud.google.com/workstations/docs
   ai-coding-assistant:
     service: Gemini Code Assist
     short: GCA
+    icon: aimachinelearning-512-color
     fidelity: exact
     alternatives: [GitHub Copilot, Claude Code]
     docs: https://cloud.google.com/gemini/docs/codeassist/overview
   ai-guardrails:
     service: Model Armor
     short: MA
+    icon: securityidentity-512-color
     fidelity: exact
     alternatives: [Vertex AI safety filters, NeMo Guardrails]
     note: Screens prompts and responses for prompt injection, jailbreaks, harmful content and sensitive data, for any model.
@@ -243,6 +277,7 @@ services:
   archive-storage:
     service: Cloud Storage (Archive class)
     short: ARC
+    icon: cloud-storage-512-color
     fidelity: exact
     alternatives: [Coldline class]
     note: Millisecond access but a 365-day minimum storage charge; Object Lifecycle Management moves objects automatically.
@@ -250,6 +285,7 @@ services:
   access-governance:
     service: Cloud IAM + Privileged Access Manager
     short: IAM
+    icon: securityidentity-512-color
     fidelity: exact
     alternatives: [Organization Policy]
     note: Workforce identity federation lets staff sign in with the company directory.
@@ -257,12 +293,14 @@ services:
   key-management:
     service: Cloud KMS
     short: KMS
+    icon: securityidentity-512-color
     fidelity: exact
     alternatives: [Cloud HSM]
     docs: https://cloud.google.com/kms/docs
   audit-logging:
     service: Cloud Audit Logs
     short: AUD
+    icon: observability-512-color
     fidelity: exact
     alternatives: [Log buckets with locked retention]
     note: Admin activity logs are free; data access logs are billed as Cloud Logging ingestion.
@@ -270,6 +308,7 @@ services:
   backup:
     service: Backup and DR Service
     short: BDR
+    icon: storage-512-color
     fidelity: exact
     alternatives: [Cloud SQL automated backups]
     docs: https://cloud.google.com/backup-disaster-recovery/docs

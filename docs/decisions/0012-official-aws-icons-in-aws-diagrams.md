@@ -1,7 +1,7 @@
-# 0012: AWS and Azure diagrams use their providers' official icons, bundled
+# 0012: Diagrams use their providers' official icons, bundled
 
-**Status:** accepted · 2026-10-02 · supersedes [0002](0002-no-bundled-provider-icons.md) for
-AWS and Azure · amended the same day to add Azure (see the end)
+**Status:** accepted · 2026-10-02 · supersedes [0002](0002-no-bundled-provider-icons.md) ·
+amended the same day to add Azure, then Google Cloud and open-source logos (see the end)
 
 ## Context
 
@@ -57,4 +57,24 @@ that in the same way as AWS ones, so the same decision applies:
 - Services that are not Azure's (GitHub Codespaces, GitHub Copilot, KEDA, Bicep), and
   those with no icon in the release used (Microsoft Fabric, Foundry Agent Service), keep
   their badges. Azure DevOps services (Repos, Pipelines) use the Azure DevOps icon.
-- Google Cloud still has none (ADR 0002 holds), until its icon terms are reviewed.
+
+## Amendment: Google Cloud and open-source projects
+
+Google's Cloud icons page says its product icons may be used freely and without
+permission to accurately refer to Google's technology, for example in architecture
+diagrams. The open-source projects Clarchy draws publish logos that documentation and
+architecture diagrams commonly use to refer to them. The same decision applies to both:
+
+- `data/icons/gcp/` holds 18 SVGs from Google's 2025 set (about 45 KB): a product's own
+  icon where Google has one (Cloud Run, Cloud SQL, BigQuery, GKE, Vertex AI) and otherwise
+  the icon of its category (Networking for Cloud DNS), always with the product's name
+  beside it. `NOTICE.md` records the terms and the source.
+- `data/icons/oss/` holds the projects' own logos (PostgreSQL, Kafka, Keycloak, vLLM,
+  LiteLLM, Langfuse and others), mostly from Simple Icons, filled with each brand's colour.
+  `NOTICE.md` lists every file with its owner, licence note and source. Projects with no
+  logo there keep a badge.
+- A cloud diagram may borrow a project's logo with `icon: oss:<stem>` where the service is
+  that project running on the cloud (LiteLLM on Cloud Run). Where the service is the
+  cloud's own (LiteLLM on Amazon ECS), the cloud's icon stays.
+- Every provider now ships icons, so ADR 0002 is superseded in full. Deleting a folder
+  returns that provider's diagrams to badges.

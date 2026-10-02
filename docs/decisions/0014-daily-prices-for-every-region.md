@@ -6,7 +6,7 @@
 
 ADR 0007 priced every design in one reference region per cloud and refreshed AWS prices on
 each deploy and every Monday. A design in Mumbai or Frankfurt was priced at US East rates,
-and prices could be a week old. The founder asked for the providers' official prices, per
+and prices could be a week old. The author asked for the providers' official prices, per
 region, every day. Clarchy stays on free services: Cloudflare's free Worker can't download
 gigabytes of offer files, and the site builds on every push.
 

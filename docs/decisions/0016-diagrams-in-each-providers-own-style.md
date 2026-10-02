@@ -6,7 +6,7 @@
 
 Until now every diagram had the same shape: rounded cards with a coloured outline, curved
 links, one boundary box for the cloud and a theme that changed only the colours. The
-founder asked for diagrams that look exactly like the ones in AWS's, Azure's and Google
+author asked for diagrams that look exactly like the ones in AWS's, Azure's and Google
 Cloud's own documentation, so that an architect recognises them at once.
 
 Those conventions differ by provider, and they are structural, not only colours:

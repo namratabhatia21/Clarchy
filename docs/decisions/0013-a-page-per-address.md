@@ -7,7 +7,7 @@
 clarchy.com was one HTML file. Pricing, How to, the examples and the rest were sections
 shown by a hash (`/#pricing`), and most lists (samples, examples, services) were drawn by
 scripts. Search engines ignore the hash, so they saw a single address with one title,
-nine `<h1>`s and little text, and nothing to list in a sitemap. The founder wants the site
+nine `<h1>`s and little text, and nothing to list in a sitemap. The author wants the site
 to be found: an address, title, description and heading per page, a sitemap, breadcrumbs
 and structured data, and a fast first paint without layout shift.
 

@@ -4,7 +4,7 @@
 
 ## Context
 
-Clarchy is in early access. The founder wants to know who uses it (name, company, email,
+Clarchy is in early access. The author wants to know who uses it (name, company, email,
 and whether they want product updates), to give a few diagrams free and then ask for a
 subscription, and to do this with free services only. Plans run in the visitor's browser
 (ADR 0008), so there was no server, and clarchy.com was a Cloudflare Worker serving static
@@ -51,7 +51,7 @@ files.
   that need hard limits would move metering to work the server does.
 - Emails are unverified, so a sign-up can use someone else's address. Before sending
   newsletters, confirm opt-ins (double opt-in) with whatever mailing tool is chosen.
-- The founder reads leads in the Cloudflare dashboard (D1 console) or exports them as CSV
+- The author reads leads in the Cloudflare dashboard (D1 console) or exports them as CSV
   from `/api/admin/leads.csv` after setting the `ADMIN_TOKEN` secret.
 
 ## Amendment, 2026-10-02: an account button and log-in by email

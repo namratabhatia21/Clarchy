@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from clarchy import blog, catalog, policies, pricing
 from clarchy.mapping import map_to_provider
 from clarchy.planner.rules import plan_with_rules
@@ -59,7 +57,7 @@ def test_third_party_prices_are_flagged_on_a_verified_bill():
     assert not any(line["approximate"] for c, line in lines.items() if c != "devenv")
 
 
-def test_blog_posts_render_safely():
+def test_blog_posts_render_safely(tmp_path):
     html = blog.to_html(
         "## Heading\n\nSome **bold**, *italic* and `code` with a [link](https://example.com) "
         "and a [bad one](javascript:alert(1)).\n\n- one\n- two\n\n<script>x</script>"
@@ -68,8 +66,16 @@ def test_blog_posts_render_safely():
     assert 'href="https://example.com"' in html and "javascript:" not in html
     assert "<ul><li>one</li><li>two</li></ul>" in html
     assert "<script>" not in html and "&lt;script&gt;" in html
-    for folder in (None, Path(__file__).resolve().parent.parent / "drafts" / "blog"):
-        assert all(
-            p["title"] and p["html"] and p["author"] == "Namrata Bhatia" for p in blog.posts(folder)
-        )
-    assert len(blog.posts(Path(__file__).resolve().parent.parent / "drafts" / "blog")) == 2
+    assert all(p["title"] and p["html"] and p["author"] for p in blog.posts())
+    (tmp_path / "2026-10-01-a-post.md").write_text(
+        "---\ntitle: A post\ndate: 2026-10-01\nauthor: Namrata Bhatia\nsummary: One line.\n"
+        "---\nBody with **bold**.\n",
+        encoding="utf-8",
+    )
+    [post] = blog.posts(tmp_path)
+    assert (post["id"], post["title"], post["author"]) == (
+        "2026-10-01-a-post",
+        "A post",
+        "Namrata Bhatia",
+    )
+    assert "<strong>bold</strong>" in post["html"]

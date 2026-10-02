@@ -6,7 +6,7 @@ amended the same day to add Azure, then Google Cloud and open-source logos (see 
 ## Context
 
 ADR 0002 kept every provider icon out of the repository, so diagrams on clarchy.com drew
-lettered badges. The founder wants AWS diagrams to use the AWS icons that readers
+lettered badges. The author wants AWS diagrams to use the AWS icons that readers
 recognise. Other sites doing so is not what makes it acceptable; AWS's own terms are. The
 AWS Architecture Icons page lets customers and partners use the icons to create
 architecture diagrams, and prohibits modifying them or using them for anything other

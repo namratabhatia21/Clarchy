@@ -4,8 +4,8 @@
 
 ## Context
 
-The founder compared three concepts for the home page, drawn from sites she admires: a
-dark field survey, a bold poster and an architect's model. She chose the model. The home
+The author compared three concepts for the home page, drawn from sites they admire: a
+dark field survey, a bold poster and an architect's model, and chose the model. The home
 page had a headline, the composer and, below it, a flat drawing of an example; nothing
 above the fold showed what Clarchy gives back, and in particular not the cost.
 
@@ -37,7 +37,7 @@ above the fold showed what Clarchy gives back, and in particular not the cost.
 
 ## Amendment, 2026-10-02: three frames
 
-The founder asked for the poster concept as the first frame, the model second and How it
+The author asked for the poster concept as the first frame, the model second and How it
 works third. The poster is drawn on a 1440 x 820 sheet scaled to the screen (container
 units keep its type and marks in place), with its own protractor that turns with the
 scroll; on phones it stacks. Its headline is the page's h1 ("Brief in, drawing out");
@@ -48,10 +48,10 @@ works, as its result.
 
 ## Amendment, 2026-10-02: the page closes on the examples
 
-The founder asked for something in orange to see the examples, with a protractor, in
+The author asked for something in orange to see the examples, with a protractor, in
 place of the example drawing at the bottom. The last frame takes the poster's orange: "See
 the examples", the first four examples as a drawing register (number, name, services, each
-linking to its page) and a "See examples" button, beside a pantograph: the founder chose
+linking to its page) and a "See examples" button, beside a pantograph: the author chose
 it from a plate of 18th-century drawing instruments (plate K) over a second protractor.
 As the frame scrolls into view its tracer follows a small sketch of three services while
 its pencil draws the same sketch at twice the size, and the copy is taken back on the way

@@ -1,5 +1,4 @@
-"""Blog posts: Markdown files in data/blog with a small front matter block. Posts being
-rewritten wait in drafts/blog/ at the repository root, which is not published.
+"""Blog posts: Markdown files in data/blog with a small front matter block.
 
     ---
     title: Why architecture needs a drawing

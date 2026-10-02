@@ -1,238 +1,283 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="1604" height="1126" viewBox="0 0 1604 1126" role="img" data-body-top="80" data-body-bottom="1098" aria-label="AI agent platform on Google Cloud">
-<style>.ca-gcp{font-family:Roboto, 'Helvetica Neue', Arial, sans-serif}
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="2694" height="1212" viewBox="0 0 2694 1212" role="img" data-body-top="80" data-body-bottom="1184" data-drawing-bottom="954" aria-label="AI agent platform on Google Cloud">
+<style>.ca-gcp{font-family:'Google Sans', Roboto, 'Helvetica Neue', Arial, sans-serif}
 .ca-gcp .ca-bg{fill:#ffffff}
-.ca-gcp .ca-title{font-size:18px;font-weight:600;fill:#16191f}
-.ca-gcp .ca-subtitle{font-size:13px;fill:#545b64}
-.ca-gcp .ca-cloud{fill:#F8F9FA;stroke:#5F6368;stroke-width:1.5;}
-.ca-gcp .ca-cloud-label{font-size:13px;font-weight:600;fill:#3C4043}
-.ca-gcp .ca-band{fill:none;stroke:#9AA0A6;stroke-dasharray:5 4}
-.ca-gcp .ca-band-label{font-size:12px;font-weight:600;fill:#5F6368}
-.ca-gcp .ca-node-box{fill:#ffffff;stroke-width:1.5}
-.ca-gcp .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
-.ca-gcp .ca-service{font-size:12px;font-weight:600;fill:#16191f}
-.ca-gcp .ca-label{font-size:11px;fill:#545b64}
+.ca-gcp .ca-title{font-size:18px;font-weight:700;fill:#202124}
+.ca-gcp .ca-subtitle{font-size:13px;fill:#5F6368}
+.ca-gcp .ca-group-label{font-size:12px;font-weight:600;fill:#202124}
+.ca-gcp .ca-badge{font-size:13px;font-weight:700;fill:#ffffff}
+.ca-gcp .ca-service{font-size:12.5px;font-weight:500;fill:#202124}
+.ca-gcp .ca-label{font-size:11px;fill:#5F6368}
 .ca-gcp .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
-.ca-gcp .ca-edge{fill:none;stroke:#5F6368;stroke-width:1.5}
+.ca-gcp .ca-edge{fill:none;stroke:#5F6368;stroke-width:1.5;stroke-linejoin:round}
 .ca-gcp .ca-arrow{fill:#5F6368}
-.ca-gcp .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.ca-gcp .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1604" height="1126"/>
-<text class="ca-title" x="24" y="36">AI agent platform · Google Cloud</text>
+.ca-gcp .ca-edge-label{font-size:11px;fill:#202124;paint-order:stroke;stroke:#ffffff;stroke-width:4;stroke-linejoin:round}
+.ca-gcp .ca-step circle{fill:#1A73E8;stroke:#ffffff;stroke-width:1.5}
+.ca-gcp .ca-step text{font-size:11px;font-weight:700;fill:#ffffff}
+.ca-gcp .ca-steps-title{font-size:13px;font-weight:700;fill:#202124}
+.ca-gcp .ca-steps-text{font-size:12px;fill:#202124}
+.ca-gcp .ca-footer{font-size:10px;fill:#879196}
+.ca-gcp .ca-node-box{fill:#ffffff;stroke:#DADCE0;stroke-width:1}
+.ca-gcp .ca-group-cloud{fill:#F1F3F4;stroke:none}
+.ca-gcp .ca-group-cloud-label{fill:#5F6368;font-weight:700;font-size:13px}
+.ca-gcp .ca-group-region{fill:#FFFFFF;stroke:#DADCE0}
+.ca-gcp .ca-group-region-label{fill:#5F6368;font-weight:600}
+.ca-gcp .ca-group-vpc{fill:#E8F0FE;stroke:none}
+.ca-gcp .ca-group-vpc-label{fill:#1967D2;font-weight:600}
+.ca-gcp .ca-group-generic{fill:#F8F9FA;stroke:#DADCE0;stroke-dasharray:4 3}
+.ca-gcp .ca-group-generic-label{fill:#5F6368;font-weight:600}</style>
+<rect class="ca-bg" width="2694" height="1212"/>
+<text class="ca-title" x="24" y="36">AI agent platform on Google Cloud</text>
 <text class="ca-subtitle" x="24" y="56">Tool-using AI agents behind a chat API, with an LLM gateway for model routing and budgets, retrieval over company documents, and tracing of…</text>
-<rect class="ca-cloud" x="252" y="104" width="1328" height="970" rx="4"/>
-<text class="ca-cloud-label" x="262" y="123">Google Cloud · N. Virginia (us-east4)</text>
-<rect class="ca-band" x="262" y="134" width="1308" height="164" rx="4"/>
-<text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="902" width="1308" height="162" rx="4"/>
-<text class="ca-band-label" x="272" y="922">Shared services</text>
-<path class="ca-edge" data-from="users" data-to="cdn" d="M180,600 C227,600 227,600 274,600"/>
-<polygon class="ca-arrow" data-from="users" data-to="cdn" points="274,600 265,595.5 265,604.5"/>
-<text class="ca-edge-label" data-from="users" data-to="cdn" x="227" y="594" text-anchor="middle">HTTPS</text>
-<path class="ca-edge" data-from="cdn" data-to="lb" d="M430,600 C466,600 466,600 502,600"/>
-<polygon class="ca-arrow" data-from="cdn" data-to="lb" points="502,600 493,595.5 493,604.5"/>
-<text class="ca-edge-label" data-from="cdn" data-to="lb" x="466" y="594" text-anchor="middle">/api/*</text>
-<path class="ca-edge" data-from="lb" data-to="app" d="M658,600 C694,600 694,526 730,526"/>
-<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,526 721,521.5 721,530.5"/>
-<path class="ca-edge" data-from="app" data-to="agent" d="M808,584 C808,600 808,600 808,616"/>
-<polygon class="ca-arrow" data-from="app" data-to="agent" points="808,616 803.5,607 812.5,607"/>
-<text class="ca-edge-label" data-from="app" data-to="agent" x="808" y="594" text-anchor="middle">run</text>
-<path class="ca-edge" data-from="agent" data-to="gateway" d="M886,674 C922,674 922,452 958,452"/>
-<polygon class="ca-arrow" data-from="agent" data-to="gateway" points="958,452 949,447.5 949,456.5"/>
-<text class="ca-edge-label" data-from="agent" data-to="gateway" x="922" y="557" text-anchor="middle">prompt</text>
-<path class="ca-edge" data-from="gateway" data-to="llm" d="M1036,510 C1036,526 1036,526 1036,542"/>
-<polygon class="ca-arrow" data-from="gateway" data-to="llm" points="1036,542 1031.5,533 1040.5,533"/>
-<text class="ca-edge-label" data-from="gateway" data-to="llm" x="1036" y="520" text-anchor="middle">route</text>
-<path class="ca-edge" data-from="agent" data-to="vectors" d="M886,674 C1036,674 1036,600 1186,600"/>
-<polygon class="ca-arrow" data-from="agent" data-to="vectors" points="1186,600 1177,595.5 1177,604.5"/>
-<text class="ca-edge-label" data-from="agent" data-to="vectors" x="1036" y="631" text-anchor="middle">retrieve</text>
-<path class="ca-edge" data-from="agent" data-to="tools" d="M808,732 C808,748 808,748 808,764"/>
-<polygon class="ca-arrow" data-from="agent" data-to="tools" points="808,764 803.5,755 812.5,755"/>
-<text class="ca-edge-label" data-from="agent" data-to="tools" x="808" y="742" text-anchor="middle">call tools</text>
-<path class="ca-edge" data-from="agent" data-to="state" d="M886,674 C1036,674 1036,748 1186,748"/>
-<polygon class="ca-arrow" data-from="agent" data-to="state" points="1186,748 1177,743.5 1177,752.5"/>
-<text class="ca-edge-label" data-from="agent" data-to="state" x="1036" y="705" text-anchor="middle">checkpoint</text>
-<path class="ca-edge" data-from="docs" data-to="ingest" d="M1186,452 C1036,452 1036,378 886,378"/>
-<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="886,378 895,373.5 895,382.5"/>
-<text class="ca-edge-label" data-from="docs" data-to="ingest" x="1036" y="409" text-anchor="middle">on upload</text>
-<path class="ca-edge" data-from="ingest" data-to="gateway" d="M886,378 C922,378 922,452 958,452"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="gateway" points="958,452 949,447.5 949,456.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="gateway" x="922" y="409" text-anchor="middle">embed</text>
-<path class="ca-edge" data-from="ingest" data-to="vectors" d="M886,378 C1036,378 1036,600 1186,600"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1186,600 1177,595.5 1177,604.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1036" y="483" text-anchor="middle">index</text>
-<path class="ca-edge" data-from="agent" data-to="guardrails" d="M886,674 C922,674 922,748 958,748"/>
-<polygon class="ca-arrow" data-from="agent" data-to="guardrails" points="958,748 949,743.5 949,752.5"/>
-<text class="ca-edge-label" data-from="agent" data-to="guardrails" x="922" y="705" text-anchor="middle">screen</text>
-<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
-<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
-<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
-<path class="ca-edge" data-from="build" data-to="registry" d="M650,226 C682,226 682,226 714,226"/>
-<polygon class="ca-arrow" data-from="build" data-to="registry" points="714,226 705,221.5 705,230.5"/>
-<text class="ca-edge-label" data-from="build" data-to="registry" x="682" y="220" text-anchor="middle">image</text>
-<path class="ca-edge" data-from="registry" data-to="deploy" d="M870,226 C902,226 902,226 934,226"/>
-<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="934,226 925,221.5 925,230.5"/>
-<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1090,226 C1122,226 1122,226 1154,226"/>
-<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1154,226 1145,221.5 1145,230.5"/>
-<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1122" y="220" text-anchor="middle">applies</text>
+<rect class="ca-group ca-group-cloud" x="314" y="104" width="2356" height="842" rx="8"/>
+<text class="ca-group-label ca-group-cloud-label" x="326" y="129">Google Cloud</text>
+<rect class="ca-group ca-group-region" x="916" y="146" width="1732" height="778" rx="8"/>
+<text class="ca-group-label ca-group-region-label" x="928" y="171">Region · N. Virginia (us-east4)</text>
+<rect class="ca-group ca-group-generic" x="930" y="188" width="1704" height="104" rx="8"/>
+<text class="ca-group-label ca-group-generic-label" x="942" y="213">Build and deploy</text>
+<rect class="ca-group ca-group-vpc" x="1560" y="652" width="238" height="120" rx="8"/>
+<text class="ca-group-label ca-group-vpc-label" x="1572" y="677">VPC network</text>
+<rect class="ca-group ca-group-generic" x="930" y="798" width="1704" height="104" rx="8"/>
+<text class="ca-group-label ca-group-generic-label" x="942" y="823">Shared services</text>
+<path class="ca-edge" data-from="users" data-to="cdn" d="M230,431 L330,431"/>
+<polygon class="ca-arrow" data-from="users" data-to="cdn" points="336,431 327,426.5 327,435.5"/>
+<path class="ca-edge" data-from="cdn" data-to="lb" d="M542,431 L620,431"/>
+<polygon class="ca-arrow" data-from="cdn" data-to="lb" points="626,431 617,426.5 617,435.5"/>
+<path class="ca-edge" data-from="lb" data-to="app" d="M832,431 L948,431"/>
+<polygon class="ca-arrow" data-from="lb" data-to="app" points="954,431 945,426.5 945,435.5"/>
+<path class="ca-edge" data-from="app" data-to="agent" d="M1057,462 L1057,476"/>
+<polygon class="ca-arrow" data-from="app" data-to="agent" points="1057,482 1052.5,473 1061.5,473"/>
+<path class="ca-edge" data-from="agent" data-to="gateway" d="M1160,498 L1223,498 L1223,395 L1280,395"/>
+<polygon class="ca-arrow" data-from="agent" data-to="gateway" points="1286,395 1277,390.5 1277,399.5"/>
+<path class="ca-edge" data-from="gateway" data-to="llm" d="M1389,421 L1389,435"/>
+<polygon class="ca-arrow" data-from="gateway" data-to="llm" points="1389,441 1384.5,432 1393.5,432"/>
+<path class="ca-edge" data-from="agent" data-to="vectors" d="M1160,508 L1235.8,508 L1235.8,518 L1570,518"/>
+<polygon class="ca-arrow" data-from="agent" data-to="vectors" points="1576,518 1567,513.5 1567,522.5"/>
+<path class="ca-edge" data-from="agent" data-to="tools" d="M1057,544 L1057,558"/>
+<polygon class="ca-arrow" data-from="agent" data-to="tools" points="1057,564 1052.5,555 1061.5,555"/>
+<path class="ca-edge" data-from="agent" data-to="state" d="M1160,528 L1261.2,528 L1261.2,725 L1570,725"/>
+<polygon class="ca-arrow" data-from="agent" data-to="state" points="1576,725 1567,720.5 1567,729.5"/>
+<path class="ca-edge" data-from="docs" data-to="ingest" d="M1576,431 L1197.5,431 L1197.5,349 L1166,349"/>
+<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="1160,349 1169,344.5 1169,353.5"/>
+<text class="ca-edge-label" data-from="docs" data-to="ingest" x="1190.5" y="394" text-anchor="end">on upload</text>
+<path class="ca-edge" data-from="ingest" data-to="gateway" d="M1160,339 L1184.8,339 L1184.8,385 L1280,385"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="gateway" points="1286,385 1277,380.5 1277,389.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="gateway" x="1235.4" y="378" text-anchor="middle">embed</text>
+<path class="ca-edge" data-from="ingest" data-to="vectors" d="M1160,359 L1210.2,359 L1210.2,508 L1570,508"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1576,508 1567,503.5 1567,512.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1185.1" y="352" text-anchor="middle">index</text>
+<path class="ca-edge" data-from="agent" data-to="guardrails" d="M1160,518 L1248.5,518 L1248.5,554 L1280,554"/>
+<polygon class="ca-arrow" data-from="agent" data-to="guardrails" points="1286,554 1277,549.5 1277,558.5"/>
+<path class="ca-edge" data-from="repo" data-to="build" d="M1150,249 L1184,249"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="1190,249 1181,244.5 1181,253.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="1170" y="242" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="registry" d="M1396,249 L1430,249"/>
+<polygon class="ca-arrow" data-from="build" data-to="registry" points="1436,249 1427,244.5 1427,253.5"/>
+<text class="ca-edge-label" data-from="build" data-to="registry" x="1416" y="242" text-anchor="middle">image</text>
+<path class="ca-edge" data-from="registry" data-to="deploy" d="M1642,249 L1676,249"/>
+<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="1682,249 1673,244.5 1673,253.5"/>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1888,249 L1922,249"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1928,249 1919,244.5 1919,253.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1908" y="242" text-anchor="middle">applies</text>
 <g class="node" data-id="users" data-capability="client" data-stage="users">
-<rect class="ca-node-box" x="24" y="542" width="156" height="116" rx="8" style="stroke:#5F6368"/>
-<g fill="#5F6368"><circle cx="102" cy="566" r="10"/><path d="M84,598 Q84,580 102,580 Q120,580 120,598 Z"/></g>
-<text class="ca-service" x="102" y="616" text-anchor="middle">Employees (browser)</text>
+<rect class="ca-node-box" x="24" y="400" width="206" height="62" rx="6"/>
+<g fill="#5F6368"><circle cx="52" cy="423.4" r="6.4"/><path d="M39.8,447 Q39.8,432.6 52,432.6 Q64.2,432.6 64.2,447 Z"/></g>
+<text class="ca-service" x="78" y="435">Employees (browser)</text>
 </g>
 <g class="node" data-id="cdn" data-capability="cdn" data-stage="serve">
-<rect class="ca-node-box" x="274" y="542" width="156" height="116" rx="8" style="stroke:#1A73E8"/>
-<rect x="328" y="552" width="48" height="48" rx="6" fill="#1A73E8"/><text class="ca-badge" x="352" y="581" text-anchor="middle">CDN</text>
-<text class="ca-service" x="352" y="616" text-anchor="middle">Cloud CDN</text>
-<text class="ca-label" x="352" y="651" text-anchor="middle">Web front end</text>
-<text class="ca-fidelity" x="424" y="556" text-anchor="end">close</text>
+<rect class="ca-node-box" x="336" y="400" width="206" height="62" rx="6"/>
+<rect x="348" y="415" width="32" height="32" rx="4" fill="#1A73E8"/><text class="ca-badge" x="364" y="435.5" text-anchor="middle">CDN</text>
+<text class="ca-service" x="390" y="425">Cloud CDN</text>
+<text class="ca-label" x="390" y="440">Web front end</text>
+<text class="ca-fidelity" x="536" y="456" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="lb" data-capability="load-balancer" data-stage="serve">
-<rect class="ca-node-box" x="502" y="542" width="156" height="116" rx="8" style="stroke:#1A73E8"/>
-<rect x="556" y="552" width="48" height="48" rx="6" fill="#1A73E8"/><text class="ca-badge" x="580" y="581" text-anchor="middle">LB</text>
-<text class="ca-service" x="580" y="616" text-anchor="middle">Cloud Load Balancing</text>
-<text class="ca-service" x="580" y="630" text-anchor="middle">(Application LB)</text>
-<text class="ca-label" x="580" y="651" text-anchor="middle">HTTPS load balancer</text>
+<rect class="ca-node-box" x="626" y="400" width="206" height="62" rx="6"/>
+<rect x="638" y="415" width="32" height="32" rx="4" fill="#1A73E8"/><text class="ca-badge" x="654" y="435.5" text-anchor="middle">LB</text>
+<text class="ca-service" x="680" y="418">Cloud Load Balancing</text>
+<text class="ca-service" x="680" y="432">(Application LB)</text>
+<text class="ca-label" x="680" y="447">HTTPS load balancer</text>
 </g>
 <g class="node" data-id="app" data-capability="container-service" data-stage="run">
-<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#185ABC"/>
-<rect x="784" y="478" width="48" height="48" rx="6" fill="#185ABC"/><text class="ca-badge" x="808" y="507" text-anchor="middle">RUN</text>
-<text class="ca-service" x="808" y="542" text-anchor="middle">Cloud Run</text>
-<text class="ca-label" x="808" y="577" text-anchor="middle">Chat API (streaming)</text>
+<rect class="ca-node-box" x="954" y="400" width="206" height="62" rx="6"/>
+<rect x="966" y="415" width="32" height="32" rx="4" fill="#185ABC"/><text class="ca-badge" x="982" y="435.5" text-anchor="middle">RUN</text>
+<text class="ca-service" x="1008" y="425">Cloud Run</text>
+<text class="ca-label" x="1008" y="440">Chat API (streaming)</text>
 </g>
 <g class="node" data-id="agent" data-capability="agent-orchestration" data-stage="run">
-<rect class="ca-node-box" x="730" y="616" width="156" height="116" rx="8" style="stroke:#9334E6"/>
-<rect x="784" y="626" width="48" height="48" rx="6" fill="#9334E6"/><text class="ca-badge" x="808" y="655" text-anchor="middle">AGE</text>
-<text class="ca-service" x="808" y="690" text-anchor="middle">Vertex AI Agent Engine</text>
-<text class="ca-label" x="808" y="725" text-anchor="middle">Agent runtime (LangGraph)</text>
-<text class="ca-fidelity" x="880" y="630" text-anchor="end">close</text>
+<rect class="ca-node-box" x="954" y="482" width="206" height="62" rx="6"/>
+<rect x="966" y="497" width="32" height="32" rx="4" fill="#9334E6"/><text class="ca-badge" x="982" y="517.5" text-anchor="middle">AGE</text>
+<text class="ca-service" x="1008" y="507">Vertex AI Agent Engine</text>
+<text class="ca-label" x="1008" y="522">Agent runtime (LangGraph)</text>
+<text class="ca-fidelity" x="1154" y="538" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="tools" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="730" y="764" width="156" height="116" rx="8" style="stroke:#1967D2"/>
-<rect x="784" y="774" width="48" height="48" rx="6" fill="#1967D2"/><text class="ca-badge" x="808" y="803" text-anchor="middle">FN</text>
-<text class="ca-service" x="808" y="838" text-anchor="middle">Cloud Run functions</text>
-<text class="ca-label" x="808" y="873" text-anchor="middle">Tool functions</text>
+<rect class="ca-node-box" x="954" y="564" width="206" height="62" rx="6"/>
+<rect x="966" y="579" width="32" height="32" rx="4" fill="#1967D2"/><text class="ca-badge" x="982" y="599.5" text-anchor="middle">FN</text>
+<text class="ca-service" x="1008" y="589">Cloud Run functions</text>
+<text class="ca-label" x="1008" y="604">Tool functions</text>
 </g>
 <g class="node" data-id="gateway" data-capability="llm-gateway" data-stage="integrate">
-<rect class="ca-node-box" x="958" y="394" width="156" height="116" rx="8" style="stroke:#9334E6"/>
-<rect x="1012" y="404" width="48" height="48" rx="6" fill="#9334E6"/><text class="ca-badge" x="1036" y="433" text-anchor="middle">GW</text>
-<text class="ca-service" x="1036" y="468" text-anchor="middle">LiteLLM on Cloud Run</text>
-<text class="ca-label" x="1036" y="503" text-anchor="middle">LLM gateway (LiteLLM)</text>
-<text class="ca-fidelity" x="1108" y="408" text-anchor="end">close</text>
+<rect class="ca-node-box" x="1286" y="359" width="206" height="62" rx="6"/>
+<rect x="1298" y="374" width="32" height="32" rx="4" fill="#9334E6"/><text class="ca-badge" x="1314" y="394.5" text-anchor="middle">GW</text>
+<text class="ca-service" x="1340" y="384">LiteLLM on Cloud Run</text>
+<text class="ca-label" x="1340" y="399">LLM gateway (LiteLLM)</text>
+<text class="ca-fidelity" x="1486" y="415" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="llm" data-capability="llm-inference" data-stage="run">
-<rect class="ca-node-box" x="958" y="542" width="156" height="116" rx="8" style="stroke:#9334E6"/>
-<rect x="1012" y="552" width="48" height="48" rx="6" fill="#9334E6"/><text class="ca-badge" x="1036" y="581" text-anchor="middle">VAI</text>
-<text class="ca-service" x="1036" y="616" text-anchor="middle">Vertex AI</text>
-<text class="ca-label" x="1036" y="651" text-anchor="middle">Models + embeddings</text>
+<rect class="ca-node-box" x="1286" y="441" width="206" height="62" rx="6"/>
+<rect x="1298" y="456" width="32" height="32" rx="4" fill="#9334E6"/><text class="ca-badge" x="1314" y="476.5" text-anchor="middle">VAI</text>
+<text class="ca-service" x="1340" y="466">Vertex AI</text>
+<text class="ca-label" x="1340" y="481">Models + embeddings</text>
 </g>
 <g class="node" data-id="docs" data-capability="object-storage" data-stage="store">
-<rect class="ca-node-box" x="1186" y="394" width="156" height="116" rx="8" style="stroke:#E37400"/>
-<rect x="1240" y="404" width="48" height="48" rx="6" fill="#E37400"/><text class="ca-badge" x="1264" y="433" text-anchor="middle">GCS</text>
-<text class="ca-service" x="1264" y="468" text-anchor="middle">Cloud Storage</text>
-<text class="ca-label" x="1264" y="503" text-anchor="middle">Source documents</text>
+<rect class="ca-node-box" x="1576" y="400" width="206" height="62" rx="6"/>
+<rect x="1588" y="415" width="32" height="32" rx="4" fill="#E37400"/><text class="ca-badge" x="1604" y="435.5" text-anchor="middle">GCS</text>
+<text class="ca-service" x="1630" y="425">Cloud Storage</text>
+<text class="ca-label" x="1630" y="440">Source documents</text>
 </g>
 <g class="node" data-id="ingest" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="730" y="320" width="156" height="116" rx="8" style="stroke:#1967D2"/>
-<rect x="784" y="330" width="48" height="48" rx="6" fill="#1967D2"/><text class="ca-badge" x="808" y="359" text-anchor="middle">FN</text>
-<text class="ca-service" x="808" y="394" text-anchor="middle">Cloud Run functions</text>
-<text class="ca-label" x="808" y="429" text-anchor="middle">Chunk + embed documents</text>
+<rect class="ca-node-box" x="954" y="318" width="206" height="62" rx="6"/>
+<rect x="966" y="333" width="32" height="32" rx="4" fill="#1967D2"/><text class="ca-badge" x="982" y="353.5" text-anchor="middle">FN</text>
+<text class="ca-service" x="1008" y="343">Cloud Run functions</text>
+<text class="ca-label" x="1008" y="358">Chunk + embed documents</text>
 </g>
 <g class="node" data-id="vectors" data-capability="vector-search" data-stage="store">
-<rect class="ca-node-box" x="1186" y="542" width="156" height="116" rx="8" style="stroke:#9334E6"/>
-<rect x="1240" y="552" width="48" height="48" rx="6" fill="#9334E6"/><text class="ca-badge" x="1264" y="581" text-anchor="middle">VS</text>
-<text class="ca-service" x="1264" y="616" text-anchor="middle">Vertex AI Vector</text>
-<text class="ca-service" x="1264" y="630" text-anchor="middle">Search</text>
-<text class="ca-label" x="1264" y="651" text-anchor="middle">Knowledge index</text>
+<rect class="ca-node-box" x="1576" y="482" width="206" height="62" rx="6"/>
+<rect x="1588" y="497" width="32" height="32" rx="4" fill="#9334E6"/><text class="ca-badge" x="1604" y="517.5" text-anchor="middle">VS</text>
+<text class="ca-service" x="1630" y="507">Vertex AI Vector Search</text>
+<text class="ca-label" x="1630" y="522">Knowledge index</text>
 </g>
 <g class="node" data-id="state" data-capability="relational-db" data-stage="store">
-<rect class="ca-node-box" x="1186" y="690" width="156" height="116" rx="8" style="stroke:#1A73E8"/>
-<rect x="1240" y="700" width="48" height="48" rx="6" fill="#1A73E8"/><text class="ca-badge" x="1264" y="729" text-anchor="middle">SQL</text>
-<text class="ca-service" x="1264" y="764" text-anchor="middle">Cloud SQL for</text>
-<text class="ca-service" x="1264" y="778" text-anchor="middle">PostgreSQL</text>
-<text class="ca-label" x="1264" y="799" text-anchor="middle">Agent state + history</text>
+<rect class="ca-node-box" x="1576" y="694" width="206" height="62" rx="6"/>
+<rect x="1588" y="709" width="32" height="32" rx="4" fill="#1A73E8"/><text class="ca-badge" x="1604" y="729.5" text-anchor="middle">SQL</text>
+<text class="ca-service" x="1630" y="719">Cloud SQL for PostgreSQL</text>
+<text class="ca-label" x="1630" y="734">Agent state + history</text>
 </g>
 <g class="node" data-id="auth" data-capability="identity" data-stage="operate">
-<rect class="ca-node-box" x="274" y="936" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="328" y="946" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="352" y="975" text-anchor="middle">IDP</text>
-<text class="ca-service" x="352" y="1010" text-anchor="middle">Identity Platform</text>
-<text class="ca-label" x="352" y="1045" text-anchor="middle">Single sign-on</text>
+<rect class="ca-node-box" x="944" y="828" width="206" height="62" rx="6"/>
+<rect x="956" y="843" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="972" y="863.5" text-anchor="middle">IDP</text>
+<text class="ca-service" x="998" y="853">Identity Platform</text>
+<text class="ca-label" x="998" y="868">Single sign-on</text>
 </g>
 <g class="node" data-id="secrets" data-capability="secrets" data-stage="operate">
-<rect class="ca-node-box" x="462" y="936" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="516" y="946" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="540" y="975" text-anchor="middle">SM</text>
-<text class="ca-service" x="540" y="1010" text-anchor="middle">Secret Manager</text>
-<text class="ca-label" x="540" y="1045" text-anchor="middle">Model and tool credentials</text>
+<rect class="ca-node-box" x="1190" y="828" width="206" height="62" rx="6"/>
+<rect x="1202" y="843" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="1218" y="863.5" text-anchor="middle">SM</text>
+<text class="ca-service" x="1244" y="853">Secret Manager</text>
+<text class="ca-label" x="1244" y="868">Model and tool credentials</text>
 </g>
 <g class="node" data-id="traces" data-capability="llm-observability" data-stage="operate">
-<rect class="ca-node-box" x="650" y="936" width="156" height="116" rx="8" style="stroke:#B06000"/>
-<rect x="704" y="946" width="48" height="48" rx="6" fill="#B06000"/><text class="ca-badge" x="728" y="975" text-anchor="middle">TRC</text>
-<text class="ca-service" x="728" y="1010" text-anchor="middle">Cloud Trace (Vertex AI</text>
-<text class="ca-service" x="728" y="1024" text-anchor="middle">agent tracing)</text>
-<text class="ca-label" x="728" y="1045" text-anchor="middle">LLM tracing (Langfuse)</text>
-<text class="ca-fidelity" x="800" y="950" text-anchor="end">partial</text>
+<rect class="ca-node-box" x="1436" y="828" width="206" height="62" rx="6"/>
+<rect x="1448" y="843" width="32" height="32" rx="4" fill="#B06000"/><text class="ca-badge" x="1464" y="863.5" text-anchor="middle">TRC</text>
+<text class="ca-service" x="1490" y="846">Cloud Trace (Vertex AI</text>
+<text class="ca-service" x="1490" y="860">agent tracing)</text>
+<text class="ca-label" x="1490" y="875">LLM tracing (Langfuse)</text>
+<text class="ca-fidelity" x="1636" y="884" text-anchor="end">partial</text>
 </g>
 <g class="node" data-id="guardrails" data-capability="ai-guardrails" data-stage="integrate">
-<rect class="ca-node-box" x="958" y="690" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="1012" y="700" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="1036" y="729" text-anchor="middle">MA</text>
-<text class="ca-service" x="1036" y="764" text-anchor="middle">Model Armor</text>
-<text class="ca-label" x="1036" y="799" text-anchor="middle">AI guardrails</text>
+<rect class="ca-node-box" x="1286" y="523" width="206" height="62" rx="6"/>
+<rect x="1298" y="538" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="1314" y="558.5" text-anchor="middle">MA</text>
+<text class="ca-service" x="1340" y="548">Model Armor</text>
+<text class="ca-label" x="1340" y="563">AI guardrails</text>
 </g>
 <g class="node" data-id="access" data-capability="access-governance" data-stage="operate">
-<rect class="ca-node-box" x="838" y="936" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="892" y="946" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="916" y="975" text-anchor="middle">IAM</text>
-<text class="ca-service" x="916" y="1010" text-anchor="middle">Cloud IAM + Privileged</text>
-<text class="ca-service" x="916" y="1024" text-anchor="middle">Access Manager</text>
-<text class="ca-label" x="916" y="1045" text-anchor="middle">Cloud access governance</text>
+<rect class="ca-node-box" x="1682" y="828" width="206" height="62" rx="6"/>
+<rect x="1694" y="843" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="1710" y="863.5" text-anchor="middle">IAM</text>
+<text class="ca-service" x="1736" y="846">Cloud IAM + Privileged</text>
+<text class="ca-service" x="1736" y="860">Access Manager</text>
+<text class="ca-label" x="1736" y="875">Cloud access governance</text>
 </g>
 <g class="node" data-id="audit" data-capability="audit-logging" data-stage="operate">
-<rect class="ca-node-box" x="1026" y="936" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="1080" y="946" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="1104" y="975" text-anchor="middle">AUD</text>
-<text class="ca-service" x="1104" y="1010" text-anchor="middle">Cloud Audit Logs</text>
-<text class="ca-label" x="1104" y="1045" text-anchor="middle">Audit trail</text>
+<rect class="ca-node-box" x="1928" y="828" width="206" height="62" rx="6"/>
+<rect x="1940" y="843" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="1956" y="863.5" text-anchor="middle">AUD</text>
+<text class="ca-service" x="1982" y="853">Cloud Audit Logs</text>
+<text class="ca-label" x="1982" y="868">Audit trail</text>
 </g>
 <g class="node" data-id="keys" data-capability="key-management" data-stage="operate">
-<rect class="ca-node-box" x="1214" y="936" width="156" height="116" rx="8" style="stroke:#D93025"/>
-<rect x="1268" y="946" width="48" height="48" rx="6" fill="#D93025"/><text class="ca-badge" x="1292" y="975" text-anchor="middle">KMS</text>
-<text class="ca-service" x="1292" y="1010" text-anchor="middle">Cloud KMS</text>
-<text class="ca-label" x="1292" y="1045" text-anchor="middle">Encryption keys</text>
+<rect class="ca-node-box" x="2174" y="828" width="206" height="62" rx="6"/>
+<rect x="2186" y="843" width="32" height="32" rx="4" fill="#D93025"/><text class="ca-badge" x="2202" y="863.5" text-anchor="middle">KMS</text>
+<text class="ca-service" x="2228" y="853">Cloud KMS</text>
+<text class="ca-label" x="2228" y="868">Encryption keys</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
-<rect class="ca-node-box" x="1402" y="936" width="156" height="116" rx="8" style="stroke:#B06000"/>
-<rect x="1456" y="946" width="48" height="48" rx="6" fill="#B06000"/><text class="ca-badge" x="1480" y="975" text-anchor="middle">MON</text>
-<text class="ca-service" x="1480" y="1010" text-anchor="middle">Cloud Monitoring +</text>
-<text class="ca-service" x="1480" y="1024" text-anchor="middle">Cloud Logging</text>
-<text class="ca-label" x="1480" y="1045" text-anchor="middle">Logs, metrics, alarms</text>
+<rect class="ca-node-box" x="2420" y="828" width="206" height="62" rx="6"/>
+<rect x="2432" y="843" width="32" height="32" rx="4" fill="#B06000"/><text class="ca-badge" x="2448" y="863.5" text-anchor="middle">MON</text>
+<text class="ca-service" x="2474" y="846">Cloud Monitoring + Cloud</text>
+<text class="ca-service" x="2474" y="860">Logging</text>
+<text class="ca-label" x="2474" y="875">Logs, metrics, alarms</text>
 </g>
 <g class="node" data-id="repo" data-capability="source-control" data-stage="code">
-<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="328" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="352" y="207" text-anchor="middle">SSM</text>
-<text class="ca-service" x="352" y="242" text-anchor="middle">Secure Source Manager</text>
-<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
+<rect class="ca-node-box" x="944" y="218" width="206" height="62" rx="6"/>
+<rect x="956" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="972" y="253.5" text-anchor="middle">SSM</text>
+<text class="ca-service" x="998" y="243">Secure Source Manager</text>
+<text class="ca-label" x="998" y="258">App and infrastructure code</text>
 </g>
 <g class="node" data-id="build" data-capability="ci-build" data-stage="build">
-<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="548" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="572" y="207" text-anchor="middle">CB</text>
-<text class="ca-service" x="572" y="242" text-anchor="middle">Cloud Build</text>
-<text class="ca-label" x="572" y="277" text-anchor="middle">Build, test and evaluate</text>
+<rect class="ca-node-box" x="1190" y="218" width="206" height="62" rx="6"/>
+<rect x="1202" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="1218" y="253.5" text-anchor="middle">CB</text>
+<text class="ca-service" x="1244" y="243">Cloud Build</text>
+<text class="ca-label" x="1244" y="258">Build, test and evaluate</text>
 </g>
 <g class="node" data-id="registry" data-capability="container-registry" data-stage="ship">
-<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#185ABC"/>
-<rect x="768" y="178" width="48" height="48" rx="6" fill="#185ABC"/><text class="ca-badge" x="792" y="207" text-anchor="middle">AR</text>
-<text class="ca-service" x="792" y="242" text-anchor="middle">Artifact Registry</text>
-<text class="ca-label" x="792" y="277" text-anchor="middle">Container images</text>
+<rect class="ca-node-box" x="1436" y="218" width="206" height="62" rx="6"/>
+<rect x="1448" y="233" width="32" height="32" rx="4" fill="#185ABC"/><text class="ca-badge" x="1464" y="253.5" text-anchor="middle">AR</text>
+<text class="ca-service" x="1490" y="243">Artifact Registry</text>
+<text class="ca-label" x="1490" y="258">Container images</text>
 </g>
 <g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
-<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="988" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">CD</text>
-<text class="ca-service" x="1012" y="242" text-anchor="middle">Cloud Deploy</text>
-<text class="ca-label" x="1012" y="277" text-anchor="middle">Release pipeline</text>
+<rect class="ca-node-box" x="1682" y="218" width="206" height="62" rx="6"/>
+<rect x="1694" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="1710" y="253.5" text-anchor="middle">CD</text>
+<text class="ca-service" x="1736" y="243">Cloud Deploy</text>
+<text class="ca-label" x="1736" y="258">Release pipeline</text>
 </g>
 <g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
-<rect class="ca-node-box" x="1154" y="168" width="156" height="116" rx="8" style="stroke:#B06000"/>
-<rect x="1208" y="178" width="48" height="48" rx="6" fill="#B06000"/><text class="ca-badge" x="1232" y="207" text-anchor="middle">IM</text>
-<text class="ca-service" x="1232" y="242" text-anchor="middle">Infrastructure Manager</text>
-<text class="ca-service" x="1232" y="256" text-anchor="middle">(Terraform)</text>
-<text class="ca-label" x="1232" y="277" text-anchor="middle">Infrastructure as code</text>
+<rect class="ca-node-box" x="1928" y="218" width="206" height="62" rx="6"/>
+<rect x="1940" y="233" width="32" height="32" rx="4" fill="#B06000"/><text class="ca-badge" x="1956" y="253.5" text-anchor="middle">IM</text>
+<text class="ca-service" x="1982" y="236">Infrastructure Manager</text>
+<text class="ca-service" x="1982" y="250">(Terraform)</text>
+<text class="ca-label" x="1982" y="265">Infrastructure as code</text>
 </g>
-<text class="ca-footer" x="24" y="1114">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Google Cloud.</text>
+<g class="ca-step" data-step="1"><circle cx="313" cy="431" r="9"/><text x="313" y="434.8" text-anchor="middle">1</text></g>
+<g class="ca-step" data-step="2"><circle cx="603" cy="431" r="9"/><text x="603" y="434.8" text-anchor="middle">2</text></g>
+<g class="ca-step" data-step="3"><circle cx="931" cy="431" r="9"/><text x="931" y="434.8" text-anchor="middle">3</text></g>
+<g class="ca-step" data-step="4"><circle cx="1057" cy="472" r="9"/><text x="1057" y="475.8" text-anchor="middle">4</text></g>
+<g class="ca-step" data-step="5"><circle cx="954" cy="834" r="9"/><text x="954" y="837.8" text-anchor="middle">5</text></g>
+<g class="ca-step" data-step="6"><circle cx="1263" cy="395" r="9"/><text x="1263" y="398.8" text-anchor="middle">6</text></g>
+<g class="ca-step" data-step="7"><circle cx="1553" cy="518" r="9"/><text x="1553" y="521.8" text-anchor="middle">7</text></g>
+<g class="ca-step" data-step="8"><circle cx="1057" cy="554" r="9"/><text x="1057" y="557.8" text-anchor="middle">8</text></g>
+<g class="ca-step" data-step="9"><circle cx="1553" cy="725" r="9"/><text x="1553" y="728.8" text-anchor="middle">9</text></g>
+<g class="ca-step" data-step="10"><circle cx="1200" cy="834" r="9"/><text x="1200" y="837.8" text-anchor="middle">10</text></g>
+<g class="ca-step" data-step="11"><circle cx="1267.2" cy="554" r="9"/><text x="1267.2" y="557.8" text-anchor="middle">11</text></g>
+<g class="ca-step" data-step="12"><circle cx="1389" cy="431" r="9"/><text x="1389" y="434.8" text-anchor="middle">12</text></g>
+<g class="ca-step" data-step="13"><circle cx="1296" cy="365" r="9"/><text x="1296" y="368.8" text-anchor="middle">13</text></g>
+<g class="ca-step" data-step="14"><circle cx="2430" cy="834" r="9"/><text x="2430" y="837.8" text-anchor="middle">14</text></g>
+<text class="ca-steps-title" x="24" y="982">Serving a request</text>
+<g class="ca-step" data-step="1"><circle cx="33" cy="998" r="9"/><text x="33" y="1001.8" text-anchor="middle">1</text></g>
+<text class="ca-steps-text" x="50" y="1002">Employees (browser) → Web front end: load the app through the CDN (HTTPS)</text>
+<g class="ca-step" data-step="2"><circle cx="33" cy="1022" r="9"/><text x="33" y="1025.8" text-anchor="middle">2</text></g>
+<text class="ca-steps-text" x="50" y="1026">Web front end → HTTPS load balancer: forward API calls</text>
+<g class="ca-step" data-step="3"><circle cx="33" cy="1046" r="9"/><text x="33" y="1049.8" text-anchor="middle">3</text></g>
+<text class="ca-steps-text" x="50" y="1050">HTTPS load balancer → Chat API (streaming): run the business logic</text>
+<g class="ca-step" data-step="4"><circle cx="33" cy="1070" r="9"/><text x="33" y="1073.8" text-anchor="middle">4</text></g>
+<text class="ca-steps-text" x="50" y="1074">Chat API (streaming) → Agent runtime (LangGraph): hand the request to the agent</text>
+<g class="ca-step" data-step="5"><circle cx="33" cy="1094" r="9"/><text x="33" y="1097.8" text-anchor="middle">5</text></g>
+<text class="ca-steps-text" x="50" y="1098">Chat API (streaming) → Single sign-on: verify the user's sign-in token</text>
+<g class="ca-step" data-step="6"><circle cx="33" cy="1118" r="9"/><text x="33" y="1121.8" text-anchor="middle">6</text></g>
+<text class="ca-steps-text" x="50" y="1122">Agent runtime (LangGraph) → LLM gateway (LiteLLM): send the prompt through the gateway</text>
+<g class="ca-step" data-step="7"><circle cx="33" cy="1142" r="9"/><text x="33" y="1145.8" text-anchor="middle">7</text></g>
+<text class="ca-steps-text" x="50" y="1146">Agent runtime (LangGraph) → Knowledge index: retrieve relevant passages</text>
+<g class="ca-step" data-step="8"><circle cx="1370" cy="998" r="9"/><text x="1370" y="1001.8" text-anchor="middle">8</text></g>
+<text class="ca-steps-text" x="1387" y="1002">Agent runtime (LangGraph) → Tool functions: call tools that look up or change data</text>
+<g class="ca-step" data-step="9"><circle cx="1370" cy="1022" r="9"/><text x="1370" y="1025.8" text-anchor="middle">9</text></g>
+<text class="ca-steps-text" x="1387" y="1026">Agent runtime (LangGraph) → Agent state + history: save the agent's progress and the conversation</text>
+<g class="ca-step" data-step="10"><circle cx="1370" cy="1046" r="9"/><text x="1370" y="1049.8" text-anchor="middle">10</text></g>
+<text class="ca-steps-text" x="1387" y="1050">Agent runtime (LangGraph) → Model and tool credentials: fetch credentials</text>
+<g class="ca-step" data-step="11"><circle cx="1370" cy="1070" r="9"/><text x="1370" y="1073.8" text-anchor="middle">11</text></g>
+<text class="ca-steps-text" x="1387" y="1074">Agent runtime (LangGraph) → AI guardrails: screen the prompt and the answer</text>
+<g class="ca-step" data-step="12"><circle cx="1370" cy="1094" r="9"/><text x="1370" y="1097.8" text-anchor="middle">12</text></g>
+<text class="ca-steps-text" x="1387" y="1098">LLM gateway (LiteLLM) → Models + embeddings: call the chosen model, falling back to another if it fails</text>
+<g class="ca-step" data-step="13"><circle cx="1370" cy="1118" r="9"/><text x="1370" y="1121.8" text-anchor="middle">13</text></g>
+<text class="ca-steps-text" x="1387" y="1122">Every model call → LLM tracing (Langfuse): record the prompt, tool calls, tokens and cost</text>
+<g class="ca-step" data-step="14"><circle cx="1370" cy="1142" r="9"/><text x="1370" y="1145.8" text-anchor="middle">14</text></g>
+<text class="ca-steps-text" x="1387" y="1146">Every component → Logs, metrics, alarms: send logs and metrics</text>
+<text class="ca-footer" x="24" y="1200">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Google Cloud.</text>
 </svg>

@@ -21,7 +21,7 @@ const Examples = (() => {
     return designs[id];
   }
 
-  const svgSource = (svg) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CA.croppedSvgText(svg, { transparent: true }))}`;
+  const svgSource = (svg) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CA.croppedSvgText(svg, { transparent: true, drawingOnly: true }))}`;
 
   // Diagrams load when they come into view, so pages that don't show them never fetch them.
   function whenVisible(node, load) {

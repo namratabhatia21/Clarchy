@@ -53,6 +53,8 @@ def engine_bundle() -> bytes:
             rel = path.relative_to(root)
             if path.is_dir() or rel.parts[0] == "static" or "__pycache__" in rel.parts:
                 continue
+            if rel.parts[:2] == ("data", "directory"):  # the service lists are for pages only
+                continue
             if path.suffix not in (".py", ".yaml", ".md", ".svg", ".png"):
                 continue
             archive.write(path, f"clarchy/{rel.as_posix()}")

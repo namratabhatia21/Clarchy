@@ -78,3 +78,17 @@ architecture diagrams commonly use to refer to them. The same decision applies t
   cloud's own (LiteLLM on Amazon ECS), the cloud's icon stays.
 - Every provider now ships icons, so ADR 0002 is superseded in full. Deleting a folder
   returns that provider's diagrams to badges.
+
+## Amendment, 2026-10-02: group icons
+
+Diagrams now draw each provider's groups the way its documentation does (ADR 0016), so the
+icons that mark those groups ship too, under the same terms and checks (a test fails if a
+drawn icon is missing or an undrawn one is shipped):
+
+- AWS: `AWS-Cloud-logo_32.svg`, `Region_32.svg`, `Virtual-private-cloud-VPC_32.svg`,
+  `Public-subnet_32.svg`, `Private-subnet_32.svg` and `Res_Users_48.svg`, from the same
+  `aws-icons` 3.3.0 package as the service icons.
+- Azure: `icon-service-Virtual-Networks.svg`, `icon-service-Subnet.svg` and
+  `icon-service-Users.svg`, from the `@squinch/pack-azure` 0.14.0 package, which
+  republishes Microsoft's Azure Public Service Icons (V24) verbatim; its copy of an icon
+  already bundled (Key Vaults) is byte-identical to ours.

@@ -370,7 +370,18 @@ def _band(frame: dict, top: float, bottom: float, label: str) -> list[str]:
 
 
 def render_svg(arch: ProviderArchitecture, icons: IconLibrary | None = None) -> str:
+    """A provider's diagram, drawn the way its own documentation draws one (render_doc.py),
+    or, for providers without such conventions (open source), as service cards."""
+    from clarchy.render_doc import look_for, render_documented
+
     icons = icons or IconLibrary(None)
+    look = look_for(arch.provider)
+    if look is not None:
+        return render_documented(arch, icons, look)
+    return _render_cards(arch, icons)
+
+
+def _render_cards(arch: ProviderArchitecture, icons: IconLibrary) -> str:
     theme = theme_for(arch.provider)
     boxes, f = _layout(arch)
     spec = arch.spec

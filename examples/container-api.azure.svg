@@ -1,150 +1,197 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-azure" width="1356" height="978" viewBox="0 0 1356 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="Containerised API on Azure">
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-azure" width="1448" height="1230" viewBox="0 0 1448 1230" role="img" data-body-top="80" data-body-bottom="1202" data-drawing-bottom="1020" aria-label="Containerised API on Azure">
 <style>.ca-azure{font-family:'Segoe UI', 'Helvetica Neue', Arial, sans-serif}
 .ca-azure .ca-bg{fill:#ffffff}
-.ca-azure .ca-title{font-size:18px;font-weight:600;fill:#16191f}
-.ca-azure .ca-subtitle{font-size:13px;fill:#545b64}
-.ca-azure .ca-cloud{fill:#FFFFFF;stroke:#0078D4;stroke-width:1.5;}
-.ca-azure .ca-cloud-label{font-size:13px;font-weight:600;fill:#0F548C}
-.ca-azure .ca-band{fill:none;stroke:#8A8886;stroke-dasharray:5 4}
-.ca-azure .ca-band-label{font-size:12px;font-weight:600;fill:#605E5C}
-.ca-azure .ca-node-box{fill:#ffffff;stroke-width:1.5}
-.ca-azure .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
-.ca-azure .ca-service{font-size:12px;font-weight:600;fill:#16191f}
-.ca-azure .ca-label{font-size:11px;fill:#545b64}
+.ca-azure .ca-title{font-size:18px;font-weight:700;fill:#323130}
+.ca-azure .ca-subtitle{font-size:13px;fill:#605E5C}
+.ca-azure .ca-group-label{font-size:12px;font-weight:600;fill:#323130}
+.ca-azure .ca-badge{font-size:13px;font-weight:700;fill:#ffffff}
+.ca-azure .ca-service{font-size:12px;font-weight:600;fill:#323130}
+.ca-azure .ca-label{font-size:11px;fill:#605E5C}
 .ca-azure .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
-.ca-azure .ca-edge{fill:none;stroke:#605E5C;stroke-width:1.5}
+.ca-azure .ca-edge{fill:none;stroke:#605E5C;stroke-width:1.5;stroke-linejoin:round}
 .ca-azure .ca-arrow{fill:#605E5C}
-.ca-azure .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.ca-azure .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1356" height="978"/>
-<text class="ca-title" x="24" y="36">Containerised API · Azure</text>
+.ca-azure .ca-edge-label{font-size:11px;fill:#323130;paint-order:stroke;stroke:#ffffff;stroke-width:4;stroke-linejoin:round}
+.ca-azure .ca-step circle{fill:#0078D4;stroke:#ffffff;stroke-width:1.5}
+.ca-azure .ca-step text{font-size:11px;font-weight:700;fill:#ffffff}
+.ca-azure .ca-steps-title{font-size:13px;font-weight:700;fill:#323130}
+.ca-azure .ca-steps-text{font-size:12px;fill:#323130}
+.ca-azure .ca-footer{font-size:10px;fill:#879196}
+.ca-azure .ca-node-box{fill:transparent;stroke:transparent;stroke-width:1.5}
+.ca-azure .ca-group-region{fill:none;stroke:#8A8886}
+.ca-azure .ca-group-region-label{fill:#323130;font-weight:600}
+.ca-azure .ca-group-vpc{fill:none;stroke:#0078D4}
+.ca-azure .ca-group-vpc-label{fill:#323130;font-weight:600}
+.ca-azure .ca-group-public{fill:#F3F9FD;stroke:#0078D4;stroke-dasharray:4 3}
+.ca-azure .ca-group-public-label{fill:#323130;font-weight:600}
+.ca-azure .ca-group-private{fill:#F3F9FD;stroke:#0078D4;stroke-dasharray:4 3}
+.ca-azure .ca-group-private-label{fill:#323130;font-weight:600}
+.ca-azure .ca-group-generic{fill:none;stroke:#8A8886;stroke-dasharray:4 3}
+.ca-azure .ca-group-generic-label{fill:#605E5C;font-weight:600}</style>
+<rect class="ca-bg" width="1448" height="1230"/>
+<text class="ca-title" x="24" y="36">Containerised API on Azure</text>
 <text class="ca-subtitle" x="24" y="56">Always-on containerised web API with a relational database and cache, for steady traffic and existing Docker apps.</text>
-<rect class="ca-cloud" x="252" y="104" width="1080" height="822" rx="4"/>
-<text class="ca-cloud-label" x="262" y="123">Microsoft Azure · Ireland (northeurope)</text>
-<rect class="ca-band" x="262" y="134" width="1060" height="164" rx="4"/>
-<text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="754" width="1060" height="162" rx="4"/>
-<text class="ca-band-label" x="272" y="774">Shared services</text>
-<path class="ca-edge" data-from="users" data-to="dns" d="M180,526 C227,526 227,452 274,452"/>
-<polygon class="ca-arrow" data-from="users" data-to="dns" points="274,452 265,447.5 265,456.5"/>
-<path class="ca-edge" data-from="users" data-to="firewall" d="M180,526 C227,526 227,600 274,600"/>
-<polygon class="ca-arrow" data-from="users" data-to="firewall" points="274,600 265,595.5 265,604.5"/>
-<text class="ca-edge-label" data-from="users" data-to="firewall" x="227" y="557" text-anchor="middle">HTTPS</text>
-<path class="ca-edge" data-from="firewall" data-to="lb" d="M430,600 C466,600 466,526 502,526"/>
-<polygon class="ca-arrow" data-from="firewall" data-to="lb" points="502,526 493,521.5 493,530.5"/>
-<path class="ca-edge" data-from="lb" data-to="app" d="M658,526 C694,526 694,526 730,526"/>
-<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,526 721,521.5 721,530.5"/>
-<path class="ca-edge" data-from="app" data-to="cache" d="M886,526 C922,526 922,378 958,378"/>
-<polygon class="ca-arrow" data-from="app" data-to="cache" points="958,378 949,373.5 949,382.5"/>
-<path class="ca-edge" data-from="app" data-to="db" d="M886,526 C922,526 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="app" data-to="db" points="958,526 949,521.5 949,530.5"/>
-<path class="ca-edge" data-from="app" data-to="files" d="M886,526 C922,526 922,674 958,674"/>
-<polygon class="ca-arrow" data-from="app" data-to="files" points="958,674 949,669.5 949,678.5"/>
-<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
-<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
-<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
-<path class="ca-edge" data-from="build" data-to="registry" d="M650,226 C682,226 682,226 714,226"/>
-<polygon class="ca-arrow" data-from="build" data-to="registry" points="714,226 705,221.5 705,230.5"/>
-<text class="ca-edge-label" data-from="build" data-to="registry" x="682" y="220" text-anchor="middle">image</text>
-<path class="ca-edge" data-from="registry" data-to="deploy" d="M870,226 C902,226 902,226 934,226"/>
-<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="934,226 925,221.5 925,230.5"/>
-<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1090,226 C1122,226 1122,226 1154,226"/>
-<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1154,226 1145,221.5 1145,230.5"/>
-<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1122" y="220" text-anchor="middle">applies</text>
+<rect class="ca-group ca-group-region" x="464" y="104" width="960" height="908" rx="4"/>
+<text class="ca-group-label ca-group-region-label" x="476" y="129">Azure region · Ireland (northeurope)</text>
+<rect class="ca-group ca-group-generic" x="478" y="146" width="932" height="152" rx="4"/>
+<text class="ca-group-label ca-group-generic-label" x="490" y="171">Build and deploy</text>
+<rect class="ca-group ca-group-vpc" x="486" y="460" width="650" height="352" rx="4"/>
+<rect x="496" y="470" width="20" height="20" fill="#0078D4"/>
+<text class="ca-group-label ca-group-vpc-label" x="524" y="485">Virtual network</text>
+<rect class="ca-group ca-group-public" x="502" y="502" width="178" height="294" rx="4"/>
+<rect x="512" y="512" width="20" height="20" fill="#0078D4"/>
+<text class="ca-group-label ca-group-public-label" x="540" y="527">Application Gateway subnet</text>
+<rect class="ca-group ca-group-private" x="722" y="502" width="398" height="294" rx="4"/>
+<rect x="732" y="512" width="20" height="20" fill="#0078D4"/>
+<text class="ca-group-label ca-group-private-label" x="760" y="527">Workload subnet</text>
+<rect class="ca-group ca-group-generic" x="478" y="838" width="932" height="152" rx="4"/>
+<text class="ca-group-label ca-group-generic-label" x="490" y="863">Shared services</text>
+<path class="ca-edge" data-from="users" data-to="dns" d="M127,629 L201.3,629 L201.3,566 L285,566"/>
+<polygon class="ca-arrow" data-from="users" data-to="dns" points="291,566 282,561.5 282,570.5"/>
+<path class="ca-edge" data-from="users" data-to="firewall" d="M127,639 L216.7,639 L216.7,702 L285,702"/>
+<polygon class="ca-arrow" data-from="users" data-to="firewall" points="291,702 282,697.5 282,706.5"/>
+<path class="ca-edge" data-from="firewall" data-to="lb" d="M347,702 L455,702 L455,634 L557,634"/>
+<polygon class="ca-arrow" data-from="firewall" data-to="lb" points="563,634 554,629.5 554,638.5"/>
+<path class="ca-edge" data-from="lb" data-to="app" d="M619,634 L777,634"/>
+<polygon class="ca-arrow" data-from="lb" data-to="app" points="783,634 774,629.5 774,638.5"/>
+<path class="ca-edge" data-from="app" data-to="cache" d="M839,634 L921,634 L921,566 L997,566"/>
+<polygon class="ca-arrow" data-from="app" data-to="cache" points="1003,566 994,561.5 994,570.5"/>
+<path class="ca-edge" data-from="app" data-to="db" d="M839,644 L932.5,644 L932.5,702 L997,702"/>
+<polygon class="ca-arrow" data-from="app" data-to="db" points="1003,702 994,697.5 994,706.5"/>
+<path class="ca-edge" data-from="app" data-to="files" d="M839,624 L909.5,624 L909.5,354 L997,354"/>
+<polygon class="ca-arrow" data-from="app" data-to="files" points="1003,354 994,349.5 994,358.5"/>
+<path class="ca-edge" data-from="repo" data-to="build" d="M595,206 L723,206"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="729,206 720,201.5 720,210.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="662" y="199" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="registry" d="M785,206 L913,206"/>
+<polygon class="ca-arrow" data-from="build" data-to="registry" points="919,206 910,201.5 910,210.5"/>
+<text class="ca-edge-label" data-from="build" data-to="registry" x="852" y="199" text-anchor="middle">image</text>
+<path class="ca-edge" data-from="registry" data-to="deploy" d="M975,206 L1103,206"/>
+<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="1109,206 1100,201.5 1100,210.5"/>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1165,206 L1293,206"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1299,206 1290,201.5 1290,210.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1232" y="199" text-anchor="middle">applies</text>
 <g class="node" data-id="users" data-capability="client" data-stage="users">
-<rect class="ca-node-box" x="24" y="468" width="156" height="116" rx="8" style="stroke:#605E5C"/>
-<g fill="#605E5C"><circle cx="102" cy="492" r="10"/><path d="M84,524 Q84,506 102,506 Q120,506 120,524 Z"/></g>
-<text class="ca-service" x="102" y="542" text-anchor="middle">Clients</text>
+<rect class="ca-node-box" x="24" y="604" width="150" height="110" rx="4"/>
+<g fill="#605E5C"><circle cx="99" cy="621.6" r="9.6"/><path d="M80.8,658 Q80.8,636.4 99,636.4 Q117.2,636.4 117.2,658 Z"/></g>
+<text class="ca-service" x="99" y="674" text-anchor="middle">Clients</text>
 </g>
 <g class="node" data-id="dns" data-capability="dns" data-stage="serve">
-<rect class="ca-node-box" x="274" y="394" width="156" height="116" rx="8" style="stroke:#0078D4"/>
-<rect x="328" y="404" width="48" height="48" rx="6" fill="#0078D4"/><text class="ca-badge" x="352" y="433" text-anchor="middle">DNS</text>
-<text class="ca-service" x="352" y="468" text-anchor="middle">Azure DNS</text>
-<text class="ca-label" x="352" y="503" text-anchor="middle">Domain</text>
+<rect class="ca-node-box" x="244" y="536" width="150" height="110" rx="4"/>
+<rect x="295" y="542" width="48" height="48" rx="4" fill="#0078D4"/><text class="ca-badge" x="319" y="570.5" text-anchor="middle">DNS</text>
+<text class="ca-service" x="319" y="606" text-anchor="middle">Azure DNS</text>
+<text class="ca-label" x="319" y="621" text-anchor="middle">Domain</text>
 </g>
 <g class="node" data-id="firewall" data-capability="waf" data-stage="serve">
-<rect class="ca-node-box" x="274" y="542" width="156" height="116" rx="8" style="stroke:#A4262C"/>
-<rect x="328" y="552" width="48" height="48" rx="6" fill="#A4262C"/><text class="ca-badge" x="352" y="581" text-anchor="middle">WAF</text>
-<text class="ca-service" x="352" y="616" text-anchor="middle">Azure Web Application</text>
-<text class="ca-service" x="352" y="630" text-anchor="middle">Firewall</text>
-<text class="ca-label" x="352" y="651" text-anchor="middle">Web firewall</text>
+<rect class="ca-node-box" x="244" y="672" width="150" height="110" rx="4"/>
+<rect x="295" y="678" width="48" height="48" rx="4" fill="#A4262C"/><text class="ca-badge" x="319" y="706.5" text-anchor="middle">WAF</text>
+<text class="ca-service" x="319" y="742" text-anchor="middle">Azure Web Application</text>
+<text class="ca-service" x="319" y="756" text-anchor="middle">Firewall</text>
+<text class="ca-label" x="319" y="771" text-anchor="middle">Web firewall</text>
 </g>
 <g class="node" data-id="lb" data-capability="load-balancer" data-stage="serve">
-<rect class="ca-node-box" x="502" y="468" width="156" height="116" rx="8" style="stroke:#0078D4"/>
-<rect x="556" y="478" width="48" height="48" rx="6" fill="#0078D4"/><text class="ca-badge" x="580" y="507" text-anchor="middle">AGW</text>
-<text class="ca-service" x="580" y="542" text-anchor="middle">Azure Application</text>
-<text class="ca-service" x="580" y="556" text-anchor="middle">Gateway</text>
-<text class="ca-label" x="580" y="577" text-anchor="middle">HTTPS load balancer</text>
+<rect class="ca-node-box" x="516" y="604" width="150" height="110" rx="4"/>
+<rect x="567" y="610" width="48" height="48" rx="4" fill="#0078D4"/><text class="ca-badge" x="591" y="638.5" text-anchor="middle">AGW</text>
+<text class="ca-service" x="591" y="674" text-anchor="middle">Azure Application</text>
+<text class="ca-service" x="591" y="688" text-anchor="middle">Gateway</text>
+<text class="ca-label" x="591" y="703" text-anchor="middle">HTTPS load balancer</text>
 </g>
 <g class="node" data-id="app" data-capability="container-service" data-stage="run">
-<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#005B70"/>
-<rect x="784" y="478" width="48" height="48" rx="6" fill="#005B70"/><text class="ca-badge" x="808" y="507" text-anchor="middle">ACA</text>
-<text class="ca-service" x="808" y="542" text-anchor="middle">Azure Container Apps</text>
-<text class="ca-label" x="808" y="577" text-anchor="middle">API containers</text>
+<rect class="ca-node-box" x="736" y="604" width="150" height="110" rx="4"/>
+<rect x="787" y="610" width="48" height="48" rx="4" fill="#005B70"/><text class="ca-badge" x="811" y="638.5" text-anchor="middle">ACA</text>
+<text class="ca-service" x="811" y="674" text-anchor="middle">Azure Container Apps</text>
+<text class="ca-label" x="811" y="689" text-anchor="middle">API containers</text>
 </g>
 <g class="node" data-id="cache" data-capability="cache" data-stage="store">
-<rect class="ca-node-box" x="958" y="320" width="156" height="116" rx="8" style="stroke:#004E8C"/>
-<rect x="1012" y="330" width="48" height="48" rx="6" fill="#004E8C"/><text class="ca-badge" x="1036" y="359" text-anchor="middle">RED</text>
-<text class="ca-service" x="1036" y="394" text-anchor="middle">Azure Managed Redis</text>
-<text class="ca-label" x="1036" y="429" text-anchor="middle">Session + query cache</text>
+<rect class="ca-node-box" x="956" y="536" width="150" height="110" rx="4"/>
+<rect x="1007" y="542" width="48" height="48" rx="4" fill="#004E8C"/><text class="ca-badge" x="1031" y="570.5" text-anchor="middle">RED</text>
+<text class="ca-service" x="1031" y="606" text-anchor="middle">Azure Managed Redis</text>
+<text class="ca-label" x="1031" y="621" text-anchor="middle">Session + query cache</text>
 </g>
 <g class="node" data-id="db" data-capability="relational-db" data-stage="store">
-<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#004E8C"/>
-<rect x="1012" y="478" width="48" height="48" rx="6" fill="#004E8C"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">PG</text>
-<text class="ca-service" x="1036" y="542" text-anchor="middle">Azure Database for</text>
-<text class="ca-service" x="1036" y="556" text-anchor="middle">PostgreSQL (Flexible…</text>
-<text class="ca-label" x="1036" y="577" text-anchor="middle">PostgreSQL</text>
+<rect class="ca-node-box" x="956" y="672" width="150" height="110" rx="4"/>
+<rect x="1007" y="678" width="48" height="48" rx="4" fill="#004E8C"/><text class="ca-badge" x="1031" y="706.5" text-anchor="middle">PG</text>
+<text class="ca-service" x="1031" y="742" text-anchor="middle">Azure Database for</text>
+<text class="ca-service" x="1031" y="756" text-anchor="middle">PostgreSQL (Flexible…</text>
+<text class="ca-label" x="1031" y="771" text-anchor="middle">PostgreSQL</text>
 </g>
 <g class="node" data-id="files" data-capability="object-storage" data-stage="store">
-<rect class="ca-node-box" x="958" y="616" width="156" height="116" rx="8" style="stroke:#107C10"/>
-<rect x="1012" y="626" width="48" height="48" rx="6" fill="#107C10"/><text class="ca-badge" x="1036" y="655" text-anchor="middle">BLOB</text>
-<text class="ca-service" x="1036" y="690" text-anchor="middle">Azure Blob Storage</text>
-<text class="ca-label" x="1036" y="725" text-anchor="middle">Uploads</text>
+<rect class="ca-node-box" x="956" y="324" width="150" height="110" rx="4"/>
+<rect x="1007" y="330" width="48" height="48" rx="4" fill="#107C10"/><text class="ca-badge" x="1031" y="358.5" text-anchor="middle">BLOB</text>
+<text class="ca-service" x="1031" y="394" text-anchor="middle">Azure Blob Storage</text>
+<text class="ca-label" x="1031" y="409" text-anchor="middle">Uploads</text>
 </g>
 <g class="node" data-id="secrets" data-capability="secrets" data-stage="operate">
-<rect class="ca-node-box" x="274" y="788" width="156" height="116" rx="8" style="stroke:#A4262C"/>
-<rect x="328" y="798" width="48" height="48" rx="6" fill="#A4262C"/><text class="ca-badge" x="352" y="827" text-anchor="middle">KV</text>
-<text class="ca-service" x="352" y="862" text-anchor="middle">Azure Key Vault</text>
-<text class="ca-label" x="352" y="897" text-anchor="middle">DB credentials</text>
+<rect class="ca-node-box" x="492" y="868" width="150" height="110" rx="4"/>
+<rect x="543" y="874" width="48" height="48" rx="4" fill="#A4262C"/><text class="ca-badge" x="567" y="902.5" text-anchor="middle">KV</text>
+<text class="ca-service" x="567" y="938" text-anchor="middle">Azure Key Vault</text>
+<text class="ca-label" x="567" y="953" text-anchor="middle">DB credentials</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
-<rect class="ca-node-box" x="462" y="788" width="156" height="116" rx="8" style="stroke:#486991"/>
-<rect x="516" y="798" width="48" height="48" rx="6" fill="#486991"/><text class="ca-badge" x="540" y="827" text-anchor="middle">MON</text>
-<text class="ca-service" x="540" y="862" text-anchor="middle">Azure Monitor +</text>
-<text class="ca-service" x="540" y="876" text-anchor="middle">Application Insights</text>
-<text class="ca-label" x="540" y="897" text-anchor="middle">Logs, metrics, alarms</text>
+<rect class="ca-node-box" x="682" y="868" width="150" height="110" rx="4"/>
+<rect x="733" y="874" width="48" height="48" rx="4" fill="#486991"/><text class="ca-badge" x="757" y="902.5" text-anchor="middle">MON</text>
+<text class="ca-service" x="757" y="938" text-anchor="middle">Azure Monitor +</text>
+<text class="ca-service" x="757" y="952" text-anchor="middle">Application Insights</text>
+<text class="ca-label" x="757" y="967" text-anchor="middle">Logs, metrics, alarms</text>
 </g>
 <g class="node" data-id="repo" data-capability="source-control" data-stage="code">
-<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
-<rect x="328" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="352" y="207" text-anchor="middle">REPO</text>
-<text class="ca-service" x="352" y="242" text-anchor="middle">Azure Repos</text>
-<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
+<rect class="ca-node-box" x="492" y="176" width="150" height="110" rx="4"/>
+<rect x="543" y="182" width="48" height="48" rx="4" fill="#0F6CBD"/><text class="ca-badge" x="567" y="210.5" text-anchor="middle">REPO</text>
+<text class="ca-service" x="567" y="246" text-anchor="middle">Azure Repos</text>
+<text class="ca-label" x="567" y="261" text-anchor="middle">App and infrastructure…</text>
 </g>
 <g class="node" data-id="build" data-capability="ci-build" data-stage="build">
-<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
-<rect x="548" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="572" y="207" text-anchor="middle">PIPE</text>
-<text class="ca-service" x="572" y="242" text-anchor="middle">Azure Pipelines</text>
-<text class="ca-label" x="572" y="277" text-anchor="middle">Build and test</text>
+<rect class="ca-node-box" x="682" y="176" width="150" height="110" rx="4"/>
+<rect x="733" y="182" width="48" height="48" rx="4" fill="#0F6CBD"/><text class="ca-badge" x="757" y="210.5" text-anchor="middle">PIPE</text>
+<text class="ca-service" x="757" y="246" text-anchor="middle">Azure Pipelines</text>
+<text class="ca-label" x="757" y="261" text-anchor="middle">Build and test</text>
 </g>
 <g class="node" data-id="registry" data-capability="container-registry" data-stage="ship">
-<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#005B70"/>
-<rect x="768" y="178" width="48" height="48" rx="6" fill="#005B70"/><text class="ca-badge" x="792" y="207" text-anchor="middle">ACR</text>
-<text class="ca-service" x="792" y="242" text-anchor="middle">Azure Container</text>
-<text class="ca-service" x="792" y="256" text-anchor="middle">Registry</text>
-<text class="ca-label" x="792" y="277" text-anchor="middle">Container images</text>
+<rect class="ca-node-box" x="872" y="176" width="150" height="110" rx="4"/>
+<rect x="923" y="182" width="48" height="48" rx="4" fill="#005B70"/><text class="ca-badge" x="947" y="210.5" text-anchor="middle">ACR</text>
+<text class="ca-service" x="947" y="246" text-anchor="middle">Azure Container</text>
+<text class="ca-service" x="947" y="260" text-anchor="middle">Registry</text>
+<text class="ca-label" x="947" y="275" text-anchor="middle">Container images</text>
 </g>
 <g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
-<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#0F6CBD"/>
-<rect x="988" y="178" width="48" height="48" rx="6" fill="#0F6CBD"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">REL</text>
-<text class="ca-service" x="1012" y="242" text-anchor="middle">Azure Pipelines</text>
-<text class="ca-service" x="1012" y="256" text-anchor="middle">(release stages)</text>
-<text class="ca-label" x="1012" y="277" text-anchor="middle">Release pipeline</text>
+<rect class="ca-node-box" x="1062" y="176" width="150" height="110" rx="4"/>
+<rect x="1113" y="182" width="48" height="48" rx="4" fill="#0F6CBD"/><text class="ca-badge" x="1137" y="210.5" text-anchor="middle">REL</text>
+<text class="ca-service" x="1137" y="246" text-anchor="middle">Azure Pipelines</text>
+<text class="ca-service" x="1137" y="260" text-anchor="middle">(release stages)</text>
+<text class="ca-label" x="1137" y="275" text-anchor="middle">Release pipeline</text>
 </g>
 <g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
-<rect class="ca-node-box" x="1154" y="168" width="156" height="116" rx="8" style="stroke:#486991"/>
-<rect x="1208" y="178" width="48" height="48" rx="6" fill="#486991"/><text class="ca-badge" x="1232" y="207" text-anchor="middle">BCP</text>
-<text class="ca-service" x="1232" y="242" text-anchor="middle">Bicep</text>
-<text class="ca-label" x="1232" y="277" text-anchor="middle">Infrastructure as code</text>
+<rect class="ca-node-box" x="1252" y="176" width="150" height="110" rx="4"/>
+<rect x="1303" y="182" width="48" height="48" rx="4" fill="#486991"/><text class="ca-badge" x="1327" y="210.5" text-anchor="middle">BCP</text>
+<text class="ca-service" x="1327" y="246" text-anchor="middle">Bicep</text>
+<text class="ca-label" x="1327" y="261" text-anchor="middle">Infrastructure as code</text>
 </g>
-<text class="ca-footer" x="24" y="966">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Azure.</text>
+<g class="ca-step" data-step="1"><circle cx="268" cy="566" r="9"/><text x="268" y="569.8" text-anchor="middle">1</text></g>
+<g class="ca-step" data-step="2"><circle cx="268" cy="702" r="9"/><text x="268" y="705.8" text-anchor="middle">2</text></g>
+<g class="ca-step" data-step="3"><circle cx="540" cy="634" r="9"/><text x="540" y="637.8" text-anchor="middle">3</text></g>
+<g class="ca-step" data-step="4"><circle cx="760" cy="634" r="9"/><text x="760" y="637.8" text-anchor="middle">4</text></g>
+<g class="ca-step" data-step="5"><circle cx="980" cy="566" r="9"/><text x="980" y="569.8" text-anchor="middle">5</text></g>
+<g class="ca-step" data-step="6"><circle cx="980" cy="702" r="9"/><text x="980" y="705.8" text-anchor="middle">6</text></g>
+<g class="ca-step" data-step="7"><circle cx="980" cy="354" r="9"/><text x="980" y="357.8" text-anchor="middle">7</text></g>
+<g class="ca-step" data-step="8"><circle cx="502" cy="874" r="9"/><text x="502" y="877.8" text-anchor="middle">8</text></g>
+<g class="ca-step" data-step="9"><circle cx="692" cy="874" r="9"/><text x="692" y="877.8" text-anchor="middle">9</text></g>
+<text class="ca-steps-title" x="24" y="1048">Serving a request</text>
+<g class="ca-step" data-step="1"><circle cx="33" cy="1064" r="9"/><text x="33" y="1067.8" text-anchor="middle">1</text></g>
+<text class="ca-steps-text" x="50" y="1068">Clients → Domain: look up the app's address</text>
+<g class="ca-step" data-step="2"><circle cx="33" cy="1088" r="9"/><text x="33" y="1091.8" text-anchor="middle">2</text></g>
+<text class="ca-steps-text" x="50" y="1092">Clients → Web firewall: filter malicious traffic (HTTPS)</text>
+<g class="ca-step" data-step="3"><circle cx="33" cy="1112" r="9"/><text x="33" y="1115.8" text-anchor="middle">3</text></g>
+<text class="ca-steps-text" x="50" y="1116">Web firewall → HTTPS load balancer: spread requests across healthy instances</text>
+<g class="ca-step" data-step="4"><circle cx="33" cy="1136" r="9"/><text x="33" y="1139.8" text-anchor="middle">4</text></g>
+<text class="ca-steps-text" x="50" y="1140">HTTPS load balancer → API containers: run the business logic</text>
+<g class="ca-step" data-step="5"><circle cx="33" cy="1160" r="9"/><text x="33" y="1163.8" text-anchor="middle">5</text></g>
+<text class="ca-steps-text" x="50" y="1164">API containers → Session + query cache: read and refresh cached results</text>
+<g class="ca-step" data-step="6"><circle cx="747" cy="1064" r="9"/><text x="747" y="1067.8" text-anchor="middle">6</text></g>
+<text class="ca-steps-text" x="764" y="1068">API containers → PostgreSQL: read and write records</text>
+<g class="ca-step" data-step="7"><circle cx="747" cy="1088" r="9"/><text x="747" y="1091.8" text-anchor="middle">7</text></g>
+<text class="ca-steps-text" x="764" y="1092">API containers → Uploads: store or read files</text>
+<g class="ca-step" data-step="8"><circle cx="747" cy="1112" r="9"/><text x="747" y="1115.8" text-anchor="middle">8</text></g>
+<text class="ca-steps-text" x="764" y="1116">API containers → DB credentials: fetch credentials</text>
+<g class="ca-step" data-step="9"><circle cx="747" cy="1136" r="9"/><text x="747" y="1139.8" text-anchor="middle">9</text></g>
+<text class="ca-steps-text" x="764" y="1140">Every component → Logs, metrics, alarms: send logs and metrics</text>
+<text class="ca-footer" x="24" y="1218">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Azure.</text>
 </svg>

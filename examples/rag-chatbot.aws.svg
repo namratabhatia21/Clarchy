@@ -1,166 +1,213 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1388" height="978" viewBox="0 0 1388 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="RAG chatbot on AWS">
-<style>.ca-aws{font-family:'Open Sans', 'Helvetica Neue', Arial, sans-serif}
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-aws" width="1492" height="1406" viewBox="0 0 1492 1406" role="img" data-body-top="80" data-body-bottom="1378" data-drawing-bottom="1220" aria-label="RAG chatbot on AWS">
+<style>.ca-aws{font-family:'Amazon Ember', 'Helvetica Neue', Arial, sans-serif}
 .ca-aws .ca-bg{fill:#ffffff}
-.ca-aws .ca-title{font-size:18px;font-weight:600;fill:#16191f}
-.ca-aws .ca-subtitle{font-size:13px;fill:#545b64}
-.ca-aws .ca-cloud{fill:#FFFFFF;stroke:#232F3E;stroke-width:1.5;}
-.ca-aws .ca-cloud-label{font-size:13px;font-weight:600;fill:#232F3E}
-.ca-aws .ca-band{fill:none;stroke:#879196;stroke-dasharray:5 4}
-.ca-aws .ca-band-label{font-size:12px;font-weight:600;fill:#545B64}
-.ca-aws .ca-node-box{fill:#ffffff;stroke-width:1.5}
-.ca-aws .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
-.ca-aws .ca-service{font-size:12px;font-weight:600;fill:#16191f}
-.ca-aws .ca-label{font-size:11px;fill:#545b64}
+.ca-aws .ca-title{font-size:18px;font-weight:700;fill:#232F3E}
+.ca-aws .ca-subtitle{font-size:13px;fill:#545B64}
+.ca-aws .ca-group-label{font-size:12px;font-weight:600;fill:#232F3E}
+.ca-aws .ca-badge{font-size:13px;font-weight:700;fill:#ffffff}
+.ca-aws .ca-service{font-size:12px;font-weight:600;fill:#232F3E}
+.ca-aws .ca-label{font-size:11px;fill:#545B64}
 .ca-aws .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
-.ca-aws .ca-edge{fill:none;stroke:#545B64;stroke-width:1.5}
-.ca-aws .ca-arrow{fill:#545B64}
-.ca-aws .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.ca-aws .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1388" height="978"/>
-<text class="ca-title" x="24" y="36">RAG chatbot · AWS</text>
+.ca-aws .ca-edge{fill:none;stroke:#232F3E;stroke-width:1.5;stroke-linejoin:round}
+.ca-aws .ca-arrow{fill:#232F3E}
+.ca-aws .ca-edge-label{font-size:11px;fill:#232F3E;paint-order:stroke;stroke:#ffffff;stroke-width:4;stroke-linejoin:round}
+.ca-aws .ca-step circle{fill:#232F3E;stroke:#ffffff;stroke-width:1.5}
+.ca-aws .ca-step text{font-size:11px;font-weight:700;fill:#ffffff}
+.ca-aws .ca-steps-title{font-size:13px;font-weight:700;fill:#232F3E}
+.ca-aws .ca-steps-text{font-size:12px;fill:#232F3E}
+.ca-aws .ca-footer{font-size:10px;fill:#879196}
+.ca-aws .ca-node-box{fill:transparent;stroke:transparent;stroke-width:1.5}
+.ca-aws .ca-group-cloud{fill:none;stroke:#232F3E}
+.ca-aws .ca-group-cloud-label{fill:#232F3E;font-weight:600}
+.ca-aws .ca-group-region{fill:none;stroke:#00A4A6;stroke-dasharray:6 4}
+.ca-aws .ca-group-region-label{fill:#147EBA;font-weight:600}
+.ca-aws .ca-group-vpc{fill:none;stroke:#8C4FFF}
+.ca-aws .ca-group-vpc-label{fill:#8C4FFF;font-weight:600}
+.ca-aws .ca-group-public{fill:#F2F6E8;stroke:none}
+.ca-aws .ca-group-public-label{fill:#248814;font-weight:600}
+.ca-aws .ca-group-private{fill:#E6F6F7;stroke:none}
+.ca-aws .ca-group-private-label{fill:#147EBA;font-weight:600}
+.ca-aws .ca-group-generic{fill:none;stroke:#7D8998;stroke-dasharray:6 4}
+.ca-aws .ca-group-generic-label{fill:#5A6C86;font-weight:600}</style>
+<rect class="ca-bg" width="1492" height="1406"/>
+<text class="ca-title" x="24" y="36">RAG chatbot on AWS</text>
 <text class="ca-subtitle" x="24" y="56">Chat assistant that answers from your own documents using retrieval-augmented generation with a managed LLM.</text>
-<rect class="ca-cloud" x="252" y="104" width="1112" height="822" rx="4"/>
-<text class="ca-cloud-label" x="262" y="123">AWS Cloud · Oregon (us-west-2)</text>
-<rect class="ca-band" x="262" y="134" width="1092" height="164" rx="4"/>
-<text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="754" width="1092" height="162" rx="4"/>
-<text class="ca-band-label" x="272" y="774">Shared services</text>
-<path class="ca-edge" data-from="users" data-to="cdn" d="M180,526 C227,526 227,526 274,526"/>
-<polygon class="ca-arrow" data-from="users" data-to="cdn" points="274,526 265,521.5 265,530.5"/>
-<text class="ca-edge-label" data-from="users" data-to="cdn" x="227" y="520" text-anchor="middle">HTTPS</text>
-<path class="ca-edge" data-from="cdn" data-to="lb" d="M430,526 C466,526 466,526 502,526"/>
-<polygon class="ca-arrow" data-from="cdn" data-to="lb" points="502,526 493,521.5 493,530.5"/>
-<text class="ca-edge-label" data-from="cdn" data-to="lb" x="466" y="520" text-anchor="middle">/api/*</text>
-<path class="ca-edge" data-from="lb" data-to="app" d="M658,526 C694,526 694,600 730,600"/>
-<polygon class="ca-arrow" data-from="lb" data-to="app" points="730,600 721,595.5 721,604.5"/>
-<path class="ca-edge" data-from="app" data-to="vectors" d="M886,600 C1036,600 1036,526 1186,526"/>
-<polygon class="ca-arrow" data-from="app" data-to="vectors" points="1186,526 1177,521.5 1177,530.5"/>
-<text class="ca-edge-label" data-from="app" data-to="vectors" x="1036" y="557" text-anchor="middle">retrieve</text>
-<path class="ca-edge" data-from="app" data-to="llm" d="M886,600 C922,600 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="app" data-to="llm" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="app" data-to="llm" x="922" y="557" text-anchor="middle">generate</text>
-<path class="ca-edge" data-from="app" data-to="history" d="M886,600 C1036,600 1036,674 1186,674"/>
-<polygon class="ca-arrow" data-from="app" data-to="history" points="1186,674 1177,669.5 1177,678.5"/>
-<path class="ca-edge" data-from="docs" data-to="ingest" d="M1186,378 C1036,378 1036,452 886,452"/>
-<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="886,452 895,447.5 895,456.5"/>
-<text class="ca-edge-label" data-from="docs" data-to="ingest" x="1036" y="409" text-anchor="middle">on upload</text>
-<path class="ca-edge" data-from="ingest" data-to="llm" d="M886,452 C922,452 922,526 958,526"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="llm" points="958,526 949,521.5 949,530.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="llm" x="922" y="483" text-anchor="middle">embed</text>
-<path class="ca-edge" data-from="ingest" data-to="vectors" d="M886,452 C1036,452 1036,526 1186,526"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1186,526 1177,521.5 1177,530.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1036" y="483" text-anchor="middle">index</text>
-<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
-<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
-<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
-<path class="ca-edge" data-from="build" data-to="registry" d="M650,226 C682,226 682,226 714,226"/>
-<polygon class="ca-arrow" data-from="build" data-to="registry" points="714,226 705,221.5 705,230.5"/>
-<text class="ca-edge-label" data-from="build" data-to="registry" x="682" y="220" text-anchor="middle">image</text>
-<path class="ca-edge" data-from="registry" data-to="deploy" d="M870,226 C902,226 902,226 934,226"/>
-<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="934,226 925,221.5 925,230.5"/>
-<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1090,226 C1122,226 1122,226 1154,226"/>
-<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1154,226 1145,221.5 1145,230.5"/>
-<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1122" y="220" text-anchor="middle">applies</text>
+<rect class="ca-group ca-group-cloud" x="244" y="104" width="1224" height="1108" rx="0"/>
+<rect x="244" y="104" width="32" height="32" fill="#232F3E"/>
+<text class="ca-group-label ca-group-cloud-label" x="284" y="125">AWS Cloud</text>
+<rect class="ca-group ca-group-region" x="486" y="146" width="960" height="1044" rx="0"/>
+<rect x="486" y="146" width="32" height="32" fill="#00A4A6"/>
+<text class="ca-group-label ca-group-region-label" x="526" y="167">Oregon (us-west-2)</text>
+<rect class="ca-group ca-group-generic" x="500" y="188" width="932" height="152" rx="0"/>
+<text class="ca-group-label ca-group-generic-label" x="512" y="209">Build and deploy</text>
+<rect class="ca-group ca-group-vpc" x="508" y="774" width="430" height="216" rx="0"/>
+<rect x="508" y="774" width="32" height="32" fill="#8C4FFF"/>
+<text class="ca-group-label ca-group-vpc-label" x="548" y="795">VPC</text>
+<rect class="ca-group ca-group-public" x="524" y="816" width="178" height="158" rx="0"/>
+<rect x="524" y="816" width="32" height="32" fill="#248814"/>
+<text class="ca-group-label ca-group-public-label" x="564" y="837">Public subnet</text>
+<rect class="ca-group ca-group-private" x="744" y="816" width="178" height="158" rx="0"/>
+<rect x="744" y="816" width="32" height="32" fill="#147EBA"/>
+<text class="ca-group-label ca-group-private-label" x="784" y="837">Private subnet</text>
+<rect class="ca-group ca-group-generic" x="500" y="1016" width="932" height="152" rx="0"/>
+<text class="ca-group-label ca-group-generic-label" x="512" y="1037">Shared services</text>
+<path class="ca-edge" data-from="users" data-to="cdn" d="M127,880 L307,880"/>
+<polygon class="ca-arrow" data-from="users" data-to="cdn" points="313,880 304,875.5 304,884.5"/>
+<path class="ca-edge" data-from="cdn" data-to="lb" d="M369,880 L579,880"/>
+<polygon class="ca-arrow" data-from="cdn" data-to="lb" points="585,880 576,875.5 576,884.5"/>
+<path class="ca-edge" data-from="lb" data-to="app" d="M641,880 L799,880"/>
+<polygon class="ca-arrow" data-from="lb" data-to="app" points="805,880 796,875.5 796,884.5"/>
+<path class="ca-edge" data-from="app" data-to="vectors" d="M861,880 L1198.7,880 L1198.7,537 L1267,537"/>
+<polygon class="ca-arrow" data-from="app" data-to="vectors" points="1273,537 1264,532.5 1264,541.5"/>
+<path class="ca-edge" data-from="app" data-to="llm" d="M861,870 L969.3,870 L969.3,537 L1047,537"/>
+<polygon class="ca-arrow" data-from="app" data-to="llm" points="1053,537 1044,532.5 1044,541.5"/>
+<path class="ca-edge" data-from="app" data-to="history" d="M861,890 L981.7,890 L981.7,668 L1267,668"/>
+<polygon class="ca-arrow" data-from="app" data-to="history" points="1273,668 1264,663.5 1264,672.5"/>
+<path class="ca-edge" data-from="docs" data-to="ingest" d="M1273,396 L932.3,396 L932.3,522 L867,522"/>
+<polygon class="ca-arrow" data-from="docs" data-to="ingest" points="861,522 870,517.5 870,526.5"/>
+<text class="ca-edge-label" data-from="docs" data-to="ingest" x="1102.7" y="389" text-anchor="middle">on upload</text>
+<path class="ca-edge" data-from="ingest" data-to="llm" d="M861,532 L957,532 L957,527 L1047,527"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="llm" points="1053,527 1044,522.5 1044,531.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="llm" x="928.2" y="525" text-anchor="middle">embed</text>
+<path class="ca-edge" data-from="ingest" data-to="vectors" d="M861,542 L944.7,542 L944.7,489 L1183.3,489 L1183.3,527 L1267,527"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="vectors" points="1273,527 1264,522.5 1264,531.5"/>
+<text class="ca-edge-label" data-from="ingest" data-to="vectors" x="1064" y="482" text-anchor="middle">index</text>
+<path class="ca-edge" data-from="repo" data-to="build" d="M617,248 L745,248"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="751,248 742,243.5 742,252.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="684" y="241" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="registry" d="M807,248 L935,248"/>
+<polygon class="ca-arrow" data-from="build" data-to="registry" points="941,248 932,243.5 932,252.5"/>
+<text class="ca-edge-label" data-from="build" data-to="registry" x="874" y="241" text-anchor="middle">image</text>
+<path class="ca-edge" data-from="registry" data-to="deploy" d="M997,248 L1125,248"/>
+<polygon class="ca-arrow" data-from="registry" data-to="deploy" points="1131,248 1122,243.5 1122,252.5"/>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1187,248 L1315,248"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1321,248 1312,243.5 1312,252.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1254" y="241" text-anchor="middle">applies</text>
 <g class="node" data-id="users" data-capability="client" data-stage="users">
-<rect class="ca-node-box" x="24" y="468" width="156" height="116" rx="8" style="stroke:#545B64"/>
-<g fill="#545B64"><circle cx="102" cy="492" r="10"/><path d="M84,524 Q84,506 102,506 Q120,506 120,524 Z"/></g>
-<text class="ca-service" x="102" y="542" text-anchor="middle">Employees (browser)</text>
+<rect class="ca-node-box" x="24" y="850" width="150" height="110" rx="4"/>
+<g fill="#545B64"><circle cx="99" cy="867.6" r="9.6"/><path d="M80.8,904 Q80.8,882.4 99,882.4 Q117.2,882.4 117.2,904 Z"/></g>
+<text class="ca-service" x="99" y="920" text-anchor="middle">Employees (browser)</text>
 </g>
 <g class="node" data-id="cdn" data-capability="cdn" data-stage="serve">
-<rect class="ca-node-box" x="274" y="468" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
-<rect x="328" y="478" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="ca-badge" x="352" y="507" text-anchor="middle">CF</text>
-<text class="ca-service" x="352" y="542" text-anchor="middle">Amazon CloudFront</text>
-<text class="ca-label" x="352" y="577" text-anchor="middle">Web front end</text>
+<rect class="ca-node-box" x="266" y="850" width="150" height="110" rx="4"/>
+<rect x="317" y="856" width="48" height="48" rx="4" fill="#8C4FFF"/><text class="ca-badge" x="341" y="884.5" text-anchor="middle">CF</text>
+<text class="ca-service" x="341" y="920" text-anchor="middle">Amazon CloudFront</text>
+<text class="ca-label" x="341" y="935" text-anchor="middle">Web front end</text>
 </g>
 <g class="node" data-id="lb" data-capability="load-balancer" data-stage="serve">
-<rect class="ca-node-box" x="502" y="468" width="156" height="116" rx="8" style="stroke:#8C4FFF"/>
-<rect x="556" y="478" width="48" height="48" rx="6" fill="#8C4FFF"/><text class="ca-badge" x="580" y="507" text-anchor="middle">ALB</text>
-<text class="ca-service" x="580" y="542" text-anchor="middle">Application Load</text>
-<text class="ca-service" x="580" y="556" text-anchor="middle">Balancer</text>
-<text class="ca-label" x="580" y="577" text-anchor="middle">HTTPS load balancer</text>
+<rect class="ca-node-box" x="538" y="850" width="150" height="110" rx="4"/>
+<rect x="589" y="856" width="48" height="48" rx="4" fill="#8C4FFF"/><text class="ca-badge" x="613" y="884.5" text-anchor="middle">ALB</text>
+<text class="ca-service" x="613" y="920" text-anchor="middle">Application Load</text>
+<text class="ca-service" x="613" y="934" text-anchor="middle">Balancer</text>
+<text class="ca-label" x="613" y="949" text-anchor="middle">HTTPS load balancer</text>
 </g>
 <g class="node" data-id="app" data-capability="container-service" data-stage="run">
-<rect class="ca-node-box" x="730" y="542" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="552" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="581" text-anchor="middle">ECS</text>
-<text class="ca-service" x="808" y="616" text-anchor="middle">Amazon ECS on AWS</text>
-<text class="ca-service" x="808" y="630" text-anchor="middle">Fargate</text>
-<text class="ca-label" x="808" y="651" text-anchor="middle">Chat API (streaming)</text>
+<rect class="ca-node-box" x="758" y="850" width="150" height="110" rx="4"/>
+<rect x="809" y="856" width="48" height="48" rx="4" fill="#ED7100"/><text class="ca-badge" x="833" y="884.5" text-anchor="middle">ECS</text>
+<text class="ca-service" x="833" y="920" text-anchor="middle">Amazon ECS on AWS</text>
+<text class="ca-service" x="833" y="934" text-anchor="middle">Fargate</text>
+<text class="ca-label" x="833" y="949" text-anchor="middle">Chat API (streaming)</text>
 </g>
 <g class="node" data-id="llm" data-capability="llm-inference" data-stage="run">
-<rect class="ca-node-box" x="958" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="1012" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1036" y="507" text-anchor="middle">BR</text>
-<text class="ca-service" x="1036" y="542" text-anchor="middle">Amazon Bedrock</text>
-<text class="ca-label" x="1036" y="577" text-anchor="middle">LLM + embeddings</text>
+<rect class="ca-node-box" x="1006" y="502" width="150" height="110" rx="4"/>
+<rect x="1057" y="508" width="48" height="48" rx="4" fill="#01A88D"/><text class="ca-badge" x="1081" y="536.5" text-anchor="middle">BR</text>
+<text class="ca-service" x="1081" y="572" text-anchor="middle">Amazon Bedrock</text>
+<text class="ca-label" x="1081" y="587" text-anchor="middle">LLM + embeddings</text>
 </g>
 <g class="node" data-id="ingest" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="730" y="394" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="784" y="404" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="808" y="433" text-anchor="middle">λ</text>
-<text class="ca-service" x="808" y="468" text-anchor="middle">AWS Lambda</text>
-<text class="ca-label" x="808" y="503" text-anchor="middle">Chunk + embed documents</text>
+<rect class="ca-node-box" x="758" y="502" width="150" height="110" rx="4"/>
+<rect x="809" y="508" width="48" height="48" rx="4" fill="#ED7100"/><text class="ca-badge" x="833" y="536.5" text-anchor="middle">λ</text>
+<text class="ca-service" x="833" y="572" text-anchor="middle">AWS Lambda</text>
+<text class="ca-label" x="833" y="587" text-anchor="middle">Chunk + embed documents</text>
 </g>
 <g class="node" data-id="docs" data-capability="object-storage" data-stage="store">
-<rect class="ca-node-box" x="1186" y="320" width="156" height="116" rx="8" style="stroke:#7AA116"/>
-<rect x="1240" y="330" width="48" height="48" rx="6" fill="#7AA116"/><text class="ca-badge" x="1264" y="359" text-anchor="middle">S3</text>
-<text class="ca-service" x="1264" y="394" text-anchor="middle">Amazon S3</text>
-<text class="ca-label" x="1264" y="429" text-anchor="middle">Source documents</text>
+<rect class="ca-node-box" x="1226" y="366" width="150" height="110" rx="4"/>
+<rect x="1277" y="372" width="48" height="48" rx="4" fill="#7AA116"/><text class="ca-badge" x="1301" y="400.5" text-anchor="middle">S3</text>
+<text class="ca-service" x="1301" y="436" text-anchor="middle">Amazon S3</text>
+<text class="ca-label" x="1301" y="451" text-anchor="middle">Source documents</text>
 </g>
 <g class="node" data-id="vectors" data-capability="vector-search" data-stage="store">
-<rect class="ca-node-box" x="1186" y="468" width="156" height="116" rx="8" style="stroke:#01A88D"/>
-<rect x="1240" y="478" width="48" height="48" rx="6" fill="#01A88D"/><text class="ca-badge" x="1264" y="507" text-anchor="middle">AOS</text>
-<text class="ca-service" x="1264" y="542" text-anchor="middle">Amazon OpenSearch</text>
-<text class="ca-service" x="1264" y="556" text-anchor="middle">Serverless (vector)</text>
-<text class="ca-label" x="1264" y="577" text-anchor="middle">Embeddings index</text>
-<text class="ca-fidelity" x="1336" y="482" text-anchor="end">close</text>
+<rect class="ca-node-box" x="1226" y="502" width="150" height="110" rx="4"/>
+<rect x="1277" y="508" width="48" height="48" rx="4" fill="#01A88D"/><text class="ca-badge" x="1301" y="536.5" text-anchor="middle">AOS</text>
+<text class="ca-service" x="1301" y="572" text-anchor="middle">Amazon OpenSearch</text>
+<text class="ca-service" x="1301" y="586" text-anchor="middle">Serverless (vector)</text>
+<text class="ca-label" x="1301" y="601" text-anchor="middle">Embeddings index</text>
+<text class="ca-fidelity" x="1370" y="514" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="history" data-capability="key-value-db" data-stage="store">
-<rect class="ca-node-box" x="1186" y="616" width="156" height="116" rx="8" style="stroke:#C925D1"/>
-<rect x="1240" y="626" width="48" height="48" rx="6" fill="#C925D1"/><text class="ca-badge" x="1264" y="655" text-anchor="middle">DDB</text>
-<text class="ca-service" x="1264" y="690" text-anchor="middle">Amazon DynamoDB</text>
-<text class="ca-label" x="1264" y="725" text-anchor="middle">Chat history</text>
+<rect class="ca-node-box" x="1226" y="638" width="150" height="110" rx="4"/>
+<rect x="1277" y="644" width="48" height="48" rx="4" fill="#C925D1"/><text class="ca-badge" x="1301" y="672.5" text-anchor="middle">DDB</text>
+<text class="ca-service" x="1301" y="708" text-anchor="middle">Amazon DynamoDB</text>
+<text class="ca-label" x="1301" y="723" text-anchor="middle">Chat history</text>
 </g>
 <g class="node" data-id="auth" data-capability="identity" data-stage="operate">
-<rect class="ca-node-box" x="274" y="788" width="156" height="116" rx="8" style="stroke:#DD344C"/>
-<rect x="328" y="798" width="48" height="48" rx="6" fill="#DD344C"/><text class="ca-badge" x="352" y="827" text-anchor="middle">COG</text>
-<text class="ca-service" x="352" y="862" text-anchor="middle">Amazon Cognito</text>
-<text class="ca-label" x="352" y="897" text-anchor="middle">Single sign-on</text>
+<rect class="ca-node-box" x="514" y="1046" width="150" height="110" rx="4"/>
+<rect x="565" y="1052" width="48" height="48" rx="4" fill="#DD344C"/><text class="ca-badge" x="589" y="1080.5" text-anchor="middle">COG</text>
+<text class="ca-service" x="589" y="1116" text-anchor="middle">Amazon Cognito</text>
+<text class="ca-label" x="589" y="1131" text-anchor="middle">Single sign-on</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
-<rect class="ca-node-box" x="462" y="788" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="516" y="798" width="48" height="48" rx="6" fill="#E7157B"/><text class="ca-badge" x="540" y="827" text-anchor="middle">CW</text>
-<text class="ca-service" x="540" y="862" text-anchor="middle">Amazon CloudWatch</text>
-<text class="ca-label" x="540" y="897" text-anchor="middle">Logs, traces, cost alarms</text>
+<rect class="ca-node-box" x="704" y="1046" width="150" height="110" rx="4"/>
+<rect x="755" y="1052" width="48" height="48" rx="4" fill="#E7157B"/><text class="ca-badge" x="779" y="1080.5" text-anchor="middle">CW</text>
+<text class="ca-service" x="779" y="1116" text-anchor="middle">Amazon CloudWatch</text>
+<text class="ca-label" x="779" y="1131" text-anchor="middle">Logs, traces, cost alarms</text>
 </g>
 <g class="node" data-id="repo" data-capability="source-control" data-stage="code">
-<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="328" y="178" width="48" height="48" rx="6" fill="#3B48CC"/><text class="ca-badge" x="352" y="207" text-anchor="middle">GIT</text>
-<text class="ca-service" x="352" y="242" text-anchor="middle">GitHub or GitLab via</text>
-<text class="ca-service" x="352" y="256" text-anchor="middle">AWS CodeConnections</text>
-<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
-<text class="ca-fidelity" x="424" y="182" text-anchor="end">partial</text>
+<rect class="ca-node-box" x="514" y="218" width="150" height="110" rx="4"/>
+<rect x="565" y="224" width="48" height="48" rx="4" fill="#3B48CC"/><text class="ca-badge" x="589" y="252.5" text-anchor="middle">GIT</text>
+<text class="ca-service" x="589" y="288" text-anchor="middle">GitHub or GitLab via</text>
+<text class="ca-service" x="589" y="302" text-anchor="middle">AWS CodeConnections</text>
+<text class="ca-label" x="589" y="317" text-anchor="middle">App and infrastructure…</text>
+<text class="ca-fidelity" x="658" y="230" text-anchor="end">partial</text>
 </g>
 <g class="node" data-id="build" data-capability="ci-build" data-stage="build">
-<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="548" y="178" width="48" height="48" rx="6" fill="#3B48CC"/><text class="ca-badge" x="572" y="207" text-anchor="middle">CB</text>
-<text class="ca-service" x="572" y="242" text-anchor="middle">AWS CodeBuild</text>
-<text class="ca-label" x="572" y="277" text-anchor="middle">Build and test</text>
+<rect class="ca-node-box" x="704" y="218" width="150" height="110" rx="4"/>
+<rect x="755" y="224" width="48" height="48" rx="4" fill="#3B48CC"/><text class="ca-badge" x="779" y="252.5" text-anchor="middle">CB</text>
+<text class="ca-service" x="779" y="288" text-anchor="middle">AWS CodeBuild</text>
+<text class="ca-label" x="779" y="303" text-anchor="middle">Build and test</text>
 </g>
 <g class="node" data-id="registry" data-capability="container-registry" data-stage="ship">
-<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#ED7100"/>
-<rect x="768" y="178" width="48" height="48" rx="6" fill="#ED7100"/><text class="ca-badge" x="792" y="207" text-anchor="middle">ECR</text>
-<text class="ca-service" x="792" y="242" text-anchor="middle">Amazon ECR</text>
-<text class="ca-label" x="792" y="277" text-anchor="middle">Container images</text>
+<rect class="ca-node-box" x="894" y="218" width="150" height="110" rx="4"/>
+<rect x="945" y="224" width="48" height="48" rx="4" fill="#ED7100"/><text class="ca-badge" x="969" y="252.5" text-anchor="middle">ECR</text>
+<text class="ca-service" x="969" y="288" text-anchor="middle">Amazon ECR</text>
+<text class="ca-label" x="969" y="303" text-anchor="middle">Container images</text>
 </g>
 <g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
-<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#3B48CC"/>
-<rect x="988" y="178" width="48" height="48" rx="6" fill="#3B48CC"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">CP</text>
-<text class="ca-service" x="1012" y="242" text-anchor="middle">AWS CodePipeline</text>
-<text class="ca-label" x="1012" y="277" text-anchor="middle">Release pipeline</text>
+<rect class="ca-node-box" x="1084" y="218" width="150" height="110" rx="4"/>
+<rect x="1135" y="224" width="48" height="48" rx="4" fill="#3B48CC"/><text class="ca-badge" x="1159" y="252.5" text-anchor="middle">CP</text>
+<text class="ca-service" x="1159" y="288" text-anchor="middle">AWS CodePipeline</text>
+<text class="ca-label" x="1159" y="303" text-anchor="middle">Release pipeline</text>
 </g>
 <g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
-<rect class="ca-node-box" x="1154" y="168" width="156" height="116" rx="8" style="stroke:#E7157B"/>
-<rect x="1208" y="178" width="48" height="48" rx="6" fill="#E7157B"/><text class="ca-badge" x="1232" y="207" text-anchor="middle">CFN</text>
-<text class="ca-service" x="1232" y="242" text-anchor="middle">AWS CloudFormation</text>
-<text class="ca-label" x="1232" y="277" text-anchor="middle">Infrastructure as code</text>
+<rect class="ca-node-box" x="1274" y="218" width="150" height="110" rx="4"/>
+<rect x="1325" y="224" width="48" height="48" rx="4" fill="#E7157B"/><text class="ca-badge" x="1349" y="252.5" text-anchor="middle">CFN</text>
+<text class="ca-service" x="1349" y="288" text-anchor="middle">AWS CloudFormation</text>
+<text class="ca-label" x="1349" y="303" text-anchor="middle">Infrastructure as code</text>
 </g>
-<text class="ca-footer" x="24" y="966">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with AWS.</text>
+<g class="ca-step" data-step="1"><circle cx="290" cy="880" r="9"/><text x="290" y="883.8" text-anchor="middle">1</text></g>
+<g class="ca-step" data-step="2"><circle cx="562" cy="880" r="9"/><text x="562" y="883.8" text-anchor="middle">2</text></g>
+<g class="ca-step" data-step="3"><circle cx="782" cy="880" r="9"/><text x="782" y="883.8" text-anchor="middle">3</text></g>
+<g class="ca-step" data-step="4"><circle cx="1250" cy="537" r="9"/><text x="1250" y="540.8" text-anchor="middle">4</text></g>
+<g class="ca-step" data-step="5"><circle cx="1030" cy="537" r="9"/><text x="1030" y="540.8" text-anchor="middle">5</text></g>
+<g class="ca-step" data-step="6"><circle cx="1250" cy="668" r="9"/><text x="1250" y="671.8" text-anchor="middle">6</text></g>
+<g class="ca-step" data-step="7"><circle cx="524" cy="1052" r="9"/><text x="524" y="1055.8" text-anchor="middle">7</text></g>
+<g class="ca-step" data-step="8"><circle cx="714" cy="1052" r="9"/><text x="714" y="1055.8" text-anchor="middle">8</text></g>
+<text class="ca-steps-title" x="24" y="1248">Serving a request</text>
+<g class="ca-step" data-step="1"><circle cx="33" cy="1264" r="9"/><text x="33" y="1267.8" text-anchor="middle">1</text></g>
+<text class="ca-steps-text" x="50" y="1268">Employees (browser) → Web front end: load the app through the CDN (HTTPS)</text>
+<g class="ca-step" data-step="2"><circle cx="33" cy="1288" r="9"/><text x="33" y="1291.8" text-anchor="middle">2</text></g>
+<text class="ca-steps-text" x="50" y="1292">Web front end → HTTPS load balancer: forward API calls</text>
+<g class="ca-step" data-step="3"><circle cx="33" cy="1312" r="9"/><text x="33" y="1315.8" text-anchor="middle">3</text></g>
+<text class="ca-steps-text" x="50" y="1316">HTTPS load balancer → Chat API (streaming): run the business logic</text>
+<g class="ca-step" data-step="4"><circle cx="33" cy="1336" r="9"/><text x="33" y="1339.8" text-anchor="middle">4</text></g>
+<text class="ca-steps-text" x="50" y="1340">Chat API (streaming) → Embeddings index: retrieve relevant passages</text>
+<g class="ca-step" data-step="5"><circle cx="769" cy="1264" r="9"/><text x="769" y="1267.8" text-anchor="middle">5</text></g>
+<text class="ca-steps-text" x="786" y="1268">Chat API (streaming) → LLM + embeddings: generate the answer</text>
+<g class="ca-step" data-step="6"><circle cx="769" cy="1288" r="9"/><text x="769" y="1291.8" text-anchor="middle">6</text></g>
+<text class="ca-steps-text" x="786" y="1292">Chat API (streaming) → Chat history: read and write items</text>
+<g class="ca-step" data-step="7"><circle cx="769" cy="1312" r="9"/><text x="769" y="1315.8" text-anchor="middle">7</text></g>
+<text class="ca-steps-text" x="786" y="1316">Chat API (streaming) → Single sign-on: verify the user's sign-in token</text>
+<g class="ca-step" data-step="8"><circle cx="769" cy="1336" r="9"/><text x="769" y="1339.8" text-anchor="middle">8</text></g>
+<text class="ca-steps-text" x="786" y="1340">Every component → Logs, traces, cost alarms: send logs and metrics</text>
+<text class="ca-footer" x="24" y="1394">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with AWS.</text>
 </svg>

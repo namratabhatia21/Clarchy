@@ -30,3 +30,9 @@ is the embedded SVG, decoded and saved byte for byte under its official file nam
 Microsoft's own download or a newer release, get it from the page above and pass the
 folder with `--icons` or `CLARCHY_ICONS_AZURE`; that folder is then used instead of this
 one. See docs/decisions/0012-official-aws-icons-in-aws-diagrams.md.
+
+The virtual network, subnet and users icons (`icon-service-Virtual-Networks.svg`,
+`icon-service-Subnet.svg`, `icon-service-Users.svg`) come from the `@squinch/pack-azure`
+npm package 0.14.0, which republishes Microsoft's Azure Public Service Icons V24 verbatim
+(its copy of Key Vaults is byte-identical to the one above). They mark the virtual network,
+its subnets and the people in Azure diagrams.

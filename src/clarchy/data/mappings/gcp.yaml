@@ -26,6 +26,14 @@ provider:
       storage: "#E37400"
       devtools: "#137333"
       management: "#B06000"
+  # Where each service sits in a Google Cloud diagram: global services (DNS, Cloud CDN,
+  # Cloud Armor and the global Application Load Balancer) in Google Cloud but outside the
+  # region; what runs on the VPC network inside it; serverless services in the region.
+  diagram:
+    style: gcp
+    placement:
+      global: [dns, cdn, waf, load-balancer]
+      private: [kubernetes, event-autoscaling, relational-db, cache]
 
 services:
   dns:

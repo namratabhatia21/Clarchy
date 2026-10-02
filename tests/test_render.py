@@ -10,7 +10,9 @@ from clarchy.explain import explain_markdown
 from clarchy.icons import IconLibrary, bundled_icon_dir, bundled_library, icon_library
 from clarchy.mapping import map_to_provider
 from clarchy.render import render_svg
+from clarchy.render_doc import look_icons
 from clarchy.spec import load_pattern
+from clarchy.workflows import generate_workflows
 
 EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 UPDATE = os.environ.get("UPDATE_GOLDEN") == "1"
@@ -116,8 +118,73 @@ def test_every_aws_service_has_its_bundled_aws_icon():
     assert not missing, f"no bundled icon for {missing}"
     root = bundled_icon_dir("aws")
     assert (root / "NOTICE.md").is_file(), "the icons travel with their terms"
-    used = {library.find(stem).name for stem in stems}
+    used = {library.find(stem).name for stem in [*stems, *look_icons("aws")]}
     assert {p.name for p in root.glob("*.svg")} == used, "ship only the icons Clarchy draws"
+
+
+def test_aws_diagrams_draw_aws_groups_with_their_official_icons():
+    """AWS Cloud, Region, VPC and subnets, as AWS's Architecture Icons draw them, with
+    AWS's own group icons embedded unchanged."""
+    svg = render_svg(arch("kubernetes-microservices"), icon_library("aws"))
+    library = bundled_library("aws")
+    for kind, stem in (
+        ("cloud", "AWS-Cloud-logo"),
+        ("region", "Region"),
+        ("vpc", "Virtual-private-cloud-VPC"),
+        ("public", "Public-subnet"),
+        ("private", "Private-subnet"),
+    ):
+        assert f'class="ca-group ca-group-{kind}"' in svg
+        encoded = base64.b64encode(library.find(stem).read_bytes()).decode("ascii")
+        assert encoded in svg, stem
+    assert ".ca-aws .ca-group-region{fill:none;stroke:#00A4A6;stroke-dasharray:6 4}" in svg
+    assert ".ca-aws .ca-group-vpc{fill:none;stroke:#8C4FFF}" in svg
+
+
+def test_services_sit_where_the_provider_documentation_puts_them():
+    """Global services outside the region, the load balancer in a public subnet and what
+    runs in the network inside it, everything else in the region."""
+    root = ET.fromstring(render_svg(arch("kubernetes-microservices")))
+    groups = {
+        g.get("class").split()[-1].removeprefix("ca-group-"): tuple(
+            float(g.get(k)) for k in ("x", "y", "width", "height")
+        )
+        for g in root.iter(f"{SVG_NS}rect")
+        if (g.get("class") or "").startswith("ca-group ")
+    }
+    boxes = {
+        g.get("data-id"): tuple(
+            float(g.find(f"{SVG_NS}rect").get(k)) for k in ("x", "y", "width", "height")
+        )
+        for g in root.iter(f"{SVG_NS}g")
+        if g.get("class") == "node"
+    }
+
+    def inside(box, group):
+        x, y, w, h = box
+        gx, gy, gw, gh = groups[group]
+        return gx <= x and gy <= y and x + w <= gx + gw and y + h <= gy + gh
+
+    a = arch("kubernetes-microservices")
+    by_capability = {m.component.capability: m.component.id for m in a.components}
+    assert not inside(boxes[by_capability["dns"]], "region")
+    assert inside(boxes[by_capability["dns"]], "cloud")
+    assert inside(boxes[by_capability["load-balancer"]], "public")
+    assert inside(boxes[by_capability["relational-db"]], "private")
+    assert inside(boxes[by_capability["message-queue"]], "region")
+    assert not inside(boxes[by_capability["message-queue"]], "vpc")
+
+
+def test_the_main_request_is_numbered_and_explained_under_the_drawing():
+    a = arch("rag-chatbot")
+    root = ET.fromstring(render_svg(a))
+    steps = [g for g in root.iter(f"{SVG_NS}g") if g.get("class") == "ca-step"]
+    numbers = [int(g.get("data-step")) for g in steps]
+    request = next(w for w in generate_workflows(a.spec) if w.kind == "request")
+    # Each step once on the drawing and once in the list under it.
+    assert sorted(numbers) == sorted([*range(1, len(request.steps) + 1)] * 2)
+    texts = " ".join("".join(t.itertext()) for t in root.iter(f"{SVG_NS}text"))
+    assert request.name in texts and request.steps[0].text.split(":")[0] in texts
 
 
 def test_aws_diagrams_embed_the_icon_files_unchanged():
@@ -141,7 +208,7 @@ def test_every_drawn_azure_service_has_its_bundled_azure_icon():
     assert not [s for s in stems if library.find(s) is None]
     root = bundled_icon_dir("azure")
     assert (root / "NOTICE.md").is_file()
-    used = {library.find(stem).name for stem in stems}
+    used = {library.find(stem).name for stem in [*stems, *look_icons("azure")]}
     assert {p.name for p in root.glob("*.svg")} == used, "ship only the icons Clarchy draws"
     # Not Azure's products, or not in this icon release: lettered badges.
     no_icon = {raw["service"] for raw in services.values() if "icon" not in raw}
@@ -161,7 +228,9 @@ def test_every_provider_ships_exactly_the_icons_it_draws(provider):
     services = catalog.provider_mapping(provider)["services"]
     stems = [raw["icon"] for raw in services.values() if "icon" in raw]
     assert not [s for s in stems if library.find(s) is None], "every named icon exists"
-    own = {library.find(s).name for s in stems if not s.startswith("oss:")}
+    own = {
+        library.find(s).name for s in [*stems, *look_icons(provider)] if not s.startswith("oss:")
+    }
     files = {p.name for p in root.iterdir() if p.suffix in (".svg", ".png")}
     assert files == own, "ship only the icons Clarchy draws"
 

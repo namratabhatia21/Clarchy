@@ -773,6 +773,12 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .canvas .ca-edge, .canvas .ca-arrow, .canvas .ca-edge-label { transition: opacity .2s; }
 .canvas g.node:hover .ca-node-box { stroke-width: 2.5; }
 .canvas g.node.selected .ca-node-box { stroke-width: 3.5; filter: drop-shadow(0 0 6px var(--p-glow)); }
+/* AWS and Azure draw a service as its icon, with no box (render_doc.py): the box shows
+   only while the service is hovered, focused, selected or lit by a workflow. */
+.canvas g.node:hover .ca-node-box, .canvas g.node:focus-visible .ca-node-box,
+.canvas g.node.selected .ca-node-box, .canvas.focusing g.node.lit .ca-node-box { stroke: var(--p-accent); }
+.canvas .ca-step { transition: opacity .2s; }
+.canvas.focusing .ca-step { opacity: .14; }
 .canvas.focusing g.node:not(.lit),
 .canvas.focusing .ca-edge:not(.lit),
 .canvas.focusing .ca-arrow:not(.lit),
@@ -782,7 +788,9 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .canvas.drawing g.node { animation: fade-up .45s ease-out backwards; animation-delay: calc(var(--i, 0) * 28ms); }
 .canvas.drawing .ca-edge { stroke-dasharray: 1; animation: line-draw .9s ease-out .35s backwards; }
 .canvas.drawing .ca-arrow, .canvas.drawing .ca-edge-label { animation: fade-up .3s ease-out 1.05s backwards; }
-.canvas.drawing .ca-cloud, .canvas.drawing .ca-band, .canvas.drawing .ca-cloud-label, .canvas.drawing .ca-band-label { animation: fade-up .5s ease-out backwards; }
+.canvas.drawing .ca-cloud, .canvas.drawing .ca-band, .canvas.drawing .ca-cloud-label, .canvas.drawing .ca-band-label,
+.canvas.drawing .ca-group, .canvas.drawing .ca-group-label { animation: fade-up .5s ease-out backwards; }
+.canvas.drawing .ca-step { animation: fade-up .3s ease-out 1.05s backwards; }
 @keyframes line-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes fade-up { from { opacity: 0; } to { opacity: 1; } }
 .ws-diagram { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }

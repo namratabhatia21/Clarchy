@@ -28,6 +28,15 @@ provider:
       storage: "#107C10"
       devtools: "#0F6CBD"
       management: "#486991"
+  # Where each service sits in an Azure diagram, as the Azure Architecture Center draws
+  # it: global services outside the region; Application Gateway in its own subnet and
+  # what runs in the virtual network in a workload subnet; everything else in the region.
+  diagram:
+    style: azure
+    placement:
+      global: [dns, cdn, waf]
+      public: [load-balancer]
+      private: [container-service, kubernetes, event-autoscaling, relational-db, cache]
 
 services:
   dns:

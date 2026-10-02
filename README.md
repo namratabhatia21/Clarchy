@@ -263,7 +263,7 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `tools.py`, `mcp_server.py` | The tool functions and the MCP server that exposes them |
 | `delivery.py`, `workflows.py` | Deterministic build-and-deploy toolchain and generated workflows |
 | `spec.py`, `catalog.py`, `mapping.py` | The neutral spec, its data and the provider mapping |
-| `render.py`, `explain.py` | Themed SVG diagrams and Markdown explanations |
+| `render.py`, `render_doc.py`, `explain.py` | SVG diagrams, drawn the way AWS, Azure and Google Cloud documentation draws them ([ADR 0016](docs/decisions/0016-diagrams-in-each-providers-own-style.md)), and Markdown explanations |
 | `web.py`, `payloads.py`, `static/` | FastAPI app (with a server-sent events `/api/plan` stream) and a no-build front end |
 | `planner/answers.py` | Answers to open questions turned into requirement statements for a re-plan |
 | `policies.py`, `data/policies.yaml` | AI and data regulations checked against a design |

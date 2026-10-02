@@ -35,6 +35,15 @@ provider:
       storage: "#7AA116"
       devtools: "#3B48CC"
       management: "#E7157B"
+  # Where each service sits in an AWS diagram, as AWS's reference architectures draw it:
+  # global services in the AWS Cloud but outside the Region; the load balancer in a public
+  # subnet and what runs in the VPC in a private subnet; everything else in the Region.
+  diagram:
+    style: aws
+    placement:
+      global: [dns, cdn, waf]
+      public: [load-balancer]
+      private: [container-service, kubernetes, event-autoscaling, llm-gateway, relational-db, cache, data-warehouse]
 
 services:
   dns:

@@ -314,10 +314,11 @@ const CA = (() => {
 
   // Diagrams carry their own title and notice for downloads; on the page those repeat what
   // is already shown, so crop the view to the diagram body.
-  function cropDiagram(svg) {
+  function cropDiagram(svg, { drawingOnly = false } = {}) {
     if (!svg || !svg.dataset || !svg.dataset.bodyTop) return svg;
     const top = Number(svg.dataset.bodyTop);
-    const bottom = Number(svg.dataset.bodyBottom);
+    // drawingOnly also leaves out the numbered steps written under the drawing.
+    const bottom = Number((drawingOnly && svg.dataset.drawingBottom) || svg.dataset.bodyBottom);
     const width = Number(svg.getAttribute("width"));
     if (!(bottom > top) || !width) return svg;
     svg.setAttribute("viewBox", `0 ${top} ${width} ${bottom - top}`);
@@ -325,12 +326,13 @@ const CA = (() => {
     return svg;
   }
   // The diagram body without its title and footer; `transparent` drops the white
-  // background so the drawing sits on the page's gridded paper.
-  function croppedSvgText(text, { transparent = false } = {}) {
+  // background so the drawing sits on the page's gridded paper, and `drawingOnly` (for
+  // thumbnails) the steps under it.
+  function croppedSvgText(text, { transparent = false, drawingOnly = false } = {}) {
     const doc = new DOMParser().parseFromString(text, "image/svg+xml");
     const svg = doc.documentElement;
     if (svg.nodeName !== "svg") return text;
-    cropDiagram(svg);
+    cropDiagram(svg, { drawingOnly });
     if (transparent) for (const bg of svg.querySelectorAll(".ca-bg")) bg.remove();
     return new XMLSerializer().serializeToString(svg);
   }

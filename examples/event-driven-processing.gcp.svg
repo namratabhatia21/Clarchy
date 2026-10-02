@@ -1,147 +1,173 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="1160" height="978" viewBox="0 0 1160 978" role="img" data-body-top="80" data-body-bottom="950" aria-label="Event-driven processing on Google Cloud">
-<style>.ca-gcp{font-family:Roboto, 'Helvetica Neue', Arial, sans-serif}
+<svg xmlns="http://www.w3.org/2000/svg" class="ca-diagram ca-gcp" width="1530" height="888" viewBox="0 0 1530 888" role="img" data-body-top="80" data-body-bottom="860" data-drawing-bottom="726" aria-label="Event-driven processing on Google Cloud">
+<style>.ca-gcp{font-family:'Google Sans', Roboto, 'Helvetica Neue', Arial, sans-serif}
 .ca-gcp .ca-bg{fill:#ffffff}
-.ca-gcp .ca-title{font-size:18px;font-weight:600;fill:#16191f}
-.ca-gcp .ca-subtitle{font-size:13px;fill:#545b64}
-.ca-gcp .ca-cloud{fill:#F8F9FA;stroke:#5F6368;stroke-width:1.5;}
-.ca-gcp .ca-cloud-label{font-size:13px;font-weight:600;fill:#3C4043}
-.ca-gcp .ca-band{fill:none;stroke:#9AA0A6;stroke-dasharray:5 4}
-.ca-gcp .ca-band-label{font-size:12px;font-weight:600;fill:#5F6368}
-.ca-gcp .ca-node-box{fill:#ffffff;stroke-width:1.5}
-.ca-gcp .ca-badge{font-size:14px;font-weight:700;fill:#ffffff}
-.ca-gcp .ca-service{font-size:12px;font-weight:600;fill:#16191f}
-.ca-gcp .ca-label{font-size:11px;fill:#545b64}
+.ca-gcp .ca-title{font-size:18px;font-weight:700;fill:#202124}
+.ca-gcp .ca-subtitle{font-size:13px;fill:#5F6368}
+.ca-gcp .ca-group-label{font-size:12px;font-weight:600;fill:#202124}
+.ca-gcp .ca-badge{font-size:13px;font-weight:700;fill:#ffffff}
+.ca-gcp .ca-service{font-size:12.5px;font-weight:500;fill:#202124}
+.ca-gcp .ca-label{font-size:11px;fill:#5F6368}
 .ca-gcp .ca-fidelity{font-size:10px;font-style:italic;fill:#b0084d}
-.ca-gcp .ca-edge{fill:none;stroke:#5F6368;stroke-width:1.5}
+.ca-gcp .ca-edge{fill:none;stroke:#5F6368;stroke-width:1.5;stroke-linejoin:round}
 .ca-gcp .ca-arrow{fill:#5F6368}
-.ca-gcp .ca-edge-label{font-size:11px;fill:#16191f;paint-order:stroke;stroke:#ffffff;stroke-width:4}
-.ca-gcp .ca-footer{font-size:10px;fill:#879196}</style>
-<rect class="ca-bg" width="1160" height="978"/>
-<text class="ca-title" x="24" y="36">Event-driven processing · Google Cloud</text>
+.ca-gcp .ca-edge-label{font-size:11px;fill:#202124;paint-order:stroke;stroke:#ffffff;stroke-width:4;stroke-linejoin:round}
+.ca-gcp .ca-step circle{fill:#1A73E8;stroke:#ffffff;stroke-width:1.5}
+.ca-gcp .ca-step text{font-size:11px;font-weight:700;fill:#ffffff}
+.ca-gcp .ca-steps-title{font-size:13px;font-weight:700;fill:#202124}
+.ca-gcp .ca-steps-text{font-size:12px;fill:#202124}
+.ca-gcp .ca-footer{font-size:10px;fill:#879196}
+.ca-gcp .ca-node-box{fill:#ffffff;stroke:#DADCE0;stroke-width:1}
+.ca-gcp .ca-group-cloud{fill:#F1F3F4;stroke:none}
+.ca-gcp .ca-group-cloud-label{fill:#5F6368;font-weight:700;font-size:13px}
+.ca-gcp .ca-group-region{fill:#FFFFFF;stroke:#DADCE0}
+.ca-gcp .ca-group-region-label{fill:#5F6368;font-weight:600}
+.ca-gcp .ca-group-vpc{fill:#E8F0FE;stroke:none}
+.ca-gcp .ca-group-vpc-label{fill:#1967D2;font-weight:600}
+.ca-gcp .ca-group-generic{fill:#F8F9FA;stroke:#DADCE0;stroke-dasharray:4 3}
+.ca-gcp .ca-group-generic-label{fill:#5F6368;font-weight:600}</style>
+<rect class="ca-bg" width="1530" height="888"/>
+<text class="ca-title" x="24" y="36">Event-driven processing on Google Cloud</text>
 <text class="ca-subtitle" x="24" y="56">Uploads and events trigger asynchronous processing through a queue and a workflow, so slow jobs never block users.</text>
-<rect class="ca-cloud" x="252" y="104" width="884" height="822" rx="4"/>
-<text class="ca-cloud-label" x="262" y="123">Google Cloud · Mumbai (asia-south1)</text>
-<rect class="ca-band" x="262" y="134" width="864" height="164" rx="4"/>
-<text class="ca-band-label" x="272" y="154">Build and deploy</text>
-<rect class="ca-band" x="262" y="754" width="864" height="162" rx="4"/>
-<text class="ca-band-label" x="272" y="774">Shared services</text>
-<path class="ca-edge" data-from="producers" data-to="api" d="M180,526 C227,526 227,526 274,526"/>
-<polygon class="ca-arrow" data-from="producers" data-to="api" points="274,526 265,521.5 265,530.5"/>
-<path class="ca-edge" data-from="api" data-to="ingest" d="M430,526 C466,526 466,452 502,452"/>
-<polygon class="ca-arrow" data-from="api" data-to="ingest" points="502,452 493,447.5 493,456.5"/>
-<path class="ca-edge" data-from="ingest" data-to="raw" d="M658,452 C808,452 808,452 958,452"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="raw" points="958,452 949,447.5 949,456.5"/>
-<text class="ca-edge-label" data-from="ingest" data-to="raw" x="808" y="446" text-anchor="middle">store</text>
-<path class="ca-edge" data-from="ingest" data-to="queue" d="M658,452 C694,452 694,378 730,378"/>
-<polygon class="ca-arrow" data-from="ingest" data-to="queue" points="730,378 721,373.5 721,382.5"/>
-<path class="ca-edge" data-from="queue" data-to="workflow" d="M808,436 C808,452 808,452 808,468"/>
-<polygon class="ca-arrow" data-from="queue" data-to="workflow" points="808,468 803.5,459 812.5,459"/>
-<path class="ca-edge" data-from="workflow" data-to="workers" d="M730,526 C694,526 694,600 658,600"/>
-<polygon class="ca-arrow" data-from="workflow" data-to="workers" points="658,600 667,595.5 667,604.5"/>
-<path class="ca-edge" data-from="workers" data-to="raw" d="M658,600 C808,600 808,452 958,452"/>
-<polygon class="ca-arrow" data-from="workers" data-to="raw" points="958,452 949,447.5 949,456.5"/>
-<path class="ca-edge" data-from="workers" data-to="state" d="M658,600 C808,600 808,600 958,600"/>
-<polygon class="ca-arrow" data-from="workers" data-to="state" points="958,600 949,595.5 949,604.5"/>
-<path class="ca-edge" data-from="workers" data-to="events" d="M658,600 C694,600 694,674 730,674"/>
-<polygon class="ca-arrow" data-from="workers" data-to="events" points="730,674 721,669.5 721,678.5"/>
-<text class="ca-edge-label" data-from="workers" data-to="events" x="694" y="631" text-anchor="middle">job done</text>
-<path class="ca-edge" data-from="repo" data-to="build" d="M430,226 C462,226 462,226 494,226"/>
-<polygon class="ca-arrow" data-from="repo" data-to="build" points="494,226 485,221.5 485,230.5"/>
-<text class="ca-edge-label" data-from="repo" data-to="build" x="462" y="220" text-anchor="middle">push</text>
-<path class="ca-edge" data-from="build" data-to="deploy" d="M650,226 C682,226 682,226 714,226"/>
-<polygon class="ca-arrow" data-from="build" data-to="deploy" points="714,226 705,221.5 705,230.5"/>
-<text class="ca-edge-label" data-from="build" data-to="deploy" x="682" y="220" text-anchor="middle">artifact</text>
-<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M870,226 C902,226 902,226 934,226"/>
-<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="934,226 925,221.5 925,230.5"/>
-<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="902" y="220" text-anchor="middle">applies</text>
+<rect class="ca-group ca-group-cloud" x="314" y="104" width="1192" height="614" rx="8"/>
+<text class="ca-group-label ca-group-cloud-label" x="326" y="129">Google Cloud</text>
+<rect class="ca-group ca-group-region" x="336" y="146" width="1148" height="550" rx="8"/>
+<text class="ca-group-label ca-group-region-label" x="348" y="171">Region · Mumbai (asia-south1)</text>
+<rect class="ca-group ca-group-generic" x="350" y="188" width="1120" height="104" rx="8"/>
+<text class="ca-group-label ca-group-generic-label" x="362" y="213">Build and deploy</text>
+<rect class="ca-group ca-group-generic" x="350" y="570" width="1120" height="104" rx="8"/>
+<text class="ca-group-label ca-group-generic-label" x="362" y="595">Shared services</text>
+<path class="ca-edge" data-from="producers" data-to="api" d="M230,431 L352,431"/>
+<polygon class="ca-arrow" data-from="producers" data-to="api" points="358,431 349,426.5 349,435.5"/>
+<path class="ca-edge" data-from="api" data-to="ingest" d="M564,431 L606,431 L606,390 L642,390"/>
+<polygon class="ca-arrow" data-from="api" data-to="ingest" points="648,390 639,385.5 639,394.5"/>
+<path class="ca-edge" data-from="ingest" data-to="raw" d="M854,395 L891.1,395 L891.1,385 L1250,385"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="raw" points="1256,385 1247,380.5 1247,389.5"/>
+<path class="ca-edge" data-from="ingest" data-to="queue" d="M854,385 L878.6,385 L878.6,349 L960,349"/>
+<polygon class="ca-arrow" data-from="ingest" data-to="queue" points="966,349 957,344.5 957,353.5"/>
+<path class="ca-edge" data-from="queue" data-to="workflow" d="M1069,380 L1069,394"/>
+<polygon class="ca-arrow" data-from="queue" data-to="workflow" points="1069,400 1064.5,391 1073.5,391"/>
+<path class="ca-edge" data-from="workflow" data-to="workers" d="M966,431 L916.3,431 L916.3,467 L860,467"/>
+<polygon class="ca-arrow" data-from="workflow" data-to="workers" points="854,467 863,462.5 863,471.5"/>
+<path class="ca-edge" data-from="workers" data-to="raw" d="M854,457 L903.7,457 L903.7,395 L1250,395"/>
+<polygon class="ca-arrow" data-from="workers" data-to="raw" points="1256,395 1247,390.5 1247,399.5"/>
+<path class="ca-edge" data-from="workers" data-to="state" d="M854,477 L928.9,477 L928.9,472 L1250,472"/>
+<polygon class="ca-arrow" data-from="workers" data-to="state" points="1256,472 1247,467.5 1247,476.5"/>
+<path class="ca-edge" data-from="workers" data-to="events" d="M854,487 L941.4,487 L941.4,513 L960,513"/>
+<polygon class="ca-arrow" data-from="workers" data-to="events" points="966,513 957,508.5 957,517.5"/>
+<text class="ca-edge-label" data-from="workers" data-to="events" x="897.7" y="480" text-anchor="middle">job done</text>
+<path class="ca-edge" data-from="repo" data-to="build" d="M570,249 L604,249"/>
+<polygon class="ca-arrow" data-from="repo" data-to="build" points="610,249 601,244.5 601,253.5"/>
+<text class="ca-edge-label" data-from="repo" data-to="build" x="590" y="242" text-anchor="middle">push</text>
+<path class="ca-edge" data-from="build" data-to="deploy" d="M816,249 L850,249"/>
+<polygon class="ca-arrow" data-from="build" data-to="deploy" points="856,249 847,244.5 847,253.5"/>
+<text class="ca-edge-label" data-from="build" data-to="deploy" x="836" y="242" text-anchor="middle">artifact</text>
+<path class="ca-edge" data-from="deploy" data-to="infra-code" d="M1062,249 L1096,249"/>
+<polygon class="ca-arrow" data-from="deploy" data-to="infra-code" points="1102,249 1093,244.5 1093,253.5"/>
+<text class="ca-edge-label" data-from="deploy" data-to="infra-code" x="1082" y="242" text-anchor="middle">applies</text>
 <g class="node" data-id="producers" data-capability="client" data-stage="users">
-<rect class="ca-node-box" x="24" y="468" width="156" height="116" rx="8" style="stroke:#5F6368"/>
-<g fill="#5F6368"><circle cx="102" cy="492" r="10"/><path d="M84,524 Q84,506 102,506 Q120,506 120,524 Z"/></g>
-<text class="ca-service" x="102" y="542" text-anchor="middle">Apps and partners</text>
+<rect class="ca-node-box" x="24" y="400" width="206" height="62" rx="6"/>
+<g fill="#5F6368"><circle cx="52" cy="423.4" r="6.4"/><path d="M39.8,447 Q39.8,432.6 52,432.6 Q64.2,432.6 64.2,447 Z"/></g>
+<text class="ca-service" x="78" y="435">Apps and partners</text>
 </g>
 <g class="node" data-id="api" data-capability="api-gateway" data-stage="serve">
-<rect class="ca-node-box" x="274" y="468" width="156" height="116" rx="8" style="stroke:#C5221F"/>
-<rect x="328" y="478" width="48" height="48" rx="6" fill="#C5221F"/><text class="ca-badge" x="352" y="507" text-anchor="middle">APIG</text>
-<text class="ca-service" x="352" y="542" text-anchor="middle">API Gateway</text>
-<text class="ca-label" x="352" y="577" text-anchor="middle">Ingest API</text>
-<text class="ca-fidelity" x="424" y="482" text-anchor="end">close</text>
+<rect class="ca-node-box" x="358" y="400" width="206" height="62" rx="6"/>
+<rect x="370" y="415" width="32" height="32" rx="4" fill="#C5221F"/><text class="ca-badge" x="386" y="435.5" text-anchor="middle">APIG</text>
+<text class="ca-service" x="412" y="425">API Gateway</text>
+<text class="ca-label" x="412" y="440">Ingest API</text>
+<text class="ca-fidelity" x="558" y="456" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="ingest" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="502" y="394" width="156" height="116" rx="8" style="stroke:#1967D2"/>
-<rect x="556" y="404" width="48" height="48" rx="6" fill="#1967D2"/><text class="ca-badge" x="580" y="433" text-anchor="middle">FN</text>
-<text class="ca-service" x="580" y="468" text-anchor="middle">Cloud Run functions</text>
-<text class="ca-label" x="580" y="503" text-anchor="middle">Validate + enqueue</text>
+<rect class="ca-node-box" x="648" y="359" width="206" height="62" rx="6"/>
+<rect x="660" y="374" width="32" height="32" rx="4" fill="#1967D2"/><text class="ca-badge" x="676" y="394.5" text-anchor="middle">FN</text>
+<text class="ca-service" x="702" y="384">Cloud Run functions</text>
+<text class="ca-label" x="702" y="399">Validate + enqueue</text>
 </g>
 <g class="node" data-id="queue" data-capability="message-queue" data-stage="integrate">
-<rect class="ca-node-box" x="730" y="320" width="156" height="116" rx="8" style="stroke:#C5221F"/>
-<rect x="784" y="330" width="48" height="48" rx="6" fill="#C5221F"/><text class="ca-badge" x="808" y="359" text-anchor="middle">PS</text>
-<text class="ca-service" x="808" y="394" text-anchor="middle">Pub/Sub</text>
-<text class="ca-label" x="808" y="429" text-anchor="middle">Job queue</text>
-<text class="ca-fidelity" x="880" y="334" text-anchor="end">close</text>
+<rect class="ca-node-box" x="966" y="318" width="206" height="62" rx="6"/>
+<rect x="978" y="333" width="32" height="32" rx="4" fill="#C5221F"/><text class="ca-badge" x="994" y="353.5" text-anchor="middle">PS</text>
+<text class="ca-service" x="1020" y="343">Pub/Sub</text>
+<text class="ca-label" x="1020" y="358">Job queue</text>
+<text class="ca-fidelity" x="1166" y="374" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="events" data-capability="event-bus" data-stage="integrate">
-<rect class="ca-node-box" x="730" y="616" width="156" height="116" rx="8" style="stroke:#C5221F"/>
-<rect x="784" y="626" width="48" height="48" rx="6" fill="#C5221F"/><text class="ca-badge" x="808" y="655" text-anchor="middle">EA</text>
-<text class="ca-service" x="808" y="690" text-anchor="middle">Eventarc</text>
-<text class="ca-label" x="808" y="725" text-anchor="middle">Domain events</text>
-<text class="ca-fidelity" x="880" y="630" text-anchor="end">close</text>
+<rect class="ca-node-box" x="966" y="482" width="206" height="62" rx="6"/>
+<rect x="978" y="497" width="32" height="32" rx="4" fill="#C5221F"/><text class="ca-badge" x="994" y="517.5" text-anchor="middle">EA</text>
+<text class="ca-service" x="1020" y="507">Eventarc</text>
+<text class="ca-label" x="1020" y="522">Domain events</text>
+<text class="ca-fidelity" x="1166" y="538" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="workflow" data-capability="workflow" data-stage="integrate">
-<rect class="ca-node-box" x="730" y="468" width="156" height="116" rx="8" style="stroke:#C5221F"/>
-<rect x="784" y="478" width="48" height="48" rx="6" fill="#C5221F"/><text class="ca-badge" x="808" y="507" text-anchor="middle">WF</text>
-<text class="ca-service" x="808" y="542" text-anchor="middle">Workflows</text>
-<text class="ca-label" x="808" y="577" text-anchor="middle">Processing steps</text>
+<rect class="ca-node-box" x="966" y="400" width="206" height="62" rx="6"/>
+<rect x="978" y="415" width="32" height="32" rx="4" fill="#C5221F"/><text class="ca-badge" x="994" y="435.5" text-anchor="middle">WF</text>
+<text class="ca-service" x="1020" y="425">Workflows</text>
+<text class="ca-label" x="1020" y="440">Processing steps</text>
 </g>
 <g class="node" data-id="workers" data-capability="serverless-function" data-stage="run">
-<rect class="ca-node-box" x="502" y="542" width="156" height="116" rx="8" style="stroke:#1967D2"/>
-<rect x="556" y="552" width="48" height="48" rx="6" fill="#1967D2"/><text class="ca-badge" x="580" y="581" text-anchor="middle">FN</text>
-<text class="ca-service" x="580" y="616" text-anchor="middle">Cloud Run functions</text>
-<text class="ca-label" x="580" y="651" text-anchor="middle">Workers</text>
+<rect class="ca-node-box" x="648" y="441" width="206" height="62" rx="6"/>
+<rect x="660" y="456" width="32" height="32" rx="4" fill="#1967D2"/><text class="ca-badge" x="676" y="476.5" text-anchor="middle">FN</text>
+<text class="ca-service" x="702" y="466">Cloud Run functions</text>
+<text class="ca-label" x="702" y="481">Workers</text>
 </g>
 <g class="node" data-id="raw" data-capability="object-storage" data-stage="store">
-<rect class="ca-node-box" x="958" y="394" width="156" height="116" rx="8" style="stroke:#E37400"/>
-<rect x="1012" y="404" width="48" height="48" rx="6" fill="#E37400"/><text class="ca-badge" x="1036" y="433" text-anchor="middle">GCS</text>
-<text class="ca-service" x="1036" y="468" text-anchor="middle">Cloud Storage</text>
-<text class="ca-label" x="1036" y="503" text-anchor="middle">Raw + processed files</text>
+<rect class="ca-node-box" x="1256" y="359" width="206" height="62" rx="6"/>
+<rect x="1268" y="374" width="32" height="32" rx="4" fill="#E37400"/><text class="ca-badge" x="1284" y="394.5" text-anchor="middle">GCS</text>
+<text class="ca-service" x="1310" y="384">Cloud Storage</text>
+<text class="ca-label" x="1310" y="399">Raw + processed files</text>
 </g>
 <g class="node" data-id="state" data-capability="key-value-db" data-stage="store">
-<rect class="ca-node-box" x="958" y="542" width="156" height="116" rx="8" style="stroke:#1A73E8"/>
-<rect x="1012" y="552" width="48" height="48" rx="6" fill="#1A73E8"/><text class="ca-badge" x="1036" y="581" text-anchor="middle">FS</text>
-<text class="ca-service" x="1036" y="616" text-anchor="middle">Firestore</text>
-<text class="ca-label" x="1036" y="651" text-anchor="middle">Job status</text>
-<text class="ca-fidelity" x="1108" y="556" text-anchor="end">close</text>
+<rect class="ca-node-box" x="1256" y="441" width="206" height="62" rx="6"/>
+<rect x="1268" y="456" width="32" height="32" rx="4" fill="#1A73E8"/><text class="ca-badge" x="1284" y="476.5" text-anchor="middle">FS</text>
+<text class="ca-service" x="1310" y="466">Firestore</text>
+<text class="ca-label" x="1310" y="481">Job status</text>
+<text class="ca-fidelity" x="1456" y="497" text-anchor="end">close</text>
 </g>
 <g class="node" data-id="logs" data-capability="monitoring" data-stage="operate">
-<rect class="ca-node-box" x="274" y="788" width="156" height="116" rx="8" style="stroke:#B06000"/>
-<rect x="328" y="798" width="48" height="48" rx="6" fill="#B06000"/><text class="ca-badge" x="352" y="827" text-anchor="middle">MON</text>
-<text class="ca-service" x="352" y="862" text-anchor="middle">Cloud Monitoring +</text>
-<text class="ca-service" x="352" y="876" text-anchor="middle">Cloud Logging</text>
-<text class="ca-label" x="352" y="897" text-anchor="middle">Logs, metrics, alarms</text>
+<rect class="ca-node-box" x="364" y="600" width="206" height="62" rx="6"/>
+<rect x="376" y="615" width="32" height="32" rx="4" fill="#B06000"/><text class="ca-badge" x="392" y="635.5" text-anchor="middle">MON</text>
+<text class="ca-service" x="418" y="618">Cloud Monitoring + Cloud</text>
+<text class="ca-service" x="418" y="632">Logging</text>
+<text class="ca-label" x="418" y="647">Logs, metrics, alarms</text>
 </g>
 <g class="node" data-id="repo" data-capability="source-control" data-stage="code">
-<rect class="ca-node-box" x="274" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="328" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="352" y="207" text-anchor="middle">SSM</text>
-<text class="ca-service" x="352" y="242" text-anchor="middle">Secure Source Manager</text>
-<text class="ca-label" x="352" y="277" text-anchor="middle">App and infrastructure…</text>
+<rect class="ca-node-box" x="364" y="218" width="206" height="62" rx="6"/>
+<rect x="376" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="392" y="253.5" text-anchor="middle">SSM</text>
+<text class="ca-service" x="418" y="243">Secure Source Manager</text>
+<text class="ca-label" x="418" y="258">App and infrastructure code</text>
 </g>
 <g class="node" data-id="build" data-capability="ci-build" data-stage="build">
-<rect class="ca-node-box" x="494" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="548" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="572" y="207" text-anchor="middle">CB</text>
-<text class="ca-service" x="572" y="242" text-anchor="middle">Cloud Build</text>
-<text class="ca-label" x="572" y="277" text-anchor="middle">Build and test</text>
+<rect class="ca-node-box" x="610" y="218" width="206" height="62" rx="6"/>
+<rect x="622" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="638" y="253.5" text-anchor="middle">CB</text>
+<text class="ca-service" x="664" y="243">Cloud Build</text>
+<text class="ca-label" x="664" y="258">Build and test</text>
 </g>
 <g class="node" data-id="deploy" data-capability="cd-deploy" data-stage="ship">
-<rect class="ca-node-box" x="714" y="168" width="156" height="116" rx="8" style="stroke:#137333"/>
-<rect x="768" y="178" width="48" height="48" rx="6" fill="#137333"/><text class="ca-badge" x="792" y="207" text-anchor="middle">CD</text>
-<text class="ca-service" x="792" y="242" text-anchor="middle">Cloud Deploy</text>
-<text class="ca-label" x="792" y="277" text-anchor="middle">Release pipeline</text>
+<rect class="ca-node-box" x="856" y="218" width="206" height="62" rx="6"/>
+<rect x="868" y="233" width="32" height="32" rx="4" fill="#137333"/><text class="ca-badge" x="884" y="253.5" text-anchor="middle">CD</text>
+<text class="ca-service" x="910" y="243">Cloud Deploy</text>
+<text class="ca-label" x="910" y="258">Release pipeline</text>
 </g>
 <g class="node" data-id="infra-code" data-capability="iac" data-stage="code">
-<rect class="ca-node-box" x="934" y="168" width="156" height="116" rx="8" style="stroke:#B06000"/>
-<rect x="988" y="178" width="48" height="48" rx="6" fill="#B06000"/><text class="ca-badge" x="1012" y="207" text-anchor="middle">IM</text>
-<text class="ca-service" x="1012" y="242" text-anchor="middle">Infrastructure Manager</text>
-<text class="ca-service" x="1012" y="256" text-anchor="middle">(Terraform)</text>
-<text class="ca-label" x="1012" y="277" text-anchor="middle">Infrastructure as code</text>
+<rect class="ca-node-box" x="1102" y="218" width="206" height="62" rx="6"/>
+<rect x="1114" y="233" width="32" height="32" rx="4" fill="#B06000"/><text class="ca-badge" x="1130" y="253.5" text-anchor="middle">IM</text>
+<text class="ca-service" x="1156" y="236">Infrastructure Manager</text>
+<text class="ca-service" x="1156" y="250">(Terraform)</text>
+<text class="ca-label" x="1156" y="265">Infrastructure as code</text>
 </g>
-<text class="ca-footer" x="24" y="966">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Google Cloud.</text>
+<g class="ca-step" data-step="1"><circle cx="335" cy="431" r="9"/><text x="335" y="434.8" text-anchor="middle">1</text></g>
+<g class="ca-step" data-step="2"><circle cx="627" cy="390" r="9"/><text x="627" y="393.8" text-anchor="middle">2</text></g>
+<g class="ca-step" data-step="3"><circle cx="1233" cy="385" r="9"/><text x="1233" y="388.8" text-anchor="middle">3</text></g>
+<g class="ca-step" data-step="4"><circle cx="943" cy="349" r="9"/><text x="943" y="352.8" text-anchor="middle">4</text></g>
+<g class="ca-step" data-step="5"><circle cx="374" cy="606" r="9"/><text x="374" y="609.8" text-anchor="middle">5</text></g>
+<text class="ca-steps-title" x="24" y="754">Serving a request</text>
+<g class="ca-step" data-step="1"><circle cx="33" cy="770" r="9"/><text x="33" y="773.8" text-anchor="middle">1</text></g>
+<text class="ca-steps-text" x="50" y="774">Apps and partners → Ingest API: authenticate, throttle and route the call</text>
+<g class="ca-step" data-step="2"><circle cx="33" cy="794" r="9"/><text x="33" y="797.8" text-anchor="middle">2</text></g>
+<text class="ca-steps-text" x="50" y="798">Ingest API → Validate + enqueue: run the function</text>
+<g class="ca-step" data-step="3"><circle cx="33" cy="818" r="9"/><text x="33" y="821.8" text-anchor="middle">3</text></g>
+<text class="ca-steps-text" x="50" y="822">Validate + enqueue → Raw + processed files: store the upload</text>
+<g class="ca-step" data-step="4"><circle cx="788" cy="770" r="9"/><text x="788" y="773.8" text-anchor="middle">4</text></g>
+<text class="ca-steps-text" x="805" y="774">Validate + enqueue → Job queue: queue the job</text>
+<g class="ca-step" data-step="5"><circle cx="788" cy="794" r="9"/><text x="788" y="797.8" text-anchor="middle">5</text></g>
+<text class="ca-steps-text" x="805" y="798">Every component → Logs, metrics, alarms: send logs and metrics</text>
+<text class="ca-footer" x="24" y="876">Generated by Clarchy. Service names belong to their owners; Clarchy is not affiliated with Google Cloud.</text>
 </svg>

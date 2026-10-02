@@ -20,3 +20,9 @@ files are copied byte for byte from there and renamed to the AWS package's patte
 `Arch_<service>_64.svg`. To use AWS's own download instead, or a newer release, get it
 from the page above and pass the folder with `--icons` or `CLARCHY_ICONS_AWS`; that folder is
 then used instead of this one. See docs/decisions/0012-official-aws-icons-in-aws-diagrams.md.
+
+Group icons (AWS Cloud logo, Region, VPC, public and private subnet) and the Users
+resource icon come from the same release and package (`icons/architecture-group/` and
+`icons/resource/`), copied byte for byte and renamed to AWS's pattern
+(`AWS-Cloud-logo_32.svg`, `Res_Users_48.svg` and so on). They mark the groups and the
+people in AWS diagrams, as AWS's own reference architectures use them.

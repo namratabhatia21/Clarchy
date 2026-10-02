@@ -15,8 +15,8 @@ site also gets its fonts (fonts/), sharing images and a 404 page. --no-engine bu
 replay-only page. Fragment builds target sandboxed hosts that block downloads, so their
 download buttons copy to the clipboard instead, and they keep the drawings inline.
 
-Official provider icons are never embedded: hosting them is a separate licensing question
-(see docs/decisions/0002-no-bundled-provider-icons.md).
+AWS designs use the AWS Architecture Icons that ship with the package (ADR 0012); the
+other clouds keep lettered badges.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any
 
 from clarchy import blog, catalog, payloads
-from clarchy.icons import IconLibrary
+from clarchy.icons import bundled_library
 
 SCRIPT_TAG = re.compile(r'<script src="/static/([\w-]+\.js)"></script>')
 PYODIDE_VERSION = "314.0.7"
@@ -40,7 +40,8 @@ ENGINE_BUNDLE = "clarchy-engine.zip"
 
 
 def engine_bundle() -> bytes:
-    """This package as a zip for Pyodide: the Python modules and their data files."""
+    """This package as a zip for Pyodide: the Python modules and their data files, including
+    the bundled AWS icons."""
     root = Path(__file__).resolve().parent
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -48,7 +49,7 @@ def engine_bundle() -> bytes:
             rel = path.relative_to(root)
             if path.is_dir() or rel.parts[0] == "static" or "__pycache__" in rel.parts:
                 continue
-            if path.suffix not in (".py", ".yaml", ".md"):
+            if path.suffix not in (".py", ".yaml", ".md", ".svg"):
                 continue
             archive.write(path, f"clarchy/{rel.as_posix()}")
     return buffer.getvalue()
@@ -70,7 +71,7 @@ STYLESHEET_TAG = '<link rel="stylesheet" href="/static/app.css">'
 def _designs_for(key: str, spec_yaml: str) -> dict[str, Any]:
     designs = {}
     for provider in catalog.providers():
-        status, body = payloads.design_payload(spec_yaml, provider)
+        status, body = payloads.design_payload(spec_yaml, provider, bundled_library(provider))
         if status != 200:
             raise RuntimeError(f"{key} failed on {provider}: {body}")
         designs[f"{key}.{provider}"] = body
@@ -93,7 +94,7 @@ def recorded_runs() -> dict[str, dict[str, Any]]:
 
 
 def site_data(clipboard_only: bool = False, engine: dict[str, Any] | None = None) -> dict[str, Any]:
-    no_icons = {p: IconLibrary(None) for p in catalog.providers()}
+    icons = {p: bundled_library(p) for p in catalog.providers()}
     pattern_yaml = {name: catalog.pattern_text(name) for name in catalog.pattern_names()}
     runs = recorded_runs()
 
@@ -109,7 +110,7 @@ def site_data(clipboard_only: bool = False, engine: dict[str, Any] | None = None
         designs.update(_designs_for(key, run["spec_yaml"]))
 
     return {
-        "meta": payloads.meta_payload(no_icons),
+        "meta": payloads.meta_payload(icons),
         "samples": payloads.samples_payload(),
         "blog": blog.posts(),
         "patterns": payloads.patterns_payload(),

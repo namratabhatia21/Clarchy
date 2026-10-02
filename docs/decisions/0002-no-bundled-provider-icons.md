@@ -1,6 +1,6 @@
 # 0002: Provider icons are not bundled
 
-**Status:** accepted · 2026-10-01
+**Status:** superseded for AWS by [0012](0012-official-aws-icons-in-aws-diagrams.md) · 2026-10-01; still holds for Azure and Google Cloud
 
 ## Context
 

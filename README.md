@@ -38,8 +38,9 @@ it, how close each provider's service is (**exact, close or partial**) and the
 at the top.
 
 Diagrams follow each provider's visual language (AWS dark frame and category colours,
-Azure blue, Google Cloud's palette, a neutral style for open source) without using any
-provider logos or icons.
+Azure blue, Google Cloud's palette, a neutral style for open source). AWS diagrams use the
+official AWS Architecture Icons; the other clouds use lettered badges (see
+[Official provider icons](#official-provider-icons)).
 
 ## How the agent works
 
@@ -335,15 +336,18 @@ allowance is `FREE_DIAGRAMS` in `wrangler.jsonc`.
 
 ## Official provider icons
 
-Clarchy never ships provider icons
-([ADR 0002](docs/decisions/0002-no-bundled-provider-icons.md)); diagrams use lettered
-badges coloured by service category. To use the official AWS set, download the
-[AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) package, read its
-terms, and point Clarchy at it:
+AWS diagrams use the official [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/),
+which ship with Clarchy for the services it draws, unchanged and under AWS's terms
+([ADR 0012](docs/decisions/0012-official-aws-icons-in-aws-diagrams.md),
+`src/clarchy/data/icons/aws/NOTICE.md`). Azure, Google Cloud and the open-source view use
+lettered badges coloured by service category
+([ADR 0002](docs/decisions/0002-no-bundled-provider-icons.md)). To use a provider's own
+icon package instead (or a newer AWS release), download it, read its terms, and point
+Clarchy at it:
 
 ```bash
-export CLARCHY_ICONS_AWS=~/Downloads/Asset-Package
-clarchy icons --provider aws              # shows which icons were found
+export CLARCHY_ICONS_AZURE=~/Downloads/Azure_Public_Service_Icons
+clarchy icons --provider azure            # shows which icons were found
 ```
 
 ## Development

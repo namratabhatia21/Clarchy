@@ -1,3 +1,4 @@
+import base64
 import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -6,7 +7,7 @@ import pytest
 
 from clarchy import catalog
 from clarchy.explain import explain_markdown
-from clarchy.icons import IconLibrary
+from clarchy.icons import IconLibrary, bundled_icon_dir, bundled_library, icon_library
 from clarchy.mapping import map_to_provider
 from clarchy.render import render_svg
 from clarchy.spec import load_pattern
@@ -102,6 +103,48 @@ def test_official_icons_are_embedded_when_available(tmp_path):
     assert svg.count("data:image/svg+xml;base64,") == len(buckets) == 1
     # Services without an installed icon fall back to lettered badges.
     assert ">CF</text>" in svg
+
+
+def test_every_aws_service_has_its_bundled_aws_icon():
+    library = bundled_library("aws")
+    services = catalog.provider_mapping("aws")["services"]
+    # Icons are only for AWS services: KEDA and GitHub keep their lettered badges.
+    no_icon = sorted(raw["service"] for raw in services.values() if "icon" not in raw)
+    assert no_icon == ["GitHub or GitLab via AWS CodeConnections", "KEDA on Amazon EKS"]
+    stems = [raw["icon"] for raw in services.values() if "icon" in raw]
+    missing = [stem for stem in stems if library.find(stem) is None]
+    assert not missing, f"no bundled icon for {missing}"
+    root = bundled_icon_dir("aws")
+    assert (root / "NOTICE.md").is_file(), "the icons travel with their terms"
+    used = {library.find(stem).name for stem in stems}
+    assert {p.name for p in root.glob("*.svg")} == used, "ship only the icons Clarchy draws"
+
+
+def test_aws_diagrams_embed_the_icon_files_unchanged():
+    a = arch("serverless-web-app")
+    svg = render_svg(a, icon_library("aws"))
+    bucket = bundled_library("aws").find("Amazon-Simple-Storage-Service")
+    assert bucket.name == "Arch_Amazon-Simple-Storage-Service_64.svg"
+    encoded = base64.b64encode(bucket.read_bytes()).decode("ascii")
+    assert f'href="data:image/svg+xml;base64,{encoded}"' in svg
+    assert "Service names and icons belong to their owners" in svg
+    assert "not affiliated with AWS" in svg
+    badges = sum(1 for m in a.components if m.choice and not m.choice.icon)
+    assert svg.count('class="ca-badge"') == badges, "every AWS service drew its icon"
+
+
+@pytest.mark.parametrize("provider", [p for p in catalog.providers() if p != "aws"])
+def test_other_clouds_ship_no_icons(provider):
+    assert bundled_icon_dir(provider) is None
+    svg = render_svg(arch("serverless-web-app", provider), icon_library(provider))
+    assert "data:image/" not in svg and 'class="ca-badge"' in svg
+
+
+def test_an_icon_folder_given_by_the_user_wins(tmp_path, monkeypatch):
+    monkeypatch.setenv("CLARCHY_ICONS_AWS", str(tmp_path))
+    assert icon_library("aws").root == tmp_path
+    monkeypatch.delenv("CLARCHY_ICONS_AWS")
+    assert icon_library("aws").root == bundled_icon_dir("aws")
 
 
 @pytest.mark.parametrize("provider", catalog.providers())

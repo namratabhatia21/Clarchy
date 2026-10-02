@@ -39,6 +39,8 @@ clarchy = [
     "data/prices/*.yaml",
     "data/samples/*.md",
     "data/blog/*.md",
+    "data/icons/*/*.svg",
+    "data/icons/*/*.md",
     "static/*",
     "static/fonts/*",
     "static/brand/*",

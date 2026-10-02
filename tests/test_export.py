@@ -140,6 +140,7 @@ def test_site_ships_the_in_browser_engine(tmp_path):
     )
     names = zipfile.ZipFile(tmp_path / ENGINE_BUNDLE).namelist()
     assert "clarchy/browser.py" in names and "clarchy/data/prices/aws.yaml" in names
+    assert "clarchy/data/icons/aws/Arch_AWS-Lambda_64.svg" in names
     assert not any("/static/" in n or "__pycache__" in n for n in names)
 
     # The bundle alone is enough to run the engine (as Pyodide will).
@@ -151,12 +152,13 @@ def test_site_ships_the_in_browser_engine(tmp_path):
         "assert clarchy.__file__.startswith(sys.argv[1]);"
         "from clarchy import catalog;"
         "r = json.loads(b.design(catalog.pattern_text('rag-chatbot'), 'gcp'));"
-        "print(r['ok'], r['body']['cost']['available'])"
+        "a = json.loads(b.design(catalog.pattern_text('rag-chatbot'), 'aws'));"
+        "print(r['ok'], r['body']['cost']['available'], a['body']['official_icons'])"
     )
     out = subprocess.run(
         [sys.executable, "-c", code, str(unpacked)], capture_output=True, text=True
     )
-    assert out.stdout.strip() == "True True", out.stderr
+    assert out.stdout.strip() == "True True True", out.stderr
 
 
 def test_full_site_keeps_designs_fonts_and_sharing_files_beside_the_page(tmp_path):

@@ -33,7 +33,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from clarchy import __version__, catalog, payloads
-from clarchy.icons import IconLibrary, icon_dir_from_env
+from clarchy.icons import IconLibrary, bundled_library, icon_library
 from clarchy.ingest import MAX_UPLOAD_BYTES, IngestError, from_text, read_document
 
 MAX_SPEC_BYTES = 100_000
@@ -50,9 +50,9 @@ def _icon_libraries() -> dict[str, IconLibrary]:
     libraries = {}
     for provider in catalog.providers():
         try:
-            libraries[provider] = IconLibrary(icon_dir_from_env(provider))
+            libraries[provider] = icon_library(provider)
         except FileNotFoundError:
-            libraries[provider] = IconLibrary(None)
+            libraries[provider] = bundled_library(provider)
     return libraries
 
 

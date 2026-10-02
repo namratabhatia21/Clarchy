@@ -4,10 +4,10 @@
 #   exact   - same concept, comparable features
 #   close   - same job, notable differences (see note)
 #   partial - covers part of the capability; something else is needed for the rest
-# short: 2-4 letter badge used when official icons are not installed.
-# icon: filename stem searched for inside the AWS Architecture Icons asset package
-#   (matched case-insensitively against files like Arch_<stem>_48.svg). Stems are
-#   best-effort; run `clarchy icons --provider aws` to check them against your copy.
+# short: 2-4 letter badge used when no icon is found.
+# icon: filename stem of the service's AWS Architecture Icon (Arch_<stem>_64.svg), matched
+#   case-insensitively. The icons for these stems ship in data/icons/aws/ (ADR 0012); a
+#   newer AWS package passed with --icons is searched the same way.
 
 provider:
   name: AWS
@@ -209,7 +209,7 @@ services:
     service: Amazon EKS
     short: EKS
     fidelity: exact
-    icon: Elastic-Kubernetes-Service
+    icon: Amazon-Elastic-Kubernetes-Service
     alternatives: [EKS Auto Mode]
     docs: https://docs.aws.amazon.com/eks/
   event-autoscaling:
@@ -234,27 +234,27 @@ services:
     service: AWS CodeBuild
     short: CB
     fidelity: exact
-    icon: CodeBuild
+    icon: AWS-CodeBuild
     alternatives: [GitHub Actions]
     docs: https://docs.aws.amazon.com/codebuild/
   container-registry:
     service: Amazon ECR
     short: ECR
     fidelity: exact
-    icon: Elastic-Container-Registry
+    icon: Amazon-Elastic-Container-Registry
     docs: https://docs.aws.amazon.com/ecr/
   cd-deploy:
     service: AWS CodePipeline
     short: CP
     fidelity: exact
-    icon: CodePipeline
+    icon: AWS-CodePipeline
     alternatives: [AWS CodeDeploy, GitHub Actions]
     docs: https://docs.aws.amazon.com/codepipeline/
   iac:
     service: AWS CloudFormation
     short: CFN
     fidelity: exact
-    icon: CloudFormation
+    icon: AWS-CloudFormation
     alternatives: [AWS CDK, Terraform or OpenTofu]
     docs: https://docs.aws.amazon.com/cloudformation/
   dev-environment:

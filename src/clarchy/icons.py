@@ -1,10 +1,12 @@
-"""Finds official provider icons in a locally downloaded asset package.
+"""Finds official provider icons for diagrams.
 
-Clarchy does not ship provider icons. Each provider publishes its own icon set under
-its own terms, so users download it themselves and point Clarchy at the folder:
+The AWS Architecture Icons for the services Clarchy draws ship in data/icons/aws/ and are
+used, unchanged, in AWS diagrams (ADR 0012). Azure and Google Cloud icons are not
+bundled: users download a provider's package themselves and point Clarchy at the folder,
+which also works for a newer AWS release:
 
-    export CLARCHY_ICONS_AWS=~/Downloads/Asset-Package
-    clarchy render serverless-web-app --provider aws -o out.svg
+    export CLARCHY_ICONS_AZURE=~/Downloads/Azure_Public_Service_Icons
+    clarchy render serverless-web-app --provider azure -o out.svg
 
 Without icons the renderer draws neutral lettered badges instead.
 """
@@ -14,6 +16,8 @@ from __future__ import annotations
 import base64
 import os
 import re
+from functools import cache
+from importlib import resources
 from pathlib import Path
 
 _MIME = {".svg": "image/svg+xml", ".png": "image/png"}
@@ -24,6 +28,24 @@ _SIZE_PREFERENCE = {"48": 0, "64": 1, "32": 2, "16": 3}
 def icon_dir_from_env(provider: str) -> Path | None:
     value = os.environ.get(f"CLARCHY_ICONS_{provider.upper()}")
     return Path(value).expanduser() if value else None
+
+
+def bundled_icon_dir(provider: str) -> Path | None:
+    """The icons that ship with Clarchy for this provider (only AWS has any)."""
+    path = Path(str(resources.files("clarchy").joinpath("data", "icons", provider)))
+    return path if path.is_dir() else None
+
+
+@cache
+def bundled_library(provider: str) -> IconLibrary:
+    return IconLibrary(bundled_icon_dir(provider))
+
+
+def icon_library(provider: str, explicit: Path | None = None) -> IconLibrary:
+    """The icons for one provider: an explicit folder, else CLARCHY_ICONS_<PROVIDER>, else
+    the icons bundled with Clarchy, else none (lettered badges)."""
+    root = explicit or icon_dir_from_env(provider)
+    return IconLibrary(root) if root else bundled_library(provider)
 
 
 class IconLibrary:

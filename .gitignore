@@ -6,7 +6,8 @@ __pycache__/
 .ruff_cache/
 build/
 dist/
-# Provider icon packages are downloaded by each user, never committed.
-icons/
+# Icon packages a user downloads stay out of git. The AWS icons Clarchy ships live in
+# src/clarchy/data/icons/aws/ (ADR 0012).
+/icons/
 Asset-Package*/
 site/

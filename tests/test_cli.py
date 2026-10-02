@@ -42,9 +42,17 @@ def test_invalid_spec_reports_error(tmp_path, capsys):
 
 
 def test_icons_without_directory(capsys, monkeypatch):
+    monkeypatch.delenv("CLARCHY_ICONS_AZURE", raising=False)
+    assert main(["icons", "--provider", "azure"]) == 1
+    assert "CLARCHY_ICONS_AZURE" in capsys.readouterr().err
+
+
+def test_icons_for_aws_come_bundled(capsys, monkeypatch):
     monkeypatch.delenv("CLARCHY_ICONS_AWS", raising=False)
-    assert main(["icons", "--provider", "aws"]) == 1
-    assert "CLARCHY_ICONS_AWS" in capsys.readouterr().err
+    assert main(["icons", "--provider", "aws"]) == 0
+    out, err = capsys.readouterr()
+    assert "Arch_AWS-Lambda_64.svg" in out and "NOT FOUND" not in out
+    assert "38/38 icons found" in err
 
 
 def test_plan_from_long_text_writes_spec_diagrams_and_explanations(tmp_path, capsys):

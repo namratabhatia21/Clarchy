@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from clarchy import __version__, catalog, policies, pricing
 from clarchy.explain import explain_markdown
-from clarchy.icons import IconLibrary
+from clarchy.icons import IconLibrary, icon_library
 from clarchy.mapping import MappingError, map_to_provider, service_choice
 from clarchy.render import render_svg
 from clarchy.spec import load_pattern, load_spec
@@ -152,7 +152,7 @@ def design_payload(
     except MappingError as exc:
         return 422, {"errors": [{"where": "mapping", "message": str(exc)}]}
 
-    icons = icons or IconLibrary(None)
+    icons = icons or icon_library(provider)
     spec = arch.spec
     components = []
     for m in arch.components:

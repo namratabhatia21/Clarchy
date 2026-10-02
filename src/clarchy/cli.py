@@ -22,15 +22,14 @@ from pydantic import ValidationError
 
 from clarchy import catalog
 from clarchy.explain import explain_markdown
-from clarchy.icons import IconLibrary, icon_dir_from_env
+from clarchy.icons import IconLibrary, icon_library
 from clarchy.mapping import MappingError, map_to_provider
 from clarchy.render import render_svg
 from clarchy.spec import load_pattern, load_spec_or_pattern
 
 
 def _icons(provider: str, explicit: str | None) -> IconLibrary:
-    root = Path(explicit).expanduser() if explicit else icon_dir_from_env(provider)
-    return IconLibrary(root)
+    return icon_library(provider, Path(explicit).expanduser() if explicit else None)
 
 
 def _write(text: str, output: str | None) -> None:
@@ -78,14 +77,19 @@ def cmd_icons(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return 1
+    print(f"icons from {library.root}", file=sys.stderr)
     services = catalog.provider_mapping(args.provider)["services"]
+    drawn = {k: raw for k, raw in services.items() if raw.get("icon")}
     missing = 0
     for capability, raw in services.items():
-        found = library.find(raw.get("icon"))
-        missing += found is None
-        where = found.relative_to(library.root).as_posix() if found else "NOT FOUND"
+        if capability not in drawn:
+            where = "badge (not a provider service)"
+        else:
+            found = library.find(raw["icon"])
+            missing += found is None
+            where = found.relative_to(library.root).as_posix() if found else "NOT FOUND"
         print(f"{capability:20} {raw['service']:42} {where}")
-    print(f"\n{len(services) - missing}/{len(services)} icons found", file=sys.stderr)
+    print(f"\n{len(drawn) - missing}/{len(drawn)} icons found", file=sys.stderr)
     return 0 if missing == 0 else 1
 
 

@@ -1,17 +1,15 @@
 // Cloudflare Worker "clarchy": serves the static site built by `clarchy export-site -o site`
-// as static assets, on Cloudflare's free plan. Workers Builds deploys it on every push.
+// as static assets, on Cloudflare's free plan. Workers Builds deploys it on every push
+// (build command: make prices site).
 {
   "name": "clarchy",
   "compatibility_date": "2026-10-01",
-  // site/ isn't committed: Wrangler builds it before deploy, versions upload and preview,
-  // so a build works whatever build command the Workers Builds settings hold.
-  "build": { "command": "make prices site" },
   "assets": {
     "directory": "./site",
     // Unknown paths get site/404.html (written by export-site) with a 404 status.
     "not_found_handling": "404-page"
   },
-  // Lets `wrangler preview`, Workers Builds' command for other branches, run. It adds no
-  // settings of its own, and `wrangler deploy` doesn't read it.
+  // Worker Previews: other branches run `npx wrangler preview`, which needs this block. It
+  // is empty because Previews need no settings of their own; `wrangler deploy` ignores it.
   "previews": {}
 }

@@ -276,13 +276,12 @@ clarchy export-site -o site/ --fragment               # one file with every page
 ```
 
 clarchy.com is a Cloudflare Worker that serves `site/` as static assets
-([wrangler.jsonc](wrangler.jsonc)) on Cloudflare's free plan. Wrangler builds the site
-itself (`make prices site`, the config's `build` command) before it deploys, so Workers
-Builds needs no build command of its own: it deploys every push to the production branch
-and makes a Worker Preview (`wrangler preview`) of every other branch. The `Pages`
-workflow can also deploy it when run by hand, with the repository secrets
-`CLOUDFLARE_API_TOKEN` (permission *Workers Scripts: Edit*) and `CLOUDFLARE_ACCOUNT_ID`,
-and publishes a copy to GitHub Pages when that is turned on.
+([wrangler.jsonc](wrangler.jsonc)) on Cloudflare's free plan. Workers Builds runs
+`make prices site` and deploys on every push to the branch set in the Worker's build
+settings; other branches get a Worker Preview (`npx wrangler preview`, which needs the
+config's empty `previews` block). The `Pages` workflow can also deploy it when run by hand,
+with the repository secrets `CLOUDFLARE_API_TOKEN` (permission *Workers Scripts: Edit*) and
+`CLOUDFLARE_ACCOUNT_ID`, and publishes a copy to GitHub Pages when that is turned on.
 
 The `Space` workflow mirrors the site to the Hugging Face Space `bhatianamrata/clarchy`,
 a static Space. It builds the site as one page

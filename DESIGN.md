@@ -14,7 +14,11 @@ drawing that Clarchy made, not an illustration of one.
 The home page is three frames. First a poster: "Brief in, drawing out" in huge condensed
 type on a signal-orange field, round a protractor that turns as the page scrolls, with
 architect's stamps in place of stickers; the header sits on it until it scrolls away.
-Then the brief beside a model of a real design, then how it works.
+Then the brief beside a model of a real design, then how it works. The page closes on
+the poster's orange again: "See the examples" in the same huge type, a drawing register of
+real examples on a paper sheet, and a half-circle protractor whose arm opens to 120° as
+the frame scrolls into view. Small text there sits on the paper or the navy button, never
+on the orange, which is too light for it.
 
 The second frame shows an architect's massing model of a real design (`massing.py`,
 [ADR 0015](docs/decisions/0015-a-massing-model-on-the-home-page.md)): each running service
@@ -25,8 +29,9 @@ and the current price book every time the site is built, so it is never a mock-u
 ## Layout
 
 - The header has four sections (Examples, Services, Pricing, How to) and one button,
-  Start a plan; the logo goes home. About, Blog, Privacy, Terms and the planner note are
-  in the footer.
+  Log in / Sign up (a person outline; once logged in, the visitor's initial and first
+  name, with a small menu); the logo goes home. About, Blog, Privacy, Terms and the
+  planner note are in the footer.
 - The home page sits within gutters of 6% of the width (24 to 96px). The scale stands in
   the left gutter only where it is wide enough (1400px and up), so it never touches text.
 

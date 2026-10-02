@@ -45,3 +45,14 @@ the model frame's headline becomes an h2 and keeps "priced" as its accent. The h
 takes the poster's colour while the poster is in view, and the instruments wait until
 both the poster and the model have scrolled away. The example drawing now follows How it
 works, as its result.
+
+## Amendment, 2026-10-02: the page closes on the examples
+
+The founder asked for something in orange to see the examples, with a protractor, in
+place of the example drawing at the bottom. The last frame takes the poster's orange: "See
+the examples", the first four examples as a drawing register (number, name, services, each
+linking to its page) and a "See examples" button, beside a half-circle protractor whose
+arm opens from 0° to 120° as the frame scrolls into view and closes on the way back
+(drafting.js; with reduced motion it stays open). Both are drawn by site.py with the page,
+so the frame needs no script to read. The massing model above already shows a real
+design, priced, so the drawing no longer needs repeating.

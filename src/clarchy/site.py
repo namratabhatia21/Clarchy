@@ -138,7 +138,6 @@ class Content:
     patterns: list[dict[str, Any]]
     catalog: dict[str, Any]
     posts: list[dict[str, Any]]
-    proof: dict[str, Any] | None = None  # the home page's example drawing: name, size, cost
     model: dict[str, str] | None = None  # the home page's massing model: figure, kicker, facts
     example_meta: dict[str, str] | None = None  # each example's facts line, as HTML
 
@@ -164,23 +163,12 @@ def content(meta: dict[str, Any]) -> Content:
         status, design = payloads.design_payload(catalog.pattern_text(p["id"]), "aws")
         if status == 200:
             designs[p["id"]] = design
-    proof = None
-    if "rag-chatbot" in designs:
-        design = designs["rag-chatbot"]
-        cost = design["cost"]
-        proof = {
-            "name": design["name"],
-            "services": len(design["components"]),
-            "monthly": cost["monthly"] if cost.get("available") else None,
-            "policies": len(design["policies"]),
-        }
     return Content(
         meta=meta,
         samples=payloads.samples_payload(),
         patterns=patterns,
         catalog=payloads.catalog_payload(),
         posts=blog.posts(),
-        proof=proof,
         model=_model("rag-chatbot") if "rag-chatbot" in designs else None,
         example_meta={pid: design_meta(d) for pid, d in designs.items()},
     )
@@ -262,6 +250,62 @@ def _poster_art() -> str:
         + mark(150, 560, 7)
         + "</svg>"
     )
+
+
+CODA_SWEEP = 120  # the reading the closing protractor's arm opens to (drafting.js)
+
+
+def _coda_protractor() -> str:
+    """The closing frame's protractor: a half circle in degrees on its base strip, with an
+    arm that opens from 0 as the page scrolls down to it (drafting.js)."""
+    cx, cy, r = 270, 262, 236
+
+    def at(radius: float, degrees: float) -> tuple[float, float]:
+        a = math.radians(degrees)
+        return cx + radius * math.cos(a), cy - radius * math.sin(a)
+
+    minor, major, nums = [], [], []
+    for d in range(181):
+        long = 26 if d % 10 == 0 else 17 if d % 5 == 0 else 10
+        (x1, y1), (x2, y2) = at(r - 4, d), at(r - 4 - long, d)
+        (major if d % 10 == 0 else minor).append(f"M{x1:.1f} {y1:.1f}L{x2:.1f} {y2:.1f}")
+    for d in range(0, 181, 10):
+        for radius, value, cls in ((r - 44, 180 - d, "out"), (r - 66, d, "in")):
+            x, y = at(radius, d)
+            turn = f"rotate({90 - d} {x:.1f} {y:.1f})"
+            nums.append(
+                f'<text class="{cls}" x="{x:.1f}" y="{y + 4:.1f}" transform="{turn}">{value}</text>'
+            )
+    sx, sy = at(150, CODA_SWEEP)
+    body = f"M{cx - r} {cy + 18}V{cy}A{r} {r} 0 0 1 {cx + r} {cy}V{cy + 18}Z"
+    return (
+        f'<svg class="coda-protractor" viewBox="0 0 540 290" data-sweep="{CODA_SWEEP}" '
+        'aria-hidden="true">'
+        f'<path class="cp-shadow" transform="translate(10 12)" d="{body}"/>'
+        f'<path class="cp-face" d="{body}"/>'
+        f'<path class="cp-sweep" d="M{cx} {cy}H{cx + 150}A150 150 0 0 0 {sx:.1f} {sy:.1f}Z"/>'
+        f'<path class="cp-ticks" d="{"".join(minor)}"/>'
+        f'<path class="cp-ticks major" d="{"".join(major)}"/><g class="cp-nums">{"".join(nums)}</g>'
+        f'<path class="cp-line" d="M{cx - 92} {cy}A92 92 0 0 1 {cx + 92} {cy}'
+        f'M{cx - r + 6} {cy}H{cx + r - 6}M{cx} {cy - 10}V{cy + 10}"/>'
+        f'<text class="cp-reading" x="{cx - 128}" y="{cy + 13.5}">{CODA_SWEEP:03d}°</text>'
+        f'<g class="cp-arm" transform="rotate({-CODA_SWEEP} {cx} {cy})">'
+        f'<path d="M{cx - 16} {cy - 6}H{cx + r + 8}L{cx + r + 22} {cy}L{cx + r + 8} {cy + 6}'
+        f'H{cx - 16}Z"/><path class="cp-index" d="M{cx + 18} {cy}H{cx + r + 12}"/></g>'
+        f'<circle class="cp-hub" cx="{cx}" cy="{cy}" r="11"/>'
+        f'<circle class="cp-pin" cx="{cx}" cy="{cy}" r="3.5"/></svg>'
+    )
+
+
+def _coda_register(c: Content, shown: int = 4) -> str:
+    """The first examples, listed like a drawing register, each linking to its page."""
+    rows = "".join(
+        f'<li><a href="{PATHS["examples"]}{_e(p["id"])}/"><span class="no">{i:02d}</span>'
+        f'<span class="nm">{_e(p["name"])}</span>'
+        f'<span class="sv">{_plural(int(p.get("components") or 0), "service")}</span></a></li>'
+        for i, p in enumerate(c.patterns[:shown], 1)
+    )
+    return f'<ol class="coda-list">{rows}</ol>'
 
 
 def _model(example: str) -> dict[str, str]:
@@ -568,25 +612,6 @@ def _samples(c: Content) -> str:
 def _regions(c: Content) -> str:
     return "".join(
         f'<option value="{_e(k)}">{_e(v)}</option>' for k, v in c.meta.get("regions", {}).items()
-    )
-
-
-def _proof_caption(c: Content, body: str) -> str:
-    if not c.proof:
-        return body
-    p = c.proof
-    parts = [_plural(p["services"], "service")]
-    if p["monthly"] is not None:
-        parts.append(f"about {_money(p['monthly'])} a month")
-    if p["policies"]:
-        parts.append(f"{_plural(p['policies'], 'policy', 'policies')} checked")
-    body = body.replace(
-        '<b class="proof-title">RAG chatbot on AWS</b>',
-        f'<b class="proof-title">{_e(p["name"])} on AWS</b>',
-    )
-    return body.replace(
-        '<span class="proof-meta">A reference example, drawn and priced by Clarchy</span>',
-        f'<span class="proof-meta">{_e(" · ".join(parts))}</span>',
     )
 
 
@@ -923,7 +948,6 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
     body = PAGE_BLOCK.sub(section, body)
     if not shell.single and f'id="page-{key}"' not in body:
         raise ValueError(f"index.html has no page:{key} section")
-    body = _proof_caption(c, body)
     nav = PARENT.get(key, key)
     body = body.replace(
         f'class="main-link" data-page="{nav}"',
@@ -946,6 +970,8 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "model-facts": c.model["facts"] if c.model else "",
         "poster-dial": _poster_dial(),
         "poster-art": _poster_art(),
+        "coda-protractor": _coda_protractor(),
+        "coda-register": _coda_register(c),
         "example-count": _count_word(len(c.patterns)),
         "example-filters": _example_filters(c),
         "example-grid": _example_grid(c),

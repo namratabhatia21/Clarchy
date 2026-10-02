@@ -148,8 +148,6 @@ def test_every_image_has_a_text_alternative(built):
     for p in pages:
         for img in Page(_file(out, p.path).read_text()).images:
             assert img.get("alt"), f"{p.path}: image without alt text"
-    proof = Page((out / "index.html").read_text()).images[0]
-    assert proof["width"] and proof["height"], "the home page drawing keeps its space"
 
 
 def test_sitemap_robots_and_cloudflare_files(built):
@@ -205,13 +203,31 @@ def test_the_home_page_shows_a_priced_massing_model(built):
     assert re.search(r"about \$[\d,]+ a month", figure.group(0))
     assert 'href="/examples/rag-chatbot/"' in figure.group(0)
     # Three frames: the poster with the page's one headline, the brief beside the model,
-    # then how it works; the example drawing follows as the result.
-    order = [home.index(s) for s in ('class="poster"', 'id="brief"', 'id="story"', 'id="proof"')]
+    # then how it works; the page closes on the examples, in the poster's orange.
+    order = [home.index(s) for s in ('class="poster"', 'id="brief"', 'id="story"', 'id="coda"')]
     assert order == sorted(order)
     poster = home[order[0] : order[1]]
     assert home.count("<h1") == 1 and '<h1 class="poster-title' in poster
     assert 'class="dial-art"' in poster and "data-to-brief" in poster
     assert "<em>priced</em>" in home[order[1] : order[2]]
+
+
+def test_the_home_page_closes_on_the_examples(built):
+    out, content, _pages = built
+    home = (out / "index.html").read_text()
+    coda = re.search(r'<section class="coda".*?</section>', home, re.S).group(0)
+    assert 'href="/examples/"' in coda
+    # A register of real examples, each linking to its page with its size.
+    for i, p in enumerate(content.patterns[:4], 1):
+        assert f'href="/examples/{p["id"]}/"><span class="no">{i:02d}</span>' in coda
+        assert f'<span class="nm">{site._e(p["name"])}</span>' in coda
+    assert f"{site._count_word(len(content.patterns))} designs" in coda
+    # The protractor is decoration: hidden from screen readers, its arm drawn at the reading
+    # drafting.js opens it to.
+    svg = re.search(r'<svg class="coda-protractor".*?</svg>', coda, re.S).group(0)
+    assert 'aria-hidden="true"' in svg and f'data-sweep="{site.CODA_SWEEP}"' in svg
+    assert f"rotate({-site.CODA_SWEEP} 270 262)" in svg
+    assert "proof" not in home, "the example drawing gave way to the examples frame"
 
 
 def test_about_names_the_founder(built):
@@ -265,6 +281,13 @@ def test_design_rules_that_can_be_checked(built):
     # Four sections in the header; the rest are in the footer.
     header = re.search(r'<nav class="main-nav".*?</nav>', template, re.S).group(0)
     assert header.count('class="main-link"') == 4
+    # Then one button: Log in / Sign up, which opens the sign-up form with a log-in mode.
+    topbar = re.search(r'<header class="topbar">.*?</header>', template, re.S).group(0)
+    assert 'id="account-button"' in topbar and "Log in / Sign up" in topbar
+    assert "Start a plan" not in topbar
+    assert 'data-mode="login"' in template and template.count("data-signup-only") == 3
+    # Start a plan, from Pricing and How to, opens the home page at the brief.
+    assert re.findall(r'href="([^"]*)">Start a plan<', template) == ["/#brief", "/#brief"]
     footer = re.search(r'<p class="footer-links">.*?</p>', template, re.S).group(0)
     for path in ("/about/", "/blog/", "/privacy/", "/terms/"):
         assert f'href="{path}"' in footer

@@ -90,7 +90,9 @@ def test_page_has_pricing_and_sign_up_with_the_consent_wording_the_api_stores():
     # The updates box is unticked by default, and its words are exactly what the Worker
     # records as consent (worker/consent.mjs).
     box = re.search(
-        r'<label class="check"><input type="checkbox" name="updates"><span>(.*?)</span>', page
+        r'<label class="check" data-signup-only><input type="checkbox" name="updates">'
+        r"<span>(.*?)</span>",
+        page,
     )
     assert box, "the updates box must be present and unticked"
     consent = Path(__file__).resolve().parents[1] / "worker" / "consent.mjs"

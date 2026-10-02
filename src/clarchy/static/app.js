@@ -87,7 +87,6 @@
     const { meta, samples, patterns } = boot;
     if (page === "plan") {
       Plan.init(meta, samples);
-      Examples.preview($("proof"));
       Drafting.start();
     } else if (page === "examples" || page === "example") {
       Examples.init(patterns);
@@ -137,7 +136,10 @@
       else link.removeAttribute("aria-current");
     }
     if (PATH) setHead(url);
-    if (scroll && !samePage && !(page === "howto" && sub)) window.scrollTo({ top: 0 });
+    // "/#brief" (Start a plan, from Pricing or How to) opens the home page at the brief.
+    const spot = page === "plan" && url.hash ? document.getElementById(url.hash.slice(1)) : null;
+    if (spot) spot.scrollIntoView();
+    else if (scroll && !samePage && !(page === "howto" && sub)) window.scrollTo({ top: 0 });
     if (page === "example") Examples.show(sub);
     if (page === "services") Services.show(params);
     if (page === "howto") HowTo.show(sub);

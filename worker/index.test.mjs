@@ -148,6 +148,58 @@ describe("sign-up", () => {
   });
 });
 
+describe("log in", () => {
+  const logIn = async (body, options = {}) => {
+    const res = await call("POST", "/api/login", { body, ...options });
+    return { status: res.status, body: await res.json() };
+  };
+
+  it("returns the account that uses the email, whatever its case, and leaves it as it was", async () => {
+    const { body: created } = await signUp({ updates: true });
+    await call("POST", "/api/spend", { body: { id: created.id } });
+    const res = await logIn({ email: "  ASHA@northwind.example " });
+    assert.equal(res.status, 200);
+    assert.equal(res.body.id, created.id);
+    assert.equal(res.body.used, 1);
+    const row = env.DB.sql.prepare("SELECT name, company, updates_opt_in FROM leads").get();
+    assert.deepEqual({ ...row }, { name: "Asha Rao", company: "Northwind", updates_opt_in: 1 });
+  });
+
+  it("answers 404 for an email no account uses, and checks the address", async () => {
+    const res = await logIn({ email: "nobody@northwind.example" });
+    assert.equal(res.status, 404);
+    assert.match(res.body.error, /Sign up/);
+    assert.equal((await logIn({ email: "not-an-email" })).status, 400);
+    assert.equal((await logIn({ email: "asha@northwind.example", website: "spam" })).status, 400);
+  });
+
+  it("limits failed log-ins from one network to ten an hour, and keeps no email", async () => {
+    await signUp();
+    for (let i = 0; i < 10; i += 1) {
+      assert.equal((await logIn({ email: `guess${i}@northwind.example` })).status, 404);
+    }
+    assert.equal((await logIn({ email: "asha@northwind.example" })).status, 429);
+    assert.equal((await logIn({ email: "asha@northwind.example" }, { ip: "198.51.100.4" })).status, 200);
+    const columns = env.DB.sql.prepare("PRAGMA table_info(failed_logins)").all().map((c) => c.name);
+    assert.deepEqual(columns, ["ip_hash", "at"]);
+  });
+
+  it("waits for its migration: 503 with a way forward until failed_logins exists", async () => {
+    await signUp();
+    env.DB.sql.exec("DROP TABLE failed_logins");
+    const res = await logIn({ email: "asha@northwind.example" });
+    assert.equal(res.status, 503);
+    assert.match(res.body.error, /Sign up again with the same email/);
+    assert.equal((await signUp()).status, 200, "signing up still works");
+  });
+
+  it("refuses requests from other sites", async () => {
+    await signUp();
+    const res = await call("POST", "/api/login", { body: { email: "asha@northwind.example" }, origin: "https://evil.example" });
+    assert.equal(res.status, 403);
+  });
+});
+
 describe("credits", () => {
   it("allows three diagrams on the free plan, then answers 402", async () => {
     const { body } = await signUp();

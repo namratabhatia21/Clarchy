@@ -46,7 +46,18 @@
       <a href="/pricing/" class="main-link" data-page="pricing">Pricing</a>
       <a href="/how-to/" class="main-link" data-page="howto">How to</a>
     </nav>
-    <a href="/" class="btn btn-primary nav-cta">Start a plan</a>
+    <div class="account" id="account">
+      <button type="button" class="account-button" id="account-button" aria-expanded="false" aria-haspopup="true">
+        <span class="account-mark" id="account-mark" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3.4"/><path d="M3.6 17.2c1-3.4 3.4-5 6.4-5s5.4 1.6 6.4 5"/></svg></span>
+        <span class="account-label" id="account-label">Log in / Sign up</span>
+      </button>
+      <div class="account-menu" id="account-menu" hidden>
+        <p class="account-who"><b id="account-name"></b><span id="account-email"></span></p>
+        <p class="account-plan" id="account-plan"></p>
+        <a class="account-item" href="/pricing/">Pricing</a>
+        <button type="button" class="account-item" id="account-logout">Log out</button>
+      </div>
+    </div>
   </header>
 
   <main id="main">
@@ -288,16 +299,20 @@
           </div>
         </section>
 
-        <figure class="proof" id="proof" data-example="rag-chatbot">
-          <a class="proof-sheet" href="/examples/rag-chatbot/" tabindex="-1" aria-hidden="true"><img alt="Architecture drawing of a RAG chatbot on AWS, with its services and how they connect" width="1280" height="720"></a>
-          <figcaption>
-            <span class="proof-text">
-              <b class="proof-title">RAG chatbot on AWS</b>
-              <span class="proof-meta">A reference example, drawn and priced by Clarchy</span>
-            </span>
-            <a class="proof-link" href="/examples/rag-chatbot/">Open it on every cloud</a>
-          </figcaption>
-        </figure>
+        <section class="coda" id="coda" aria-labelledby="coda-title">
+          <div class="coda-inner">
+            <div class="coda-text">
+              <h2 class="coda-title" id="coda-title">See the <span>examples</span></h2>
+              <div class="coda-sheet">
+                <p class="coda-head"><span>Drawing register</span><span><!-- render:example-count --> designs</span></p>
+                <!-- render:coda-register -->
+                <p class="coda-note">Each one drawn and priced on AWS, Azure, Google Cloud and open source.</p>
+              </div>
+              <a class="poster-btn coda-btn" href="/examples/">See examples</a>
+            </div>
+            <div class="coda-figure"><!-- render:coda-protractor --></div>
+          </div>
+        </section>
       </div>
 
       <div class="run" id="run" hidden>
@@ -445,7 +460,7 @@
             <li>Downloads: diagram, explanation and spec</li>
             <li>Unlimited samples, examples and re-planning</li>
           </ul>
-          <a class="btn" href="/">Start a plan</a>
+          <a class="btn" href="/#brief">Start a plan</a>
         </article>
         <article class="plan-card featured">
           <h2>Pro</h2>
@@ -604,7 +619,7 @@
               <li><a href="/examples/">Examples</a> are reviewed reference architectures. Open one to see it on every cloud, with costs.</li>
             </ul>
             <div class="howto-end">
-              <a class="btn btn-primary" href="/">Start a plan</a>
+              <a class="btn btn-primary" href="/#brief">Start a plan</a>
             </div>
           </section>
         </div>
@@ -681,7 +696,7 @@
         </section>
         <section>
           <h2>What you tell us when you sign up</h2>
-          <p>Before your first diagram, Clarchy asks for your name, company and email, and whether you want product updates. It keeps these with the date you signed up, whether you joined the Pro waitlist, how many diagrams you have planned, when you last visited, and a one-way, salted fingerprint of your IP address that is used only to stop automated sign-ups. Your IP address itself is not stored.</p>
+          <p>When you sign up, Clarchy asks for your name, company and email, and whether you want product updates. It keeps these with the date you signed up, whether you joined the Pro waitlist, how many diagrams you have planned, when you last visited, and a one-way, salted fingerprint of your IP address that is used only to stop automated sign-ups and repeated failed log-ins. Your IP address itself is not stored, and a failed log-in keeps only that fingerprint, for an hour.</p>
           <p>These details are used to give you your free diagrams, to manage your account and the Pro waitlist, and to reply to you. Product updates are sent only if you ticked that box, and you can unsubscribe at any time. Clarchy does not sell or share your details. They are stored in a Cloudflare D1 database and kept until you ask for them to be deleted.</p>
         </section>
         <section>
@@ -694,7 +709,7 @@
         </section>
         <section>
           <h2>What your browser keeps</h2>
-          <p>Your browser keeps, in its local storage, your account's random identifier and its free-diagram count, your current draft, and your model and endpoint choices, so you don't have to sign up or retype them again. They stay on your device, and you can clear them at any time in your browser's settings. Clarchy sets no cookies and uses no analytics or advertising trackers.</p>
+          <p>Your browser keeps, in its local storage, your account's random identifier, its free-diagram count and the name and email you entered (to show who is logged in; Log out clears them), your current draft, and your model and endpoint choices, so you don't have to sign up or retype them again. They stay on your device, and you can clear them at any time in your browser's settings. Clarchy sets no cookies and uses no analytics or advertising trackers.</p>
         </section>
         <section>
           <h2>Downloads from other services</h2>
@@ -784,17 +799,21 @@
 
   <!-- Sign-up: asked on the first action on the home page (access.js) -->
   <dialog class="modal" id="signup-dialog" aria-labelledby="signup-title">
-    <form class="modal-body" id="signup-form" novalidate>
+    <form class="modal-body" id="signup-form" data-mode="signup" novalidate>
       <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+      <div class="segmented full form-modes" id="form-modes">
+        <button type="button" data-mode="signup" aria-pressed="true">Sign up</button>
+        <button type="button" data-mode="login" aria-pressed="false">Log in</button>
+      </div>
       <h2 id="signup-title">Before you start</h2>
-      <p class="modal-lead">Clarchy is in early access. Tell us who you are and your first <span data-free-count>3</span> diagrams are free.</p>
-      <label class="field"><span>Name</span><input name="name" autocomplete="name" required maxlength="120"></label>
-      <label class="field"><span>Company</span><input name="company" autocomplete="organization" required maxlength="120"></label>
+      <p class="modal-lead" id="signup-lead">Clarchy is in early access. Tell us who you are and your first <span data-free-count>3</span> diagrams are free.</p>
+      <label class="field" data-signup-only><span>Name</span><input name="name" autocomplete="name" required maxlength="120"></label>
+      <label class="field" data-signup-only><span>Company</span><input name="company" autocomplete="organization" required maxlength="120"></label>
       <label class="field"><span>Work email</span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>
-      <label class="check"><input type="checkbox" name="updates"><span>Send me product updates, about once a month. You can unsubscribe any time.</span></label>
+      <label class="check" data-signup-only><input type="checkbox" name="updates"><span>Send me product updates, about once a month. You can unsubscribe any time.</span></label>
       <label class="trap" aria-hidden="true">Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label>
       <p class="form-error" id="signup-error" role="alert" hidden></p>
-      <button type="submit" class="btn btn-primary">Continue</button>
+      <button type="submit" class="btn btn-primary" id="signup-submit">Continue</button>
       <p class="modal-fine">We use these details for your free diagrams and your account. Your brief stays in your browser. <a href="/privacy/" data-close>Privacy</a> · <a href="/terms/" data-close>Terms</a></p>
     </form>
   </dialog>

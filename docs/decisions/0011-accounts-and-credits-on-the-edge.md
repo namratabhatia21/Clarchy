@@ -53,3 +53,20 @@ files.
   newsletters, confirm opt-ins (double opt-in) with whatever mailing tool is chosen.
 - The founder reads leads in the Cloudflare dashboard (D1 console) or exports them as CSV
   from `/api/admin/leads.csv` after setting the `ADMIN_TOKEN` secret.
+
+## Amendment, 2026-10-02: an account button and log-in by email
+
+The header's Start a plan button did nothing on the home page, so it gives way to an
+account button: Log in / Sign up, then the visitor's initial and first name with a menu
+(their email, free diagrams left, Pricing, Log out). It opens the same form, which now has
+two modes: Sign up (name, company, email, updates) and Log in (email only, through the new
+`POST /api/login`, which returns the account that uses the email without changing it).
+The button works whenever the API answers, even with `ACCOUNTS` off: signing up from it is
+then the visitor's choice, and nothing is asked first or counted.
+
+Log-in has no password or emailed link, like signing up again with the same email already
+did, so anyone who knows a member's email can use their free diagrams. That is accepted
+while accounts only hold free diagrams; before Pro is paid for, log-in needs an emailed
+link. So that the endpoint can't be used to check who has signed up, ten failed log-ins an
+hour from one network are allowed, then 429. Failures are kept for an hour in
+`failed_logins` (migration 0002) with only the salted IP hash, never the email tried.

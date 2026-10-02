@@ -6,6 +6,8 @@
 //   GET  /api/config            { accounts, free_diagrams }; accounts is false when the ACCOUNTS
 //                               variable is "off", and the page then asks nothing and limits nothing
 //   POST /api/signup            { name, company, email, updates, website }  -> standing
+//   POST /api/login             { email, website }  -> standing, or 404 when no account uses
+//                               that email (ten failures an hour per network, then 429)
 //   GET  /api/me?id=            standing, or 404 when the id is unknown
 //   POST /api/spend             { id }  -> 200 with standing, or 402 when no credits are left
 //   POST /api/waitlist          { id }  -> joins the Pro waitlist
@@ -18,6 +20,7 @@ import { CONSENT_TEXT } from "./consent.mjs";
 
 const MAX_BODY_BYTES = 4096;
 const SIGNUPS_PER_HOUR = 10;
+const FAILED_LOGINS_PER_HOUR = 10;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -139,6 +142,43 @@ async function signup(request, env) {
   return json(await standing(env, lead), 201);
 }
 
+// Logging in on another device: the account that uses this email, as signing up again
+// would return it, without changing the name, company or updates choice it was given.
+async function login(request, env) {
+  const body = await readJson(request);
+  if (text(body.website, 200)) throw new HttpError(400, "Something about that form looks automated.");
+  const email = text(body.email, 254).toLowerCase();
+  if (!EMAIL.test(email)) throw new HttpError(400, "Enter a valid email address.");
+  const hash = await ipHash(request, env);
+  const since = new Date(Date.now() - 3600 * 1000).toISOString();
+  if (hash) {
+    let recent;
+    try {
+      recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM failed_logins WHERE ip_hash = ? AND at > ?")
+        .bind(hash, since).first();
+    } catch (err) {
+      // Until migration 0002 is applied there is no limit to keep, so log-in waits for it.
+      if (/no such table/i.test(String(err && err.message))) {
+        throw new HttpError(503, "Logging in isn't available yet. Sign up again with the same email: your account carries over.");
+      }
+      throw err;
+    }
+    if (Number(recent ? recent.n : 0) >= FAILED_LOGINS_PER_HOUR) {
+      throw new HttpError(429, "Too many tries from this network. Try again in an hour.");
+    }
+  }
+  const lead = await env.DB.prepare("SELECT id, plan, pro_requested_at FROM leads WHERE email = ?").bind(email).first();
+  if (!lead) {
+    if (hash) {
+      await env.DB.prepare("DELETE FROM failed_logins WHERE at < ?").bind(since).run();
+      await env.DB.prepare("INSERT INTO failed_logins (ip_hash, at) VALUES (?, ?)").bind(hash, now()).run();
+    }
+    throw new HttpError(404, "No account uses that email. Sign up instead.");
+  }
+  await env.DB.prepare("UPDATE leads SET last_seen_at = ? WHERE id = ?").bind(now(), lead.id).run();
+  return json(await standing(env, lead));
+}
+
 async function me(url, env) {
   const lead = await findLead(env, url.searchParams.get("id"));
   if (!lead) throw new HttpError(404, "Unknown visitor.");
@@ -213,6 +253,8 @@ export default {
           return json({ accounts: accountsOn(env), free_diagrams: freeDiagrams(env) });
         case "POST /api/signup":
           return await signup(request, env);
+        case "POST /api/login":
+          return await login(request, env);
         case "GET /api/me":
           return await me(url, env);
         case "POST /api/spend":

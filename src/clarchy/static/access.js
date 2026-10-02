@@ -1,17 +1,22 @@
 "use strict";
 
-// Sign-up, free-diagram credits and the Pro waitlist, backed by the API of the Worker that
-// serves clarchy.com (worker/index.mjs). Accounts are on only when that API answers
-// /api/config; on a copy without it (GitHub Pages, `clarchy serve`, a fragment host) nothing
-// is gated. When the API has trouble mid-visit the page fails open: planning keeps working.
+// Sign-up, log-in, free-diagram credits and the Pro waitlist, backed by the API of the
+// Worker that serves clarchy.com (worker/index.mjs). The header's account button works
+// whenever that API answers /api/config. The first action on the home page asks who you are,
+// and free diagrams are counted, only while accounts are on there; on a copy without the API
+// (GitHub Pages, `clarchy serve`, a fragment host) the button hides and nothing is gated.
+// When the API has trouble mid-visit the page fails open: planning keeps working.
 
 const Access = (() => {
   const { $, store, recall } = CA;
   const KEY = "clarchy.lead";
   const CONTACT = "mailto:namrata.bhatia@clarchy.com?subject=Clarchy%20Pro";
-  // settled: the API was asked and accounts are off (or failed), so nothing will show.
-  const state = { enabled: false, settled: false, freeDiagrams: 3, lead: null };
+  // api: the Worker's API answered, so visitors can sign up and log in.
+  // enabled: accounts are on, so the home page asks first and free diagrams are counted.
+  // settled: the API was asked and accounts are off (or failed), so no credit line will show.
+  const state = { api: false, enabled: false, settled: false, freeDiagrams: 3, lead: null };
   let asking = null; // { promise, resolve } while the sign-up form is open
+  let PERSON = ""; // the account button's person outline, shown while nobody is logged in
   let replayTarget = null;
 
   async function call(method, path, body) {
@@ -25,8 +30,12 @@ const Access = (() => {
     return { status: res.status, ok: res.ok, data };
   }
 
-  function remember(standing) {
-    state.lead = standing && standing.id ? standing : null;
+  // Keeps the visitor's standing, and the name and email they typed on this device (the API
+  // never sends them back), so the header can say who is logged in.
+  function remember(standing, profile = {}) {
+    const before = state.lead;
+    const kept = before && standing && before.id === standing.id ? { name: before.name, email: before.email } : {};
+    state.lead = standing && standing.id ? { ...standing, ...kept, ...profile } : null;
     store(KEY, state.lead);
     render();
   }
@@ -58,6 +67,60 @@ const Access = (() => {
       status.textContent = lead && lead.plan === "pro" ? "Pro is on for your account." : "You're on the list. We'll email you when Pro opens.";
     }
     if (button) button.hidden = waitlisted;
+    renderAccount();
+  }
+
+  // ---------- the header's account button ----------
+  function renderAccount() {
+    const account = $("account");
+    if (!account) return;
+    account.hidden = state.settled && !state.api;
+    const lead = state.lead;
+    const name = lead && (lead.name || (lead.email || "").split("@")[0]);
+    const button = $("account-button");
+    button.classList.toggle("signed-in", Boolean(lead));
+    $("account-label").textContent = lead ? (name ? name.split(" ")[0] : "Account") : "Log in / Sign up";
+    button.setAttribute("aria-label", lead ? `Account${name ? ` of ${name}` : ""}` : "Log in or sign up");
+    const mark = $("account-mark");
+    if (lead && name) mark.textContent = name.trim().charAt(0).toUpperCase();
+    else if (!mark.querySelector("svg")) mark.innerHTML = PERSON;
+    if (!lead) closeMenu();
+    $("account-name").textContent = lead ? lead.name || "" : "";
+    $("account-email").textContent = lead ? lead.email || "" : "";
+    let plan = "";
+    if (lead && lead.plan === "pro") plan = "Pro: unlimited diagrams";
+    else if (lead && state.enabled) plan = `${lead.remaining} of ${CA.plural(lead.free_diagrams, "free diagram")} left`;
+    else if (lead) plan = "Free plan";
+    $("account-plan").textContent = plan;
+  }
+
+  function closeMenu() {
+    const menu = $("account-menu");
+    if (!menu || menu.hidden) return;
+    menu.hidden = true;
+    $("account-button").setAttribute("aria-expanded", "false");
+  }
+
+  function bindAccount() {
+    const button = $("account-button");
+    if (!button || button.dataset.bound) return;
+    button.dataset.bound = "true";
+    PERSON = $("account-mark").innerHTML;
+    button.addEventListener("click", () => {
+      if (!state.lead) { open("signup", "Sign up"); return; }
+      const menu = $("account-menu");
+      menu.hidden = !menu.hidden;
+      button.setAttribute("aria-expanded", String(!menu.hidden));
+    });
+    $("account-logout").addEventListener("click", () => {
+      remember(null);
+      button.focus();
+    });
+    $("account-menu").addEventListener("click", (e) => { if (e.target.closest("a")) closeMenu(); });
+    document.addEventListener("click", (e) => { if (!e.target.closest("#account")) closeMenu(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !$("account-menu").hidden) { closeMenu(); button.focus(); }
+    });
   }
 
   // ---------- the sign-up form ----------
@@ -74,19 +137,52 @@ const Access = (() => {
     resolve(ok);
   }
 
-  // Resolves true once the visitor has signed up (at once if they already have), false if
-  // they close the form.
-  function ask() {
-    if (!state.enabled || state.lead) return Promise.resolve(true);
+  // The form signs up (name, company, email) or logs in (email only).
+  function setMode(mode) {
+    const form = $("signup-form");
+    form.dataset.mode = mode;
+    for (const button of $("form-modes").querySelectorAll("button")) {
+      button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+    }
+    // Hidden fields are disabled, so the browser doesn't ask for them.
+    for (const field of form.querySelectorAll("[data-signup-only]")) {
+      field.hidden = mode === "login";
+      for (const input of field.querySelectorAll("input")) input.disabled = mode === "login";
+    }
+    if (mode === "login") {
+      $("signup-title").textContent = "Log in";
+      $("signup-lead").textContent = "Use the email you signed up with. Your account and free diagrams carry over to this device.";
+    } else {
+      $("signup-title").textContent = form.dataset.title || "Sign up";
+      $("signup-lead").textContent = state.enabled
+        ? `Clarchy is in early access. Tell us who you are and your first ${CA.plural(state.freeDiagrams, "diagram")} are free.`
+        : "Clarchy is in early access. Tell us who you are and we'll keep your account for when Pro opens.";
+    }
+    $("signup-submit").textContent = mode === "login" ? "Log in" : "Continue";
+    formError("");
+  }
+
+  // Opens the form; resolves true once the visitor is signed up or logged in, false if they
+  // close it.
+  function open(mode, title) {
     if (!asking) {
       let resolve;
       const promise = new Promise((r) => { resolve = r; });
       asking = { promise, resolve };
-      formError("");
+      closeMenu();
+      $("signup-form").dataset.title = title;
+      setMode(mode);
       $("signup-dialog").showModal();
-      $("signup-form").elements.name.focus();
+      $("signup-form").elements[mode === "login" ? "email" : "name"].focus();
     }
     return asking.promise;
+  }
+
+  // Before an action that needs an account: resolves true at once if accounts are off or the
+  // visitor already has one.
+  function ask() {
+    if (!state.enabled || state.lead) return Promise.resolve(true);
+    return open("signup", "Before you start");
   }
 
   async function submitSignup(e) {
@@ -97,26 +193,33 @@ const Access = (() => {
     const button = form.querySelector('button[type="submit"]');
     button.disabled = true;
     formError("");
+    const login = form.dataset.mode === "login";
     try {
-      const res = await call("POST", "/api/signup", {
-        name: f.name.value, company: f.company.value, email: f.email.value,
-        updates: f.updates.checked, website: f.website.value,
-      });
+      const res = login
+        ? await call("POST", "/api/login", { email: f.email.value, website: f.website.value })
+        : await call("POST", "/api/signup", {
+          name: f.name.value, company: f.company.value, email: f.email.value,
+          updates: f.updates.checked, website: f.website.value,
+        });
       if (res.ok) {
-        remember(res.data);
-      } else if (res.status < 500) {
+        const email = f.email.value.trim().toLowerCase();
+        remember(res.data, login ? { email } : { name: f.name.value.trim(), email });
+      } else if (res.status < 500 || (login && res.status === 503 && res.data.error)) {
         formError(res.data.error || "That didn't work. Check the details and try again.");
         return;
       } else {
-        state.enabled = false; // the API is in trouble: don't block the visitor
-        state.settled = true;
-        render();
+        throw new Error(`API ${res.status}`);
       }
       // Settle before closing: the close handler would otherwise report a cancel.
       finishAsking(true);
       $("signup-dialog").close();
     } catch {
-      state.enabled = false;
+      if (!state.enabled) {
+        // Nothing waits on this form (it was opened from the header): say so and stay.
+        formError("Clarchy can't reach its server right now. Try again in a moment.");
+        return;
+      }
+      state.enabled = false; // the API is in trouble: don't block the visitor
       state.settled = true;
       render();
       finishAsking(true);
@@ -162,6 +265,12 @@ const Access = (() => {
   function bindDialogs() {
     const signup = $("signup-dialog");
     $("signup-form").addEventListener("submit", submitSignup);
+    for (const button of $("form-modes").querySelectorAll("button")) {
+      button.addEventListener("click", () => {
+        setMode(button.dataset.mode);
+        $("signup-form").elements.email.focus();
+      });
+    }
     signup.addEventListener("close", () => finishAsking(Boolean(state.lead)));
     const limit = $("limit-dialog");
     for (const dialog of [signup, limit]) {
@@ -212,8 +321,9 @@ const Access = (() => {
   }
 
   async function joinWaitlist() {
-    if (!state.enabled) { window.location.href = CONTACT; return "mail"; }
-    if (!(await ask()) || !state.lead) return "cancelled";
+    if (!state.api) { window.location.href = CONTACT; return "mail"; }
+    if (!state.lead && !(await open("signup", "Join the Pro waitlist"))) return "cancelled";
+    if (!state.lead) return "cancelled";
     try {
       const res = await call("POST", "/api/waitlist", { id: state.lead.id });
       if (res.ok) { remember(res.data); return "joined"; }
@@ -224,12 +334,15 @@ const Access = (() => {
 
   async function init() {
     bindDialogs();
+    bindAccount();
     const off = () => { state.settled = true; render(); };
     if (CA.MODE !== "static") { off(); return; }
     try {
       const res = await call("GET", "/api/config");
-      if (!res.ok || !res.data.accounts) { off(); return; }
-      state.enabled = true;
+      if (!res.ok || typeof res.data.accounts !== "boolean") { off(); return; }
+      state.api = true;
+      state.enabled = res.data.accounts;
+      state.settled = !state.enabled;
       state.freeDiagrams = res.data.free_diagrams;
     } catch {
       off();
@@ -247,5 +360,5 @@ const Access = (() => {
     attach();
   }
 
-  return { init, attach, spend, ask, joinWaitlist, get enabled() { return state.enabled; } };
+  return { init, attach, spend, ask, open, joinWaitlist, get enabled() { return state.enabled; } };
 })();

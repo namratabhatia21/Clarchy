@@ -346,6 +346,9 @@ allowance is `FREE_DIAGRAMS` in `wrangler.jsonc`.
 - **Pause or resume the sign-up form:** `ACCOUNTS` in `wrangler.jsonc`: `"off"` asks
   nothing and limits nothing (the setting while testing), `"on"` brings back the form and
   the free-diagram count. Deploying applies it.
+- **Log in on another device:** the header's Log in / Sign up button logs in with the
+  email someone signed up with (`POST /api/login`; ten failed tries an hour per network).
+  It works even while `ACCOUNTS` is `"off"`, when signing up is optional.
 - **Turn on Pro for someone:** `UPDATE leads SET plan = 'pro' WHERE email = 'name@company.com';`
 - **Delete someone's data on request:** `DELETE FROM leads WHERE email = 'name@company.com';`
   (their usage rows go with it).

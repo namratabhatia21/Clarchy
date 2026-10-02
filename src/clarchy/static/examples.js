@@ -39,22 +39,6 @@ const Examples = (() => {
     });
   }
 
-  // The home page's real result: a reference example drawn on AWS, with its size and cost.
-  function preview(figure) {
-    whenVisible(figure, async () => {
-      const design = await awsDesign(figure.dataset.example);
-      if (!design) { figure.hidden = true; return; }
-      figure.querySelector("img").src = svgSource(design.svg);
-      const monthly = design.cost && design.cost.available ? design.cost.monthly : null;
-      figure.querySelector(".proof-title").textContent = `${design.name} on AWS`;
-      figure.querySelector(".proof-meta").textContent = [
-        CA.plural(design.components.length, "service"),
-        monthly !== null && `about ${CA.money(monthly)} a month`,
-        design.policies.length > 0 && `${CA.plural(design.policies.length, "policy", "policies")} checked`,
-      ].filter(Boolean).join(" · ");
-    });
-  }
-
   // The cards and filters come with the page (site.py); this adds the drawings and makes
   // the filters work.
   function bindIndex() {
@@ -92,5 +76,5 @@ const Examples = (() => {
     bindIndex();
   }
 
-  return { init, show, preview };
+  return { init, show };
 })();

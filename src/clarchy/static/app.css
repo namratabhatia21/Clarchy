@@ -239,7 +239,39 @@ a, button, summary, label, select { touch-action: manipulation; }
 }
 .main-link:hover { color: var(--text); }
 .main-link[aria-current="page"] { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
-.nav-cta { height: 36px; padding: 0 16px; font-size: 14px; white-space: nowrap; }
+/* The account button: a person outline (or the visitor's initial) and Log in / Sign up, or
+   their first name with a small menu once they are logged in (access.js). */
+.account { position: relative; }
+.account[hidden] { display: none; }
+.account-button {
+  display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 14px 0 9px; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text);
+  font: 600 14px var(--font-body); white-space: nowrap;
+}
+.account-button:hover { background: var(--hover); }
+.account-mark { display: inline-grid; place-items: center; width: 22px; height: 22px; flex: none; }
+.account-mark svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.account-button.signed-in .account-mark { background: var(--text); color: var(--surface); border-radius: 2px; font: 700 13px/1 var(--font-mono); }
+.account-label { max-width: 14ch; overflow: hidden; text-overflow: ellipsis; }
+.account-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20; min-width: 240px; padding: 14px 14px 10px;
+  display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.account-menu[hidden] { display: none; }
+.account-who { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--border); }
+.account-who b { font-size: 15px; }
+.account-who b:empty { display: none; }
+.account-who span { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.account-plan { font: 500 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); padding: 2px 0 6px; }
+.account-plan:empty { display: none; }
+.account-item {
+  display: block; width: 100%; padding: 8px 6px; margin: 0 -6px; border: 0; background: none; text-align: left;
+  color: var(--text); font: 500 14px var(--font-body); text-decoration: none; cursor: pointer; border-radius: var(--radius);
+}
+.account-item:hover { background: var(--hover); }
+.form-modes { margin: 0 36px 2px 0; }
+#signup-form [data-signup-only][hidden] { display: none; }
 .footer-links .engine-chip { margin-left: auto; }
 .engine-chip { font: 500 12.5px var(--font-body); color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
 .engine-chip::before { content: ""; width: 7px; height: 7px; border: 1px solid var(--faint); flex: none; }
@@ -389,7 +421,8 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .topbar.on-poster .brand-tag { color: var(--poster-ink); border-left-color: rgba(10, 31, 61, .35); }
 .topbar.on-poster .brand-name, .topbar.on-poster .logo { color: var(--poster-ink); }
 .topbar.on-poster .logo .arch { stroke: var(--poster-paper); }
-.topbar.on-poster .nav-cta { background: var(--poster-ink); border-color: var(--poster-ink); color: var(--poster-paper); }
+.topbar.on-poster .account-button { background: var(--poster-ink); border-color: var(--poster-ink); color: var(--poster-paper); }
+.topbar.on-poster .account-button.signed-in .account-mark { background: var(--poster-paper); color: var(--poster-ink); }
 .instruments.on-poster { opacity: 0 !important; }
 @media (max-width: 760px), (max-aspect-ratio: 1/1) {
   .poster-canvas {
@@ -406,6 +439,51 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 }
 @media (max-width: 760px) { :root { --topbar-h: 97px; } .poster { margin-top: -20px; } }
 
+/* ---------- Plan, last frame: the examples, on the poster's orange ----------
+   A drawing register of real examples beside a protractor whose arm opens as the frame
+   scrolls into view (drafting.js). Small text sits on the paper sheet or the navy button,
+   never on the orange. */
+.coda { width: 100vw; margin: 40px 0 -24px calc(50% - 50vw); background: var(--poster); color: var(--poster-ink); overflow: hidden; }
+.coda-inner {
+  max-width: calc(1240px + 2 * clamp(16px, 6vw, 96px)); margin: 0 auto; padding: clamp(44px, 6vw, 88px) clamp(16px, 6vw, 96px);
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 40px clamp(32px, 5vw, 80px); align-items: center;
+}
+.coda-text { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; min-width: 0; }
+.coda-title { font: 700 clamp(64px, 9vw, 148px)/.8 var(--font-display); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.005em; color: var(--poster-paper); }
+.coda-title span { display: block; }
+.coda-sheet { width: 100%; max-width: 560px; background: var(--poster-paper); color: var(--poster-ink); padding: 14px 18px 12px; box-shadow: 8px 10px 0 var(--poster-ink); }
+.coda-head { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--poster-ink); font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.coda-list { list-style: none; margin: 0; padding: 0; }
+.coda-list a { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid rgba(10, 31, 61, .28); color: inherit; text-decoration: none; }
+.coda-list .no, .coda-list .sv { font: 500 11.5px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.coda-list .nm { font-weight: 600; font-size: 15.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.coda-list a:hover .nm, .coda-list a:focus-visible .nm { text-decoration: underline; }
+.coda-note { margin-top: 10px; font-size: 13px; color: #33476a; }
+.coda-btn { text-decoration: none; }
+.coda a:focus-visible { outline: 2px solid var(--poster-ink); outline-offset: 3px; }
+.coda-figure { min-width: 0; }
+.coda-protractor { display: block; width: 100%; max-width: 560px; margin-left: auto; overflow: visible; }
+.coda-protractor .cp-shadow { fill: var(--poster-ink); }
+.coda-protractor .cp-face { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 2.5; }
+.coda-protractor .cp-sweep { fill: rgba(217, 72, 15, .2); stroke: var(--poster); stroke-width: 1.5; }
+.coda-protractor .cp-ticks { fill: none; stroke: var(--poster-ink); stroke-width: .8; }
+.coda-protractor .cp-ticks.major { stroke-width: 1.5; }
+.coda-protractor .cp-nums text { font: 500 11px var(--font-mono); fill: var(--poster-ink); text-anchor: middle; }
+.coda-protractor .cp-nums .in { font-size: 9px; fill: #4b5f80; }
+.coda-protractor .cp-line { fill: none; stroke: var(--poster-ink); stroke-width: 1.2; }
+.coda-protractor .cp-reading { font: 500 11px var(--font-mono); letter-spacing: 2px; fill: var(--poster-ink); text-anchor: middle; }
+.coda-protractor .cp-arm path:first-child { fill: var(--poster-ink); }
+.coda-protractor .cp-index { stroke: var(--poster); stroke-width: 1.5; }
+.coda-protractor .cp-hub { fill: var(--poster); stroke: var(--poster-ink); stroke-width: 3; }
+.coda-protractor .cp-pin { fill: var(--poster-ink); }
+@media (max-width: 900px) {
+  .coda-inner { grid-template-columns: minmax(0, 1fr); }
+  .coda-figure { order: -1; }
+  .coda-protractor { margin: 0 auto; max-width: 440px; }
+  .coda-sheet { max-width: none; }
+}
+@media (max-width: 700px) { .coda { margin-bottom: -20px; } .coda-list .sv { display: none; } .coda-list a { grid-template-columns: 30px minmax(0, 1fr); } }
+
 /* ---------- Plan, second frame: the brief beside a model of a real design ---------- */
 .brief-frame { padding-top: 56px; }
 .kicker { font: 500 11px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
@@ -413,7 +491,7 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .brief-frame .hero h2 em { font-style: normal; color: var(--accent-ink); }
 .model-facts { font: 500 10.5px/1.9 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-top: -8px; }
 .model-facts i { display: inline-block; width: 8px; height: 8px; background: var(--accent); margin-right: 8px; }
-.plan-start > :not(.instruments, .poster, .brief-frame, .story) { width: 100%; max-width: 800px; margin-inline: auto; }
+.plan-start > :not(.instruments, .poster, .brief-frame, .story, .coda) { width: 100%; max-width: 800px; margin-inline: auto; }
 .hero { display: flex; flex-direction: column; gap: 16px; margin-bottom: 8px; }
 .hero h1 { font-size: clamp(36px, 4.8vw, 56px); }
 .hero h1 em { font-style: normal; color: var(--accent-ink); }
@@ -509,19 +587,6 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .samples { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
 .sample-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .sample-list .chip { height: 32px; }
-.proof { margin: 6px 0 0; display: flex; flex-direction: column; border: 1px solid var(--border-strong); background: var(--surface); }
-.proof-sheet {
-  display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; padding: 18px;
-  background-color: var(--paper); border-bottom: 1px solid var(--border-strong);
-}
-.proof-sheet img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
-.proof figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px 20px; flex-wrap: wrap; padding: 12px 16px; }
-.proof-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.proof-title { font-size: 14.5px; }
-.proof-meta { color: var(--muted); font-size: 13px; }
-.proof-link { font-weight: 600; font-size: 13.5px; color: var(--accent-ink); text-decoration: none; white-space: nowrap; }
-.proof-link::after { content: " →"; }
-.proof-link:hover { text-decoration: underline; }
 
 /* "How it works" as a chain dimension: one segment per stage, slash ticks between. */
 .how-line {
@@ -968,7 +1033,7 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .cost-line > summary .tag { display: none; }
   .cost-items .num:nth-child(2) { display: none; }
 }
-/* The header holds the brand, its tag, four sections and the Start a plan button on one
+/* The header holds the brand, its tag, four sections and the account button on one
    row from 960px; down to 760px without the tag; below that the sections get a row of
    their own. About, Blog, Privacy and Terms are in the footer. */
 @media (max-width: 960px) {
@@ -978,7 +1043,8 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .topbar { padding: 10px 24px 0; gap: 4px 12px; position: static; }
   .main-nav { width: 100%; order: 3; height: 44px; gap: 0; }
   .main-link { flex: 1; justify-content: center; padding: 0 6px; }
-  .nav-cta { order: 2; height: 34px; padding: 0 12px; font-size: 13.5px; }
+  .account { order: 2; }
+  .account-button { height: 34px; padding: 0 10px 0 7px; font-size: 13.5px; }
 }
 @media (max-width: 700px) {
   .page { padding: 20px 16px 36px; }

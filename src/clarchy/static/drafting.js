@@ -116,7 +116,7 @@ const Drafting = (() => {
   // ---------- drawings plotted as they come into view ----------
   // Things already on screen stay as they are; the rest are plotted top to bottom the
   // first time they scroll in (app.css: [data-draw]).
-  const PLOTTED = ".proof, .plan-card, .howto-step, .about-contact";
+  const PLOTTED = ".plan-card, .howto-step, .about-contact";
   let watcher = null;
   function reveal() {
     if (reduced.matches || !("IntersectionObserver" in window)) return;
@@ -154,6 +154,10 @@ const Drafting = (() => {
     const posterDial = poster && poster.querySelector(".pd-dial");
     const posterReading = poster && poster.querySelector(".pd-reading");
     const topbar = document.querySelector(".topbar");
+    const coda = document.getElementById("coda");
+    const codaArm = coda && coda.querySelector(".cp-arm");
+    const codaSweep = coda && coda.querySelector(".cp-sweep");
+    const codaReading = coda && coda.querySelector(".cp-reading");
     let stage = -1;
     let queued = false;
 
@@ -168,6 +172,23 @@ const Drafting = (() => {
       });
     }
 
+    // The closing frame's protractor opens its arm as the frame scrolls into view, from 0
+    // to the reading drawn in the page, and closes again on the way back up.
+    function openCoda() {
+      const box = coda.getBoundingClientRect();
+      const shown = box.top < window.innerHeight && box.bottom > 0;
+      if (!codaArm) return shown;
+      const p = reduced.matches ? 1 : Math.min(1, Math.max(0, (window.innerHeight - box.top) / box.height));
+      const sweep = Number(codaArm.ownerSVGElement.dataset.sweep || 120);
+      const deg = sweep * (1 - (1 - p) ** 2);
+      const [cx, cy, r] = [270, 262, 150]; // the pivot and the sweep's radius (site.py)
+      const a = (deg * Math.PI) / 180;
+      codaArm.setAttribute("transform", `rotate(${(-deg).toFixed(2)} ${cx} ${cy})`);
+      codaSweep.setAttribute("d", `M${cx} ${cy}H${cx + r}A${r} ${r} 0 0 0 ${(cx + r * Math.cos(a)).toFixed(1)} ${(cy - r * Math.sin(a)).toFixed(1)}Z`);
+      codaReading.textContent = `${deg.toFixed(0).padStart(3, "0")}°`;
+      return shown;
+    }
+
     function update() {
       queued = false;
       if (start.offsetParent === null) { // the run view or another page is showing
@@ -176,11 +197,13 @@ const Drafting = (() => {
       }
       const y = window.scrollY;
       const angle = y * DEG_PER_PX;
+      const codaShown = coda ? openCoda() : false;
       if (poster) {
-        // The header sits on the poster, and the instruments wait, until it scrolls away.
+        // The header sits on the poster, and the instruments wait, until it scrolls away
+        // (and again while the closing frame is on screen).
         const over = poster.getBoundingClientRect().bottom > (topbar ? topbar.offsetHeight : 0) + 4;
         topbar?.classList.toggle("on-poster", over);
-        instruments.classList.toggle("on-poster", over);
+        instruments.classList.toggle("on-poster", over || codaShown);
         if (posterDial) posterDial.setAttribute("transform", `rotate(${(angle * 2).toFixed(2)})`);
         if (posterReading) {
           posterReading.textContent = `${((((212 - angle * 2) % 360) + 360) % 360).toFixed(0).padStart(3, "0")}°`;

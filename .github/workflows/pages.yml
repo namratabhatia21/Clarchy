@@ -1,15 +1,13 @@
 name: Pages
 
 # Publishes the site (clarchy export-site) to GitHub Pages and, when the repository has
-# Cloudflare secrets, to the Cloudflare Worker "clarchy" (site, API and D1 database, all in
-# wrangler.jsonc). Prices come from the committed price books, which the Prices workflow
-# (prices.yml) refreshes every day.
+# Cloudflare secrets, to the Cloudflare Worker "clarchy" (wrangler.jsonc). Prices come
+# from the committed price books, which the Prices workflow (prices.yml) refreshes every day.
 #
 # Cloudflare: Workers Builds (the Worker connected to this repository, build command
 # "make prices site") deploys every push, including the daily price commits. This workflow
 # deploys to Cloudflare only on manual runs, as a fallback. That needs the secrets
-# CLOUDFLARE_API_TOKEN (permissions "Workers Scripts: Edit" and "D1: Edit") and
-# CLOUDFLARE_ACCOUNT_ID.
+# CLOUDFLARE_API_TOKEN (permission "Workers Scripts: Edit") and CLOUDFLARE_ACCOUNT_ID.
 # GitHub Pages is optional: the copy there is published only when Settings → Pages → Source
 # is "GitHub Actions" (private repositories need a paid GitHub plan for Pages). When Pages
 # is off, those steps are skipped and the run still passes. To skip them on purpose, set

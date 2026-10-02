@@ -1,6 +1,6 @@
 # 0011: Sign-ups, free diagrams and the Pro waitlist on the Worker, in D1
 
-**Status:** accepted · 2026-10-02 · works with [0008](0008-plans-run-in-the-browser.md)
+**Status:** withdrawn · 2026-10-02 (see the end) · worked with [0008](0008-plans-run-in-the-browser.md)
 
 ## Context
 
@@ -70,3 +70,13 @@ while accounts only hold free diagrams; before Pro is paid for, log-in needs an 
 link. So that the endpoint can't be used to check who has signed up, ten failed log-ins an
 hour from one network are allowed, then 429. Failures are kept for an hour in
 `failed_logins` (migration 0002) with only the salted IP hash, never the email tried.
+
+## Withdrawn, 2026-10-02: Clarchy is an open-source project
+
+Clarchy is now an open-source side project, not a product, so there is nothing to sign up
+for, count or sell. The sign-up form, the free-diagram count, the Pro waitlist, the Pricing
+page and the account button are gone from the site, and so are the Worker API
+(`worker/`) and its D1 binding: `wrangler.jsonc` serves `site/` as static assets only, as
+it did before this decision. No one had signed up. The old `/pricing/` address redirects to
+the home page, and a lead id left in a browser is cleared on the next visit. The D1
+database `clarchy` is no longer used by the site.

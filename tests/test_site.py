@@ -148,7 +148,7 @@ def test_sitemap_robots_and_cloudflare_files(built):
     assert "https://clarchy.com/blog/" not in listed, "an empty blog waits for its posts"
     robots = (out / "robots.txt").read_text()
     assert "Sitemap: https://clarchy.com/sitemap.xml" in robots
-    assert re.findall(r"^Disallow: (.*)$", robots, re.M) == ["/api/"]
+    assert "Disallow" not in robots
     headers = (out / "_headers").read_text()
     assert "/assets/*\n  Cache-Control: public, max-age=31536000, immutable" in headers
     assert "X-Robots-Tag: noindex" in headers and ".workers.dev/*" in headers

@@ -28,7 +28,6 @@ protractor turns as you scroll the home page and a detail drawing assembles stag
 | **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt), or start from a realistic sample (a field service agent for wind turbine technicians, a claims triage agent, clinic booking under HIPAA, fleet telemetry, supplier invoice processing). Watch the pipeline work stage by stage, then explore the result: a diagram per provider, every service grouped by lifecycle stage, the cost over time, the AI and data policies that apply, step-by-step workflows that light up the diagram, and the editable YAML spec. Answer the open questions and plan again. |
 | **Examples** | Seven reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes, AI agent platform) on every provider. |
 | **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "LangGraph", "Glacier", "Copilot"). |
-| **Pricing** | Free: 3 diagrams from your own briefs (samples, examples and re-planning are free). Pro: unlimited, in early access through a waitlist. On clarchy.com the first action on the home page asks for name, company, email and whether to send product updates. |
 | **How to** | A step-by-step guide: what to put in a brief and what each fact changes, reading the drawing and its tabs, answering questions, downloading, and using an AI model. Its example brief plans in one click. |
 | **Blog** and **About** | Why Clarchy exists, worked examples and AI regulations for architects; and what Clarchy stands for, with a contact address. |
 
@@ -270,7 +269,6 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `blog.py`, `data/blog/` | Blog posts in Markdown, rendered without dependencies |
 | `site.py`, `static/index.html` | Every page at its own address, rendered from one template with its title, description, breadcrumbs and structured data |
 | `export.py` | The static site (pages, sitemap, robots.txt, Cloudflare `_headers` and `_redirects`) with the in-browser engine bundle |
-| `worker/` | The Cloudflare Worker API on clarchy.com: sign-ups, free diagrams and the Pro waitlist in D1 (`index.mjs`, `migrations/`, tests) |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
 The site's look and the patterns it never uses are in [DESIGN.md](DESIGN.md); read it
@@ -286,7 +284,7 @@ clarchy export-site -o site/ --fragment               # one file with every page
 ```
 
 Every page has its own address: `/`, `/examples/` and `/examples/<id>/`, `/services/`,
-`/pricing/`, `/how-to/`, `/blog/`, `/about/`, `/privacy/` and `/terms/`
+`/how-to/`, `/blog/`, `/about/`, `/privacy/` and `/terms/`
 ([ADR 0013](docs/decisions/0013-a-page-per-address.md)). Each is a complete HTML file with
 its content, title, description, canonical link, breadcrumbs and structured data, so search
 engines read it without running scripts; once a page has loaded, the menu switches pages
@@ -310,16 +308,16 @@ of addresses, submit `https://clarchy.com/sitemap.xml` in Google Search Console 
 Webmaster Tools (both free).
 
 **Hosting on Cloudflare.** A Cloudflare Worker named `clarchy` serves the built files as
-static assets (`wrangler.jsonc`), and its API on `/api/*`. `make prices site` builds the
-files into `site/`. Two things deploy it:
+static assets (`wrangler.jsonc`). `make prices site` builds the files into `site/`. Two
+things deploy it:
 
 - **Workers Builds, on every push.** Connect the Worker to this repository
   (Worker → Settings → Build). Set the build command to `make prices site`, keep the
   deploy command `npx wrangler deploy`, and pick the branch the site is built from.
 - **The `Pages` workflow, when run by hand**, as a fallback. It needs an API token with
-  the *Workers Scripts: Edit* and *D1: Edit* permissions, saved as the repository
-  secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Without those secrets it
-  skips the Cloudflare step.
+  the *Workers Scripts: Edit* permission, saved as the repository secrets
+  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Without those secrets it skips the
+  Cloudflare step.
 
 The `Prices` workflow refreshes the price books every morning and commits them when a
 price has changed (as github-actions[bot]); Workers Builds deploys that commit like any
@@ -333,32 +331,6 @@ The site is then live at `clarchy.<your-subdomain>.workers.dev`. To move clarchy
    point to GitHub).
 2. Remove the custom domain from GitHub's Settings → Pages and set the repository variable
    `GITHUB_PAGES` to `off`, so only Cloudflare serves the site.
-
-**Sign-ups, free diagrams and the Pro waitlist** ([ADR 0011](docs/decisions/0011-accounts-and-credits-on-the-edge.md)).
-The Worker also answers `/api/*` from `worker/index.mjs`, with the D1 database `clarchy`
-(binding `DB`, id in `wrangler.jsonc`). Everything fits Cloudflare's free plan. The free
-allowance is `FREE_DIAGRAMS` in `wrangler.jsonc`.
-
-- **See who signed up:** Cloudflare dashboard → Storage & Databases → D1 → `clarchy` →
-  Console, then for example
-  `SELECT created_at, name, company, email, updates_opt_in, plan, pro_requested_at FROM leads ORDER BY created_at DESC;`
-  Only email people about product updates where `updates_opt_in = 1`.
-- **Pause or resume the sign-up form:** `ACCOUNTS` in `wrangler.jsonc`: `"off"` asks
-  nothing and limits nothing (the setting while testing), `"on"` brings back the form and
-  the free-diagram count. Deploying applies it.
-- **Log in on another device:** the header's Log in / Sign up button logs in with the
-  email someone signed up with (`POST /api/login`; ten failed tries an hour per network).
-  It works even while `ACCOUNTS` is `"off"`, when signing up is optional.
-- **Turn on Pro for someone:** `UPDATE leads SET plan = 'pro' WHERE email = 'name@company.com';`
-- **Delete someone's data on request:** `DELETE FROM leads WHERE email = 'name@company.com';`
-  (their usage rows go with it).
-- **Download a CSV:** add a secret `ADMIN_TOKEN` (Worker → Settings → Variables and
-  Secrets), then
-  `curl -H "Authorization: Bearer <token>" https://clarchy.com/api/admin/leads.csv -o leads.csv`.
-- **Change the schema:** add a numbered file to `worker/migrations/` and run
-  `npx wrangler d1 migrations apply clarchy --remote`.
-- **Run it locally:** `make site`, then `npx wrangler d1 migrations apply clarchy --local`
-  and `npx wrangler dev`.
 
 ## Official provider icons
 
@@ -382,7 +354,6 @@ clarchy icons --provider azure            # shows which icons were found
 
 ```bash
 make check       # ruff + pytest (the agent is tested with a scripted model, no API key needed)
-node --no-warnings --test "worker/*.test.mjs"   # the Worker API, against Node's built-in SQLite
 make examples    # regenerate examples/, which double as golden test files
 ```
 

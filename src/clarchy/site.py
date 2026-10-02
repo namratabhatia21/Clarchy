@@ -1059,10 +1059,9 @@ def redirects(c: Content) -> str:
     return "\n".join(lines) + "\n"
 
 
-ROBOTS = f"""# Every page of Clarchy may be crawled; /api/ only serves sign-ups and credits.
+ROBOTS = f"""# Every page of Clarchy may be crawled.
 User-agent: *
 Allow: /
-Disallow: /api/
 
 Sitemap: {SITE_URL}/sitemap.xml
 """

@@ -1,4 +1,5 @@
-"""Blog posts: Markdown files in data/blog with a small front matter block.
+"""Blog posts: Markdown files in data/blog with a small front matter block. Posts being
+rewritten wait in drafts/blog/ at the repository root, which is not published.
 
     ---
     title: Why architecture needs a drawing
@@ -18,6 +19,8 @@ from __future__ import annotations
 
 import html
 import re
+from importlib.resources.abc import Traversable
+from pathlib import Path
 from typing import Any
 
 from clarchy import catalog
@@ -105,10 +108,13 @@ def _front_matter(text: str) -> tuple[dict[str, str], str]:
     return meta, text[m.end() :]
 
 
-def posts() -> list[dict[str, Any]]:
-    """Every post, newest first, with its body rendered to HTML."""
+def posts(folder: Path | Traversable | None = None) -> list[dict[str, Any]]:
+    """Every published post (or every post in `folder`), newest first, with its body
+    rendered to HTML. No posts is fine: the Blog page says the first ones are coming."""
     out = []
-    folder = catalog.data_path("blog")
+    folder = folder or catalog.data_path("blog")
+    if not folder.is_dir():
+        return []
     for entry in sorted(folder.iterdir(), key=lambda p: p.name):
         if not entry.name.endswith(".md"):
             continue

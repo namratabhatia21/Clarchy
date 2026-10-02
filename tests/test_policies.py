@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from clarchy import blog, catalog, policies, pricing
 from clarchy.mapping import map_to_provider
 from clarchy.planner.rules import plan_with_rules
@@ -66,7 +68,8 @@ def test_blog_posts_render_safely():
     assert 'href="https://example.com"' in html and "javascript:" not in html
     assert "<ul><li>one</li><li>two</li></ul>" in html
     assert "<script>" not in html and "&lt;script&gt;" in html
-    posts = blog.posts()
-    assert posts and all(
-        p["title"] and p["html"] and p["author"] == "Namrata Bhatia" for p in posts
-    )
+    for folder in (None, Path(__file__).resolve().parent.parent / "drafts" / "blog"):
+        assert all(
+            p["title"] and p["html"] and p["author"] == "Namrata Bhatia" for p in blog.posts(folder)
+        )
+    assert len(blog.posts(Path(__file__).resolve().parent.parent / "drafts" / "blog")) == 2

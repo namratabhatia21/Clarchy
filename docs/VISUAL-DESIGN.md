@@ -1,8 +1,8 @@
-# Clarchy design
+# Clarchy visual design
 
 Read this before changing anything people see on clarchy.com. It describes the look the
 site has and the patterns it never uses. The reasoning is in
-[ADR 0009](docs/decisions/0009-a-drawing-set-identity.md).
+[ADR 0009](decisions/0009-a-drawing-set-identity.md).
 
 ## The idea
 
@@ -22,7 +22,7 @@ scrolls into view: one design, copied to every cloud. Small text there sits on t
 on the orange, which is too light for it.
 
 The second frame shows an architect's massing model of a real design (`massing.py`,
-[ADR 0015](docs/decisions/0015-a-massing-model-on-the-home-page.md)): each running service
+[ADR 0015](decisions/0015-a-massing-model-on-the-home-page.md)): each running service
 is a white block on a navy base, with its official icon on top and its height set by what
 it costs a month, and callouts name the costliest. It is made from the RAG chatbot example
 and the current price book every time the site is built, so it is never a mock-up.

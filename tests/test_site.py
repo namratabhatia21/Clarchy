@@ -282,7 +282,7 @@ def test_pre_rendered_colours_and_labels_match_the_scripts():
 
 
 def test_design_rules_that_can_be_checked(built):
-    """DESIGN.md lists what makes a site look generated; these are the checkable ones."""
+    """docs/VISUAL-DESIGN.md lists what makes a site look generated; these are checkable."""
     out, _content, _pages = built
     static = resources.files("clarchy").joinpath("static")
     css = static.joinpath("app.css").read_text()

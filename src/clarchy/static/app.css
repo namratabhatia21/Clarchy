@@ -1319,7 +1319,7 @@ main { overflow-x: clip; }
   .main-link { padding: 0 1px; font-size: 12.5px; }
 }
 
-/* ---------- The drawing set, brought to life (DESIGN.md) ----------
+/* ---------- The drawing set, brought to life (docs/VISUAL-DESIGN.md) ----------
    Motion happens once, means something (a line being drawn, a figure being worked out)
    and never loops; prefers-reduced-motion turns all of it off (see the top of the file). */
 

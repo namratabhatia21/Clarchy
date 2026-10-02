@@ -271,7 +271,7 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `export.py` | The static site (pages, sitemap, robots.txt, Cloudflare `_headers` and `_redirects`) with the in-browser engine bundle |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
-The site's look and the patterns it never uses are in [DESIGN.md](DESIGN.md); read it
+The site's look and the patterns it never uses are in [docs/VISUAL-DESIGN.md](docs/VISUAL-DESIGN.md); read it
 before changing anything people see.
 
 ## Static site

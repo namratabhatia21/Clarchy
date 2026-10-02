@@ -17,6 +17,8 @@ import argparse
 import json
 import re
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -35,30 +37,51 @@ SPECS: dict[str, dict[str, Any]] = {
     "apim.calls": {"service": "API Management", "hints": ["consumption"]},
     "apim.basicv2_hours": {"service": "API Management", "hints": ["basic v2"]},
     "contentsafety.text_records": {
-        "family": "AI + Machine Learning",
-        "hints": ["content safety", "text"],
+        "service": ["Foundry Tools", "Cognitive Services", "Azure AI Content Safety"],
+        "hints": ["content safety"],
     },
     "blob.archive_gb": {"service": "Storage", "hints": ["archive", "lrs", "data stored"]},
     "blob.storage_gb": {"service": "Storage", "hints": ["hot", "lrs", "data stored"]},
-    "blob.writes": {"service": "Storage", "hints": ["hot", "write operations"]},
-    "blob.reads": {"service": "Storage", "hints": ["hot", "read operations"]},
+    "blob.writes": {"service": "Storage", "hints": ["general block blob v2", "hot lrs", "write"]},
+    "blob.reads": {"service": "Storage", "hints": ["general block blob v2", "hot lrs", "read"]},
     "backup.storage_gb": {"service": "Backup", "hints": ["grs", "data stored"]},
     "backup.instances": {"service": "Backup", "hints": ["instance"]},
     "keyvault.hsm_keys": {"service": "Key Vault", "hints": ["hsm"]},
     "keyvault.operations": {"service": "Key Vault", "hints": ["operations"]},
     "entra.p2_users": {"family": "Security", "hints": ["p2"]},
-    "entra.mau": {"family": "Security", "hints": ["active user"]},
-    "frontdoor.base": {"service": "Azure Front Door Service", "hints": ["standard", "base"]},
-    "frontdoor.egress_gb": {
-        "service": "Azure Front Door Service",
-        "hints": ["standard", "data transfer"],
+    "entra.mau": {"family": "Security", "hints": ["external"]},
+    "frontdoor.base": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "zoned": True,
+        "hints": ["standard"],
     },
-    "frontdoor.requests": {"service": "Azure Front Door Service", "hints": ["standard", "request"]},
-    "waf.policies": {"service": "Azure Front Door Service", "hints": ["policy"]},
-    "waf.rules": {"service": "Azure Front Door Service", "hints": ["rule"]},
-    "waf.requests": {"service": "Azure Front Door Service", "hints": ["waf", "request"]},
-    "dns.zones": {"service": "Azure DNS", "hints": ["zone"]},
-    "dns.queries": {"service": "Azure DNS", "hints": ["queries"]},
+    "frontdoor.egress_gb": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "zoned": True,
+        "hints": ["data transfer"],
+    },
+    "frontdoor.requests": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "zoned": True,
+        "hints": ["request"],
+    },
+    "waf.policies": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
+        "zoned": True,
+        "hints": ["polic"],
+    },
+    "waf.rules": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
+        "zoned": True,
+        "hints": ["rule"],
+    },
+    "waf.requests": {
+        "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
+        "zoned": True,
+        "hints": ["waf"],
+    },
+    "dns.zones": {"service": ["Azure DNS", "DNS"], "zoned": True, "hints": ["zone"]},
+    "dns.queries": {"service": ["Azure DNS", "DNS"], "zoned": True, "hints": ["quer"]},
     "appgw.hours": {"service": "Application Gateway", "hints": ["standard", "fixed"]},
     "appgw.capacity_units": {
         "service": "Application Gateway",
@@ -68,11 +91,17 @@ SPECS: dict[str, dict[str, Any]] = {
     "containerapps.gb_hours": {"service": "Azure Container Apps", "hints": ["memory"]},
     "aks.cluster_hours": {"service": "Azure Kubernetes Service", "hints": ["standard"]},
     "vm.node_hours": {"service": "Virtual Machines", "sku": "Standard_D2s_v5", "hints": ["d2s v5"]},
-    "openai.input_tokens": {"family": "AI + Machine Learning", "hints": ["4o-mini", "inp"]},
-    "openai.output_tokens": {"family": "AI + Machine Learning", "hints": ["4o-mini", "outp"]},
+    "openai.input_tokens": {
+        "service": ["Foundry Models", "Cognitive Services", "Azure OpenAI"],
+        "hints": ["4o-mini"],
+    },
+    "openai.output_tokens": {
+        "service": ["Foundry Models", "Cognitive Services", "Azure OpenAI"],
+        "hints": ["4o", "mini", "out"],
+    },
     "openai.embedding_tokens": {
-        "family": "AI + Machine Learning",
-        "hints": ["embedding", "3-small"],
+        "service": ["Foundry Models", "Cognitive Services", "Azure OpenAI"],
+        "hints": ["embedding"],
     },
     "servicebus.base": {"service": "Service Bus", "hints": ["standard", "base"]},
     "servicebus.operations": {"service": "Service Bus", "hints": ["standard", "operations"]},
@@ -88,30 +117,38 @@ SPECS: dict[str, dict[str, Any]] = {
         "service": "Azure Data Factory v2",
         "hints": ["orchestration", "activity"],
     },
-    "postgres.compute": {
-        "service": "Azure Database for PostgreSQL",
-        "hints": ["flexible", "vcore"],
-    },
-    "postgres.storage": {
-        "service": "Azure Database for PostgreSQL",
-        "hints": ["flexible", "storage"],
-    },
+    "postgres.compute": {"service": "Azure Database for PostgreSQL", "hints": ["b2s"]},
+    "postgres.storage": {"service": "Azure Database for PostgreSQL", "hints": ["storage"]},
     "cosmos.request_units": {"service": "Azure Cosmos DB", "hints": ["serverless"]},
     "cosmos.storage_gb": {"service": "Azure Cosmos DB", "hints": ["data stored"]},
     "redis": {"service": "Redis Cache", "hints": ["balanced"]},
-    "search.unit_hours": {"family": "AI + Machine Learning", "hints": ["search", "basic"]},
-    "fabric.capacity_hours": {"family": "Analytics", "hints": ["fabric", "capacity"]},
-    "fabric.storage_gb": {"family": "Analytics", "hints": ["onelake"]},
+    "search.unit_hours": {
+        "service": ["Azure Cognitive Search", "Azure AI Search", "Search"],
+        "hints": ["basic"],
+    },
+    "fabric.capacity_hours": {
+        "service": ["Microsoft Fabric", "Fabric", "Power BI"],
+        "hints": ["capacity"],
+    },
+    "fabric.storage_gb": {"service": ["Microsoft Fabric", "Fabric"], "hints": ["onelake"]},
     "monitor.logs_gb": {"service": "Log Analytics", "hints": ["ingestion"]},
     "monitor.alerts": {"service": "Azure Monitor", "hints": ["alert"]},
     "acr.registry": {"service": "Container Registry", "hints": ["basic"]},
+    "postgres.gp": {"service": "Azure Database for PostgreSQL", "hints": ["ddsv5"]},
     "pipelines.parallel_jobs": {"family": "Developer Tools", "hints": ["parallel"]},
 }
 
 
 def _get(url: str) -> dict[str, Any]:
     request = urllib.request.Request(url, headers={"User-Agent": "clarchy-prices"})
-    return json.load(urllib.request.urlopen(request, timeout=120))
+    for attempt in range(6):
+        try:
+            return json.load(urllib.request.urlopen(request, timeout=120))
+        except urllib.error.HTTPError as exc:
+            if exc.code != 429 or attempt == 5:
+                raise
+            time.sleep(2**attempt * 3)  # the API limits bursts of requests
+    raise RuntimeError("unreachable")
 
 
 def query(filters: dict[str, str], limit_pages: int = 400) -> list[dict[str, Any]]:
@@ -148,21 +185,27 @@ def discover(region: str = "eastus", keys: list[str] | None = None, out=sys.stdo
     for key, spec in SPECS.items():
         if keys and key not in keys:
             continue
-        filters = {"armRegionName": region}
-        if "service" in spec:
-            filters["serviceName"] = spec["service"]
-        else:
-            filters["serviceFamily"] = spec["family"]
-        if "sku" in spec:
-            filters["armSkuName"] = spec["sku"]
-        ident = tuple(sorted(filters.items()))
-        if ident not in cache:
-            try:
-                cache[ident] = query(filters)
-            except Exception as exc:  # noqa: BLE001 - report and carry on
-                print(f"## {key}: query failed: {exc}", file=out)
-                cache[ident] = []
-        items = cache[ident]
+        services = spec.get("service", [None])
+        services = [services] if isinstance(services, str) else services
+        items, filters = [], {}
+        for service in services:  # the first name the API knows
+            filters = {} if spec.get("zoned") else {"armRegionName": region}
+            if service:
+                filters["serviceName"] = service
+            else:
+                filters["serviceFamily"] = spec["family"]
+            if "sku" in spec:
+                filters["armSkuName"] = spec["sku"]
+            ident = tuple(sorted(filters.items()))
+            if ident not in cache:
+                try:
+                    cache[ident] = query(filters)
+                except Exception as exc:  # noqa: BLE001 - report and carry on
+                    print(f"## {key}: query {filters} failed: {exc}", file=out)
+                    cache[ident] = []
+            items = cache[ident]
+            if items:
+                break
         hits = [i for i in items if all(h in _text(i) for h in spec["hints"])]
         names = sorted({i.get("serviceName", "") for i in items})
         print(f"## {key} ({len(items)} items in {dict(filters)}, {len(hits)} match)", file=out)
@@ -175,7 +218,8 @@ def discover(region: str = "eastus", keys: list[str] | None = None, out=sys.stdo
             print(
                 f"   {i.get('retailPrice')!s:>10} /{i.get('unitOfMeasure')!s:<12} "
                 f"{i.get('type')!s:<11} tier={i.get('tierMinimumUnits')} "
-                f"{i.get('reservationTerm') or ''} | {i.get('serviceName')} | "
+                f"{i.get('reservationTerm') or ''} {i.get('armRegionName') or '-'} | "
+                f"{i.get('serviceName')} | "
                 f"{i.get('productName')} | {i.get('skuName')} | {i.get('meterName')}"
                 + (f" | SP {plan}" if plan else ""),
                 file=out,

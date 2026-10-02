@@ -38,3 +38,25 @@ jobs:
         with:
           name: azure-discovery
           path: discovery.txt
+
+  gcp:
+    # Needs a free Google Cloud API key with the Cloud Billing API, as the secret GCP_API_KEY.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GCP_API_KEY: ${{ secrets.GCP_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.GCP_API_KEY != ''
+      - uses: actions/setup-python@v5
+        if: env.GCP_API_KEY != ''
+        with:
+          python-version: "3.12"
+      - name: Google Cloud SKUs
+        if: env.GCP_API_KEY != ''
+        run: |
+          pip install -e .
+          python -m clarchy.gcp_prices --discover --region us-east4 | tee gcp-discovery.txt
+      - name: No key yet
+        if: env.GCP_API_KEY == ''
+        run: echo "Add the repository secret GCP_API_KEY to read Google Cloud prices."

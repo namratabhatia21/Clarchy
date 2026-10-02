@@ -12,6 +12,9 @@ name: Prices
 #   Door WAF rules and requests) keep their hand-compiled value, marked manual.
 # - Google Cloud: not yet; it needs a free API key saved as the secret GCP_API_KEY.
 #
+# It also refreshes every provider's full list of services (clarchy.directory), for the
+# service directory. A list that fails or comes back much shorter keeps its last copy.
+#
 # Commits are made by github-actions[bot]. Pushes made with the workflow's own token don't
 # start other workflows, so this job runs the tests itself before it commits.
 
@@ -42,13 +45,19 @@ jobs:
         run: python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml
       - name: Refresh Azure prices
         run: python -m clarchy.azure_prices --output src/clarchy/data/prices/azure.yaml
+      - name: Refresh every provider's list of services
+        run: |
+          for provider in aws azure gcp; do
+            python -m clarchy.directory --provider "$provider" || echo "::warning::kept the last $provider list"
+          done
       - name: Keep the books if only their dates moved
         id: changed
         run: |
-          changes=$(git diff --unified=0 -- src/clarchy/data/prices | grep -E '^[+-][^+-]' | grep -v 'as_of:' || true)
+          git add -N src/clarchy/data/directory
+          changes=$(git diff --unified=0 -- src/clarchy/data/prices src/clarchy/data/directory | grep -E '^[+-][^+-]' | grep -v 'as_of:' || true)
           if [ -z "$changes" ]; then
-            git checkout -- src/clarchy/data/prices
-            echo "No price has changed."
+            git checkout -- src/clarchy/data/prices src/clarchy/data/directory
+            echo "No price or service has changed."
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "$changes" | head -40
@@ -65,6 +74,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/clarchy/data/prices examples
-          git commit -m "Refresh prices from the providers' price APIs ($(date -u +%F))"
+          git add src/clarchy/data/prices src/clarchy/data/directory examples
+          git commit -m "Refresh prices and service lists from the providers ($(date -u +%F))"
           git push

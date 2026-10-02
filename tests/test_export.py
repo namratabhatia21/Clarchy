@@ -14,6 +14,15 @@ def embedded_data(page: str) -> dict:
     return json.loads(match.group(1))
 
 
+def site_data_file(folder) -> dict:
+    """The data a multi-page export loads from assets/data.<hash>.js."""
+    page = (folder / "index.html").read_text()
+    name = re.search(r'<script src="/(assets/data\.[0-9a-f]{10}\.js)" defer></script>', page)
+    assert name, "the page must load its data file"
+    text = (folder / name.group(1)).read_text()
+    return json.loads(text.removeprefix("window.CLARCHY_DATA = ").rstrip().removesuffix(";"))
+
+
 def test_site_data_covers_patterns_samples_and_providers():
     data = site_data()
     keys = [*catalog.pattern_names(), *(f"sample:{s}" for s in SAMPLE_IDS)]
@@ -37,10 +46,15 @@ def test_recorded_runs_replay_the_whole_pipeline():
         assert data["spec_index"][result["spec_yaml"]] == f"sample:{sample_id}"
 
 
-def test_full_page_is_self_contained():
+def test_single_file_build_is_self_contained():
     page = build_site()
     assert page.startswith("<!doctype html>")
     assert "/static/" not in page
+    # Every page is in the file, linked by #hash.
+    for key in ("plan", "examples", "example", "services", "pricing", "howto", "about"):
+        assert f'id="page-{key}"' in page
+    assert 'data-routing="hash"' in page
+    assert 'href="#pricing"' in page and 'href="/pricing/"' not in page
     # One data script plus every app script, and embedded SVG never ends a script early.
     assert page.count("<script>") == page.count("</script>") == 11
     data = embedded_data(page)
@@ -132,8 +146,7 @@ def test_site_ships_the_in_browser_engine(tmp_path):
     from clarchy.export import ENGINE_BUNDLE, PYODIDE_VERSION, export_site
 
     export_site(tmp_path)
-    data = embedded_data((tmp_path / "index.html").read_text())
-    engine = data["engine"]
+    engine = site_data_file(tmp_path)["engine"]
     assert engine["bundle"] == ENGINE_BUNDLE
     assert (
         engine["pyodide"] == f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/pyodide.js"
@@ -166,22 +179,23 @@ def test_full_site_keeps_designs_fonts_and_sharing_files_beside_the_page(tmp_pat
 
     export_site(tmp_path, with_engine=False)
     page = (tmp_path / "index.html").read_text()
-    data = embedded_data(page)
-    # The drawings load on demand, so the page stays small.
+    data = site_data_file(tmp_path)
+    # The drawings load on demand and the data is a cached file, so the page stays small.
     assert "designs" not in data and data["design_files"] is True
-    assert len(page) < 700_000
+    assert "CLARCHY_DATA" not in page and len(page) < 200_000
     for key in data["spec_index"].values():
         for provider in catalog.providers():
             body = json.loads((tmp_path / "designs" / design_file(f"{key}.{provider}")).read_text())
             assert body["svg"].startswith("<svg")
     # Fonts are served with the site, under their licences.
-    assert "fonts.googleapis" not in page and 'url("fonts/archivo.woff2")' in page
+    assert "fonts.googleapis" not in page and 'url("/fonts/archivo.woff2")' in page
     assert (tmp_path / "fonts" / "archivo.woff2").exists()
     assert (tmp_path / "fonts" / "LICENSE-archivo.txt").exists()
     # Search and link previews: the head keeps its description and sharing tags.
     assert '<meta name="description"' in page
     assert '<meta property="og:image" content="https://clarchy.com/og.png">' in page
-    assert 'href="apple-touch-icon.png"' in page
+    assert 'href="/apple-touch-icon.png"' in page and 'href="/favicon.ico"' in page
+    assert (tmp_path / "favicon.ico").read_bytes()[:4] == b"\x00\x00\x01\x00"
     assert (tmp_path / "og.png").exists() and (tmp_path / "apple-touch-icon.png").exists()
     assert (tmp_path / "404.html").read_text().startswith("<!doctype html>")
 
@@ -190,5 +204,5 @@ def test_replay_only_build(tmp_path):
     from clarchy.export import ENGINE_BUNDLE, export_site
 
     export_site(tmp_path, with_engine=False)
-    assert embedded_data((tmp_path / "index.html").read_text())["engine"] is None
+    assert site_data_file(tmp_path)["engine"] is None
     assert not (tmp_path / ENGINE_BUNDLE).exists()

@@ -64,7 +64,7 @@ const Services = (() => {
     if (cat.match !== "all") params.set("match", cat.match);
     if (cat.sort !== "stage") params.set("sort", cat.sort);
     const qs = params.toString();
-    CA.setHash(`#services${qs ? `?${qs}` : ""}`);
+    CA.replaceUrl(CA.href("services", null, qs));
   }
 
   function readUrl(params) {
@@ -80,11 +80,6 @@ const Services = (() => {
   }
 
   const item = (children, pressed, onclick) => el("button", { class: "filter-item", type: "button", "aria-pressed": String(pressed), onclick }, children);
-  const ACRONYMS = { ai: "AI", iac: "IaC", ci: "CI", cd: "CD", dns: "DNS", cdn: "CDN", waf: "WAF", api: "API", llm: "LLM", etl: "ETL", db: "DB" };
-  const humanize = (id) => {
-    const words = id.replace("key-value", "key‑value").split("-").map((w) => ACRONYMS[w] || w);
-    return words[0].charAt(0).toUpperCase() + words[0].slice(1) + (words.length > 1 ? ` ${words.slice(1).join(" ")}` : "");
-  };
 
   function renderFilters() {
     const counts = Object.fromEntries(stageOrder().map((s) => [s, 0]));
@@ -120,7 +115,7 @@ const Services = (() => {
     return el("div", { class: "cap-detail" }, visibleProviders().map((p) => {
       const svc = cap.services[p.id];
       return el("div", {},
-        el("h4", {}, `${p.name}: ${svc.service}`, CA.fidelityBadge(svc.fidelity)),
+        el("h3", {}, `${p.name}: ${svc.service}`, CA.fidelityBadge(svc.fidelity)),
         svc.note && el("p", { text: svc.note }),
         svc.alternatives.length > 0 && el("p", { class: "muted", text: `Alternatives: ${svc.alternatives.join(", ")}` }),
         svc.docs && el("a", { href: svc.docs, target: "_blank", rel: "noopener noreferrer", text: "Documentation ↗" }));
@@ -142,7 +137,7 @@ const Services = (() => {
       return el("li", { class: "cap-card" },
         el("button", { type: "button", "aria-expanded": String(open), onclick: () => { open ? cat.open.delete(cap.id) : cat.open.add(cap.id); renderResults(); } },
           el("div", { class: "cap-title" },
-            el("h3", { title: cap.id }, highlight(humanize(cap.id))),
+            el("h2", { title: cap.id }, highlight(cap.title || cap.id)),
             el("span", { class: "cap-stage" }, el("span", { class: "dot", style: `background:${CA.STAGE_COLOURS[cap.stage]}` }), CA.meta.stages[cap.stage])),
           el("p", { class: "cap-desc" }, highlight(cap.description)),
           el("div", { class: "svc-rows" }, visibleProviders().flatMap((p) => serviceRow(p, cap.services[p.id])))),
@@ -161,6 +156,8 @@ const Services = (() => {
   }
 
   function initControls() {
+    if (initControls.done) return;
+    initControls.done = true;
     let timer;
     $("catalog-search").addEventListener("input", (e) => {
       clearTimeout(timer);

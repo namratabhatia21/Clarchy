@@ -9,7 +9,8 @@ const Access = (() => {
   const { $, store, recall } = CA;
   const KEY = "clarchy.lead";
   const CONTACT = "mailto:namrata.bhatia@clarchy.com?subject=Clarchy%20Pro";
-  const state = { enabled: false, freeDiagrams: 3, lead: null };
+  // settled: the API was asked and accounts are off (or failed), so nothing will show.
+  const state = { enabled: false, settled: false, freeDiagrams: 3, lead: null };
   let asking = null; // { promise, resolve } while the sign-up form is open
   let replayTarget = null;
 
@@ -33,23 +34,30 @@ const Access = (() => {
   // ---------- what the page shows ----------
   function render() {
     for (const count of document.querySelectorAll("[data-free-count]")) count.textContent = String(state.freeDiagrams);
+    // The page keeps the credit line's space until the API answers (site.py), so it
+    // appears without moving anything.
     const line = $("credit-line");
     const lead = state.lead;
-    line.hidden = !state.enabled;
-    if (state.enabled) {
+    if (line && state.enabled) {
       let text;
       if (!lead) text = `Your first ${CA.plural(state.freeDiagrams, "diagram")} are free.`;
       else if (lead.plan === "pro") text = "Pro: unlimited diagrams.";
       else if (lead.remaining > 0) text = `${lead.remaining} of ${CA.plural(lead.free_diagrams, "free diagram")} left.`;
       else text = "No free diagrams left. Samples, examples and re-planning stay free.";
-      line.replaceChildren(text, " ", CA.el("a", { href: "#pricing", text: "Pricing" }));
+      line.replaceChildren(text, " ", CA.el("a", { href: CA.href("pricing"), text: "Pricing" }));
+      line.classList.remove("pending");
+      line.hidden = false;
+    } else if (line && state.settled) {
+      line.hidden = true;
     }
     const status = $("waitlist-status");
     const button = $("waitlist-button");
     const waitlisted = Boolean(lead && (lead.waitlisted || lead.plan === "pro"));
-    status.hidden = !waitlisted;
-    status.textContent = lead && lead.plan === "pro" ? "Pro is on for your account." : "You're on the list. We'll email you when Pro opens.";
-    button.hidden = waitlisted;
+    if (status) {
+      status.hidden = !waitlisted;
+      status.textContent = lead && lead.plan === "pro" ? "Pro is on for your account." : "You're on the list. We'll email you when Pro opens.";
+    }
+    if (button) button.hidden = waitlisted;
   }
 
   // ---------- the sign-up form ----------
@@ -101,6 +109,7 @@ const Access = (() => {
         return;
       } else {
         state.enabled = false; // the API is in trouble: don't block the visitor
+        state.settled = true;
         render();
       }
       // Settle before closing: the close handler would otherwise report a cancel.
@@ -108,6 +117,7 @@ const Access = (() => {
       $("signup-dialog").close();
     } catch {
       state.enabled = false;
+      state.settled = true;
       render();
       finishAsking(true);
       $("signup-dialog").close();
@@ -130,6 +140,8 @@ const Access = (() => {
 
   function bindGate() {
     const root = $("plan-start");
+    if (!root || root.dataset.gated) return;
+    root.dataset.gated = "true";
     const intercept = (e) => {
       if (!state.enabled || state.lead) return;
       const node = e.type === "drop" ? root : interactive(e.target);
@@ -161,7 +173,18 @@ const Access = (() => {
       const result = await joinWaitlist();
       if (result === "joined") $("limit-text").textContent = "You're on the Pro waitlist. We'll email you when it opens.";
     });
-    $("waitlist-button").addEventListener("click", joinWaitlist);
+  }
+
+  // Called whenever a page appears (app.js): the home page's first action asks who you
+  // are, and Pricing's waitlist button works.
+  function attach() {
+    const button = $("waitlist-button");
+    if (button && !button.dataset.bound) {
+      button.dataset.bound = "true";
+      button.addEventListener("click", joinWaitlist);
+    }
+    if (state.enabled) bindGate();
+    render();
   }
 
   // ---------- credits and the waitlist ----------
@@ -201,14 +224,15 @@ const Access = (() => {
 
   async function init() {
     bindDialogs();
-    render();
-    if (CA.MODE !== "static") return;
+    const off = () => { state.settled = true; render(); };
+    if (CA.MODE !== "static") { off(); return; }
     try {
       const res = await call("GET", "/api/config");
-      if (!res.ok || !res.data.accounts) return;
+      if (!res.ok || !res.data.accounts) { off(); return; }
       state.enabled = true;
       state.freeDiagrams = res.data.free_diagrams;
     } catch {
+      off();
       return;
     }
     const saved = recall(KEY);
@@ -220,9 +244,8 @@ const Access = (() => {
         else if (res.status === 404) remember(null);
       } catch { /* keep the saved copy */ }
     }
-    bindGate();
-    render();
+    attach();
   }
 
-  return { init, spend, ask, joinWaitlist, get enabled() { return state.enabled; } };
+  return { init, attach, spend, ask, joinWaitlist, get enabled() { return state.enabled; } };
 })();

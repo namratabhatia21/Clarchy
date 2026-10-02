@@ -14,6 +14,30 @@ const CA = (() => {
 
   const $ = (id) => document.getElementById(id);
 
+  // Multi-page builds give every page its own address (/pricing/, /examples/<id>/);
+  // single-file builds route on the hash (#pricing, #examples/<id>). site.py marks which.
+  const ROUTING = document.body && document.body.dataset.routing === "path" ? "path" : "hash";
+  // Where the site's own files (designs, the engine) sit: "/" on a multi-page site.
+  const ROOT = (document.body && document.body.dataset.root) || "";
+  const asset = (path) => ROOT + path;
+  const PATHS = {
+    plan: "/", examples: "/examples/", services: "/services/", pricing: "/pricing/",
+    howto: "/how-to/", blog: "/blog/", about: "/about/", privacy: "/privacy/", terms: "/terms/",
+  };
+  // The link to a page: href("example", "rag-chatbot"), href("services", null, "q=queue").
+  function href(page, sub, query) {
+    const q = query ? `?${query}` : "";
+    if (ROUTING === "path") {
+      if (page === "example") return `/examples/${sub}/`;
+      if (page === "post") return `/blog/${sub}/`;
+      if (page === "howto" && sub) return `/how-to/#howto-${sub}`;
+      return `${PATHS[page] || "/"}${q}`;
+    }
+    if (page === "example") return `#examples/${sub}`;
+    if (page === "post") return `#blog/${sub}`;
+    return `#${page}${sub ? `/${sub}` : ""}${q}`;
+  }
+
   // What this page can do. A static build plans in the browser when it carries the engine.
   const HF_DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct";
   const canPlan = () => MODE !== "static" || Boolean(DATA.engine);
@@ -56,8 +80,9 @@ const CA = (() => {
     try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
   }
 
-  function setHash(hash) {
-    try { history.replaceState(null, "", hash); } catch { /* some frames refuse; harmless */ }
+  // Changes the address without a new history entry (filters, open sections).
+  function replaceUrl(url) {
+    try { history.replaceState(history.state, "", url); } catch { /* some frames refuse; harmless */ }
   }
 
   const number = (v) => (typeof v === "number" ? v.toLocaleString("en-US") : String(v));
@@ -82,7 +107,7 @@ const CA = (() => {
     if (DATA.designs) return Promise.resolve(DATA.designs[id] || null);
     if (!DATA.design_files) return Promise.resolve(null);
     if (!designFiles.has(id)) {
-      designFiles.set(id, fetch(`designs/${id.replace(":", "-")}.json`)
+      designFiles.set(id, fetch(asset(`designs/${id.replace(":", "-")}.json`))
         .then((res) => (res.ok ? res.json() : null))
         .catch(() => null));
     }
@@ -132,7 +157,7 @@ const CA = (() => {
         const py = await window.loadPyodide({ indexURL: cfg.index_url });
         progress("Loading Python packages…");
         await py.loadPackage(cfg.packages);
-        const res = await fetch(cfg.bundle);
+        const res = await fetch(asset(cfg.bundle));
         if (!res.ok) throw new Error(`could not load ${cfg.bundle} (${res.status})`);
         py.unpackArchive(await res.arrayBuffer(), "zip", { extractDir: "/home/pyodide/engine" });
         py.runPython("import sys; sys.path.insert(0, '/home/pyodide/engine')");
@@ -324,10 +349,11 @@ const CA = (() => {
   };
 
   return {
-    DATA, MODE, CLIPBOARD_ONLY, HF_DEFAULT_MODEL, canPlan, canEdit, hasRecordedRun,
-    $, el, fill, store, recall, setHash, number, plural, sleep,
+    DATA, MODE, ROUTING, CLIPBOARD_ONLY, HF_DEFAULT_MODEL, canPlan, canEdit, hasRecordedRun,
+    $, el, fill, store, recall, href, replaceUrl, asset, number, plural, sleep,
     api, deliver, fidelityBadge, fidelityTag, FIDELITY_HELP, FIDELITY_LABEL, cropDiagram, croppedSvgText, money,
     PROVIDER_COLOURS, STAGE_COLOURS,
     meta: null, // filled in by app.js
+    go: (url) => { window.location.href = url; }, // app.js swaps in its router
   };
 })();

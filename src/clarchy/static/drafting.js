@@ -114,10 +114,13 @@ const Drafting = (() => {
   }
 
   // ---------- scroll ----------
+  // Runs once the home page is on screen: at load, or when it is first opened from another
+  // page (app.js).
   function init() {
     const start = document.getElementById("plan-start");
     const instruments = document.querySelector(".instruments");
-    if (!start || !instruments) return;
+    if (!start || !instruments || start.dataset.drafting) return;
+    start.dataset.drafting = "true";
     const protractor = buildDial(instruments.querySelector(".protractor"));
     const scale = buildScale(instruments.querySelector(".scale-rule"));
     const figure = document.querySelector(".story-fig");
@@ -160,7 +163,7 @@ const Drafting = (() => {
     };
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
-    window.addEventListener("hashchange", () => setTimeout(schedule, 0));
+    window.addEventListener("clarchy:page", () => setTimeout(schedule, 0));
     new MutationObserver(schedule).observe(start, { attributes: true, attributeFilter: ["hidden"] });
 
     const cue = document.getElementById("scroll-cue");
@@ -181,5 +184,5 @@ const Drafting = (() => {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  return { drawIn };
+  return { drawIn, start: init };
 })();

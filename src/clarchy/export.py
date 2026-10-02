@@ -1,19 +1,23 @@
-"""Static site export: the web UI as one HTML page and the files it loads.
+"""Static site export: the web UI as a set of pages and the files they load.
 
-    clarchy export-site -o site/                       # site/index.html, host anywhere
-    clarchy export-site -o site/ --fragment            # body-only page for hosts that add
-                                                           # their own <html>/<head> skeleton
+    clarchy export-site -o site/                       # a page per address, host anywhere
+    clarchy export-site -o site/ --fragment            # one body-only page for hosts that
+                                                           # add their own <html>/<head>
     clarchy export-site -o site/ --api-base URL        # front end for a hosted API
 
-The page plans in the visitor's browser: next to index.html goes clarchy-engine.zip,
-this package, which the page runs with Pyodide (Python compiled to WebAssembly, loaded
-from its CDN on first use). It also embeds every built-in pattern rendered on every
-provider, the service catalog and a recorded rule-based run of each sample, so the
-examples and samples appear without loading the engine. Full pages keep those drawings in
-designs/<key>.<provider>.json beside index.html and fetch each one when it is shown; the
-site also gets its fonts (fonts/), sharing images and a 404 page. --no-engine builds a
-replay-only page. Fragment builds target sandboxed hosts that block downloads, so their
-download buttons copy to the clipboard instead, and they keep the drawings inline.
+Every page has its own address (/, /examples/, /examples/<id>/, /services/, /pricing/,
+/how-to/, /blog/, /about/, /privacy/, /terms/), rendered by site.py with its content in
+the HTML, plus sitemap.xml, robots.txt and a _headers file for Cloudflare. The scripts
+and the embedded data sit in assets/ with a content hash in their names, so browsers keep
+them. Pages plan in the visitor's browser: beside them goes clarchy-engine.zip, this
+package, which the page runs with Pyodide (Python compiled to WebAssembly, loaded from its
+CDN on first use). The data holds the service catalog and a recorded rule-based run of
+each sample, so samples and examples appear without loading the engine, and every
+built-in pattern is pre-rendered on every provider in designs/<key>.<provider>.json,
+fetched when shown. The site also gets its fonts (fonts/), sharing images and a 404 page.
+--no-engine builds a replay-only site. Fragment builds are one file with every page and
+#hash links, for sandboxed hosts that block downloads, so their download buttons copy to
+the clipboard instead and they keep the drawings inline.
 
 AWS designs use the AWS Architecture Icons that ship with the package (ADR 0012); the
 other clouds keep lettered badges.
@@ -22,18 +26,18 @@ other clouds keep lettered badges.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import io
 import json
-import re
 import zipfile
 from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from clarchy import blog, catalog, payloads
+from clarchy import blog, catalog, payloads, site
 from clarchy.icons import bundled_library
 
-SCRIPT_TAG = re.compile(r'<script src="/static/([\w-]+\.js)"></script>')
+SCRIPT_TAG = site.SCRIPT_TAG
 PYODIDE_VERSION = "314.0.7"
 PYODIDE_BASE = f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/"
 ENGINE_BUNDLE = "clarchy-engine.zip"
@@ -63,9 +67,6 @@ def engine_config(base: str = PYODIDE_BASE) -> dict[str, Any]:
         "bundle": ENGINE_BUNDLE,
         "packages": ["pydantic", "pyyaml"],
     }
-
-
-STYLESHEET_TAG = '<link rel="stylesheet" href="/static/app.css">'
 
 
 def _designs_for(key: str, spec_yaml: str) -> dict[str, Any]:
@@ -124,11 +125,6 @@ def site_data(clipboard_only: bool = False, engine: dict[str, Any] | None = None
     }
 
 
-def _between(text: str, start: str, end: str) -> str:
-    i, j = text.index(start) + len(start), text.index(end)
-    return text[i:j]
-
-
 def _script_json(value: Any) -> str:
     # "<" never appears outside JSON strings, so escaping it keeps "</script>" inside
     # embedded SVG from ending the script element early.
@@ -140,81 +136,104 @@ def design_file(key: str) -> str:
     return key.replace(":", "-") + ".json"
 
 
+def _static(name: str) -> str:
+    return resources.files("clarchy").joinpath("static", name).read_text(encoding="utf-8")
+
+
+def app_scripts() -> list[str]:
+    """The page's scripts, in the order index.html loads them."""
+    names = SCRIPT_TAG.findall(site.template())
+    if not names:
+        raise ValueError("index.html no longer references its /static/ scripts")
+    scripts = []
+    for name in names:
+        js = _static(name)
+        if "</script" in js.lower():
+            raise ValueError(f"{name} must not contain a closing script tag")
+        scripts.append(js)
+    return scripts
+
+
+def _inline_style() -> str:
+    return f"<style>\n{_static('app.css')}</style>"
+
+
+def _content(data: dict[str, Any] | None) -> site.Content:
+    if data is not None:
+        return site.content(data["meta"])
+    icons = {p: bundled_library(p) for p in catalog.providers()}
+    return site.content(payloads.meta_payload(icons))
+
+
+def _mode(api_base: str | None, engine: dict[str, Any] | None) -> str:
+    return "remote" if api_base else "static" if engine else "replay"
+
+
 def build_site(
     fragment: bool = False,
     api_base: str | None = None,
     engine: dict[str, Any] | None = None,
-    designs_out: dict[str, Any] | None = None,
 ) -> str:
-    """The page. With designs_out, the pre-rendered designs go there instead of inline, and
-    the page fetches them from designs/ (see design_file)."""
-    static = resources.files("clarchy").joinpath("static")
-    index = static.joinpath("index.html").read_text(encoding="utf-8")
-    css = static.joinpath("app.css").read_text(encoding="utf-8")
-
-    head = _between(index, "<head>", "</head>")
-    body = _between(index, "<body>", "</body>")
-    scripts = SCRIPT_TAG.findall(body)
-    if not scripts or STYLESHEET_TAG not in head:
-        raise ValueError("index.html no longer references its /static/ scripts and app.css")
-
+    """Every page in one file with #hash links and the scripts and data inline, for hosts
+    that take a single file. fragment=True drops the document skeleton the host adds."""
+    data = None
     if api_base:
         config = f"window.CLARCHY_API_BASE = {_script_json(api_base.rstrip('/'))};"
     else:
         data = site_data(clipboard_only=fragment, engine=engine)
-        if designs_out is not None:
-            designs_out.update(data.pop("designs"))
-            data["design_files"] = True
         config = f"window.CLARCHY_DATA = {_script_json(data)};"
-    inlined = [f"<script>{config}</script>"]
-    for name in scripts:
-        js = static.joinpath(name).read_text(encoding="utf-8")
-        if "</script" in js.lower():
-            raise ValueError(f"{name} must not contain a closing script tag")
-        inlined.append(f"<script>\n{js}</script>")
-    first = body.index(f'<script src="/static/{scripts[0]}"></script>')
-    body = body[:first] + "\n  ".join(inlined) + SCRIPT_TAG.sub("", body[first:]).rstrip() + "\n"
+    scripts = "\n  ".join(
+        [f"<script>{config}</script>", *(f"<script>\n{js}</script>" for js in app_scripts())]
+    )
+    shell = site.Shell(
+        mode=_mode(api_base, engine),
+        style=_inline_style(),
+        scripts=scripts + "\n",
+        root="",
+        single=True,
+        fragment=fragment,
+    )
+    return site.render(None, _content(data), shell)
 
-    title = re.search(r"<title>.*?</title>", head, re.S).group(0)
-    links = [
-        line.strip()
-        for line in head.splitlines()
-        if line.strip().startswith("<link") and STYLESHEET_TAG not in line
-    ]
-    metas = [
-        line.strip()
-        for line in head.splitlines()
-        if line.strip().startswith("<meta") and "charset" not in line and "viewport" not in line
-    ]
-    if fragment:
-        # The host supplies the head, the icons and the address; only the page's own links stay.
-        page_only = ('rel="icon"', 'rel="apple-touch-icon"', 'rel="canonical"', 'rel="preload"')
-        links = [link for link in links if not any(rel in link for rel in page_only)]
-        page = "\n".join([title, *links, f"<style>\n{css}</style>", body.strip()]) + "\n"
+
+def _hashed(stem: str, text: str) -> str:
+    return f"assets/{stem}.{hashlib.sha256(text.encode('utf-8')).hexdigest()[:10]}.js"
+
+
+def build_pages(
+    api_base: str | None = None, engine: dict[str, Any] | None = None
+) -> tuple[dict[str, str], dict[str, Any]]:
+    """The multi-page site: every page at its own address (pricing/index.html, ...), the
+    scripts and data as long-cached files in assets/, robots.txt, sitemap.xml and the
+    Cloudflare _headers and _redirects files. Returns (file texts by path, designs for designs/)."""
+    files: dict[str, str] = {}
+    designs: dict[str, Any] = {}
+    data = None
+    scripts = ""
+    if api_base:
+        config = f"window.CLARCHY_API_BASE = {_script_json(api_base.rstrip('/'))};"
+        scripts += f"<script>{config}</script>\n  "
     else:
-        page = "\n".join(
-            [
-                "<!doctype html>",
-                '<html lang="en">',
-                "<head>",
-                '<meta charset="utf-8">',
-                '<meta name="viewport" content="width=device-width, initial-scale=1">',
-                title,
-                *metas,
-                *links,
-                f"<style>\n{css}</style>",
-                "</head>",
-                "<body>",
-                body.strip(),
-                "</body>",
-                "</html>",
-            ]
-        )
-    # Fonts sit in fonts/ next to the page and the brand images at the site root.
-    page = page.replace("/static/fonts/", "fonts/").replace("/static/brand/", "")
-    if "/static/" in page:
-        raise ValueError("exported page still references /static/ assets")
-    return page
+        data = site_data(engine=engine)
+        designs = data.pop("designs")
+        data["design_files"] = True
+        data_js = f"window.CLARCHY_DATA = {_script_json(data)};\n"
+        data_path = _hashed("data", data_js)
+        files[data_path] = data_js
+        scripts += f'<script src="/{data_path}" defer></script>\n  '
+    app_js = "\n".join(app_scripts())
+    app_path = _hashed("app", app_js)
+    files[app_path] = app_js
+    scripts += f'<script src="/{app_path}" defer></script>\n'
+    shell = site.Shell(mode=_mode(api_base, engine), style=_inline_style(), scripts=scripts)
+    content = _content(data)
+    for page in site.pages(content):
+        files[f"{page.path.strip('/')}/index.html".lstrip("/")] = site.render(page, content, shell)
+    files["sitemap.xml"] = site.sitemap(content)
+    files["robots.txt"] = site.ROBOTS
+    files["_headers"] = site.HEADERS
+    files["_redirects"] = site.redirects(content)
+    return files, designs
 
 
 def export_site(
@@ -227,17 +246,23 @@ def export_site(
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     engine = engine_config(pyodide_base) if with_engine and not api_base else None
-    designs: dict[str, Any] | None = None if fragment or api_base else {}
     path = out / "index.html"
-    path.write_text(build_site(fragment, api_base, engine, designs_out=designs), encoding="utf-8")
+    if fragment:
+        path.write_text(build_site(True, api_base, engine), encoding="utf-8")
+    else:
+        files, designs = build_pages(api_base, engine)
+        for name, text in files.items():
+            target = out / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text, encoding="utf-8")
+        if designs:
+            folder = out / "designs"
+            folder.mkdir(exist_ok=True)
+            for key, body in designs.items():
+                text = json.dumps(body, ensure_ascii=False, separators=(",", ":"))
+                (folder / design_file(key)).write_text(text, encoding="utf-8")
     if engine:
         (out / ENGINE_BUNDLE).write_bytes(engine_bundle())
-    if designs:
-        folder = out / "designs"
-        folder.mkdir(exist_ok=True)
-        for key, body in designs.items():
-            text = json.dumps(body, ensure_ascii=False, separators=(",", ":"))
-            (folder / design_file(key)).write_text(text, encoding="utf-8")
     static = resources.files("clarchy").joinpath("static")
     fonts = out / "fonts"
     fonts.mkdir(exist_ok=True)

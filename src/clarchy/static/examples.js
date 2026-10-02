@@ -1,27 +1,13 @@
 "use strict";
 
-// The Examples page: a gallery of reviewed reference architectures; each opens in a workspace.
+// The Examples page, a gallery of reviewed reference architectures, and each example in a
+// workspace on its own page.
 
 const Examples = (() => {
-  const { $, el, fill, api } = CA;
-  const TAG_RULES = [
-    ["Kubernetes", ["kubernetes", "event-autoscaling"]],
-    ["AI", ["llm-inference", "vector-search", "agent-orchestration", "llm-gateway"]],
-    ["Data", ["stream", "batch-etl", "data-warehouse"]],
-    ["Event-driven", ["message-queue", "event-bus", "workflow"]],
-    ["Serverless", ["serverless-function"]],
-    ["Containers", ["container-service"]],
-    ["Web", ["cdn"]],
-  ];
+  const { $, api } = CA;
   let patterns = [];
-  let filter = "All";
   let workspace = null;
   const designs = {}; // pattern id -> promise of its AWS design
-
-  function tagsFor(pattern) {
-    const caps = new Set(pattern.capabilities || []);
-    return TAG_RULES.filter(([, list]) => list.some((c) => caps.has(c))).map(([tag]) => tag);
-  }
 
   function awsDesign(id) {
     if (!designs[id]) {
@@ -46,9 +32,9 @@ const Examples = (() => {
     observer.observe(node);
   }
 
-  function thumbnail(pattern, frame, img) {
+  function thumbnail(id, frame, img) {
     whenVisible(frame, async () => {
-      const design = await awsDesign(pattern.id);
+      const design = await awsDesign(id);
       if (design) img.src = svgSource(design.svg);
     });
   }
@@ -69,50 +55,41 @@ const Examples = (() => {
     });
   }
 
-  function renderFilters() {
-    const tags = ["All", ...TAG_RULES.map(([t]) => t).filter((t) => patterns.some((p) => tagsFor(p).includes(t)))];
-    fill($("example-filters"), tags.map((t) => el("button", {
-      type: "button", class: "chip", "aria-pressed": String(t === filter),
-      onclick: () => { filter = t; renderFilters(); renderGrid(); },
-    }, t)));
-  }
-
-  function renderGrid() {
-    const shown = patterns.filter((p) => filter === "All" || tagsFor(p).includes(filter));
-    fill($("example-grid"), shown.map((p) => {
-      const img = el("img", { alt: `${p.name} on AWS` });
-      const frame = el("div", { class: "example-thumb" }, img);
-      thumbnail(p, frame, img);
-      return el("li", {}, el("a", { class: "example-card", href: `#examples/${p.id}` },
-        frame,
-        el("div", { class: "example-body" },
-          el("h2", { text: p.name }),
-          el("p", { text: p.summary || "" })),
-        el("dl", { class: "card-block" },
-          el("div", {}, el("dt", { text: "No." }), el("dd", { text: String(patterns.indexOf(p) + 1).padStart(2, "0") })),
-          el("div", {}, el("dt", { text: "Type" }), el("dd", { text: tagsFor(p).slice(0, 2).join(" · ") || "General" })),
-          el("div", {}, el("dt", { text: "Services" }), el("dd", { text: String(p.components || 0) })))));
-    }));
+  // The cards and filters come with the page (site.py); this adds the drawings and makes
+  // the filters work.
+  function bindIndex() {
+    const grid = $("example-grid");
+    if (!grid || grid.dataset.ready) return;
+    grid.dataset.ready = "true";
+    for (const card of grid.querySelectorAll(".example-card[data-id]")) {
+      thumbnail(card.dataset.id, card.querySelector(".example-thumb"), card.querySelector("img"));
+    }
+    const filters = [...$("example-filters").querySelectorAll("[data-tag]")];
+    for (const button of filters) {
+      button.addEventListener("click", () => {
+        const tag = button.dataset.tag;
+        for (const other of filters) other.setAttribute("aria-pressed", String(other === button));
+        for (const li of grid.children) li.hidden = tag !== "All" && !(li.dataset.tags || "").split("|").includes(tag);
+      });
+    }
   }
 
   async function show(id) {
     const pattern = patterns.find((p) => p.id === id);
-    $("examples-index").hidden = Boolean(pattern);
-    $("example-detail").hidden = !pattern;
-    if (!pattern) return;
+    if (!pattern) { CA.go(CA.href("examples"), { replace: true }); return; }
+    const crumb = document.querySelector("#page-example [data-crumb]");
+    if (crumb) crumb.textContent = pattern.name;
     if (!workspace) workspace = new Workspace($("example-workspace"), { editable: true });
     if (workspace.patternId !== id) {
       workspace.patternId = id;
       const found = await api.pattern(id);
       if (found) await workspace.load(found.spec_yaml);
     }
-    window.scrollTo({ top: 0 });
   }
 
   function init(list) {
     patterns = list;
-    renderFilters();
-    renderGrid();
+    bindIndex();
   }
 
   return { init, show, preview };

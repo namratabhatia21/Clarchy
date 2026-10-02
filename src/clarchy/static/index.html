@@ -18,16 +18,17 @@
   <meta property="og:image:alt" content="Clarchy: a cloud architecture drawing with its monthly cost">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://clarchy.com/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231b2127'/%3E%3Cg fill='none'%3E%3Cpath d='M4 26.5h24' stroke='%23f3f1ea' stroke-width='2'/%3E%3Cpath d='M8.5 26.5V15a7.5 7.5 0 0 1 15 0v11.5' stroke='%23ff7a3d' stroke-width='2.6'/%3E%3Cpath d='M12.5 26.5V15.5a3.5 3.5 0 0 1 7 0v11' stroke='%23f3f1ea' stroke-width='1.4'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="icon" href="/static/brand/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231b2127'/%3E%3Cg fill='none'%3E%3Cpath d='M4 26.5h24' stroke='%23f3f1ea' stroke-width='2'/%3E%3Cpath d='M8.5 26.5V15a7.5 7.5 0 0 1 15 0v11.5' stroke='%23ff7a3d' stroke-width='2.6'/%3E%3Cpath d='M12.5 26.5V15.5a3.5 3.5 0 0 1 7 0v11' stroke='%23f3f1ea' stroke-width='1.4'/%3E%3C/g%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="/static/brand/apple-touch-icon.png">
   <link rel="preload" href="/static/fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/static/app.css">
 </head>
-<body>
+<body<!-- render:body-attrs -->>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
-    <a class="brand" href="#plan" aria-label="Clarchy home">
+    <a class="brand" href="/" aria-label="Clarchy home">
       <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
         <g fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M2 27.5h28M3.5 29.5l2-4M26.5 29.5l2-4"/>
@@ -40,19 +41,20 @@
       <span class="brand-tag">Cloud architecture drawings</span>
     </a>
     <nav class="main-nav" aria-label="Sections">
-      <a href="#plan" class="main-link" data-page="plan">Plan</a>
-      <a href="#examples" class="main-link" data-page="examples">Examples</a>
-      <a href="#services" class="main-link" data-page="services">Services</a>
-      <a href="#pricing" class="main-link" data-page="pricing">Pricing</a>
-      <a href="#howto" class="main-link" data-page="howto">How to</a>
-      <a href="#blog" class="main-link" data-page="blog">Blog</a>
-      <a href="#about" class="main-link" data-page="about">About</a>
+      <a href="/" class="main-link" data-page="plan">Plan</a>
+      <a href="/examples/" class="main-link" data-page="examples">Examples</a>
+      <a href="/services/" class="main-link" data-page="services">Services</a>
+      <a href="/pricing/" class="main-link" data-page="pricing">Pricing</a>
+      <a href="/how-to/" class="main-link" data-page="howto">How to</a>
+      <a href="/blog/" class="main-link" data-page="blog">Blog</a>
+      <a href="/about/" class="main-link" data-page="about">About</a>
     </nav>
-    <span class="engine-chip" id="engine-chip" hidden></span>
+    <!-- render:engine-chip -->
   </header>
 
   <main id="main">
     <!-- Plan: describe the app, watch the agent work, explore the result -->
+    <!-- page:plan -->
     <section class="page" id="page-plan" data-page="plan">
       <div class="plan-start" id="plan-start">
         <div class="instruments" aria-hidden="true">
@@ -72,7 +74,7 @@
         </div>
 
         <form class="composer marks" id="composer" novalidate>
-          <p class="static-note" id="static-note" hidden>
+          <p class="static-note" id="static-note"<!-- render:static-note-hidden -->>
             This demo has no server, so it replays recorded runs of the samples below.
             <a href="https://github.com/namratabhatia21/Clarchy#run-it-yourself" target="_blank" rel="noopener noreferrer">Run Clarchy yourself</a>
             to plan your own app.
@@ -94,7 +96,7 @@
             <label class="select-chip" id="region-option">
               <span>Region</span>
               <select id="region">
-                <option value="">From the text</option>
+                <option value="">From the text</option><!-- render:regions -->
               </select>
             </label>
             <label class="select-chip" id="mode-option">
@@ -120,22 +122,22 @@
           <p class="composer-error" id="composer-error" role="alert" hidden></p>
           <div class="drop-hint" aria-hidden="true">Drop your document here</div>
         </form>
-        <p class="composer-foot" id="composer-foot">Word, PDF, Excel, Markdown or text, up to 10 MB · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to start</p>
-        <p class="credit-line" id="credit-line" hidden></p>
+        <!-- render:composer-foot -->
+        <!-- render:credit-line -->
 
         <section class="samples" aria-labelledby="samples-title">
           <h2 class="label" id="samples-title">Try a sample</h2>
-          <ul class="sample-list" id="sample-list"></ul>
+          <ul class="sample-list" id="sample-list"><!-- render:samples --></ul>
         </section>
 
         <figure class="proof" id="proof" data-example="rag-chatbot">
-          <a class="proof-sheet" href="#examples/rag-chatbot" tabindex="-1" aria-hidden="true"><img alt=""></a>
+          <a class="proof-sheet" href="/examples/rag-chatbot/" tabindex="-1" aria-hidden="true"><img alt="Architecture drawing of a RAG chatbot on AWS, with its services and how they connect" width="1280" height="720"></a>
           <figcaption>
             <span class="proof-text">
               <b class="proof-title">RAG chatbot on AWS</b>
               <span class="proof-meta">A reference example, drawn and priced by Clarchy</span>
             </span>
-            <a class="proof-link" href="#examples/rag-chatbot">Open it on every cloud</a>
+            <a class="proof-link" href="/examples/rag-chatbot/">Open it on every cloud</a>
           </figcaption>
         </figure>
 
@@ -324,40 +326,48 @@
         <div class="workspace" id="plan-workspace" hidden></div>
       </div>
     </section>
+    <!-- /page:plan -->
 
     <!-- Examples: reviewed reference architectures -->
+    <!-- page:examples -->
     <section class="page" id="page-examples" data-page="examples" hidden>
-      <div class="examples-index" id="examples-index">
-        <div class="page-head">
-          <h1>Examples</h1>
-          <p>Seven reviewed reference architectures. Open one to see it on every cloud, with costs.</p>
-        </div>
-        <div class="chips-row" id="example-filters" role="group" aria-label="Filter examples"></div>
-        <ul class="example-grid" id="example-grid"></ul>
+      <!-- crumbs -->
+      <div class="page-head">
+        <h1>Examples</h1>
+        <p><!-- render:example-count --> reviewed reference architectures. Open one to see it on every cloud, with costs.</p>
       </div>
-      <div class="example-detail" id="example-detail" hidden>
-        <a class="back-link" href="#examples">← All examples</a>
-        <div class="workspace" id="example-workspace"></div>
-      </div>
+      <div class="chips-row" id="example-filters" role="group" aria-label="Filter examples"><!-- render:example-filters --></div>
+      <ul class="example-grid" id="example-grid"><!-- render:example-grid --></ul>
     </section>
+    <!-- /page:examples -->
+
+    <!-- One example on every cloud -->
+    <!-- page:example -->
+    <section class="page" id="page-example" data-page="example" hidden>
+      <!-- crumbs -->
+      <div class="workspace" id="example-workspace"><!-- render:example-head --></div>
+    </section>
+    <!-- /page:example -->
 
     <!-- Services: equivalent services across clouds -->
+    <!-- page:services -->
     <section class="page catalog-layout" id="page-services" data-page="services" hidden>
+      <!-- crumbs -->
       <aside class="filters" aria-label="Filters">
         <div class="filter-group">
           <h2 class="label">Stage</h2>
-          <div class="filter-list" id="filter-stages"></div>
+          <div class="filter-list" id="filter-stages"><!-- render:filter-stages --></div>
         </div>
         <div class="filter-group">
           <h2 class="label">Providers</h2>
-          <div class="filter-list" id="filter-providers"></div>
+          <div class="filter-list" id="filter-providers"><!-- render:filter-providers --></div>
         </div>
         <div class="filter-group">
           <h2 class="label">Match</h2>
-          <div class="segmented full" id="filter-match"></div>
+          <div class="segmented full" id="filter-match"><!-- render:filter-match --></div>
         </div>
         <div class="filter-foot">
-          <p id="catalog-review"></p>
+          <!-- render:catalog-review -->
           <details>
             <summary>What the match labels mean</summary>
             <dl>
@@ -372,7 +382,7 @@
       <div class="catalog-main">
         <div class="catalog-head">
           <div>
-            <h1>Services <span class="count" id="catalog-count"></span></h1>
+            <h1>Services <span class="count" id="catalog-count"><!-- render:catalog-count --></span></h1>
             <p class="catalog-sub">The service that does each job on AWS, Azure, Google Cloud and open source, and where they differ.</p>
           </div>
           <div class="catalog-controls">
@@ -391,13 +401,16 @@
             </label>
           </div>
         </div>
-        <ul class="catalog-results" id="catalog-results"></ul>
+        <ul class="catalog-results" id="catalog-results"><!-- render:catalog-results --></ul>
         <p class="empty" id="catalog-empty" hidden>No services match. Try another search or clear a filter.</p>
       </div>
     </section>
+    <!-- /page:services -->
 
     <!-- Pricing: a free allowance, then Pro (a waitlist during early access) -->
+    <!-- page:pricing -->
     <section class="page" id="page-pricing" data-page="pricing" hidden>
+      <!-- crumbs -->
       <div class="page-head">
         <h1>Pricing</h1>
         <p>Start free. Clarchy is in early access, so Pro opens to a waitlist first.</p>
@@ -414,7 +427,7 @@
             <li>Downloads: diagram, explanation and spec</li>
             <li>Unlimited samples, examples and re-planning</li>
           </ul>
-          <a class="btn" href="#plan">Start a plan</a>
+          <a class="btn" href="/">Start a plan</a>
         </article>
         <article class="plan-card featured">
           <h2>Pro</h2>
@@ -454,9 +467,12 @@
         </dl>
       </section>
     </section>
+    <!-- /page:pricing -->
 
     <!-- How to: using Clarchy, step by step -->
+    <!-- page:howto -->
     <section class="page" id="page-howto" data-page="howto" hidden>
+      <!-- crumbs -->
       <div class="page-head">
         <h1>How to use Clarchy</h1>
         <p>From a brief to a design you can review, price and share, in six steps. Each one matches what you see on screen.</p>
@@ -465,14 +481,14 @@
         <nav class="howto-index" aria-label="On this page">
           <p class="label">Contents</p>
           <ol>
-            <li><a href="#howto/brief" data-section="brief"><span class="no">1</span>Write the brief</a></li>
-            <li><a href="#howto/plan" data-section="plan"><span class="no">2</span>Plan it</a></li>
-            <li><a href="#howto/drawing" data-section="drawing"><span class="no">3</span>Read the drawing</a></li>
-            <li><a href="#howto/tabs" data-section="tabs"><span class="no">4</span>Cost, policies and workflows</a></li>
-            <li><a href="#howto/answers" data-section="answers"><span class="no">5</span>Answer and re-plan</a></li>
-            <li><a href="#howto/share" data-section="share"><span class="no">6</span>Download and share</a></li>
-            <li><a href="#howto/ai" data-section="ai"><span class="no">A</span>Use an AI model</a></li>
-            <li><a href="#howto/compare" data-section="compare"><span class="no">B</span>Compare clouds</a></li>
+            <li><a href="/how-to/#howto-brief" data-section="brief"><span class="no">1</span>Write the brief</a></li>
+            <li><a href="/how-to/#howto-plan" data-section="plan"><span class="no">2</span>Plan it</a></li>
+            <li><a href="/how-to/#howto-drawing" data-section="drawing"><span class="no">3</span>Read the drawing</a></li>
+            <li><a href="/how-to/#howto-tabs" data-section="tabs"><span class="no">4</span>Cost, policies and workflows</a></li>
+            <li><a href="/how-to/#howto-answers" data-section="answers"><span class="no">5</span>Answer and re-plan</a></li>
+            <li><a href="/how-to/#howto-share" data-section="share"><span class="no">6</span>Download and share</a></li>
+            <li><a href="/how-to/#howto-ai" data-section="ai"><span class="no">A</span>Use an AI model</a></li>
+            <li><a href="/how-to/#howto-compare" data-section="compare"><span class="no">B</span>Compare clouds</a></li>
           </ol>
         </nav>
         <div class="howto-body">
@@ -511,13 +527,13 @@
           <section class="howto-step" id="howto-plan" data-section="plan" aria-labelledby="howto-plan-title">
             <h2 id="howto-plan-title"><span class="step-no">2</span>Plan it</h2>
             <ol class="howto-list">
-              <li>On <a href="#plan">Plan</a>, type or paste the brief, or click <b>Attach</b>. You can also drop a file on the box.</li>
+              <li>On <a href="/">Plan</a>, type or paste the brief, or click <b>Attach</b>. You can also drop a file on the box.</li>
               <li><b>Region</b>: leave <i>From the text</i> to use the place your brief names, or choose one.</li>
-              <li><b>Planner</b>: the rule-based planner is instant and keeps everything in your browser. To have an AI model write the design, see <a href="#howto/ai">Use an AI model</a>.</li>
+              <li><b>Planner</b>: the rule-based planner is instant and keeps everything in your browser. To have an AI model write the design, see <a href="/how-to/#howto-ai">Use an AI model</a>.</li>
               <li>Click <b>Design architecture</b>, or press <kbd>Ctrl</kbd>+<kbd>Enter</kbd>. The first plan downloads the planning engine, about 15&nbsp;MB; after that, plans take seconds.</li>
               <li>Six steps run: read, understand, design, add build and deploy, describe the workflows and map to every cloud. <b>Show steps</b> lists what was found at each one.</li>
             </ol>
-            <p>On clarchy.com, the first time you start you are asked for your name, company and email. Your first <span data-free-count>3</span> diagrams from your own briefs are free; samples, examples and re-planning don't use them. See <a href="#pricing">Pricing</a>.</p>
+            <p>On clarchy.com, the first time you start you are asked for your name, company and email. Your first <span data-free-count>3</span> diagrams from your own briefs are free; samples, examples and re-planning don't use them. See <a href="/pricing/">Pricing</a>.</p>
             <p class="howto-tip"><span class="label">Tip</span><span>No brief yet? <b>Try a sample</b>, under the box, runs a ready-made one.</span></p>
           </section>
 
@@ -575,33 +591,43 @@
           <section class="howto-step" id="howto-compare" data-section="compare" aria-labelledby="howto-compare-title">
             <h2 id="howto-compare-title"><span class="step-no">B</span>Compare clouds</h2>
             <ul class="howto-list">
-              <li><a href="#services">Services</a> has a card for each job a system needs, with the service that does it on every cloud. Filter by stage or cloud; <span class="tag close">Close</span> and <span class="tag partial">Partial</span> mark differences worth knowing.</li>
-              <li><a href="#examples">Examples</a> are reviewed reference architectures. Open one to see it on every cloud, with costs.</li>
-              <li>The <a href="#blog">Blog</a> walks through worked examples, such as a field service assistant for wind turbines.</li>
+              <li><a href="/services/">Services</a> has a card for each job a system needs, with the service that does it on every cloud. Filter by stage or cloud; <span class="tag close">Close</span> and <span class="tag partial">Partial</span> mark differences worth knowing.</li>
+              <li><a href="/examples/">Examples</a> are reviewed reference architectures. Open one to see it on every cloud, with costs.</li>
             </ul>
             <div class="howto-end">
-              <a class="btn btn-primary" href="#plan">Start a plan</a>
+              <a class="btn btn-primary" href="/">Start a plan</a>
             </div>
           </section>
         </div>
       </div>
     </section>
+    <!-- /page:howto -->
 
-    <!-- Blog: why Clarchy exists, worked examples, what to plan for -->
+    <!-- Blog: worked examples and notes -->
+    <!-- page:blog -->
     <section class="page" id="page-blog" data-page="blog" hidden>
-      <div class="blog-index" id="blog-index">
-        <div class="page-head">
-          <h1>Blog</h1>
-          <p>Worked examples and notes on planning cloud and AI systems.</p>
-        </div>
-        <ul class="post-list" id="post-list"></ul>
+      <!-- crumbs -->
+      <div class="page-head">
+        <h1>Blog</h1>
+        <p>Worked examples and notes on planning cloud and AI systems.</p>
       </div>
-      <article class="post" id="post" hidden></article>
+      <!-- render:post-list -->
     </section>
+    <!-- /page:blog -->
+
+    <!-- One post -->
+    <!-- page:post -->
+    <section class="page" id="page-post" data-page="post" hidden>
+      <!-- crumbs -->
+      <article class="post" id="post"><!-- render:post --></article>
+    </section>
+    <!-- /page:post -->
 
     <!-- About -->
+    <!-- page:about -->
     <section class="page" id="page-about" data-page="about" hidden>
       <div class="prose-page">
+        <!-- crumbs -->
         <div class="page-head">
           <h1>About Clarchy</h1>
           <p>Clarchy turns a requirements brief into a cloud architecture you can question, price and compare across AWS, Azure, Google Cloud and open source.</p>
@@ -616,19 +642,25 @@
         </section>
         <section>
           <h2>What happens to your brief</h2>
-          <p>On clarchy.com the planner runs in your browser, so your brief and documents are not uploaded anywhere. If you choose an AI model, your brief goes from your browser straight to that model's provider, with your own access token. The <a href="#privacy">privacy page</a> has the details.</p>
+          <p>On clarchy.com the planner runs in your browser, so your brief and documents are not uploaded anywhere. If you choose an AI model, your brief goes from your browser straight to that model's provider, with your own access token. The <a href="/privacy/">privacy page</a> has the details.</p>
+        </section>
+        <section class="author-bio" id="author">
+          <h2>Who makes Clarchy</h2>
+          <p>Namrata Bhatia is the founder of Clarchy.</p>
         </section>
         <dl class="about-contact">
           <div><dt>Contact</dt><dd><a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a></dd></div>
-          <div><dt>Founder</dt><dd>Namrata Bhatia</dd></div>
-          <div><dt>New here</dt><dd><a href="#howto">How to use Clarchy</a></dd></div>
+          <div><dt>New here</dt><dd><a href="/how-to/">How to use Clarchy</a></dd></div>
         </dl>
       </div>
     </section>
+    <!-- /page:about -->
 
     <!-- Privacy -->
+    <!-- page:privacy -->
     <section class="page" id="page-privacy" data-page="privacy" hidden>
       <article class="prose-page">
+        <!-- crumbs -->
         <div class="page-head">
           <h1>Privacy</h1>
           <p>Clarchy is built so that your requirements stay with you. This page explains what Clarchy keeps about you, and what happens to your data when you use clarchy.com.</p>
@@ -673,10 +705,13 @@
         </section>
       </article>
     </section>
+    <!-- /page:privacy -->
 
     <!-- Terms -->
+    <!-- page:terms -->
     <section class="page" id="page-terms" data-page="terms" hidden>
       <article class="prose-page">
+        <!-- crumbs -->
         <div class="page-head">
           <h1>Terms of use</h1>
           <p>By using clarchy.com you agree to these terms. They are short because the site is free to start and there is nothing to install.</p>
@@ -712,7 +747,7 @@
         </section>
         <section>
           <h2>Names and trademarks</h2>
-          <p>AWS, Azure, Google Cloud and other product names belong to their owners. Clarchy is independent and not affiliated with or endorsed by any cloud provider.</p>
+          <p>AWS, Azure, Google Cloud and other product names belong to their owners. AWS diagrams use the AWS Architecture Icons under AWS's terms for those icons. Clarchy is independent and not affiliated with or endorsed by any cloud provider.</p>
         </section>
         <section>
           <h2>No warranty</h2>
@@ -724,17 +759,18 @@
         </section>
       </article>
     </section>
+    <!-- /page:terms -->
   </main>
 
   <footer class="footer">
     <dl class="sheet-title">
-      <div class="brand-cell"><dt>Project</dt><dd id="project-name">Clarchy</dd></div>
-      <div><dt>Sheet</dt><dd id="sheet-name">01 · Plan</dd></div>
-      <div><dt>Founder</dt><dd><a href="#about">Namrata Bhatia</a></dd></div>
-      <div><dt>Prices</dt><dd id="prices-as-of">–</dd></div>
-      <div class="notes"><dt>Notes</dt><dd>Estimates use public list prices. Service names belong to their owners; Clarchy is not affiliated with any cloud provider.</dd></div>
+      <div class="brand-cell"><dt>Project</dt><dd id="project-name"<!-- render:version-title -->>Clarchy</dd></div>
+      <div><dt>Sheet</dt><dd id="sheet-name"><!-- render:sheet --></dd></div>
+      <div><dt>Founder</dt><dd><a href="/about/#author">Namrata Bhatia</a></dd></div>
+      <div><dt>Prices</dt><dd id="prices-as-of"><!-- render:prices-as-of --></dd></div>
+      <div class="notes"><dt>Notes</dt><dd>Estimates use public list prices. Service names and icons belong to their owners; Clarchy is not affiliated with any cloud provider.</dd></div>
     </dl>
-    <p class="footer-links"><span id="copyright">© 2026 Clarchy</span><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="mailto:namrata.bhatia@clarchy.com">Contact</a></p>
+    <p class="footer-links"><span id="copyright"><!-- render:copyright --></span><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="mailto:namrata.bhatia@clarchy.com">Contact</a></p>
   </footer>
 
   <!-- Sign-up: asked on the first action on the home page (access.js) -->
@@ -750,7 +786,7 @@
       <label class="trap" aria-hidden="true">Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label>
       <p class="form-error" id="signup-error" role="alert" hidden></p>
       <button type="submit" class="btn btn-primary">Continue</button>
-      <p class="modal-fine">We use these details for your free diagrams and your account. Your brief stays in your browser. <a href="#privacy" data-close>Privacy</a> · <a href="#terms" data-close>Terms</a></p>
+      <p class="modal-fine">We use these details for your free diagrams and your account. Your brief stays in your browser. <a href="/privacy/" data-close>Privacy</a> · <a href="/terms/" data-close>Terms</a></p>
     </form>
   </dialog>
 
@@ -762,7 +798,7 @@
       <p class="modal-lead" id="limit-text"></p>
       <div class="modal-actions">
         <button type="button" class="btn btn-primary" id="limit-waitlist">Join the Pro waitlist</button>
-        <a class="btn" href="#pricing" data-close>See pricing</a>
+        <a class="btn" href="/pricing/" data-close>See pricing</a>
       </div>
     </div>
   </dialog>

@@ -3,6 +3,9 @@
     pip install -e ".[web,agent,ingest]"
     clarchy serve            # http://127.0.0.1:8000
 
+Pages: /, /examples/, /examples/<id>/, /services/, /pricing/, /how-to/, /blog/, /about/,
+/privacy/ and /terms/ (site.py), with their files under /static/.
+
 Endpoints:
   GET  /api/meta            providers, capabilities, regions, the planning engine in use
   GET  /api/samples         example requirements documents
@@ -32,7 +35,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from clarchy import __version__, catalog, payloads
+from clarchy import __version__, catalog, payloads, site
 from clarchy.icons import IconLibrary, bundled_library, icon_library
 from clarchy.ingest import MAX_UPLOAD_BYTES, IngestError, from_text, read_document
 
@@ -73,6 +76,17 @@ def _engine() -> tuple[Any, dict[str, Any]]:
 
 def _sse(event: dict[str, Any]) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+def _page_route(page: site.Page, content: site.Content, shell: site.Shell):
+    rendered: list[str] = []
+
+    def show() -> str:
+        if not rendered:
+            rendered.append(site.render(page, content, shell))
+        return rendered[0]
+
+    return show
 
 
 def create_app() -> FastAPI:
@@ -198,9 +212,19 @@ def create_app() -> FastAPI:
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
-    @app.get("/", response_class=HTMLResponse)
-    def index() -> str:
-        return static.joinpath("index.html").read_text(encoding="utf-8")
+    # The pages, each at its own address, rendered from static/index.html (site.py).
+    shell = site.Shell(
+        mode="server", style='<link rel="stylesheet" href="/static/app.css">', root=None
+    )
+    content = site.content(payloads.meta_payload(icons, engine))
+    for page in site.pages(content):
+        app.add_api_route(
+            page.path,
+            _page_route(page, content, shell),
+            methods=["GET"],
+            response_class=HTMLResponse,
+            include_in_schema=False,
+        )
 
     app.mount("/static", StaticFiles(directory=str(static)), name="static")
     return app

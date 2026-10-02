@@ -1,7 +1,7 @@
 "use strict";
 
-// The How to page: a guide in numbered sections, at #howto and #howto/<section>, and an
-// example brief that can be planned straight from the page.
+// The How to page: a guide in numbered sections (/how-to/#howto-<section>, or #howto/<section>
+// on a single-file build), and an example brief that can be planned straight from the page.
 
 const HowTo = (() => {
   const { $ } = CA;
@@ -20,7 +20,8 @@ const HowTo = (() => {
   // The current section is the last one whose heading has passed a third of the way down.
   function track() {
     ticking = false;
-    if ($("page-howto").hidden || !steps.length) return;
+    const page = $("page-howto");
+    if (!page || page.hidden || !steps.length) return;
     if (pinned) { setCurrent(pinned); return; }
     const line = window.innerHeight / 3;
     let current = steps[0];
@@ -41,20 +42,19 @@ const HowTo = (() => {
   }
 
   // Puts the example brief in the composer on the Plan page, and plans it if asked.
-  function useBrief(now) {
+  async function useBrief(now) {
     const text = $("howto-brief-text").textContent.replace(/\s+/g, " ").trim();
-    window.addEventListener("hashchange", () => Plan.useBrief(text, { now }), { once: true });
-    location.hash = "#plan";
+    await CA.go(CA.href("plan"));
+    Plan.useBrief(text, { now });
   }
 
   function init() {
     links = [...document.querySelectorAll(".howto-index a")];
     steps = [...document.querySelectorAll(".howto-step")];
     for (const link of links) {
-      // The same link twice doesn't change the hash, so scroll here too.
       link.addEventListener("click", (e) => {
-        if (link.hash !== location.hash) return;
         e.preventDefault();
+        CA.replaceUrl(link.getAttribute("href"));
         show(link.dataset.section);
       });
     }

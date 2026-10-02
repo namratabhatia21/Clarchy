@@ -66,6 +66,30 @@ def samples_payload() -> list[dict[str, str]]:
     ]
 
 
+# Capability ids are written in kebab case; these words keep their usual capitals in titles.
+ACRONYMS = {
+    "ai": "AI",
+    "iac": "IaC",
+    "ci": "CI",
+    "cd": "CD",
+    "dns": "DNS",
+    "cdn": "CDN",
+    "waf": "WAF",
+    "api": "API",
+    "llm": "LLM",
+    "etl": "ETL",
+    "db": "DB",
+}
+
+
+def capability_title(capability_id: str) -> str:
+    """A capability's title: key-value-db becomes "Key-value DB", with a non-breaking
+    hyphen so the title never wraps inside key-value."""
+    words = capability_id.replace("key-value", "key\u2011value").split("-")
+    words = [ACRONYMS.get(w, w) for w in words]
+    return " ".join([words[0][:1].upper() + words[0][1:], *words[1:]])
+
+
 def catalog_payload() -> dict[str, Any]:
     """Every capability with its equivalent service on each provider."""
     providers = catalog.providers_in_display_order()
@@ -87,6 +111,7 @@ def catalog_payload() -> dict[str, Any]:
         capabilities.append(
             {
                 "id": name,
+                "title": capability_title(name),
                 "tier": cap["tier"],
                 "stage": cap.get("stage"),
                 "category": cap["category"],

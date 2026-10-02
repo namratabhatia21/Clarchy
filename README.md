@@ -263,7 +263,8 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `planner/answers.py` | Answers to open questions turned into requirement statements for a re-plan |
 | `policies.py`, `data/policies.yaml` | AI and data regulations checked against a design |
 | `blog.py`, `data/blog/` | Blog posts in Markdown, rendered without dependencies |
-| `export.py` | The static site for GitHub Pages or Cloudflare Pages, with the in-browser engine bundle |
+| `site.py`, `static/index.html` | Every page at its own address, rendered from one template with its title, description, breadcrumbs and structured data |
+| `export.py` | The static site (pages, sitemap, robots.txt, Cloudflare `_headers` and `_redirects`) with the in-browser engine bundle |
 | `worker/` | The Cloudflare Worker API on clarchy.com: sign-ups, free diagrams and the Pro waitlist in D1 (`index.mjs`, `migrations/`, tests) |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
@@ -272,27 +273,34 @@ Design decisions are recorded in [docs/decisions/](docs/decisions/).
 
 ```bash
 clarchy export-site -o site/                          # the whole site (see below)
-clarchy export-site -o site/ --no-engine              # replay-only page
+clarchy export-site -o site/ --no-engine              # replay-only site
 clarchy export-site -o site/ --api-base https://...   # a front end for a hosted API
+clarchy export-site -o site/ --fragment               # one file with every page, #hash links
 ```
 
-The page plans in the visitor's browser: it loads Pyodide from its CDN on first use (about
-15 MB, then cached) and runs this package from `clarchy-engine.zip` next to the page.
-The catalog and recorded runs of the samples are embedded; the pre-drawn examples sit in
-`designs/` and load when shown
+Every page has its own address: `/`, `/examples/` and `/examples/<id>/`, `/services/`,
+`/pricing/`, `/how-to/`, `/blog/`, `/about/`, `/privacy/` and `/terms/`
+([ADR 0013](docs/decisions/0013-a-page-per-address.md)). Each is a complete HTML file with
+its content, title, description, canonical link, breadcrumbs and structured data, so search
+engines read it without running scripts; once a page has loaded, the menu switches pages
+without reloading. Beside the pages go `sitemap.xml`, `robots.txt`, Cloudflare's
+`_headers` (long caching for `assets/`, and `noindex` on the workers.dev copy) and
+`_redirects` (an address without its final slash moves to the one with it, in one 301).
+Links are root-relative, so serve the folder at the root of a domain.
+
+The pages plan in the visitor's browser: they load Pyodide from its CDN on first use (about
+15 MB, then cached) and run this package from `clarchy-engine.zip`. The scripts, the
+catalog and recorded runs of the samples are in `assets/` with a content hash in their
+names; the pre-drawn examples sit in `designs/` and load when shown
 ([ADR 0008](docs/decisions/0008-plans-run-in-the-browser.md)). The folder also holds the
 fonts (`fonts/`, served with the site under the SIL Open Font License), the sharing
-image (`og.png`), the touch icon and `404.html`, so serve it over HTTP rather than opening
-`index.html` from disk. The `Pages`
-workflow refreshes the AWS prices and publishes the site on every push to the default
-branch and every Monday. With `--api-base` the page talks to a Clarchy server instead,
-which needs `CLARCHY_CORS_ORIGINS` set.
+image (`og.png`), the icons and `404.html`, so serve it over HTTP rather than opening a
+file from disk. With `--api-base` the pages talk to a Clarchy server instead, which needs
+`CLARCHY_CORS_ORIGINS` set. `clarchy serve` serves the same pages itself.
 
-The live site is served at **clarchy.com** from GitHub Pages: the domain's DNS points at
-GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` from
-`www` to `namratabhatia21.github.io`), and the custom domain is set in the repository's
-Settings → Pages. The page uses only relative links, so the same build works on a custom
-domain or under a `github.io` path.
+The live site is **clarchy.com**, on the Cloudflare Worker described below. After a change
+of addresses, submit `https://clarchy.com/sitemap.xml` in Google Search Console and Bing
+Webmaster Tools (both free).
 
 **Hosting on Cloudflare.** A Cloudflare Worker named `clarchy` serves the built files as
 static assets (`wrangler.jsonc`), and its API on `/api/*`. `make prices site` builds the

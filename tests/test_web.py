@@ -19,6 +19,7 @@ SCRIPTS = (
     "plan.js",
     "examples.js",
     "services.js",
+    "blog.js",
     "howto.js",
     "access.js",
     "app.js",
@@ -46,17 +47,28 @@ def design(client, yaml_text, provider="aws"):
     return client.post("/api/design", json={"spec_yaml": yaml_text, "provider": provider})
 
 
-def test_index_and_assets_served(client):
+def test_pages_and_assets_served(client):
     page = client.get("/")
     assert (
         page.status_code == 200
         and "<title>Clarchy · Cloud architecture from your requirements</title>" in page.text
     )
+    pricing = client.get("/pricing/")
+    assert pricing.status_code == 200 and "<title>Pricing · Clarchy</title>" in pricing.text
+    assert 'id="page-pricing"' in pricing.text and 'id="page-plan"' not in pricing.text
+    example = client.get("/examples/rag-chatbot/")
+    assert '<h1 class="ws-name">RAG chatbot</h1>' in example.text
+    assert client.get("/pricing", follow_redirects=False).headers["location"].endswith("/pricing/")
+    assert client.get("/examples/nothing-here/").status_code == 404
+    # A server copy plans on the server and has no accounts.
+    assert 'id="engine-chip"' in page.text and "Rule-based planner" in page.text
+    assert '<p class="credit-line" id="credit-line" hidden></p>' in page.text
     assets = (
         *(f"/static/{name}" for name in SCRIPTS),
         "/static/app.css",
         "/static/fonts/archivo.woff2",
         "/static/brand/apple-touch-icon.png",
+        "/static/brand/favicon.ico",
     )
     for asset in assets:
         assert client.get(asset).status_code == 200, asset

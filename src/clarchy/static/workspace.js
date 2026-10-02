@@ -33,7 +33,18 @@ function answerHint(text, kind) {
 class Workspace {
   constructor(root, { editable = false, onReplan = null } = {}) {
     this.root = root;
-    root.replaceChildren(document.getElementById("workspace-template").content.cloneNode(true));
+    // An example's page arrives with its title drawn (site.py). It stays where it is (it is
+    // the page's h1, and moving it would paint it again); the rest is built around it.
+    const parts = document.getElementById("workspace-template").content.cloneNode(true);
+    const drawn = root.querySelector(":scope > .ws-head");
+    if (drawn) {
+      const head = parts.querySelector(".ws-head");
+      drawn.append(...[...head.children].filter((child) => !child.matches(".ws-title")));
+      head.remove();
+      root.append(parts);
+    } else {
+      root.replaceChildren(parts);
+    }
     this.q = (sel) => root.querySelector(sel);
     this.qa = (sel) => root.querySelectorAll(sel);
     this.editable = editable && CA.canEdit();
@@ -302,7 +313,9 @@ class Workspace {
       if (!comp) continue;
       node.setAttribute("tabindex", "0");
       node.setAttribute("role", "button");
-      node.setAttribute("aria-label", comp.service ? `${comp.service}: ${comp.label}` : comp.label);
+      // The name is the words drawn in the box, so what is read out matches what is seen.
+      const words = [...node.querySelectorAll("text")].map((t) => t.textContent.trim()).filter(Boolean).join(" ");
+      node.setAttribute("aria-label", words || (comp.service ? `${comp.service}: ${comp.label}` : comp.label));
       node.addEventListener("click", () => onSelect(comp.id));
       node.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(comp.id); }

@@ -114,7 +114,8 @@ def cmd_export_site(args: argparse.Namespace) -> int:
         with_engine=not args.no_engine,
         pyodide_base=args.pyodide_base or PYODIDE_BASE,
     )
-    print(f"wrote {path} ({path.stat().st_size // 1024} KB)", file=sys.stderr)
+    pages = sorted(path.parent.rglob("index.html"))
+    print(f"wrote {len(pages)} page(s) to {path.parent}", file=sys.stderr)
     return 0
 
 
@@ -253,7 +254,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--port", type=int, default=8000)
     p.set_defaults(func=cmd_serve)
 
-    p = sub.add_parser("export-site", help="export the web UI as one static HTML file")
+    p = sub.add_parser("export-site", help="export the web UI as a static site")
     p.add_argument("-o", "--output", default="site", help="output folder (default: site)")
     p.add_argument(
         "--fragment",

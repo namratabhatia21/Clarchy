@@ -319,7 +319,9 @@ const Plan = (() => {
   function init(meta, sampleList) {
     samples = sampleList;
     const regionSelect = $("region");
-    for (const [key, label] of Object.entries(meta.regions)) regionSelect.append(el("option", { value: key, text: label }));
+    if (regionSelect.options.length <= 1) { // the page usually lists them already (site.py)
+      for (const [key, label] of Object.entries(meta.regions)) regionSelect.append(el("option", { value: key, text: label }));
+    }
     setupPlanners(meta.engine || { mode: "none" });
 
     if (!CA.canPlan()) {
@@ -334,19 +336,26 @@ const Plan = (() => {
     } else {
       const draft = CA.recall(DRAFT_KEY);
       if (typeof draft === "string") $("requirements").value = draft;
-      if (CA.MODE === "static") {
-        $("composer-foot").textContent = "Runs in your browser. The first plan downloads the planning engine (about 15 MB). Word, PDF, Excel, Markdown or text, up to 10 MB.";
-      }
     }
 
-    fill($("sample-list"), samples.map((s) => el("li", {}, el("button", {
-      type: "button", class: "chip sample", title: s.text.split("\n").slice(1).join(" ").trim().slice(0, 220),
-      onclick: () => {
-        if (CA.canPlan()) $("requirements").value = s.text;
-        setFile(null);
-        start({ text: s.text, sampleId: s.id, label: `Sample · ${s.title}` });
-      },
-    }, s.title))));
+    const runSample = (s) => {
+      if (CA.canPlan()) $("requirements").value = s.text;
+      setFile(null);
+      start({ text: s.text, sampleId: s.id, label: `Sample · ${s.title}` });
+    };
+    // The sample buttons come with the page (site.py); older pages get them drawn here.
+    const listed = [...$("sample-list").querySelectorAll("[data-sample]")];
+    if (listed.length) {
+      for (const button of listed) {
+        const s = samples.find((x) => x.id === button.dataset.sample);
+        if (s) button.addEventListener("click", () => runSample(s));
+      }
+    } else {
+      fill($("sample-list"), samples.map((s) => el("li", {}, el("button", {
+        type: "button", class: "chip sample", title: s.text.split("\n").slice(1).join(" ").trim().slice(0, 220),
+        onclick: () => runSample(s),
+      }, s.title))));
+    }
 
     $("composer").addEventListener("submit", (e) => {
       e.preventDefault();

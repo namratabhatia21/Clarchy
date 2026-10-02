@@ -1,0 +1,51 @@
+name: Space
+
+# Mirrors clarchy.com to the Hugging Face Space bhatianamrata/clarchy, a static Space:
+# the site is built as one page (clarchy export-site --single-file) and published by
+# scripts/hf_space.py. It runs on every push to the default branch, by hand, and each
+# morning after the Prices workflow, whose commits don't start other workflows.
+#
+# It needs the repository secret HF_TOKEN: a Hugging Face access token that may write to
+# the Space (a fine-grained token with write access to it, or a write token). Without the
+# secret the job only says so. The repository variable HF_SPACE publishes to another Space.
+
+on:
+  push:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: space
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    env:
+      HAS_HF_TOKEN: ${{ secrets.HF_TOKEN != '' }}
+    steps:
+      - name: Check for a Hugging Face token
+        if: env.HAS_HF_TOKEN != 'true'
+        run: echo "::notice::No HF_TOKEN secret, so the Space is not updated."
+      - uses: actions/checkout@v4
+        if: env.HAS_HF_TOKEN == 'true'
+      - uses: actions/setup-python@v5
+        if: env.HAS_HF_TOKEN == 'true'
+        with:
+          python-version: "3.12"
+      - name: Build the site as one page
+        if: env.HAS_HF_TOKEN == 'true'
+        run: |
+          pip install -q . "huggingface_hub>=0.25"
+          clarchy export-site -o space --single-file
+      - name: Publish to the Space
+        if: env.HAS_HF_TOKEN == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: python scripts/hf_space.py space

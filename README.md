@@ -282,6 +282,13 @@ settings. The `Pages` workflow can also deploy it when run by hand, with the rep
 secrets `CLOUDFLARE_API_TOKEN` (permission *Workers Scripts: Edit*) and
 `CLOUDFLARE_ACCOUNT_ID`, and publishes a copy to GitHub Pages when that is turned on.
 
+The `Space` workflow mirrors the site to the Hugging Face Space `bhatianamrata/clarchy`,
+a static Space. It builds the site as one page
+(`clarchy export-site --single-file`, which needs no server-side addresses) and publishes
+it with [scripts/hf_space.py](scripts/hf_space.py) on every push to the default branch and
+each morning after the price refresh. It needs the repository secret `HF_TOKEN`, a Hugging
+Face token that may write to the Space; without it the job is skipped.
+
 ## Known limitations
 
 - **The agent has only been tested against scripted models** (Claude-style and

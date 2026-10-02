@@ -87,7 +87,7 @@ def test_every_address_is_its_own_page(built):
         assert 'name="robots"' not in text, "nothing is kept out of search"
         assert f'data-page="{p.key}" data-routing="path"' in text
         opening = re.search(r"<body[^>]*>", text)
-        assert text[opening.end() :].lstrip().startswith("<a class=\"skip-link\""), p.path
+        assert text[opening.end() :].lstrip().startswith('<a class="skip-link"'), p.path
         # The menu marks where the visitor is.
         menu = site.PARENT.get(p.key, p.key)
         if menu in {"plan", "examples", "services", "pricing", "howto", "blog", "about"}:
@@ -223,3 +223,21 @@ def test_pre_rendered_colours_and_labels_match_the_scripts():
     assert table("STAGE_COLOURS") == site.STAGE_COLOURS
     assert table("PROVIDER_COLOURS") == site.PROVIDER_COLOURS
     assert table("FIDELITY_HELP") == site.FIDELITY_HELP
+
+
+def test_design_rules_that_can_be_checked(built):
+    """DESIGN.md lists what makes a site look generated; these are the checkable ones."""
+    out, _content, _pages = built
+    static = resources.files("clarchy").joinpath("static")
+    css = static.joinpath("app.css").read_text()
+    template = static.joinpath("index.html").read_text()
+    assert "—" not in template, "no em dashes in the copy"
+    assert not re.search(r"\b(Inter|Geist|Space Grotesk)\b", css)
+    assert not re.search(r":hover[^{]*\{[^}]*transform", css), "hover never moves things"
+    loops = [line for line in css.splitlines() if "infinite" in line]
+    progress = ("pipeline-status", "running", "drafting-loader")
+    assert all(any(p in line for p in progress) for line in loops), "only progress loops"
+    assert "radial-gradient" not in css, "no orbs or dot grids"
+    pricing = (out / "pricing" / "index.html").read_text()
+    assert pricing.count('<article class="plan-card') == 2, "two plans, not three tiers"
+    assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css

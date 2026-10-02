@@ -268,6 +268,8 @@ services and diagram theme are in [`data/mappings/`](src/clarchy/data/mappings/)
 | `worker/` | The Cloudflare Worker API on clarchy.com: sign-ups, free diagrams and the Pro waitlist in D1 (`index.mjs`, `migrations/`, tests) |
 
 Design decisions are recorded in [docs/decisions/](docs/decisions/).
+The site's look and the patterns it never uses are in [DESIGN.md](DESIGN.md); read it
+before changing anything people see.
 
 ## Static site
 

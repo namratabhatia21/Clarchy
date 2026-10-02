@@ -143,6 +143,16 @@ class Workspace {
     for (const tab of this.qa(".ws-view-tab")) tab.setAttribute("aria-selected", String(tab.dataset.view === view));
     for (const section of this.qa(".ws-view")) section.hidden = section.dataset.view !== view;
     if (view !== "workflows") this.stopPlaying();
+    if (view === "cost") this.countCosts();
+  }
+
+  // The cost totals are worked out in front of the reader when the Cost view opens.
+  countCosts() {
+    for (const node of this.qa(".cost .stat-value[data-value]")) {
+      if (node.dataset.counted) continue;
+      node.dataset.counted = "true";
+      CA.countUp(node, Number(node.dataset.value), (v) => CA.money(v));
+    }
   }
 
   async refresh() {
@@ -433,12 +443,12 @@ class Workspace {
     const stats = el("div", { class: "cost-stats" },
       el("div", { class: "stat" },
         el("span", { class: "stat-label", text: `On demand, ${term.label}` }),
-        el("b", { class: "stat-value", text: money(term.on_demand) }),
+        el("b", { class: "stat-value", "data-value": term.on_demand, text: money(term.on_demand) }),
         el("span", { class: "stat-sub", text: `${money(cost.monthly)} in the first month` })),
       el("div", { class: "stat" },
         el("span", { class: "stat-label", text: term.commitment ? `With ${term.commitment} commitments` : "With commitments" }),
         term.committed != null
-          ? [el("b", { class: "stat-value", text: money(term.committed) }),
+          ? [el("b", { class: "stat-value", "data-value": term.committed, text: money(term.committed) }),
             el("span", { class: "stat-sub good", text: `Save ${money(save)} (${Math.round((save / term.on_demand) * 100)}%)` })]
           : [el("b", { class: "stat-value muted", text: "–" }),
             el("span", { class: "stat-sub", text: cost.break_even_months
@@ -513,7 +523,7 @@ class Workspace {
         el("p", { text: `${cost.price_region} list prices in ${cost.currency}, as of ${cost.as_of} (${cost.source}).` }),
         cost.commitment_notes.length > 0 && el("ul", {}, cost.commitment_notes.map((n) => el("li", { text: n }))),
         el("ul", {}, cost.assumptions.map((n) => el("li", { text: n }))),
-        cost.calculator && el("p", {}, "Check with the ", el("a", { href: cost.calculator, target: "_blank", rel: "noopener noreferrer", text: "official calculator ↗" }))));
+        cost.calculator && el("p", {}, "Check with the ", el("a", { href: cost.calculator, target: "_blank", rel: "noopener noreferrer", text: "official calculator ↗" }))));    if (this.state.view === "cost") this.countCosts();
   }
 
   // ---------- policies ----------

@@ -113,6 +113,30 @@ const Drafting = (() => {
     canvas.drawTimer = setTimeout(() => canvas.classList.remove("drawing"), 2400);
   }
 
+  // ---------- drawings plotted as they come into view ----------
+  // Things already on screen stay as they are; the rest are plotted top to bottom the
+  // first time they scroll in (app.css: [data-draw]).
+  const PLOTTED = ".proof, .plan-card, .howto-step, .about-contact";
+  let watcher = null;
+  function reveal() {
+    if (reduced.matches || !("IntersectionObserver" in window)) return;
+    watcher ||= new IntersectionObserver((entries) => {
+      for (const { target, isIntersecting } of entries) {
+        if (!target.dataset.draw) {
+          target.dataset.draw = isIntersecting ? "seen" : "waiting";
+          if (isIntersecting) watcher.unobserve(target);
+        } else if (isIntersecting) {
+          target.dataset.draw = "drawn";
+          watcher.unobserve(target);
+        }
+      }
+    }, { rootMargin: "0px 0px -6% 0px" });
+    for (const node of document.querySelectorAll(PLOTTED)) {
+      if (!node.dataset.draw && !node.closest(".page[hidden]")) watcher.observe(node);
+    }
+  }
+  window.addEventListener("clarchy:page", () => requestAnimationFrame(reveal));
+
   // ---------- scroll ----------
   // Runs once the home page is on screen: at load, or when it is first opened from another
   // page (app.js).

@@ -335,6 +335,20 @@ const CA = (() => {
     return new XMLSerializer().serializeToString(svg);
   }
 
+  // Works a figure up to its value once (costs); with reduced motion it is just written.
+  function countUp(node, value, format) {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !(value > 0)) { node.textContent = format(value); return; }
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 700);
+      node.textContent = format(t < 1 ? value * (1 - (1 - t) ** 3) : value);
+      if (t < 1) requestAnimationFrame(step);
+    };
+    node.textContent = format(0);
+    requestAnimationFrame(step);
+  }
+
   function money(value, { cents = false } = {}) {
     if (value === null || value === undefined) return "–";
     const digits = cents || Math.abs(value) < 10 ? 2 : 0;
@@ -351,7 +365,7 @@ const CA = (() => {
   return {
     DATA, MODE, ROUTING, CLIPBOARD_ONLY, HF_DEFAULT_MODEL, canPlan, canEdit, hasRecordedRun,
     $, el, fill, store, recall, href, replaceUrl, asset, number, plural, sleep,
-    api, deliver, fidelityBadge, fidelityTag, FIDELITY_HELP, FIDELITY_LABEL, cropDiagram, croppedSvgText, money,
+    api, deliver, fidelityBadge, fidelityTag, FIDELITY_HELP, FIDELITY_LABEL, cropDiagram, croppedSvgText, money, countUp,
     PROVIDER_COLOURS, STAGE_COLOURS,
     meta: null, // filled in by app.js
     go: (url) => { window.location.href = url; }, // app.js swaps in its router

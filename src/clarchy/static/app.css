@@ -206,6 +206,7 @@ code, .mono { font-family: var(--font-mono); font-size: .9em; }
 code { background: var(--surface-2); padding: 1px 5px; border-radius: 2px; }
 kbd { font: 500 11px var(--font-mono); border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 2px; padding: 0 4px; background: var(--surface); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+a, button, summary, label, select { touch-action: manipulation; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip-link { position: absolute; left: -999px; top: 8px; background: var(--surface); padding: 8px 12px; border: 1px solid var(--rule); z-index: 10; }
 .skip-link:focus { left: 16px; }
@@ -337,6 +338,7 @@ main { flex: 1; }
   position: relative; background: var(--surface); border: 1px solid var(--rule);
   display: flex; flex-direction: column;
 }
+.composer:has(textarea:focus-visible) { border-color: var(--focus); }
 .composer.dragging { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
 .composer textarea {
   width: 100%; border: 0; resize: vertical; min-height: 136px; background: transparent;
@@ -712,7 +714,7 @@ blockquote.evidence { margin: 4px 0 0; padding: 2px 0 2px 12px; border-left: 2px
   display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border-strong);
   color: inherit; text-decoration: none; height: 100%; transition: border-color .15s, transform .15s;
 }
-.example-card:hover { border-color: var(--rule); transform: translateY(-2px); }
+.example-card:hover { border-color: var(--rule); }
 .example-grid li { animation: plot .8s cubic-bezier(.3, .6, .2, 1) backwards; }
 .example-grid li:nth-child(2) { animation-delay: .08s; }
 .example-grid li:nth-child(3) { animation-delay: .16s; }
@@ -929,8 +931,7 @@ main { overflow-x: clip; }
 }
 .scroll-cue:hover { color: var(--text); }
 .cue-line { position: relative; width: 1px; height: 34px; background: var(--rule); }
-.cue-line::after { content: ""; position: absolute; left: -4px; bottom: 0; border: 4.5px solid transparent; border-top: 7px solid var(--accent); border-bottom: 0; animation: cue 1.8s ease-in-out infinite; }
-@keyframes cue { 50% { transform: translateY(6px); } }
+.cue-line::after { content: ""; position: absolute; left: -4px; bottom: 0; border: 4.5px solid transparent; border-top: 7px solid var(--accent); border-bottom: 0; }
 
 /* ---------- From brief to drawing: a detail that assembles as you scroll ---------- */
 .story {
@@ -945,7 +946,7 @@ main { overflow-x: clip; }
 .story-step.active { opacity: 1; }
 .step-no {
   width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surface);
-  display: inline-flex; align-items: center; justify-content: center; font: 500 12px var(--font-mono); color: var(--muted); transition: all .3s;
+  display: inline-flex; align-items: center; justify-content: center; font: 500 12px var(--font-mono); color: var(--muted); transition: background-color .3s, border-color .3s, color .3s;
 }
 .story-step.active .step-no { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .story-step h3 { font: 700 24px/1.15 var(--font-display); font-stretch: 87.5%; margin: 1px 0 8px; }
@@ -974,12 +975,12 @@ main { overflow-x: clip; }
 .story-fig.s1 [data-s="1"] .draw, .story-fig.s2 [data-s="2"] .draw, .story-fig.s3 [data-s="3"] .draw,
 .story-fig.s4 [data-s="4"] .draw, .story-fig.s5 [data-s="5"] .draw, .story-fig.s6 [data-s="6"] .draw { stroke-dashoffset: 0; }
 /* stage 6: the same drawing on every cloud */
-.story-fig .badge { fill: #ff9900; animation: clouds 6s steps(1) infinite; }
-.story-fig .tab { fill: var(--paper-muted); animation: tab-on 6s steps(1) infinite; }
+.story-fig .badge { fill: #ff9900; animation: clouds 6s steps(1) 2; }
+.story-fig .tab { fill: var(--paper-muted); animation: tab-on 6s steps(1) 2; }
 .story-fig .tab1 { animation-delay: -4.5s; }
 .story-fig .tab2 { animation-delay: -3s; }
 .story-fig .tab3 { animation-delay: -1.5s; }
-.story-fig .tab-bar { fill: var(--redline); animation: tab-bar 6s steps(1) infinite; }
+.story-fig .tab-bar { fill: var(--redline); animation: tab-bar 6s steps(1) 2; }
 @keyframes clouds { 0% { fill: #ff9900; } 25% { fill: #0078d4; } 50% { fill: #1a73e8; } 75% { fill: #0d9488; } }
 @keyframes tab-on { 0% { fill: var(--paper-ink); font-weight: 700; } 25%, 100% { fill: var(--paper-muted); font-weight: 500; } }
 @keyframes tab-bar { 0% { transform: translateX(0); } 25% { transform: translateX(58px); } 50% { transform: translateX(116px); } 75% { transform: translateX(174px); } }
@@ -1035,7 +1036,7 @@ main { overflow-x: clip; }
   display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 18px 20px 20px; background: var(--surface);
   border: 1px solid var(--border-strong); color: inherit; text-decoration: none; transition: border-color .15s, transform .15s;
 }
-.post-card:hover { border-color: var(--rule); transform: translateY(-2px); }
+.post-card:hover { border-color: var(--rule); }
 .post-card h2 { font: 700 22px/1.15 var(--font-display); font-stretch: 87.5%; }
 .post-card p { color: var(--muted); font-size: 14px; }
 .post-meta { margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--border); color: var(--faint); font: 11.5px var(--font-mono); }
@@ -1078,9 +1079,11 @@ main { overflow-x: clip; }
 .credit-line { color: var(--faint); font-size: 12.5px; margin-top: -14px; }
 .credit-line.pending { visibility: hidden; } /* keeps its line until the account API answers */
 .credit-line a { color: var(--muted); }
-.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; max-width: 1080px; }
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: stretch; max-width: 760px; }
+.plans-teams { margin: 16px 0 0; max-width: 760px; padding-top: 14px; border-top: 1px dashed var(--border); color: var(--muted); font-size: 14.5px; }
+.plans-teams a { color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
 .plan-card { background: var(--surface); border: 1px solid var(--border-strong); padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; }
-.plan-card.featured { border: 1.5px solid var(--rule); box-shadow: inset 0 3px 0 var(--accent); }
+.plan-card.featured { border: 1.5px solid var(--rule); }
 .plan-card h2 { font: 700 22px/1.2 var(--font-display); font-stretch: 87.5%; }
 .plan-price { display: flex; flex-direction: column; gap: 2px; }
 .plan-price b { font: 700 30px/1.1 var(--font-display); font-stretch: 87.5%; }
@@ -1094,7 +1097,7 @@ main { overflow-x: clip; }
 .faq dt { font-weight: 600; margin-top: 10px; }
 .faq dd { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 
-.modal { width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.modal { overscroll-behavior: contain; width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
 .modal::backdrop { background: rgba(18, 24, 30, .45); }
 .modal-body { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 24px 24px 20px; }
 .modal-body h2 { font: 700 24px/1.15 var(--font-display); font-stretch: 87.5%; padding-right: 28px; }
@@ -1198,3 +1201,47 @@ main { overflow-x: clip; }
 @media (max-width: 380px) {
   .main-link { padding: 0 1px; font-size: 12.5px; }
 }
+
+/* ---------- The drawing set, brought to life (DESIGN.md) ----------
+   Motion happens once, means something (a line being drawn, a figure being worked out)
+   and never loops; prefers-reduced-motion turns all of it off (see the top of the file). */
+
+/* The home page headline is lettered in, word by word. */
+.lettered span { display: inline-block; animation: letter .55s cubic-bezier(.3, .6, .2, 1) backwards; animation-delay: calc(var(--w) * 60ms); }
+@keyframes letter { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% -6% -20% 0); } }
+
+/* The brief's frame is traced in pencil once, then the trace lifts off. */
+.composer::before {
+  content: ""; position: absolute; inset: -1px; z-index: 2; pointer-events: none;
+  --t: linear-gradient(var(--accent), var(--accent));
+  background: var(--t) left top / 0 2px no-repeat, var(--t) right top / 2px 0 no-repeat,
+    var(--t) right bottom / 0 2px no-repeat, var(--t) left bottom / 2px 0 no-repeat;
+  animation: trace 2.6s .55s cubic-bezier(.45, 0, .3, 1) forwards;
+}
+@keyframes trace {
+  0% { background-size: 0 2px, 2px 0, 0 2px, 2px 0; }
+  26% { background-size: 100% 2px, 2px 0, 0 2px, 2px 0; }
+  36% { background-size: 100% 2px, 2px 100%, 0 2px, 2px 0; }
+  62% { background-size: 100% 2px, 2px 100%, 100% 2px, 2px 0; }
+  72%, 82% { background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%; opacity: 1; }
+  100% { background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%; opacity: 0; }
+}
+
+/* Drawings and plan cards are plotted top to bottom as they come into view (drafting.js
+   marks them; until then they are already where they will be, so nothing moves). */
+[data-draw="waiting"] { clip-path: inset(0 0 100% 0); }
+[data-draw="drawn"] { animation: plot .8s cubic-bezier(.3, .6, .2, 1) backwards; }
+
+/* Contour lines behind page headings, in the drawing's pencil (scripts/contours.py). */
+.page-head { position: relative; isolation: isolate; }
+.page-head::after {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  top: -56px; bottom: -6px; right: 0; width: min(62%, 720px);
+  background-color: var(--tick); opacity: .55;
+  -webkit-mask: url("/static/brand/contours.svg") right top / cover no-repeat;
+  mask: url("/static/brand/contours.svg") right top / cover no-repeat;
+}
+@media (max-width: 700px) { .page-head::after { width: 100%; opacity: .22; } }
+/* On reading pages the contours sit in the margin beside the text column, not behind it. */
+.prose-page .page-head::after { right: auto; left: calc(100% + 40px); width: min(34vw, 460px); top: -40px; bottom: auto; height: 220px; }
+@media (max-width: 1180px) { .prose-page .page-head::after { display: none; } }

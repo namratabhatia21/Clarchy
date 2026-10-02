@@ -11,7 +11,12 @@ blue-white blueprint paper, navy ink lines, one signal-orange accent, a title bl
 footer, sheet numbers, crop marks and dimension lines. The proof of the product is a real
 drawing that Clarchy made, not an illustration of one.
 
-The home page leads with an architect's massing model of a real design (`massing.py`,
+The home page is three frames. First a poster: "Brief in, drawing out" in huge condensed
+type on a signal-orange field, round a protractor that turns as the page scrolls, with
+architect's stamps in place of stickers; the header sits on it until it scrolls away.
+Then the brief beside a model of a real design, then how it works.
+
+The second frame shows an architect's massing model of a real design (`massing.py`,
 [ADR 0015](docs/decisions/0015-a-massing-model-on-the-home-page.md)): each running service
 is a white block on a navy base, with its official icon on top and its height set by what
 it costs a month, and callouts name the costliest. It is made from the RAG chatbot example

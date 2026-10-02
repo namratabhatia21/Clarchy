@@ -34,3 +34,14 @@ above the fold showed what Clarchy gives back, and in particular not the cost.
   well; layout shift stays under 0.02 and the headline is still the largest paint.
 - The same generator can draw any design, for example as a model view of a plan later.
 - Block heights compare services within one design; they are not a scale across designs.
+
+## Amendment, 2026-10-02: three frames
+
+The founder asked for the poster concept as the first frame, the model second and How it
+works third. The poster is drawn on a 1440 x 820 sheet scaled to the screen (container
+units keep its type and marks in place), with its own protractor that turns with the
+scroll; on phones it stacks. Its headline is the page's h1 ("Brief in, drawing out");
+the model frame's headline becomes an h2 and keeps "priced" as its accent. The header
+takes the poster's colour while the poster is in view, and the instruments wait until
+both the poster and the model have scrolled away. The example drawing now follows How it
+works, as its result.

@@ -150,6 +150,10 @@ const Drafting = (() => {
     const figure = document.querySelector(".story-fig");
     const steps = [...document.querySelectorAll(".story-step")];
     const how = [...document.querySelectorAll(".story .how-line li")];
+    const poster = document.getElementById("poster");
+    const posterDial = poster && poster.querySelector(".pd-dial");
+    const posterReading = poster && poster.querySelector(".pd-reading");
+    const topbar = document.querySelector(".topbar");
     let stage = -1;
     let queued = false;
 
@@ -166,9 +170,22 @@ const Drafting = (() => {
 
     function update() {
       queued = false;
-      if (start.offsetParent === null) return; // the run view or another page is showing
+      if (start.offsetParent === null) { // the run view or another page is showing
+        topbar?.classList.remove("on-poster");
+        return;
+      }
       const y = window.scrollY;
       const angle = y * DEG_PER_PX;
+      if (poster) {
+        // The header sits on the poster, and the instruments wait, until it scrolls away.
+        const over = poster.getBoundingClientRect().bottom > (topbar ? topbar.offsetHeight : 0) + 4;
+        topbar?.classList.toggle("on-poster", over);
+        instruments.classList.toggle("on-poster", over);
+        if (posterDial) posterDial.setAttribute("transform", `rotate(${(angle * 2).toFixed(2)})`);
+        if (posterReading) {
+          posterReading.textContent = `${((((212 - angle * 2) % 360) + 360) % 360).toFixed(0).padStart(3, "0")}°`;
+        }
+      }
       protractor.dial.style.transform = `rotate(${angle.toFixed(2)}deg)`;
       const reading = ((((NEEDLE - angle) % 360) + 360) % 360).toFixed(0).padStart(3, "0");
       protractor.reading.textContent = `${reading}°`;
@@ -190,10 +207,11 @@ const Drafting = (() => {
     window.addEventListener("clarchy:page", () => setTimeout(schedule, 0));
     new MutationObserver(schedule).observe(start, { attributes: true, attributeFilter: ["hidden"] });
 
-    const cue = document.getElementById("scroll-cue");
-    if (cue) {
-      cue.addEventListener("click", () => {
-        document.getElementById("story").scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth" });
+    // The poster's buttons take you to the brief and put the cursor in it.
+    for (const button of document.querySelectorAll("[data-to-brief]")) {
+      button.addEventListener("click", () => {
+        document.getElementById("brief").scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth" });
+        document.getElementById("requirements")?.focus({ preventScroll: true });
       });
     }
     if (reduced.matches) for (const el of document.querySelectorAll(".story-fig, .drafting-loader")) el.pauseAnimations?.();

@@ -65,11 +65,27 @@
             <span class="scale-marker"></span>
           </div>
         </div>
+        <section class="poster" id="poster" aria-labelledby="poster-title">
+          <div class="poster-canvas">
+            <h1 class="poster-title lettered" id="poster-title"><span class="pt-in"><span style="--w:0">Brief</span> <span style="--w:1">in</span></span><span class="sr-only">,</span> <span class="pt-out"><span style="--w:2">drawing</span> <span style="--w:3">out</span></span></h1>
+            <div class="poster-dial" aria-hidden="true"><!-- render:poster-dial --></div>
+            <!-- render:poster-art -->
+            <div class="poster-stamp" aria-hidden="true"><div><b>Priced daily</b><small>8 regions · Rev. C</small></div></div>
+            <button type="button" class="poster-tag" data-to-brief>Drop a PDF</button>
+            <div class="poster-cta">
+              <button type="button" class="poster-btn" data-to-brief>Design architecture</button>
+              <p>A cloud architecture from your brief, priced on four clouds. Free, in your browser.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="brief-frame" id="brief" aria-labelledby="brief-title">
         <div class="hero-grid">
         <div class="hero-main">
         <div class="hero">
-          <h1 class="lettered"><span style="--w:0">Turn</span> <span style="--w:1">a</span> <span style="--w:2">brief</span> <span style="--w:3">into</span> <span style="--w:4">a</span> <span style="--w:5">cloud</span> <span style="--w:6">architecture,</span> <span style="--w:7"><em>priced</em></span> <span style="--w:8">before</span> <span style="--w:9">you</span> <span style="--w:10">build</span> <span style="--w:11">it</span></h1>
-          <p class="hero-sub">Paste a brief or upload a document. Clarchy designs the services and how they connect, prices them on AWS, Azure, Google Cloud and open source, and shows the reason for every choice.</p>
+          <p class="kicker"><!-- render:model-kicker --></p>
+          <h2 id="brief-title">See your app as a model, <em>priced</em> before you build it.</h2>
+          <p class="hero-sub">Paste a brief or upload a document. Clarchy designs the architecture on AWS, Azure, Google Cloud or open source, sizes every service and prices it for your region.</p>
         </div>
 
         <form class="composer marks" id="composer" novalidate>
@@ -121,6 +137,7 @@
           <p class="composer-error" id="composer-error" role="alert" hidden></p>
           <div class="drop-hint" aria-hidden="true">Drop your document here</div>
         </form>
+        <!-- render:model-facts -->
         <!-- render:composer-foot -->
         <!-- render:credit-line -->
 
@@ -131,21 +148,9 @@
         </div>
         <!-- render:hero-model -->
         </div>
+        </section>
 
-        <figure class="proof" id="proof" data-example="rag-chatbot">
-          <a class="proof-sheet" href="/examples/rag-chatbot/" tabindex="-1" aria-hidden="true"><img alt="Architecture drawing of a RAG chatbot on AWS, with its services and how they connect" width="1280" height="720"></a>
-          <figcaption>
-            <span class="proof-text">
-              <b class="proof-title">RAG chatbot on AWS</b>
-              <span class="proof-meta">A reference example, drawn and priced by Clarchy</span>
-            </span>
-            <a class="proof-link" href="/examples/rag-chatbot/">Open it on every cloud</a>
-          </figcaption>
-        </figure>
 
-        <button type="button" class="scroll-cue" id="scroll-cue">
-          <span class="cue-line" aria-hidden="true"></span>See how a drawing comes together
-        </button>
 
         <section class="story" id="story" aria-labelledby="story-title">
           <div class="story-head">
@@ -282,6 +287,17 @@
             </div>
           </div>
         </section>
+
+        <figure class="proof" id="proof" data-example="rag-chatbot">
+          <a class="proof-sheet" href="/examples/rag-chatbot/" tabindex="-1" aria-hidden="true"><img alt="Architecture drawing of a RAG chatbot on AWS, with its services and how they connect" width="1280" height="720"></a>
+          <figcaption>
+            <span class="proof-text">
+              <b class="proof-title">RAG chatbot on AWS</b>
+              <span class="proof-meta">A reference example, drawn and priced by Clarchy</span>
+            </span>
+            <a class="proof-link" href="/examples/rag-chatbot/">Open it on every cloud</a>
+          </figcaption>
+        </figure>
       </div>
 
       <div class="run" id="run" hidden>

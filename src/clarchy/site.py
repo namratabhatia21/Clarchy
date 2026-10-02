@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import re
 from dataclasses import dataclass
 from datetime import date
@@ -138,7 +139,7 @@ class Content:
     catalog: dict[str, Any]
     posts: list[dict[str, Any]]
     proof: dict[str, Any] | None = None  # the home page's example drawing: name, size, cost
-    model: str | None = None  # the home page's massing model of that example, as HTML
+    model: dict[str, str] | None = None  # the home page's massing model: figure, kicker, facts
     example_meta: dict[str, str] | None = None  # each example's facts line, as HTML
 
 
@@ -185,8 +186,87 @@ def content(meta: dict[str, Any]) -> Content:
     )
 
 
-def _model(example: str) -> str:
-    """The home page's massing model of an example on AWS, at today's prices (ADR 0015)."""
+def _poster_dial() -> str:
+    """The poster's protractor: a full circle in degrees, with copy round its edge. It turns
+    as the page scrolls (drafting.js)."""
+    r, ticks, inner, nums = 182, [], [], []
+    for d in range(0, 360, 2):
+        a = math.radians(d - 90)
+        r2 = r - (26 if d % 30 == 0 else 18 if d % 10 == 0 else 11)
+        width = 1.6 if d % 10 == 0 else 0.9
+        ticks.append(
+            f'<line x1="{(r - 6) * math.cos(a):.1f}" y1="{(r - 6) * math.sin(a):.1f}" '
+            f'x2="{r2 * math.cos(a):.1f}" y2="{r2 * math.sin(a):.1f}" stroke-width="{width}"/>'
+        )
+    for d in range(0, 360, 10):
+        a = math.radians(d - 90)
+        r2 = 74 if d % 30 == 0 else 80
+        inner.append(
+            f'<line x1="{88 * math.cos(a):.1f}" y1="{88 * math.sin(a):.1f}" '
+            f'x2="{r2 * math.cos(a):.1f}" y2="{r2 * math.sin(a):.1f}"/>'
+        )
+    for d in range(0, 360, 30):
+        a = math.radians(d - 90)
+        x, y = (r - 42) * math.cos(a), (r - 42) * math.sin(a)
+        turn = f"rotate({d} {x:.1f} {y:.1f})"
+        nums.append(f'<text x="{x:.1f}" y="{y + 4:.1f}" transform="{turn}">{d}</text>')
+    arc_r = 210
+    a0, a1 = math.radians(152), math.radians(252)
+    arc = (
+        f"M{arc_r * math.cos(a0):.1f} {arc_r * math.sin(a0):.1f} "
+        f"A{arc_r} {arc_r} 0 0 1 {arc_r * math.cos(a1):.1f} {arc_r * math.sin(a1):.1f}"
+    )
+    return (
+        '<svg viewBox="-240 -240 480 480" class="dial-art">'
+        f'<defs><path id="poster-arc" d="{arc}"/></defs>'
+        f'<circle class="pd-shadow" cx="10" cy="12" r="{r}"/>'
+        '<g class="pd-dial">'
+        f'<circle class="pd-face" r="{r}"/><circle class="pd-ring" r="{r - 56}"/>'
+        f'<g class="pd-ticks">{"".join(ticks)}{"".join(inner)}</g>'
+        f'<g class="pd-nums">{"".join(nums)}</g>'
+        f'<path class="pd-cross" d="M{-r + 8} 0H{r - 8}M0 {-r + 8}V{r - 8}"/></g>'
+        '<line class="pd-needle" x1="0" y1="0" x2="-84.5" y2="134.8"/>'
+        '<circle class="pd-needle-tip" cx="-84.5" cy="134.8" r="5"/>'
+        '<circle class="pd-hub" r="22"/><circle class="pd-pin" r="6"/>'
+        '<text class="pd-reading" y="62">212°</text>'
+        '<text class="pd-arc"><textPath href="#poster-arc" textLength="345" lengthAdjust="spacing">'
+        "FROM SOURCE CONTROL TO MONITORING</textPath></text></svg>"
+    )
+
+
+def _poster_art() -> str:
+    """The poster's stamps, marks and pencil loops (on a 1440 x 820 sheet)."""
+
+    def mark(x: float, y: float, r: float = 8) -> str:
+        return (
+            f'<g class="pa-mark"><circle cx="{x}" cy="{y}" r="{r}"/>'
+            f'<path d="M{x - r - 6} {y}h{2 * r + 12}M{x} {y - r - 6}v{2 * r + 12}"/></g>'
+        )
+
+    cx, cy = 1190, 134
+    return (
+        '<svg class="poster-art" viewBox="0 0 1440 820" preserveAspectRatio="none" '
+        'aria-hidden="true"><defs>'
+        f'<path id="poster-ring" d="M{cx - 62} {cy}a62 62 0 1 1 124 0a62 62 0 1 1 -124 0"/></defs>'
+        f'<g class="pa-stamp" transform="rotate(-14 {cx} {cy})">'
+        f'<circle cx="{cx}" cy="{cy}" r="78" stroke-width="2.4"/>'
+        f'<circle cx="{cx}" cy="{cy}" r="46" stroke-width="1.2"/>'
+        '<text><textPath href="#poster-ring" textLength="384" lengthAdjust="spacing">'
+        "FOUR CLOUDS · ONE BRIEF · PRICED ·</textPath></text>"
+        f'<path d="M{cx - 18} {cy}h36M{cx} {cy - 18}v36" stroke-width="2"/></g>'
+        '<path class="pa-loop" d="M812 70 c 26 -40, 54 -40, 40 -6 c -12 30, 30 30, 46 -2 '
+        'c 14 -30, 44 -26, 34 4"/>'
+        + mark(1350, 390, 7)
+        + mark(1010, 480, 9)
+        + mark(110, 440)
+        + mark(150, 560, 7)
+        + "</svg>"
+    )
+
+
+def _model(example: str) -> dict[str, str]:
+    """The home page's massing model of an example on AWS, at today's prices (ADR 0015):
+    the figure, the line above the headline and the facts under the brief."""
     from clarchy import massing, pricing
     from clarchy.icons import bundled_library
     from clarchy.mapping import map_to_provider
@@ -194,16 +274,24 @@ def _model(example: str) -> str:
 
     arch = map_to_provider(load_pattern(example), "aws")
     cost = pricing.estimate(arch)
-    caption = (
-        f"<b>{_e(arch.spec.name)} on AWS</b> in {_e(cost['price_region'])}, about "
-        f"{_money(cost['monthly'])} a month. Each block is as tall as that service costs."
-    )
-    return (
-        f'<figure class="hero-model" id="hero-model">'
+    running = len(massing.layout(arch, cost)[0])
+    as_of = _short_date(str(cost["as_of"]))
+    figure = (
+        '<figure class="hero-model" id="hero-model">'
         f"{massing.svg(arch, cost, bundled_library('aws'))}"
-        f'<figcaption>{caption} <a href="/examples/{example}/">Open it on every cloud</a>'
-        "</figcaption></figure>"
+        '<figcaption><span class="legend">Scale 1:100 · block height is monthly cost<br>'
+        "Dashed zones: serve · run · integrate · store · operate</span>"
+        f'<a href="/examples/{example}/">Open it on every cloud</a></figcaption></figure>'
     )
+    return {
+        "figure": figure,
+        "kicker": f"Model 01 · {_e(arch.spec.name)} on AWS",
+        "facts": (
+            f'<p class="model-facts"><i></i>{_e(cost["price_region"])} · '
+            f"{_money(cost['monthly'])} a month · {_plural(running, 'running service')}<br>"
+            f"AWS list prices of {_e(as_of)}, refreshed daily</p>"
+        ),
+    }
 
 
 @cache
@@ -853,7 +941,11 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "static-note-hidden": "" if shell.mode == "replay" else " hidden",
         "regions": _regions(c),
         "samples": _samples(c),
-        "hero-model": c.model or "",
+        "hero-model": c.model["figure"] if c.model else "",
+        "model-kicker": c.model["kicker"] if c.model else "",
+        "model-facts": c.model["facts"] if c.model else "",
+        "poster-dial": _poster_dial(),
+        "poster-art": _poster_art(),
         "example-count": _count_word(len(c.patterns)),
         "example-filters": _example_filters(c),
         "example-grid": _example_grid(c),

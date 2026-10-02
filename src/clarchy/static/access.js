@@ -129,7 +129,7 @@ const Access = (() => {
   // ---------- the first action on the home page asks who you are ----------
   function interactive(target) {
     const node = target.closest("button, a, input, textarea, select, label, summary");
-    if (!node || node.closest(".scroll-cue, #signup-dialog")) return null;
+    if (!node || node.closest(".poster, #signup-dialog")) return null;
     return node;
   }
 

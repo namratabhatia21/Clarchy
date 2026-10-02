@@ -204,8 +204,14 @@ def test_the_home_page_shows_a_priced_massing_model(built):
     assert '<svg class="massing"' in figure.group(0) and 'role="img"' in figure.group(0)
     assert re.search(r"about \$[\d,]+ a month", figure.group(0))
     assert 'href="/examples/rag-chatbot/"' in figure.group(0)
-    # One headline, with "priced" as its one accented word.
-    assert home.count("<h1") == 1 and "<em>priced</em>" in home
+    # Three frames: the poster with the page's one headline, the brief beside the model,
+    # then how it works; the example drawing follows as the result.
+    order = [home.index(s) for s in ('class="poster"', 'id="brief"', 'id="story"', 'id="proof"')]
+    assert order == sorted(order)
+    poster = home[order[0] : order[1]]
+    assert home.count("<h1") == 1 and '<h1 class="poster-title' in poster
+    assert 'class="dial-art"' in poster and "data-to-brief" in poster
+    assert "<em>priced</em>" in home[order[1] : order[2]]
 
 
 def test_about_names_the_founder(built):

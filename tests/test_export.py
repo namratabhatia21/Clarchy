@@ -42,7 +42,7 @@ def test_full_page_is_self_contained():
     assert page.startswith("<!doctype html>")
     assert "/static/" not in page
     # One data script plus every app script, and embedded SVG never ends a script early.
-    assert page.count("<script>") == page.count("</script>") == 9
+    assert page.count("<script>") == page.count("</script>") == 10
     data = embedded_data(page)
     assert data["designs"]["rag-chatbot.aws"]["svg"].startswith("<svg")
     assert "official_icons" in data["meta"]
@@ -86,6 +86,7 @@ def test_index_scripts_are_all_found():
         "examples.js",
         "services.js",
         "blog.js",
+        "howto.js",
         "app.js",
     ]
 

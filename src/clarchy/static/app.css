@@ -217,7 +217,7 @@ kbd { font: 500 11px var(--font-mono); border: 1px solid var(--border-strong); b
 /* ---------- top bar ---------- */
 .topbar {
   display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
-  height: 60px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--rule);
+  min-height: 60px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--rule);
   position: sticky; top: 0; z-index: 5;
 }
 .brand { display: flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; margin-right: auto; }
@@ -781,7 +781,6 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .sheet-title .notes { grid-column: 1 / -1; }
 }
 @media (max-width: 900px) {
-  .brand-tag { display: none; }
   .catalog-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .filters { position: static; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
   .filter-foot { display: none; }
@@ -793,14 +792,23 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .cost-line > summary .tag { display: none; }
   .cost-items .num:nth-child(2) { display: none; }
 }
+/* The header holds the brand, its tag, six sheets and the engine chip on one row from
+   1240px; down to 1000px without the tag; below that the sheets get a row of their own. */
+@media (max-width: 1240px) {
+  .brand-tag { display: none; }
+}
+@media (max-width: 1000px) {
+  .topbar { padding: 10px 24px 0; gap: 4px 12px; position: static; }
+  .main-nav { width: 100%; order: 3; height: 44px; gap: 0; }
+  .main-link { flex: 1; justify-content: center; padding: 0 6px; }
+  .engine-chip { order: 2; }
+}
 @media (max-width: 700px) {
   .page { padding: 20px 16px 36px; }
   .answer-form { padding-left: 14px; }
   .ws-review-notes > summary { flex-wrap: wrap; }
-  .topbar { height: auto; padding: 10px 16px 0; gap: 4px 12px; position: static; }
-  .main-nav { width: 100%; order: 3; height: 42px; gap: 0; }
-  .main-link { flex: 1; justify-content: center; padding: 0 6px; }
-  .engine-chip { order: 2; }
+  .topbar { padding: 10px 16px 0; }
+  .main-nav { height: 42px; }
   .plan-start { margin-top: 14px; gap: 20px; }
   .hero h1 { font-size: clamp(30px, 10vw, 42px); }
   .hero-sub { font-size: 15px; }
@@ -1000,29 +1008,103 @@ main { overflow-x: clip; }
 .post-foot { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }
 
 /* ---------- about ---------- */
-.about { display: flex; flex-direction: column; gap: 8px; }
-.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: start; margin-top: 12px; }
-.founder-card { background: var(--surface); border: 1px solid var(--rule); padding: 24px 26px; display: flex; flex-direction: column; gap: 10px; margin: 9px; }
-.founder-name { font: 700 clamp(30px, 3.6vw, 40px)/1.05 var(--font-display); font-stretch: 75%; text-transform: uppercase; letter-spacing: .02em; }
-.founder-role { color: var(--accent-ink); font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
-.founder-card > p:not(.label):not(.founder-role):not(.founder-contact) { color: var(--muted); font-size: 15px; }
-.founder-contact { display: flex; flex-direction: column; gap: 4px; padding-top: 12px; margin-top: 4px; border-top: 1px dashed var(--border); }
-.founder-contact a { font: 500 15px var(--font-mono); }
+.about { display: flex; flex-direction: column; gap: 22px; max-width: 980px; }
+.about .page-head { margin-bottom: 0; }
 .principles { margin: 0; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border-strong); }
 .principles > div { background: var(--surface); padding: 14px 18px; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 16px; }
 .principles dt { font: 500 11px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--text); padding-top: 3px; }
 .principles dd { margin: 0; color: var(--muted); font-size: 14px; }
+/* Contact, as the cells of a drawing's title block. */
+.about-contact { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--border-strong); }
+.about-contact > div { padding: 10px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.about-contact > div + div { border-left: 1px solid var(--border); }
+.about-contact dt { font: 500 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--faint); }
+.about-contact dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
 .sheet-title dd a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
 
+/* ---------- how to ---------- */
+.howto { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; align-items: start; }
+.howto-index { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 10px; }
+.howto-index ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--border-strong); }
+.howto-index a {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 6px 10px; margin-left: -1px;
+  border-left: 2px solid transparent; color: var(--muted); text-decoration: none; font-size: 13.5px; line-height: 1.35;
+}
+.howto-index a:hover { color: var(--text); }
+.howto-index a[aria-current="true"] { color: var(--text); font-weight: 600; border-left-color: var(--accent); }
+.howto-index .no { font: 500 10.5px var(--font-mono); color: var(--faint); }
+.howto-index a[aria-current="true"] .no { color: var(--accent-ink); }
+.howto-body { display: flex; flex-direction: column; gap: 52px; max-width: 900px; min-width: 0; }
+.howto-step { scroll-margin-top: 84px; display: flex; flex-direction: column; gap: 14px; }
+.howto-step > h2 {
+  display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--rule);
+  font: 700 clamp(24px, 2.6vw, 30px)/1.1 var(--font-display); font-stretch: 87.5%; text-transform: uppercase;
+}
+.howto-step > h2 .step-no { flex: none; }
+.howto-step > p, .howto-list li { color: var(--muted); font-size: 15px; max-width: 75ch; }
+.howto-step b { color: var(--text); font-weight: 600; }
+.howto-list { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.howto-list li::marker { font: 500 12px var(--font-mono); color: var(--faint); }
+.howto-step q { quotes: "\201C" "\201D"; }
+.howto-tip { display: flex; gap: 12px; align-items: baseline; padding: 10px 14px; background: var(--surface); border-left: 3px solid var(--accent); font-size: 14px; color: var(--muted); max-width: 75ch; }
+.howto-tip .label { flex: none; color: var(--accent-ink); }
+.howto-tabs dt .ext { text-transform: none; color: var(--faint); letter-spacing: 0; }
+.howto-end { padding-top: 6px; }
+
+/* The example brief, marked up the way a drawing is redlined. */
+.brief-card { margin: 9px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--rule); display: flex; flex-direction: column; gap: 14px; }
+.brief-text { font-size: 16.5px; line-height: 1.75; max-width: 72ch; }
+.brief-text mark { background: none; color: inherit; padding: 0 1px; border-bottom: 2px solid var(--redline); }
+.brief-found { font: 12.5px/1.6 var(--font-mono); color: var(--muted); padding-top: 12px; border-top: 1px dashed var(--border); }
+.brief-found .label { color: var(--redline); margin-right: 8px; }
+.brief-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.brief-actions .btn { height: 40px; }
+
+.table-wrap { overflow-x: auto; }
+.howto-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.howto-table thead th {
+  text-align: left; font: 500 10.5px var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+  padding: 6px 14px 6px 0; border-bottom: 1px solid var(--rule);
+}
+.howto-table tbody th, .howto-table td { text-align: left; vertical-align: top; padding: 11px 14px 11px 0; border-bottom: 1px solid var(--border); }
+.howto-table tbody th { width: 21%; font-weight: 600; }
+.howto-table td:first-of-type { width: 32%; }
+.howto-table td:last-child { color: var(--muted); }
+.howto-table q {
+  display: inline-block; margin: 0 4px 4px 0; padding: 1px 6px; border-radius: 2px;
+  font: 12.5px/1.6 var(--font-mono); background: var(--surface-2); color: var(--text);
+}
+
 @media (max-width: 900px) {
-  .about-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .principles > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .obligation { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .howto { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .howto-index { position: static; }
+  .howto-index ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 }
 @media (max-width: 700px) {
   .main-link .no { display: none; }
-  .main-link { padding: 0 2px; font-size: 13.5px; }
+  .main-link { padding: 0 2px; font-size: 13.5px; white-space: nowrap; }
+  /* Six sheets fit a phone; on the narrowest ones the row scrolls rather than wrapping,
+     so the current sheet's underline is drawn inside the link instead of over the rule. */
+  .main-nav { overflow-x: auto; scrollbar-width: none; }
+  .main-nav::-webkit-scrollbar { display: none; }
+  .main-link { margin-bottom: 0; border-bottom: 0; }
+  .main-link[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--accent); }
   .post-list { grid-template-columns: minmax(0, 1fr); }
-  .founder-card { margin: 6px; padding: 20px; }
   .credit-input input { width: 90px; }
+  .about-contact { grid-template-columns: minmax(0, 1fr); }
+  .about-contact > div + div { border-left: 0; border-top: 1px solid var(--border); }
+  .howto-body { gap: 40px; }
+  .howto-step > h2 { font-size: 22px; }
+  .brief-card { margin: 6px; padding: 16px; }
+  .brief-text { font-size: 15.5px; }
+  .howto-table thead { display: none; }
+  .howto-table, .howto-table tbody, .howto-table tr, .howto-table th, .howto-table td { display: block; width: auto !important; }
+  .howto-table tr { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .howto-table tbody th, .howto-table td { padding: 2px 0; border: 0; }
+  .howto-table td:first-of-type { padding: 6px 0 4px; }
+}
+@media (max-width: 380px) {
+  .main-link { padding: 0 1px; font-size: 12.5px; }
 }

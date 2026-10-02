@@ -1,6 +1,7 @@
 "use strict";
 
-// Boot and routing: #plan (default), #examples, #examples/<id>, #services[?filters].
+// Boot and routing: #plan (default), #examples, #examples/<id>, #services[?filters],
+// #howto, #howto/<section>, #blog, #blog/<id> and #about.
 
 (async function main() {
   const { $, api } = CA;
@@ -9,17 +10,18 @@
     const raw = location.hash.replace(/^#\/?/, "");
     const [path, query = ""] = raw.split("?");
     const [first, sub] = path.split("/");
-    const aliases = { catalog: "services", designer: "examples", "": "plan" };
+    const aliases = { catalog: "services", designer: "examples", "how-to": "howto", help: "howto", "": "plan" };
     const page = aliases[first] ?? first;
     return {
-      page: ["plan", "examples", "services", "blog", "about"].includes(page) ? page : "plan",
+      page: ["plan", "examples", "services", "howto", "blog", "about"].includes(page) ? page : "plan",
       sub,
       params: new URLSearchParams(query),
     };
   }
 
   const SHEETS = {
-    plan: "01 · Plan", examples: "02 · Examples", services: "03 · Services", blog: "04 · Blog", about: "05 · About",
+    plan: "01 · Plan", examples: "02 · Examples", services: "03 · Services",
+    howto: "04 · How to", blog: "05 · Blog", about: "06 · About",
   };
 
   function route() {
@@ -32,6 +34,7 @@
     }
     if (page === "examples") Examples.show(sub);
     if (page === "services") Services.show(params);
+    if (page === "howto") HowTo.show(sub);
     if (page === "blog") Blog.show(sub);
     if (page === "about") window.scrollTo({ top: 0 });
   }
@@ -58,6 +61,7 @@
   Plan.init(meta, samples);
   Examples.init(patterns);
   Services.initControls();
+  HowTo.init();
   await Blog.init();
   window.addEventListener("hashchange", route);
   route();

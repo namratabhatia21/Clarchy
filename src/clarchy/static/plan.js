@@ -268,6 +268,18 @@ const Plan = (() => {
     $("requirements").focus();
   }
 
+  // From the How to page: puts a brief in the composer and, if asked, plans it.
+  function useBrief(text, { now = false } = {}) {
+    if (run.active || !CA.canPlan()) return;
+    setFile(null);
+    $("requirements").value = text;
+    CA.store(DRAFT_KEY, text);
+    showError("");
+    backToComposer();
+    window.scrollTo({ top: 0 });
+    if (now) start({ text });
+  }
+
   function setupPlanners(engine) {
     const select = $("mode");
     if (CA.MODE !== "static") {
@@ -361,5 +373,5 @@ const Plan = (() => {
     }
   }
 
-  return { init };
+  return { init, useBrief };
 })();

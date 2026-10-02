@@ -30,8 +30,9 @@
       <a href="#plan" class="main-link" data-page="plan"><span class="no">01</span>Plan</a>
       <a href="#examples" class="main-link" data-page="examples"><span class="no">02</span>Examples</a>
       <a href="#services" class="main-link" data-page="services"><span class="no">03</span>Services</a>
-      <a href="#blog" class="main-link" data-page="blog"><span class="no">04</span>Blog</a>
-      <a href="#about" class="main-link" data-page="about"><span class="no">05</span>About</a>
+      <a href="#howto" class="main-link" data-page="howto"><span class="no">04</span>How to</a>
+      <a href="#blog" class="main-link" data-page="blog"><span class="no">05</span>Blog</a>
+      <a href="#about" class="main-link" data-page="about"><span class="no">06</span>About</a>
     </nav>
     <span class="engine-chip" id="engine-chip" hidden></span>
   </header>
@@ -372,11 +373,143 @@
       </div>
     </section>
 
+    <!-- How to: using Clarchy, step by step -->
+    <section class="page" id="page-howto" data-page="howto" hidden>
+      <div class="page-head">
+        <p class="eyebrow">Sheet 04 · How to</p>
+        <h1>How to use Clarchy</h1>
+        <p>From a brief to a design you can review, price and share, in six steps. Each one matches what you see on screen.</p>
+      </div>
+      <div class="howto">
+        <nav class="howto-index" aria-label="On this page">
+          <p class="label">Contents</p>
+          <ol>
+            <li><a href="#howto/brief" data-section="brief"><span class="no">1</span>Write the brief</a></li>
+            <li><a href="#howto/plan" data-section="plan"><span class="no">2</span>Plan it</a></li>
+            <li><a href="#howto/drawing" data-section="drawing"><span class="no">3</span>Read the drawing</a></li>
+            <li><a href="#howto/tabs" data-section="tabs"><span class="no">4</span>Cost, policies and workflows</a></li>
+            <li><a href="#howto/answers" data-section="answers"><span class="no">5</span>Answer and re-plan</a></li>
+            <li><a href="#howto/share" data-section="share"><span class="no">6</span>Download and share</a></li>
+            <li><a href="#howto/ai" data-section="ai"><span class="no">A</span>Use an AI model</a></li>
+            <li><a href="#howto/compare" data-section="compare"><span class="no">B</span>Compare clouds</a></li>
+          </ol>
+        </nav>
+        <div class="howto-body">
+          <section class="howto-step" id="howto-brief" data-section="brief" aria-labelledby="howto-brief-title">
+            <h2 id="howto-brief-title"><span class="step-no">1</span>Write the brief</h2>
+            <p>Describe the app in a few plain sentences, or attach a Word, PDF, Excel, Markdown or text file of up to 10&nbsp;MB. Tables are read as well as paragraphs. Each fact below changes the design; anything you leave out becomes an assumption or a question you can answer later.</p>
+            <div class="brief-card marks">
+              <p class="label">Example brief</p>
+              <p class="brief-text" id="howto-brief-text">An <mark>assistant</mark> that answers employees' questions from our <mark>HR policy documents</mark>, for about <mark>8,000 employees</mark> in <mark>Germany</mark>. Employees <mark>sign in with SSO</mark>. It needs <mark>99.9% uptime</mark>, <mark>GDPR</mark> applies, and chat history must be <mark>kept for 2 years</mark>. The budget is <mark>$4,000 a month</mark>, and our <mark>6 developers</mark> already use <mark>GitHub Copilot</mark>.</p>
+              <p class="brief-found"><span class="label">Clarchy picks out</span> 8,000 users · Frankfurt region · 99.9% availability · GDPR · records kept 2 years · $4,000 a month · 6 developers</p>
+              <div class="brief-actions">
+                <button type="button" class="btn btn-primary" data-brief="plan">Plan this brief</button>
+                <button type="button" class="btn" data-brief="edit">Edit it first</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="howto-table">
+                <thead><tr><th scope="col">Say</th><th scope="col">For example</th><th scope="col">What it changes</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">How many people use it</th><td><q>about 8,000 employees</q> <q>120,000 patients</q></td><td>Sizes every service. Below 50,000 users the API runs as serverless functions, above that on containers. Without a number, Clarchy plans for 10,000.</td></tr>
+                  <tr><th scope="row">The busiest moments</th><td><q>300 requests per second</q> <q>2,000 orders an hour</q></td><td>Sizes the API and the database for the peak.</td></tr>
+                  <tr><th scope="row">How much data</th><td><q>2 TB of documents</q> <q>grows 50 GB a month</q></td><td>Sizes storage and its cost.</td></tr>
+                  <tr><th scope="row">Uptime</th><td><q>99.95% uptime</q> <q>24/7</q></td><td>At 99.9% or more, services and databases are spread across zones. Without a number, Clarchy assumes 99.9%.</td></tr>
+                  <tr><th scope="row">Where users are</th><td><q>users in Germany</q> <q>most customers are in India</q></td><td>Picks the region on every cloud, and the data-protection laws that apply, such as GDPR or India's DPDP Act.</td></tr>
+                  <tr><th scope="row">Rules that apply</th><td><q>HIPAA applies</q> <q>PCI DSS</q> <q>SOX</q></td><td>Adds audit logging, key management and access control, and checks each rule on the Policies tab. Clarchy knows HIPAA, PCI DSS, GDPR, SOX, SOC&nbsp;2, ISO&nbsp;27001 and FedRAMP.</td></tr>
+                  <tr><th scope="row">How long to keep records</th><td><q>keep records for 7 years</q></td><td>Adds backups, and archive storage for the retention period.</td></tr>
+                  <tr><th scope="row">Budget</th><td><q>$4,000 a month</q> <q>$50,000 a year</q></td><td>Saved with the design, so you can hold the estimate against it.</td></tr>
+                  <tr><th scope="row">What you already run</th><td><q>the backend is already in Docker</q> <q>we run Kubernetes</q></td><td>Keeps it: Docker means containers, Kubernetes means Kubernetes.</td></tr>
+                  <tr><th scope="row">Your team and tools</th><td><q>6 developers</q> <q>GitHub Copilot</q> <q>Codespaces</q></td><td>Adds the developer tools you name, priced per developer.</td></tr>
+                  <tr><th scope="row">AI features</th><td><q>an assistant that answers from our policy documents</q> <q>LangGraph agents</q> <q>Langfuse</q> <q>LiteLLM</q></td><td>Adds a model, document search, agent orchestration, an LLM gateway, tracing and guardrails, as the brief needs.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="howto-step" id="howto-plan" data-section="plan" aria-labelledby="howto-plan-title">
+            <h2 id="howto-plan-title"><span class="step-no">2</span>Plan it</h2>
+            <ol class="howto-list">
+              <li>On <a href="#plan">Plan</a>, type or paste the brief, or click <b>Attach</b>. You can also drop a file on the box.</li>
+              <li><b>Region</b>: leave <i>From the text</i> to use the place your brief names, or choose one.</li>
+              <li><b>Planner</b>: the rule-based planner is instant and keeps everything in your browser. To have an AI model write the design, see <a href="#howto/ai">Use an AI model</a>.</li>
+              <li>Click <b>Design architecture</b>, or press <kbd>Ctrl</kbd>+<kbd>Enter</kbd>. The first plan downloads the planning engine, about 15&nbsp;MB; after that, plans take seconds.</li>
+              <li>Six steps run: read, understand, design, add build and deploy, describe the workflows and map to every cloud. <b>Show steps</b> lists what was found at each one.</li>
+            </ol>
+            <p class="howto-tip"><span class="label">Tip</span><span>No brief yet? <b>Try a sample</b>, under the box, runs a ready-made one.</span></p>
+          </section>
+
+          <section class="howto-step" id="howto-drawing" data-section="drawing" aria-labelledby="howto-drawing-title">
+            <h2 id="howto-drawing-title"><span class="step-no">3</span>Read the drawing</h2>
+            <ul class="howto-list">
+              <li><b>Pick a cloud</b> with the tabs above the drawing: AWS, Azure, Google Cloud or Open source. It is the same design, drawn in each cloud's own style.</li>
+              <li><b>Click any service</b> to see why it is there: the sentence of your brief that asked for it, how it connects, its sizing, its monthly cost and the alternatives.</li>
+              <li><b>Actual size</b> shows the drawing at full scale. <kbd>Esc</kbd> closes the details.</li>
+              <li>The <b>title block</b> under the drawing lists the cloud, the region and the number of services.</li>
+            </ul>
+          </section>
+
+          <section class="howto-step" id="howto-tabs" data-section="tabs" aria-labelledby="howto-tabs-title">
+            <h2 id="howto-tabs-title"><span class="step-no">4</span>Check cost, policies and workflows</h2>
+            <p>The tabs next to the cloud names show the rest of the design.</p>
+            <dl class="principles howto-tabs">
+              <div><dt>Services</dt><dd>Every part of the design with the service it uses on this cloud, grouped by stage, and why it is there.</dd></div>
+              <div><dt>Cost</dt><dd>The monthly estimate, and totals for 1 month, 6 months, 1 year and 3 years, on demand and with commitments. Add startup or model credits to see what is left to pay. AWS prices come from the AWS Price List API; Azure, Google Cloud and third-party prices are marked approximate.</dd></div>
+              <div><dt>Policies</dt><dd>The AI and data rules that apply, such as the EU AI Act, GDPR or HIPAA. Each obligation is covered by a component, a gap with a suggestion, or an action for your team. A checklist for design reviews, not legal advice.</dd></div>
+              <div><dt>Workflows</dt><dd>Numbered paths through the drawing: a user's request, a release, a background job. Press <b>Play</b> to walk through one step by step.</dd></div>
+              <div><dt>Spec</dt><dd>The YAML behind the drawing. Edit it and the drawing, services and costs update as you type; <b>Reset</b> brings back the plan.</dd></div>
+            </dl>
+          </section>
+
+          <section class="howto-step" id="howto-answers" data-section="answers" aria-labelledby="howto-answers-title">
+            <h2 id="howto-answers-title"><span class="step-no">5</span>Answer questions and re-plan</h2>
+            <ol class="howto-list">
+              <li>The bar above the drawing lists the <b>questions</b> your brief left open and the <b>assumptions</b> Clarchy made instead.</li>
+              <li>Click <b>Answer and re-plan</b>. Answer in your own words, such as <q>50k</q>, <q>yes</q> or <q>Frankfurt</q>, or correct an assumption.</li>
+              <li>Clarchy plans again with your answers. Answered questions are not asked again, and each round keeps the answers you gave before.</li>
+            </ol>
+          </section>
+
+          <section class="howto-step" id="howto-share" data-section="share" aria-labelledby="howto-share-title">
+            <h2 id="howto-share-title"><span class="step-no">6</span>Download and share</h2>
+            <p>Use <b>Download</b>, at the top right of the result:</p>
+            <dl class="principles howto-tabs">
+              <div><dt>Diagram <span class="ext">.svg</span></dt><dd>For slides, documents and wikis. It stays sharp at any size.</dd></div>
+              <div><dt>Explanation <span class="ext">.md</span></dt><dd>The reasoning for every component, ready for a design review.</dd></div>
+              <div><dt>Spec <span class="ext">.yaml</span></dt><dd>The design itself, to keep under version control next to your code.</dd></div>
+            </dl>
+          </section>
+
+          <section class="howto-step" id="howto-ai" data-section="ai" aria-labelledby="howto-ai-title">
+            <h2 id="howto-ai-title"><span class="step-no">A</span>Use an AI model</h2>
+            <ol class="howto-list">
+              <li>In <b>Planner</b>, choose <i>Open-source model (Hugging Face)</i>.</li>
+              <li>Paste a Hugging Face token that may make calls to Inference Providers (<a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">create one free ↗</a>), and keep or change the model.</li>
+              <li>For a model on your own machine, open <b>Use another endpoint</b>: run Ollama with <code>OLLAMA_ORIGINS=*</code>, enter <code>http://localhost:11434/v1</code> and a model such as <code>qwen2.5:7b</code>, and leave the token empty.</li>
+            </ol>
+            <p class="howto-tip"><span class="label">Privacy</span><span>The token goes from your browser straight to the model provider and is forgotten when you close the tab. With the rule-based planner, nothing leaves your browser.</span></p>
+          </section>
+
+          <section class="howto-step" id="howto-compare" data-section="compare" aria-labelledby="howto-compare-title">
+            <h2 id="howto-compare-title"><span class="step-no">B</span>Compare clouds</h2>
+            <ul class="howto-list">
+              <li><a href="#services">Services</a> has a card for each job a system needs, with the service that does it on every cloud. Filter by stage or cloud; <span class="tag close">Close</span> and <span class="tag partial">Partial</span> mark differences worth knowing.</li>
+              <li><a href="#examples">Examples</a> are reviewed reference architectures. Open one to see it on every cloud, with costs.</li>
+              <li>The <a href="#blog">Blog</a> walks through worked examples, such as a field service assistant for wind turbines.</li>
+            </ul>
+            <div class="howto-end">
+              <a class="btn btn-primary" href="#plan">Start a plan</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
     <!-- Blog: why Clarchy exists, worked examples, what to plan for -->
     <section class="page" id="page-blog" data-page="blog" hidden>
       <div class="blog-index" id="blog-index">
         <div class="page-head">
-          <p class="eyebrow">Sheet 04 · Notes</p>
+          <p class="eyebrow">Sheet 05 · Notes</p>
           <h1>Blog</h1>
           <p>Why Clarchy exists, worked examples, and what architects should plan for.</p>
         </div>
@@ -389,26 +522,22 @@
     <section class="page" id="page-about" data-page="about" hidden>
       <div class="about">
         <div class="page-head">
-          <p class="eyebrow">Sheet 05 · About</p>
+          <p class="eyebrow">Sheet 06 · About</p>
           <h1>About Clarchy</h1>
           <p>Clarchy turns a requirements brief into a cloud architecture you can question, price and compare across AWS, Azure, Google Cloud and open source.</p>
         </div>
-        <div class="about-grid">
-          <article class="founder-card marks">
-            <p class="label">Founder</p>
-            <h2 class="founder-name">Namrata Bhatia</h2>
-            <p class="founder-role">Founder and creator of Clarchy</p>
-            <p>Namrata is an AWS educator. She built Clarchy to make architecture decisions explainable: every service tied to the requirement that asked for it, priced from real list prices, and drawn the same way on every cloud.</p>
-            <p class="founder-contact"><span class="label">Contact</span><a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a></p>
-          </article>
-          <dl class="principles">
-            <div><dt>Explainable</dt><dd>Every component quotes the sentence of your brief that asked for it, and everything Clarchy assumed is listed for you to confirm.</dd></div>
-            <div><dt>Priced from the source</dt><dd>AWS prices come from the AWS Price List API and are refreshed every week. Azure, Google Cloud and third-party prices are marked approximate.</dd></div>
-            <div><dt>Cloud-neutral</dt><dd>One design, drawn on AWS, Azure, Google Cloud and open source, each in its own look.</dd></div>
-            <div><dt>Ready for review</dt><dd>Security, access, audit, retention and AI regulations are part of the drawing, not an afterthought.</dd></div>
-            <div><dt>Private by default</dt><dd>Plans run in your browser. Your documents leave it only if you choose a hosted model.</dd></div>
-          </dl>
-        </div>
+        <dl class="principles">
+          <div><dt>Explainable</dt><dd>Every component quotes the sentence of your brief that asked for it, and everything Clarchy assumed is listed for you to confirm.</dd></div>
+          <div><dt>Priced from the source</dt><dd>AWS prices come from the AWS Price List API and are refreshed every week. Azure, Google Cloud and third-party prices are marked approximate.</dd></div>
+          <div><dt>Cloud-neutral</dt><dd>One design, drawn on AWS, Azure, Google Cloud and open source, each in its own look.</dd></div>
+          <div><dt>Ready for review</dt><dd>Security, access, audit, retention and AI regulations are part of the drawing, not an afterthought.</dd></div>
+          <div><dt>Private by default</dt><dd>Plans run in your browser. Your documents leave it only if you choose a hosted model.</dd></div>
+        </dl>
+        <dl class="about-contact">
+          <div><dt>Contact</dt><dd><a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a></dd></div>
+          <div><dt>Founder</dt><dd>Namrata Bhatia</dd></div>
+          <div><dt>New here</dt><dd><a href="#howto">How to use Clarchy</a></dd></div>
+        </dl>
       </div>
     </section>
   </main>
@@ -531,6 +660,7 @@
   <script src="/static/examples.js"></script>
   <script src="/static/services.js"></script>
   <script src="/static/blog.js"></script>
+  <script src="/static/howto.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

@@ -28,7 +28,8 @@ protractor turns as you scroll the home page and a detail drawing assembles stag
 | **Plan** | Type or drop in a requirements document (.docx, .pdf, .xlsx, .md, .txt), or start from a realistic sample (a field service agent for wind turbine technicians, a claims triage agent, clinic booking under HIPAA, fleet telemetry, supplier invoice processing). Watch the pipeline work stage by stage, then explore the result: a diagram per provider, every service grouped by lifecycle stage, the cost over time with prepaid credits, the AI and data policies that apply, step-by-step workflows that light up the diagram, and the editable YAML spec. Answer the open questions and plan again. |
 | **Examples** | Seven reference architectures (serverless web app, containerised API, event-driven processing, data pipeline, RAG chatbot, microservices on Kubernetes, AI agent platform) on every provider. |
 | **Services** | A catalog of every capability with the equivalent service on each provider side by side. Filter by lifecycle stage, provider and how close the match is, or search by any service name ("KEDA", "LangGraph", "Glacier", "Copilot"). |
-| **Blog** and **About** | Why Clarchy exists, worked examples and AI regulations for architects; and who builds it. |
+| **How to** | A step-by-step guide: what to put in a brief and what each fact changes, reading the drawing and its tabs, answering questions, downloading, and using an AI model. Its example brief plans in one click. |
+| **Blog** and **About** | Why Clarchy exists, worked examples and AI regulations for architects; and what Clarchy stands for, with a contact address. |
 
 Every component carries a **rationale**, the **sentences from your document** that led to
 it, how close each provider's service is (**exact, close or partial**) and the

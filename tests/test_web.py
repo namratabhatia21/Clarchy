@@ -19,6 +19,7 @@ SCRIPTS = (
     "plan.js",
     "examples.js",
     "services.js",
+    "howto.js",
     "app.js",
 )
 

@@ -135,10 +135,13 @@
       else link.removeAttribute("aria-current");
     }
     if (PATH) setHead(url);
-    // "/#brief" (Start a plan, from How to) opens the home page at the brief.
+    // "/#brief" (Start a plan on How to, Try it free in the header) opens the home page at
+    // the brief, with the cursor in it.
     const spot = page === "plan" && url.hash ? document.getElementById(url.hash.slice(1)) : null;
-    if (spot) spot.scrollIntoView();
-    else if (scroll && !samePage && !(page === "howto" && sub)) window.scrollTo({ top: 0 });
+    if (spot) {
+      spot.scrollIntoView();
+      if (spot.id === "brief") document.getElementById("requirements")?.focus({ preventScroll: true });
+    } else if (scroll && !samePage && !(page === "howto" && sub)) window.scrollTo({ top: 0 });
     if (page === "example") Examples.show(sub);
     if (page === "services") Services.show(params);
     if (page === "howto") HowTo.show(sub);

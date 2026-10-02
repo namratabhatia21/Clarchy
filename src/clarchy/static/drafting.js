@@ -200,7 +200,7 @@ const Drafting = (() => {
     const how = [...document.querySelectorAll(".story .how-line li")];
     const poster = document.getElementById("poster");
     const posterDial = poster && poster.querySelector(".pd-dial");
-    const posterReading = poster && poster.querySelector(".pd-reading");
+    const heroCta = document.getElementById("hero-cta");
     const topbar = document.querySelector(".topbar");
     const coda = document.getElementById("coda");
     const pantograph = coda && makePantograph(coda.querySelector(".coda-pantograph"));
@@ -233,7 +233,7 @@ const Drafting = (() => {
     function update() {
       queued = false;
       if (start.offsetParent === null) { // the run view or another page is showing
-        topbar?.classList.remove("on-poster");
+        topbar?.classList.remove("on-poster", "cta-out");
         return;
       }
       const y = window.scrollY;
@@ -242,13 +242,13 @@ const Drafting = (() => {
       if (poster) {
         // The header sits on the poster, and the instruments wait, until it scrolls away
         // (and again while the closing frame is on screen).
-        const over = poster.getBoundingClientRect().bottom > (topbar ? topbar.offsetHeight : 0) + 4;
+        const below = topbar ? topbar.offsetHeight : 0;
+        const over = poster.getBoundingClientRect().bottom > below + 4;
         topbar?.classList.toggle("on-poster", over);
         instruments.classList.toggle("on-poster", over || codaShown);
-        if (posterDial) posterDial.setAttribute("transform", `rotate(${(angle * 2).toFixed(2)})`);
-        if (posterReading) {
-          posterReading.textContent = `${((((212 - angle * 2) % 360) + 360) % 360).toFixed(0).padStart(3, "0")}°`;
-        }
+        if (posterDial && !reduced.matches) posterDial.setAttribute("transform", `rotate(${(angle * 2).toFixed(2)})`);
+        // Once the hero's button has gone under the header, the header offers the brief.
+        if (heroCta) topbar?.classList.toggle("cta-out", heroCta.getBoundingClientRect().bottom < below);
       }
       protractor.dial.style.transform = `rotate(${angle.toFixed(2)}deg)`;
       const reading = ((((NEEDLE - angle) % 360) + 360) % 360).toFixed(0).padStart(3, "0");
@@ -271,13 +271,18 @@ const Drafting = (() => {
     window.addEventListener("clarchy:page", () => setTimeout(schedule, 0));
     new MutationObserver(schedule).observe(start, { attributes: true, attributeFilter: ["hidden"] });
 
-    // The poster's buttons take you to the brief and put the cursor in it.
-    for (const button of document.querySelectorAll("[data-to-brief]")) {
-      button.addEventListener("click", () => {
-        document.getElementById("brief").scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth" });
-        document.getElementById("requirements")?.focus({ preventScroll: true });
-      });
-    }
+    // The hero's button, and the header's once it shows, take you to the brief and put the
+    // cursor in it. Elsewhere the header's link opens the home page at the brief (app.js).
+    // It listens first (capture), so the page router doesn't also act on the header's link.
+    document.addEventListener("click", (e) => {
+      const trigger = e.target.closest && e.target.closest("[data-to-brief]");
+      if (!trigger || start.offsetParent === null) return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById("brief").scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth" });
+      document.getElementById("requirements")?.focus({ preventScroll: true });
+    }, true);
     if (reduced.matches) for (const el of document.querySelectorAll(".story-fig, .drafting-loader")) el.pauseAnimations?.();
 
     // The massing model in the hero holds the right of the page: the protractor waits until

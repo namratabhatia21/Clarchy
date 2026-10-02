@@ -367,6 +367,13 @@ const Plan = (() => {
       }, s.title))));
     }
 
+    // The hero's See an example runs one sample (site.py names it).
+    for (const button of document.querySelectorAll("[data-sample-run]")) {
+      const s = samples.find((x) => x.id === button.dataset.sampleRun);
+      if (s) button.addEventListener("click", () => runSample(s));
+      else button.hidden = true;
+    }
+
     $("composer").addEventListener("submit", (e) => {
       e.preventDefault();
       start({ text: $("requirements").value, file: run.file });
@@ -394,6 +401,33 @@ const Plan = (() => {
         composer.classList.remove("dragging");
         if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
       });
+      // A document dropped anywhere on the hero is attached to the brief, which comes into view.
+      const poster = $("poster");
+      if (poster) {
+        let over = 0;
+        const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes("Files");
+        poster.addEventListener("dragenter", (e) => {
+          if (!hasFiles(e)) return;
+          e.preventDefault();
+          over += 1;
+          poster.classList.add("dropping");
+        });
+        poster.addEventListener("dragover", (e) => { if (hasFiles(e)) e.preventDefault(); });
+        poster.addEventListener("dragleave", () => {
+          over = Math.max(0, over - 1);
+          if (!over) poster.classList.remove("dropping");
+        });
+        poster.addEventListener("drop", (e) => {
+          e.preventDefault();
+          over = 0;
+          poster.classList.remove("dropping");
+          if (!e.dataTransfer.files.length) return;
+          setFile(e.dataTransfer.files[0]);
+          const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          $("brief").scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+          $(run.file ? "plan-button" : "requirements").focus({ preventScroll: true });
+        });
+      }
     }
   }
 

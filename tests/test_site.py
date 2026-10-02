@@ -73,7 +73,8 @@ def _file(out: Path, path: str) -> Path:
 def test_every_address_is_its_own_page(built):
     out, _content, pages = built
     keys = {p.key for p in pages}
-    assert {"plan", "examples", "example", "services", "pricing", "howto", "blog"} <= keys
+    assert {"plan", "examples", "example", "services", "howto", "blog"} <= keys
+    assert "pricing" not in keys, "an open-source project has no pricing page"
     assert {"about", "privacy", "terms"} <= keys
     assert len({p.path for p in pages}) == len(pages)
     for p in pages:
@@ -90,7 +91,7 @@ def test_every_address_is_its_own_page(built):
         assert text[opening.end() :].lstrip().startswith('<a class="skip-link"'), p.path
         # The menu marks where the visitor is.
         menu = site.PARENT.get(p.key, p.key)
-        if menu in {"examples", "services", "pricing", "howto"}:
+        if menu in {"examples", "services", "howto"}:
             assert f'data-page="{menu}" aria-current="page"' in text
 
 
@@ -118,17 +119,6 @@ def test_structured_data_and_breadcrumbs(built):
         assert trail == ["Home", *(name for name, _ in p.crumbs)]
         assert doc.crumbs == trail, f"{p.path}: the visible breadcrumbs match"
         assert graph["BreadcrumbList"]["itemListElement"][-1]["item"] == p.url
-
-
-def test_pricing_questions_are_marked_up_as_shown(built):
-    out, _content, _pages = built
-    text = (out / "pricing" / "index.html").read_text()
-    faq = next(item for item in Page(text).json_ld[0]["@graph"] if item["@type"] == "FAQPage")
-    questions = [q["name"] for q in faq["mainEntity"]]
-    assert questions[0] == "What counts as a diagram?" and len(questions) == 4
-    for q in faq["mainEntity"]:
-        assert f"<dt>{q['name']}</dt>" in text
-        assert q["acceptedAnswer"]["text"].split(".")[0] in text
 
 
 def test_no_link_on_any_page_leads_nowhere(built):
@@ -164,8 +154,10 @@ def test_sitemap_robots_and_cloudflare_files(built):
     assert "X-Robots-Tag: noindex" in headers and ".workers.dev/*" in headers
     redirects = (out / "_redirects").read_text().splitlines()
     rules = [line.split() for line in redirects if line and not line.startswith("#")]
-    assert ["/pricing", "/pricing/", "301"] in rules
+    assert ["/how-to", "/how-to/", "301"] in rules
     assert ["/index.html", "/", "301"] in rules
+    # Old links to the Pricing page land on the home page.
+    assert ["/pricing/", "/", "301"] in rules and ["/pricing", "/", "301"] in rules
     sources = [r[0] for r in rules]
     assert len(sources) == len(set(sources))
     for _source, target, code in rules:
@@ -177,10 +169,8 @@ def test_pages_carry_their_lists_for_the_first_paint(built):
     home = (out / "index.html").read_text()
     for sample in content.samples:
         assert f'data-sample="{sample["id"]}"' in home
-    # A replay-only copy has no accounts; a site that plans keeps the credit line's space.
-    assert '<p class="credit-line" id="credit-line" hidden></p>' in home
     files, _designs = build_pages(engine=engine_config())
-    assert '<p class="credit-line pending" id="credit-line">' in files["index.html"]
+    assert "credit-line" not in home and "credit-line" not in files["index.html"]
     examples = (out / "examples" / "index.html").read_text()
     for pattern in content.patterns:
         assert f'href="/examples/{pattern["id"]}/"' in examples
@@ -252,7 +242,7 @@ def test_about_names_the_founder(built):
 
 def test_hash_links_for_single_file_builds():
     assert site.to_hash("/") == "#plan"
-    assert site.to_hash("/pricing/") == "#pricing"
+    assert site.to_hash("/pricing/") is None, "no such page"
     assert site.to_hash("/how-to/") == "#howto"
     assert site.to_hash("/how-to/#howto-answers") == "#howto/answers"
     assert site.to_hash("/examples/rag-chatbot/") == "#examples/rag-chatbot"
@@ -288,19 +278,14 @@ def test_design_rules_that_can_be_checked(built):
     # No grid paper behind pages or cards; only the diagram viewer keeps one.
     grids = re.findall(r"([^{}]+)\{[^}]*linear-gradient\(90deg", css)
     assert [g.strip() for g in grids] == [".canvas"], grids
-    pricing = (out / "pricing" / "index.html").read_text()
-    assert pricing.count('<article class="plan-card') == 2, "two plans, not three tiers"
     assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css
-    # Four sections in the header; the rest are in the footer.
+    # Three sections in the header; the rest are in the footer.
     header = re.search(r'<nav class="main-nav".*?</nav>', template, re.S).group(0)
-    assert header.count('class="main-link"') == 4
-    # Then one button: Log in / Sign up, which opens the sign-up form with a log-in mode.
+    assert header.count('class="main-link"') == 3
     topbar = re.search(r'<header class="topbar">.*?</header>', template, re.S).group(0)
-    assert 'id="account-button"' in topbar and "Log in / Sign up" in topbar
-    assert "Start a plan" not in topbar
-    assert 'data-mode="login"' in template and template.count("data-signup-only") == 3
-    # Start a plan, from Pricing and How to, opens the home page at the brief.
-    assert re.findall(r'href="([^"]*)">Start a plan<', template) == ["/#brief", "/#brief"]
+    assert "Start a plan" not in topbar and "account" not in topbar
+    # Start a plan, on How to, opens the home page at the brief.
+    assert re.findall(r'href="([^"]*)">Start a plan<', template) == ["/#brief"]
     footer = re.search(r'<p class="footer-links">.*?</p>', template, re.S).group(0)
     for path in ("/about/", "/blog/", "/privacy/", "/terms/"):
         assert f'href="{path}"' in footer

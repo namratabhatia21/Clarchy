@@ -5,8 +5,8 @@
                                                            # add their own <html>/<head>
     clarchy export-site -o site/ --api-base URL        # front end for a hosted API
 
-Every page has its own address (/, /examples/, /examples/<id>/, /services/, /pricing/,
-/how-to/, /blog/, /about/, /privacy/, /terms/), rendered by site.py with its content in
+Every page has its own address (/, /examples/, /examples/<id>/, /services/, /how-to/,
+/blog/, /about/, /privacy/, /terms/), rendered by site.py with its content in
 the HTML, plus sitemap.xml, robots.txt and a _headers file for Cloudflare. The scripts
 and the embedded data sit in assets/ with a content hash in their names, so browsers keep
 them. Pages plan in the visitor's browser: beside them goes clarchy-engine.zip, this
@@ -205,7 +205,7 @@ def _hashed(stem: str, text: str) -> str:
 def build_pages(
     api_base: str | None = None, engine: dict[str, Any] | None = None
 ) -> tuple[dict[str, str], dict[str, Any]]:
-    """The multi-page site: every page at its own address (pricing/index.html, ...), the
+    """The multi-page site: every page at its own address (how-to/index.html, ...), the
     scripts and data as long-cached files in assets/, robots.txt, sitemap.xml and the
     Cloudflare _headers and _redirects files. Returns (file texts by path, designs for designs/)."""
     files: dict[str, str] = {}

@@ -239,39 +239,6 @@ a, button, summary, label, select { touch-action: manipulation; }
 }
 .main-link:hover { color: var(--text); }
 .main-link[aria-current="page"] { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
-/* The account button: a person outline (or the visitor's initial) and Log in / Sign up, or
-   their first name with a small menu once they are logged in (access.js). */
-.account { position: relative; }
-.account[hidden] { display: none; }
-.account-button {
-  display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 14px 0 9px; cursor: pointer;
-  border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text);
-  font: 600 14px var(--font-body); white-space: nowrap;
-}
-.account-button:hover { background: var(--hover); }
-.account-mark { display: inline-grid; place-items: center; width: 22px; height: 22px; flex: none; }
-.account-mark svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-.account-button.signed-in .account-mark { background: var(--text); color: var(--surface); border-radius: 2px; font: 700 13px/1 var(--font-mono); }
-.account-label { max-width: 14ch; overflow: hidden; text-overflow: ellipsis; }
-.account-menu {
-  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20; min-width: 240px; padding: 14px 14px 10px;
-  display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--rule);
-  border-radius: var(--radius); box-shadow: var(--shadow);
-}
-.account-menu[hidden] { display: none; }
-.account-who { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--border); }
-.account-who b { font-size: 15px; }
-.account-who b:empty { display: none; }
-.account-who span { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
-.account-plan { font: 500 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); padding: 2px 0 6px; }
-.account-plan:empty { display: none; }
-.account-item {
-  display: block; width: 100%; padding: 8px 6px; margin: 0 -6px; border: 0; background: none; text-align: left;
-  color: var(--text); font: 500 14px var(--font-body); text-decoration: none; cursor: pointer; border-radius: var(--radius);
-}
-.account-item:hover { background: var(--hover); }
-.form-modes { margin: 0 36px 2px 0; }
-#signup-form [data-signup-only][hidden] { display: none; }
 .footer-links .engine-chip { margin-left: auto; }
 .engine-chip { font: 500 12.5px var(--font-body); color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
 .engine-chip::before { content: ""; width: 7px; height: 7px; border: 1px solid var(--faint); flex: none; }
@@ -421,8 +388,6 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .topbar.on-poster .brand-tag { color: var(--poster-ink); border-left-color: rgba(10, 31, 61, .35); }
 .topbar.on-poster .brand-name, .topbar.on-poster .logo { color: var(--poster-ink); }
 .topbar.on-poster .logo .arch { stroke: var(--poster-paper); }
-.topbar.on-poster .account-button { background: var(--poster-ink); border-color: var(--poster-ink); color: var(--poster-paper); }
-.topbar.on-poster .account-button.signed-in .account-mark { background: var(--poster-paper); color: var(--poster-ink); }
 .instruments.on-poster { opacity: 0 !important; }
 @media (max-width: 760px), (max-aspect-ratio: 1/1) {
   .poster-canvas {
@@ -1044,7 +1009,7 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .cost-line > summary .tag { display: none; }
   .cost-items .num:nth-child(2) { display: none; }
 }
-/* The header holds the brand, its tag, four sections and the account button on one
+/* The header holds the brand, its tag and three sections on one
    row from 960px; down to 760px without the tag; below that the sections get a row of
    their own. About, Blog, Privacy and Terms are in the footer. */
 @media (max-width: 960px) {
@@ -1054,8 +1019,6 @@ mark { background: var(--warn-bg); color: inherit; padding: 0 1px; }
   .topbar { padding: 10px 24px 0; gap: 4px 12px; position: static; }
   .main-nav { width: 100%; order: 3; height: 44px; gap: 0; }
   .main-link { flex: 1; justify-content: center; padding: 0 6px; }
-  .account { order: 2; }
-  .account-button { height: 34px; padding: 0 10px 0 7px; font-size: 13.5px; }
 }
 @media (max-width: 700px) {
   .page { padding: 20px 16px 36px; }
@@ -1267,46 +1230,6 @@ main { overflow-x: clip; }
 .about-contact dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
 .sheet-title dd a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
 
-/* ---------- pricing, sign-up and credits (access.js) ---------- */
-.credit-line { color: var(--faint); font-size: 12.5px; margin-top: -14px; }
-.credit-line.pending { visibility: hidden; } /* keeps its line until the account API answers */
-.credit-line a { color: var(--muted); }
-.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: stretch; max-width: 760px; }
-.plans-teams { margin: 16px 0 0; max-width: 760px; padding-top: 14px; border-top: 1px dashed var(--border); color: var(--muted); font-size: 14.5px; }
-.plans-teams a { color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
-.plan-card { background: var(--surface); border: 1px solid var(--border-strong); padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; }
-.plan-card.featured { border: 1.5px solid var(--rule); }
-.plan-card h2 { font: 700 22px/1.2 var(--font-display); font-stretch: 87.5%; }
-.plan-price { display: flex; flex-direction: column; gap: 2px; }
-.plan-price b { font: 700 30px/1.1 var(--font-display); font-stretch: 87.5%; }
-.plan-price span { color: var(--muted); font-size: 13.5px; }
-.plan-for { color: var(--muted); font-size: 14px; }
-.plan-list { margin: 4px 0 8px; padding: 12px 0 0 18px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 6px; font-size: 14px; flex: 1; }
-.plan-card .btn { align-self: flex-start; }
-.plan-status { color: var(--ok); font-weight: 600; font-size: 14px; }
-.faq { margin-top: 40px; }
-.faq dl { margin: 0; display: flex; flex-direction: column; gap: 4px; }
-.faq dt { font-weight: 600; margin-top: 10px; }
-.faq dd { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
-
-.modal { overscroll-behavior: contain; width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
-.modal::backdrop { background: rgba(18, 24, 30, .45); }
-.modal-body { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 24px 24px 20px; }
-.modal-body h2 { font: 700 24px/1.15 var(--font-display); font-stretch: 87.5%; padding-right: 28px; }
-.modal-lead { color: var(--muted); font-size: 14.5px; }
-.modal-close { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; border-radius: var(--radius); }
-.modal-close:hover { background: var(--hover); color: var(--text); }
-.modal .field input { height: 38px; font-size: 14.5px; }
-.modal .btn-primary { align-self: stretch; }
-.modal-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.modal-actions .btn-primary { align-self: auto; }
-.modal-fine { color: var(--faint); font-size: 12.5px; }
-.check { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13.5px; color: var(--muted); cursor: pointer; }
-.check input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--accent); }
-.form-error { color: var(--err); font-size: 13.5px; }
-/* A field people never see; automated form fillers do. */
-.trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-
 /* ---------- how to ---------- */
 .howto { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; align-items: start; }
 .howto-index { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 10px; }
@@ -1361,7 +1284,6 @@ main { overflow-x: clip; }
 }
 
 @media (max-width: 900px) {
-  .plans { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
   .principles > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .obligation { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .howto { grid-template-columns: minmax(0, 1fr); gap: 28px; }

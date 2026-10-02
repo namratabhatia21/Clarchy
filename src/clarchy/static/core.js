@@ -14,14 +14,14 @@ const CA = (() => {
 
   const $ = (id) => document.getElementById(id);
 
-  // Multi-page builds give every page its own address (/pricing/, /examples/<id>/);
-  // single-file builds route on the hash (#pricing, #examples/<id>). site.py marks which.
+  // Multi-page builds give every page its own address (/how-to/, /examples/<id>/);
+  // single-file builds route on the hash (#howto, #examples/<id>). site.py marks which.
   const ROUTING = document.body && document.body.dataset.routing === "path" ? "path" : "hash";
   // Where the site's own files (designs, the engine) sit: "/" on a multi-page site.
   const ROOT = (document.body && document.body.dataset.root) || "";
   const asset = (path) => ROOT + path;
   const PATHS = {
-    plan: "/", examples: "/examples/", services: "/services/", pricing: "/pricing/",
+    plan: "/", examples: "/examples/", services: "/services/",
     howto: "/how-to/", blog: "/blog/", about: "/about/", privacy: "/privacy/", terms: "/terms/",
   };
   // The link to a page: href("example", "rag-chatbot"), href("services", null, "q=queue").

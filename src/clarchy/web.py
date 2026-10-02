@@ -3,7 +3,7 @@
     pip install -e ".[web,agent,ingest]"
     clarchy serve            # http://127.0.0.1:8000
 
-Pages: /, /examples/, /examples/<id>/, /services/, /pricing/, /how-to/, /blog/, /about/,
+Pages: /, /examples/, /examples/<id>/, /services/, /how-to/, /blog/, /about/,
 /privacy/ and /terms/ (site.py), with their files under /static/.
 
 Endpoints:

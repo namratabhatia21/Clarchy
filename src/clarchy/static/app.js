@@ -1,12 +1,12 @@
 "use strict";
 
 // Boot and routing. On a multi-page site every page has its own address: /, /examples/,
-// /examples/<id>/, /services/[?filters], /pricing/, /how-to/[#howto-<step>], /blog/,
-// /blog/<id>/, /about/, /privacy/ and /terms/. Each address is a complete page; once one
-// has loaded, links switch pages here without reloading, fetching a page's section the
-// first time it is shown and keeping it (so a plan in progress survives a look at
-// Pricing). Single-file builds hold every section and route on the hash (#pricing,
-// #examples/<id>, #howto/<step>). Old hash links (/#pricing) go to the new addresses.
+// /examples/<id>/, /services/[?filters], /how-to/[#howto-<step>], /blog/, /blog/<id>/,
+// /about/, /privacy/ and /terms/. Each address is a complete page; once one has loaded,
+// links switch pages here without reloading, fetching a page's section the first time it
+// is shown and keeping it (so a plan in progress survives a look at How to). Single-file
+// builds hold every section and route on the hash (#howto, #examples/<id>,
+// #howto/<step>). Old hash links (/#examples) go to the new addresses.
 
 (async function main() {
   const { $, api } = CA;
@@ -14,11 +14,11 @@
   const MENU = { example: "examples", post: "blog" }; // the menu item a sub-page belongs to
   const SHEETS = {
     plan: "01 · Plan", examples: "02 · Examples", example: "02 · Examples", services: "03 · Services",
-    pricing: "04 · Pricing", howto: "05 · How to", blog: "06 · Blog", post: "06 · Blog", about: "07 · About",
+    howto: "04 · How to", blog: "05 · Blog", post: "05 · Blog", about: "06 · About",
     privacy: "Privacy", terms: "Terms",
   };
   const FIRST = {
-    "": "plan", examples: "examples", services: "services", pricing: "pricing", "how-to": "howto",
+    "": "plan", examples: "examples", services: "services", "how-to": "howto",
     blog: "blog", about: "about", privacy: "privacy", terms: "terms",
   };
 
@@ -29,7 +29,7 @@
     const [first, sub] = path.split("/");
     const aliases = { catalog: "services", designer: "examples", "how-to": "howto", help: "howto", "": "plan" };
     let page = aliases[first] ?? first;
-    if (!["plan", "examples", "services", "pricing", "howto", "blog", "about", "privacy", "terms"].includes(page)) return null;
+    if (!["plan", "examples", "services", "howto", "blog", "about", "privacy", "terms"].includes(page)) return null;
     if (page === "examples" && sub) page = "example";
     if (page === "blog" && sub) page = "post";
     return { page, sub: sub || undefined, params: new URLSearchParams(query) };
@@ -97,7 +97,6 @@
     } else if (page === "blog" || page === "post") {
       await Blog.init();
     }
-    Access.attach();
   }
 
   // ---------- the head, when a page is shown without reloading ----------
@@ -136,7 +135,7 @@
       else link.removeAttribute("aria-current");
     }
     if (PATH) setHead(url);
-    // "/#brief" (Start a plan, from Pricing or How to) opens the home page at the brief.
+    // "/#brief" (Start a plan, from How to) opens the home page at the brief.
     const spot = page === "plan" && url.hash ? document.getElementById(url.hash.slice(1)) : null;
     if (spot) spot.scrollIntoView();
     else if (scroll && !samePage && !(page === "howto" && sub)) window.scrollTo({ top: 0 });
@@ -211,7 +210,8 @@
   }
 
   // ---------- start ----------
-  const [meta, samples, patterns] = await Promise.all([api.meta(), api.samples(), api.patterns(), Access.init()]);
+  const [meta, samples, patterns] = await Promise.all([api.meta(), api.samples(), api.patterns()]);
+  CA.store("clarchy.lead", null); // a sign-up kept by browsers before accounts were removed
   CA.meta = meta;
   boot = { meta, samples, patterns };
   $("project-name").title = `Clarchy ${meta.version}`;
@@ -233,7 +233,7 @@
 
   wireLinks();
   const here = new URL(location.href);
-  // Old links such as clarchy.com/#pricing or /#examples/rag-chatbot.
+  // Old links such as clarchy.com/#examples/rag-chatbot.
   const legacy = PATH && here.pathname === "/" && here.hash ? fromHash(here.hash) : null;
   if (legacy && legacy.page !== "plan") {
     await go(CA.href(legacy.page, legacy.sub, legacy.params.toString()), { replace: true });

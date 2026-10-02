@@ -43,20 +43,8 @@
     <nav class="main-nav" aria-label="Sections">
       <a href="/examples/" class="main-link" data-page="examples">Examples</a>
       <a href="/services/" class="main-link" data-page="services">Services</a>
-      <a href="/pricing/" class="main-link" data-page="pricing">Pricing</a>
       <a href="/how-to/" class="main-link" data-page="howto">How to</a>
     </nav>
-    <div class="account" id="account">
-      <button type="button" class="account-button" id="account-button" aria-expanded="false" aria-haspopup="true">
-        <span class="account-mark" id="account-mark" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3.4"/><path d="M3.6 17.2c1-3.4 3.4-5 6.4-5s5.4 1.6 6.4 5"/></svg></span>
-        <span class="account-label" id="account-label">Log in / Sign up</span>
-      </button>
-      <div class="account-menu" id="account-menu" hidden>
-        <p class="account-who"><b id="account-name"></b><span id="account-email"></span></p>
-        <p class="account-plan" id="account-plan"></p>
-        <a class="account-item" href="/pricing/">Pricing</a>
-        <button type="button" class="account-item" id="account-logout">Log out</button>
-      </div>
     </div>
   </header>
 
@@ -150,7 +138,6 @@
         </form>
         <!-- render:model-facts -->
         <!-- render:composer-foot -->
-        <!-- render:credit-line -->
 
         <section class="samples" aria-labelledby="samples-title">
           <h2 class="label" id="samples-title">Try a sample</h2>
@@ -160,8 +147,6 @@
         <!-- render:hero-model -->
         </div>
         </section>
-
-
 
         <section class="story" id="story" aria-labelledby="story-title">
           <div class="story-head">
@@ -440,59 +425,6 @@
     </section>
     <!-- /page:services -->
 
-    <!-- Pricing: a free allowance, then Pro (a waitlist during early access) -->
-    <!-- page:pricing -->
-    <section class="page" id="page-pricing" data-page="pricing" hidden>
-      <!-- crumbs -->
-      <div class="page-head">
-        <h1>Pricing</h1>
-        <p>Start free. Clarchy is in early access, so Pro opens to a waitlist first.</p>
-      </div>
-      <div class="plans">
-        <article class="plan-card">
-          <h2>Free</h2>
-          <p class="plan-price"><b>$0</b></p>
-          <p class="plan-for">For trying Clarchy on a real project.</p>
-          <ul class="plan-list">
-            <li><span data-free-count>3</span> diagrams from your own briefs or documents</li>
-            <li>Every cloud: AWS, Azure, Google Cloud and open source</li>
-            <li>Costs, policy checks and workflows</li>
-            <li>Downloads: diagram, explanation and spec</li>
-            <li>Unlimited samples, examples and re-planning</li>
-          </ul>
-          <a class="btn" href="/#brief">Start a plan</a>
-        </article>
-        <article class="plan-card featured">
-          <h2>Pro</h2>
-          <p class="plan-price"><b>Early access</b><span>Price to be announced</span></p>
-          <p class="plan-for">For architects who design every week.</p>
-          <ul class="plan-list">
-            <li>Unlimited diagrams</li>
-            <li>Everything in Free</li>
-            <li>Early access to new features</li>
-            <li>Email support</li>
-          </ul>
-          <button type="button" class="btn btn-primary" id="waitlist-button">Join the Pro waitlist</button>
-          <p class="plan-status" id="waitlist-status" role="status" hidden></p>
-        </article>
-      </div>
-      <p class="plans-teams">For architecture teams and consultancies: Pro for everyone on the team, and a say in what Clarchy builds next. <a href="mailto:namrata.bhatia@clarchy.com?subject=Clarchy%20for%20teams">Talk to us</a></p>
-      <section class="prose-page faq" aria-labelledby="faq-title">
-        <h2 id="faq-title">Questions</h2>
-        <dl>
-          <dt>What counts as a diagram?</dt>
-          <dd>Each plan from your own brief or document. Samples, examples, and answering questions to re-plan a design you already have don't count.</dd>
-          <dt>Do you see my brief?</dt>
-          <dd>No. Plans run in your browser, so your brief and documents are never uploaded to Clarchy.</dd>
-          <dt>How does Pro start?</dt>
-          <dd>Join the waitlist and we'll email you when Pro opens, with the price. Nothing is charged unless you agree to it.</dd>
-          <dt>Will you email me?</dt>
-          <dd>Only about your account, unless you ticked the box for product updates. You can unsubscribe at any time.</dd>
-        </dl>
-      </section>
-    </section>
-    <!-- /page:pricing -->
-
     <!-- How to: using Clarchy, step by step -->
     <!-- page:howto -->
     <section class="page" id="page-howto" data-page="howto" hidden>
@@ -557,7 +489,6 @@
               <li>Click <b>Design architecture</b>, or press <kbd>Ctrl</kbd>+<kbd>Enter</kbd>. The first plan downloads the planning engine, about 15&nbsp;MB; after that, plans take seconds.</li>
               <li>Six steps run: read, understand, design, add build and deploy, describe the workflows and map to every cloud. <b>Show steps</b> lists what was found at each one.</li>
             </ol>
-            <p>On clarchy.com, the first time you start you are asked for your name, company and email. Your first <span data-free-count>3</span> diagrams from your own briefs are free; samples, examples and re-planning don't use them. See <a href="/pricing/">Pricing</a>.</p>
             <p class="howto-tip"><span class="label">Tip</span><span>No brief yet? <b>Try a sample</b>, under the box, runs a ready-made one.</span></p>
           </section>
 
@@ -687,7 +618,7 @@
         <!-- crumbs -->
         <div class="page-head">
           <h1>Privacy</h1>
-          <p>Clarchy is built so that your requirements stay with you. This page explains what Clarchy keeps about you, and what happens to your data when you use clarchy.com.</p>
+          <p>Clarchy has no accounts and keeps no data about you. This page explains what happens to your data when you use clarchy.com.</p>
           <p class="updated">Updated 2 October 2026</p>
         </div>
         <section>
@@ -695,13 +626,8 @@
           <p>Clarchy is run by Namrata Bhatia. For any question about your data, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>.</p>
         </section>
         <section>
-          <h2>What you tell us when you sign up</h2>
-          <p>When you sign up, Clarchy asks for your name, company and email, and whether you want product updates. It keeps these with the date you signed up, whether you joined the Pro waitlist, how many diagrams you have planned, when you last visited, and a one-way, salted fingerprint of your IP address that is used only to stop automated sign-ups and repeated failed log-ins. Your IP address itself is not stored, and a failed log-in keeps only that fingerprint, for an hour.</p>
-          <p>These details are used to give you your free diagrams, to manage your account and the Pro waitlist, and to reply to you. Product updates are sent only if you ticked that box, and you can unsubscribe at any time. Clarchy does not sell or share your details. They are stored in a Cloudflare D1 database and kept until you ask for them to be deleted.</p>
-        </section>
-        <section>
           <h2>Your briefs and documents</h2>
-          <p>With the rule-based planner, your brief and any document you attach are read and planned in your browser. They are never sent to Clarchy, and Clarchy does not store them; only the count of diagrams you plan is recorded.</p>
+          <p>Your brief and any document you attach are read and planned in your browser. With the rule-based planner they never leave it; Clarchy does not receive or store them.</p>
         </section>
         <section>
           <h2>If you use an AI model</h2>
@@ -709,7 +635,7 @@
         </section>
         <section>
           <h2>What your browser keeps</h2>
-          <p>Your browser keeps, in its local storage, your account's random identifier, its free-diagram count and the name and email you entered (to show who is logged in; Log out clears them), your current draft, and your model and endpoint choices, so you don't have to sign up or retype them again. They stay on your device, and you can clear them at any time in your browser's settings. Clarchy sets no cookies and uses no analytics or advertising trackers.</p>
+          <p>Your browser keeps your current draft and your model and endpoint choices in its local storage, so you don't have to retype them. The access token you paste is kept only for the current tab. Everything stays on your device, and you can clear it at any time in your browser's settings. Clarchy sets no cookies and uses no analytics or advertising trackers.</p>
         </section>
         <section>
           <h2>Downloads from other services</h2>
@@ -721,7 +647,7 @@
         </section>
         <section>
           <h2>Your choices</h2>
-          <p>To see, correct or delete what Clarchy keeps about you, or to stop product updates, email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>. If you email Clarchy, your address and message are used only to reply to you.</p>
+          <p>Clarchy keeps no data about you to see or delete. If you email <a href="mailto:namrata.bhatia@clarchy.com">namrata.bhatia@clarchy.com</a>, your address and message are used only to reply to you.</p>
         </section>
         <section>
           <h2>Changes</h2>
@@ -738,7 +664,7 @@
         <!-- crumbs -->
         <div class="page-head">
           <h1>Terms of use</h1>
-          <p>By using clarchy.com you agree to these terms. They are short because the site is free to start and there is nothing to install.</p>
+          <p>By using clarchy.com you agree to these terms. They are short because the site is free and there is nothing to install.</p>
           <p class="updated">Updated 2 October 2026</p>
         </div>
         <section>
@@ -756,10 +682,6 @@
         <section>
           <h2>Your responsibility</h2>
           <p>You decide what to build and deploy. Review any design for security, reliability, cost and compliance before you use it.</p>
-        </section>
-        <section>
-          <h2>Free diagrams and Pro</h2>
-          <p>Signing up gives you a number of free diagrams, shown on the pricing page; samples, examples and re-planning don't use them. The free allowance may change. Joining the Pro waitlist is not a purchase and commits you to nothing: Clarchy will tell you the price before anything is charged. Please sign up only once, with your own details.</p>
         </section>
         <section>
           <h2>Your content</h2>
@@ -796,40 +718,6 @@
     </dl>
     <p class="footer-links"><span id="copyright"><!-- render:copyright --></span><a href="/about/">About</a><a href="/blog/">Blog</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="mailto:namrata.bhatia@clarchy.com">Contact</a><!-- render:engine-chip --></p>
   </footer>
-
-  <!-- Sign-up: asked on the first action on the home page (access.js) -->
-  <dialog class="modal" id="signup-dialog" aria-labelledby="signup-title">
-    <form class="modal-body" id="signup-form" data-mode="signup" novalidate>
-      <button type="button" class="modal-close" data-close aria-label="Close">×</button>
-      <div class="segmented full form-modes" id="form-modes">
-        <button type="button" data-mode="signup" aria-pressed="true">Sign up</button>
-        <button type="button" data-mode="login" aria-pressed="false">Log in</button>
-      </div>
-      <h2 id="signup-title">Before you start</h2>
-      <p class="modal-lead" id="signup-lead">Clarchy is in early access. Tell us who you are and your first <span data-free-count>3</span> diagrams are free.</p>
-      <label class="field" data-signup-only><span>Name</span><input name="name" autocomplete="name" required maxlength="120"></label>
-      <label class="field" data-signup-only><span>Company</span><input name="company" autocomplete="organization" required maxlength="120"></label>
-      <label class="field"><span>Work email</span><input name="email" type="email" autocomplete="email" required maxlength="254"></label>
-      <label class="check" data-signup-only><input type="checkbox" name="updates"><span>Send me product updates, about once a month. You can unsubscribe any time.</span></label>
-      <label class="trap" aria-hidden="true">Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label>
-      <p class="form-error" id="signup-error" role="alert" hidden></p>
-      <button type="submit" class="btn btn-primary" id="signup-submit">Continue</button>
-      <p class="modal-fine">We use these details for your free diagrams and your account. Your brief stays in your browser. <a href="/privacy/" data-close>Privacy</a> · <a href="/terms/" data-close>Terms</a></p>
-    </form>
-  </dialog>
-
-  <!-- Shown when the free diagrams are used up -->
-  <dialog class="modal" id="limit-dialog" aria-labelledby="limit-title">
-    <div class="modal-body">
-      <button type="button" class="modal-close" data-close aria-label="Close">×</button>
-      <h2 id="limit-title">You've used your free diagrams</h2>
-      <p class="modal-lead" id="limit-text"></p>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-primary" id="limit-waitlist">Join the Pro waitlist</button>
-        <a class="btn" href="/pricing/" data-close>See pricing</a>
-      </div>
-    </div>
-  </dialog>
 
   <template id="workspace-template">
     <div class="ws-head">
@@ -940,7 +828,6 @@
   <script src="/static/services.js"></script>
   <script src="/static/blog.js"></script>
   <script src="/static/howto.js"></script>
-  <script src="/static/access.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

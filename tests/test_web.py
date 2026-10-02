@@ -21,7 +21,6 @@ SCRIPTS = (
     "services.js",
     "blog.js",
     "howto.js",
-    "access.js",
     "app.js",
 )
 
@@ -53,16 +52,16 @@ def test_pages_and_assets_served(client):
         page.status_code == 200
         and "<title>Clarchy · Cloud architecture from your requirements</title>" in page.text
     )
-    pricing = client.get("/pricing/")
-    assert pricing.status_code == 200 and "<title>Pricing · Clarchy</title>" in pricing.text
-    assert 'id="page-pricing"' in pricing.text and 'id="page-plan"' not in pricing.text
+    howto = client.get("/how-to/")
+    assert howto.status_code == 200 and 'id="page-howto"' in howto.text
+    assert 'id="page-plan"' not in howto.text
     example = client.get("/examples/rag-chatbot/")
     assert '<h1 class="ws-name">RAG chatbot</h1>' in example.text
-    assert client.get("/pricing", follow_redirects=False).headers["location"].endswith("/pricing/")
+    assert client.get("/how-to", follow_redirects=False).headers["location"].endswith("/how-to/")
+    assert client.get("/pricing/").status_code == 404
     assert client.get("/examples/nothing-here/").status_code == 404
-    # A server copy plans on the server and has no accounts.
+    # A server copy plans on the server.
     assert 'id="engine-chip"' in page.text and "Rule-based planner" in page.text
-    assert '<p class="credit-line" id="credit-line" hidden></p>' in page.text
     assets = (
         *(f"/static/{name}" for name in SCRIPTS),
         "/static/app.css",

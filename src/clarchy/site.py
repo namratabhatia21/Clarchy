@@ -1,13 +1,13 @@
 """The web UI's pages, each at its own address, rendered from static/index.html.
 
 One template holds every page between <!-- page:KEY --> and <!-- /page:KEY --> markers.
-A multi-page build renders one document per address (/, /examples/, /pricing/, ...) with
+A multi-page build renders one document per address (/, /examples/, /how-to/, ...) with
 only that page's section, its own title, description, canonical link, breadcrumbs and
 structured data, and with the lists that scripts used to fill in (samples, examples,
 services, posts) already in the HTML, so search engines and the first paint see the real
 page. The scripts then take over and switch pages without reloading (app.js). A
 single-page build, for hosts that take one file, keeps every section and hash links
-(#pricing), as before.
+(#howto), as before.
 
 `clarchy serve` renders these pages per request (web.py); `clarchy export-site` writes
 them as files with a sitemap and robots.txt (export.py).
@@ -40,7 +40,6 @@ PATHS = {
     "plan": "/",
     "examples": "/examples/",
     "services": "/services/",
-    "pricing": "/pricing/",
     "howto": "/how-to/",
     "blog": "/blog/",
     "about": "/about/",
@@ -53,11 +52,10 @@ SHEETS = {
     "examples": "02 · Examples",
     "example": "02 · Examples",
     "services": "03 · Services",
-    "pricing": "04 · Pricing",
-    "howto": "05 · How to",
-    "blog": "06 · Blog",
-    "post": "06 · Blog",
-    "about": "07 · About",
+    "howto": "04 · How to",
+    "blog": "05 · Blog",
+    "post": "05 · Blog",
+    "about": "06 · About",
     "privacy": "Privacy",
     "terms": "Terms",
 }
@@ -438,14 +436,6 @@ def pages(c: Content) -> list[Page]:
             (("Services", PATHS["services"]),),
         ),
         Page(
-            "pricing",
-            PATHS["pricing"],
-            "Pricing · Clarchy",
-            "Start free: your first 3 diagrams from your own briefs, with unlimited samples "
-            "and examples. Pro, with unlimited diagrams, is in early access.",
-            (("Pricing", PATHS["pricing"]),),
-        ),
-        Page(
             "howto",
             PATHS["howto"],
             "How to use Clarchy: from a brief to a cloud architecture",
@@ -495,8 +485,8 @@ def pages(c: Content) -> list[Page]:
             "terms",
             PATHS["terms"],
             "Terms of use · Clarchy",
-            "The terms for using clarchy.com: free diagrams and the Pro waitlist, estimates "
-            "that are not quotes, and designs as a starting point for your own review.",
+            "The terms for using clarchy.com: estimates that are not quotes, policy checks "
+            "that are not legal advice, and designs as a starting point for your own review.",
             (("Terms", PATHS["terms"]),),
         ),
     ]
@@ -631,17 +621,6 @@ def _composer_foot(shell: Shell) -> str:
         )
     hidden = " hidden" if shell.mode == "replay" else ""
     return f'<p class="composer-foot" id="composer-foot"{hidden}>{text}</p>'
-
-
-def _credit_line(shell: Shell) -> str:
-    # On clarchy.com the line appears once the account API answers (access.js); its space
-    # is kept from the start so nothing below it moves.
-    if shell.mode == "static":
-        return (
-            '<p class="credit-line pending" id="credit-line">Your first '
-            '<span data-free-count>3</span> diagrams are free. <a href="/pricing/">Pricing</a></p>'
-        )
-    return '<p class="credit-line" id="credit-line" hidden></p>'
 
 
 def _samples(c: Content) -> str:
@@ -851,24 +830,6 @@ def _organization() -> list[dict[str, Any]]:
     ]
 
 
-def _faq(section: str) -> list[dict[str, Any]]:
-    faq = re.search(r'class="prose-page faq".*?<dl>(.*?)</dl>', section, re.S)
-    if not faq:
-        return []
-
-    def text(fragment: str) -> str:
-        return html.unescape(re.sub(r"<[^>]+>", "", fragment)).strip()
-
-    return [
-        {
-            "@type": "Question",
-            "name": text(q),
-            "acceptedAnswer": {"@type": "Answer", "text": text(a)},
-        }
-        for q, a in re.findall(r"<dt>(.*?)</dt>\s*<dd>(.*?)</dd>", faq.group(1), re.S)
-    ]
-
-
 def structured_data(page: Page, section: str = "") -> dict[str, Any]:
     graph: list[dict[str, Any]] = []
     if page.key == "plan":
@@ -888,12 +849,7 @@ def structured_data(page: Page, section: str = "") -> dict[str, Any]:
                 "description": HOME_DESCRIPTION,
                 "applicationCategory": "DeveloperApplication",
                 "operatingSystem": "Any, in a web browser",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "USD",
-                    "description": "Your first 3 diagrams are free",
-                },
+                "isAccessibleForFree": True,
                 "publisher": {"@id": f"{SITE_URL}/#organization"},
             },
         ]
@@ -907,10 +863,6 @@ def structured_data(page: Page, section: str = "") -> dict[str, Any]:
                 ],
             }
         )
-    if page.key == "pricing":
-        questions = _faq(section)
-        if questions:
-            graph.append({"@type": "FAQPage", "mainEntity": questions})
     if page.key == "about":
         graph += _organization()
         graph.append(
@@ -1007,7 +959,6 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "body-attrs": attrs,
         "engine-chip": _engine_chip(shell, c.meta),
         "composer-foot": _composer_foot(shell),
-        "credit-line": _credit_line(shell),
         "static-note-hidden": "" if shell.mode == "replay" else " hidden",
         "regions": _regions(c),
         "samples": _samples(c),
@@ -1096,6 +1047,10 @@ def redirects(c: Content) -> str:
     lines = [
         "# Every page's address ends in a slash; these send the other spellings there.",
         "/index.html / 301",
+        "# The Pricing page went when Clarchy became an open-source project.",
+        "/pricing/ / 301",
+        "/pricing / 301",
+        "/pricing/index.html / 301",
     ]
     for p in pages(c):
         if p.path != "/":

@@ -238,11 +238,6 @@ const Plan = (() => {
     }
     showError("");
     run.active = true;
-    // A plan from the visitor's own brief uses a free diagram; samples and re-plans don't.
-    if (!sampleId && !answers.length && !(await Access.spend())) {
-      run.active = false;
-      return;
-    }
     run.replay = replay;
     run.input = { text, file, label, answers, baseLabel };
     $("plan-start").hidden = true;

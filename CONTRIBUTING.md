@@ -45,7 +45,9 @@ Versions follow [Semantic Versioning](https://semver.org/). To release:
 1. On a branch `release/vX.Y.Z`, set `version` in `pyproject.toml` and move the notes
    into a `## [X.Y.Z] - YYYY-MM-DD` section of `CHANGELOG.md`. Merge it.
 2. Tag the merge on `main` and push the tag:
-   `git tag -a vX.Y.Z -m "Clarchy X.Y.Z" && git push origin vX.Y.Z`.
+   `git tag -a vX.Y.Z -m "Clarchy X.Y.Z" && git push origin vX.Y.Z`. Or, on GitHub,
+   *Releases → Draft a new release*, create the tag `vX.Y.Z` on `main` and publish.
 3. The `Release` workflow checks the tag against `pyproject.toml`, runs the checks,
    builds the wheel, the source package and a zip of the site, and publishes the GitHub
-   release with the notes from `CHANGELOG.md`.
+   release with the notes from `CHANGELOG.md` (or adds the files and notes to the release
+   made on GitHub).

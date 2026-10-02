@@ -4,6 +4,8 @@ name: Release
 #
 #   git tag -a v0.1.0 -m "Clarchy 0.1.0" && git push origin v0.1.0
 #
+# or when a release is made with a new tag in GitHub's "Draft a new release" page.
+#
 # It checks that the tag matches the version in pyproject.toml, runs the checks, builds
 # the package (wheel and source) and a ready-to-host copy of the site, and creates the
 # release with that version's notes from CHANGELOG.md. CONTRIBUTING.md has the steps.
@@ -45,9 +47,16 @@ jobs:
           ls -l dist
       - name: Write the release notes
         run: python scripts/release_notes.py "$GITHUB_REF_NAME" > notes.md
-      - name: Create the release
+      - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "$GITHUB_REF_NAME" dist/*
-          --title "Clarchy $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+        # A release made in GitHub's "Draft a new release" page creates the tag itself; then
+        # this run finds that release and adds the files and the notes to it.
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+            gh release edit "$GITHUB_REF_NAME" --title "Clarchy $GITHUB_REF_NAME" --notes-file notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" dist/* \
+              --title "Clarchy $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+          fi

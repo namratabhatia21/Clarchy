@@ -1,11 +1,11 @@
 name: Pages
 
 # Publishes the site (clarchy export-site) to GitHub Pages and, when the repository has
-# Cloudflare secrets, to Cloudflare Pages. AWS prices are refreshed from the AWS Price List
-# API on every deploy and every Monday.
+# Cloudflare secrets, to the Cloudflare Worker "clarchy" (static assets, wrangler.jsonc).
+# AWS prices are refreshed from the AWS Price List API on every deploy and every Monday.
 #
-# Cloudflare: add the secrets CLOUDFLARE_API_TOKEN (Pages edit permission) and
-# CLOUDFLARE_ACCOUNT_ID, and create a Pages project called "clarchy" (Direct Upload).
+# Cloudflare: add the secrets CLOUDFLARE_API_TOKEN (permission "Workers Scripts: Edit")
+# and CLOUDFLARE_ACCOUNT_ID.
 # To stop publishing to GitHub Pages, set the repository variable GITHUB_PAGES to "off".
 # Requires Settings → Pages → Source: "GitHub Actions". The custom domain (clarchy.com) is
 # set in Settings → Pages too; workflow deployments ignore a CNAME file.
@@ -44,13 +44,13 @@ jobs:
             || echo "::warning::Could not refresh AWS prices; publishing the committed price book"
       - run: pip install .
       - run: clarchy export-site -o site
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare (Worker "clarchy")
         if: env.HAS_CLOUDFLARE == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy site --project-name=clarchy --branch=main
+          command: deploy
       - uses: actions/configure-pages@v5
         if: vars.GITHUB_PAGES != 'off'
       - uses: actions/upload-pages-artifact@v3

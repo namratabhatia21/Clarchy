@@ -1,0 +1,10 @@
+// Cloudflare Worker that serves the static site built by `clarchy export-site -o site`.
+// The Pages workflow builds the site and runs `wrangler deploy` when the repository has
+// the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets.
+{
+  "name": "clarchy",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./site"
+  }
+}

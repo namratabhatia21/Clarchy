@@ -286,16 +286,18 @@ GitHub Pages (four `A` and four `AAAA` records for `clarchy.com`, and a `CNAME` 
 Settings → Pages. The page uses only relative links, so the same build works on a custom
 domain or under a `github.io` path.
 
-**Hosting on Cloudflare Pages instead.** The same workflow also deploys to Cloudflare Pages
-once the repository has two secrets:
+**Hosting on Cloudflare.** The same workflow also deploys the site to a Cloudflare Worker
+named `clarchy`, which serves the built files as static assets (`wrangler.jsonc`), once
+the repository has two secrets:
 
-1. In Cloudflare, create a Pages project named `clarchy` (Workers & Pages → Create →
-   Pages → Upload assets), and an API token with the *Cloudflare Pages: Edit* permission.
+1. In Cloudflare, create an API token with the *Workers Scripts: Edit* permission (the
+   "Edit Cloudflare Workers" template works), and copy your account ID.
 2. In GitHub, add the repository secrets `CLOUDFLARE_API_TOKEN` and
-   `CLOUDFLARE_ACCOUNT_ID`, then re-run the `Pages` workflow.
-3. In the Pages project, add the custom domains `clarchy.com` and `www.clarchy.com`. If
-   the domain's DNS is on Cloudflare, the records are created for you; otherwise move the
-   domain's nameservers to Cloudflare first.
+   `CLOUDFLARE_ACCOUNT_ID`, then run the `Pages` workflow. The Worker is created or
+   updated and is live at `clarchy.<your-subdomain>.workers.dev`.
+3. In the Worker's Settings → Domains & Routes, add the custom domains `clarchy.com` and
+   `www.clarchy.com` (the domain must be on Cloudflare DNS; remove old records that
+   point to GitHub).
 4. Remove the custom domain from GitHub's Settings → Pages and set the repository variable
    `GITHUB_PAGES` to `off`, so only Cloudflare serves the site.
 

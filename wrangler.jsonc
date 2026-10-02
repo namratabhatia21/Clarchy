@@ -23,6 +23,9 @@
     }
   ],
   "vars": {
+    // "on" asks for name, company and email on the first action on the home page and
+    // counts free diagrams; "off" pauses both (the page then asks nothing and limits nothing).
+    "ACCOUNTS": "off",
     // Diagrams from a visitor's own brief before the Pro waitlist prompt.
     "FREE_DIAGRAMS": "3"
   }

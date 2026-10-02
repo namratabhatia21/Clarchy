@@ -3,7 +3,8 @@
 // site/ as static files. It keeps sign-ups, free-diagram credits and the Pro waitlist in
 // D1 (binding DB). Plans themselves run in the visitor's browser and are never sent here.
 //
-//   GET  /api/config            { accounts, free_diagrams }
+//   GET  /api/config            { accounts, free_diagrams }; accounts is false when the ACCOUNTS
+//                               variable is "off", and the page then asks nothing and limits nothing
 //   POST /api/signup            { name, company, email, updates, website }  -> standing
 //   GET  /api/me?id=            standing, or 404 when the id is unknown
 //   POST /api/spend             { id }  -> 200 with standing, or 402 when no credits are left
@@ -32,6 +33,9 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
   headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
 });
 const now = () => new Date().toISOString();
+
+// The sign-up form and the free-diagram limit can be paused without a code change.
+const accountsOn = (env) => String(env.ACCOUNTS ?? "on").trim().toLowerCase() !== "off";
 
 function freeDiagrams(env) {
   const n = Number(env.FREE_DIAGRAMS);
@@ -206,7 +210,7 @@ export default {
       }
       switch (`${request.method} ${url.pathname}`) {
         case "GET /api/config":
-          return json({ accounts: true, free_diagrams: freeDiagrams(env) });
+          return json({ accounts: accountsOn(env), free_diagrams: freeDiagrams(env) });
         case "POST /api/signup":
           return await signup(request, env);
         case "GET /api/me":

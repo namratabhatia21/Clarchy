@@ -72,6 +72,13 @@ describe("config and routing", async () => {
     assert.deepEqual(await res.json(), { accounts: true, free_diagrams: 3 });
   });
 
+  it("turns accounts off when ACCOUNTS is off, so the page asks nothing", async () => {
+    env.ACCOUNTS = "off";
+    assert.deepEqual(await (await call("GET", "/api/config")).json(), { accounts: false, free_diagrams: 3 });
+    env.ACCOUNTS = "on";
+    assert.equal((await (await call("GET", "/api/config")).json()).accounts, true);
+  });
+
   it("serves everything outside /api/ from the static files", async () => {
     const res = await call("GET", "/pricing");
     assert.equal(await res.text(), "static file");

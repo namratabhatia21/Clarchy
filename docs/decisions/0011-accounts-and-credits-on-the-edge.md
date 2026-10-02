@@ -34,6 +34,9 @@ files.
 - **Abuse limits without paid services:** same-origin POSTs only, a hidden honeypot field,
   at most 10 new sign-ups an hour per network (a salted hash of the IP; the IP itself is
   never stored), bodies capped at 4 KB, bound SQL parameters everywhere.
+- **A switch to pause it.** `ACCOUNTS` in `wrangler.jsonc` set to `"off"` makes
+  `/api/config` report accounts off, so the page asks nothing and limits nothing, as on a
+  copy without the API. It is off while the site is being tested.
 - **Fail open.** The page turns accounts on only when `/api/config` answers. Copies
   without the API (GitHub Pages, `clarchy serve`, fragment hosts) gate nothing, and if
   the API fails mid-visit, planning carries on.

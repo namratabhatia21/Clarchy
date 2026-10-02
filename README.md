@@ -323,6 +323,9 @@ allowance is `FREE_DIAGRAMS` in `wrangler.jsonc`.
   Console, then for example
   `SELECT created_at, name, company, email, updates_opt_in, plan, pro_requested_at FROM leads ORDER BY created_at DESC;`
   Only email people about product updates where `updates_opt_in = 1`.
+- **Pause or resume the sign-up form:** `ACCOUNTS` in `wrangler.jsonc`: `"off"` asks
+  nothing and limits nothing (the setting while testing), `"on"` brings back the form and
+  the free-diagram count. Deploying applies it.
 - **Turn on Pro for someone:** `UPDATE leads SET plan = 'pro' WHERE email = 'name@company.com';`
 - **Delete someone's data on request:** `DELETE FROM leads WHERE email = 'name@company.com';`
   (their usage rows go with it).

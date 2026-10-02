@@ -21,6 +21,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -49,21 +50,27 @@ SPECS: dict[str, dict[str, Any]] = {
     "keyvault.hsm_keys": {"service": "Key Vault", "hints": ["hsm"]},
     "keyvault.operations": {"service": "Key Vault", "hints": ["operations"]},
     "entra.p2_users": {"family": "Security", "hints": ["p2"]},
-    "entra.mau": {"family": "Security", "hints": ["external"]},
+    "entra.mau": {
+        "service": "Azure Active Directory for External Identities",
+        "hints": ["monthly active users"],
+    },
     "frontdoor.base": {
-        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "service": "Azure Front Door Service",
+        "product": "Azure Front Door",
         "zoned": True,
-        "hints": ["standard"],
+        "hints": ["standard", "base"],
     },
     "frontdoor.egress_gb": {
-        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "service": "Azure Front Door Service",
+        "product": "Azure Front Door",
         "zoned": True,
-        "hints": ["data transfer"],
+        "hints": ["standard", "transfer out"],
     },
     "frontdoor.requests": {
-        "service": ["Azure Front Door Service", "Azure Front Door", "Front Door"],
+        "service": "Azure Front Door Service",
+        "product": "Azure Front Door",
         "zoned": True,
-        "hints": ["request"],
+        "hints": ["standard", "request"],
     },
     "waf.policies": {
         "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
@@ -71,14 +78,16 @@ SPECS: dict[str, dict[str, Any]] = {
         "hints": ["polic"],
     },
     "waf.rules": {
-        "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
+        "service": "Azure Front Door Service",
+        "product": "Azure Front Door Service",
         "zoned": True,
-        "hints": ["rule"],
+        "hints": ["custom"],
     },
     "waf.requests": {
-        "service": ["Azure Front Door Service", "Azure Front Door", "Web Application Firewall"],
+        "service": "Azure Front Door Service",
+        "product": "Azure Front Door Service",
         "zoned": True,
-        "hints": ["waf"],
+        "hints": ["standard", "request"],
     },
     "dns.zones": {"service": ["Azure DNS", "DNS"], "zoned": True, "hints": ["zone"]},
     "dns.queries": {"service": ["Azure DNS", "DNS"], "zoned": True, "hints": ["quer"]},
@@ -130,7 +139,7 @@ SPECS: dict[str, dict[str, Any]] = {
         "service": ["Microsoft Fabric", "Fabric", "Power BI"],
         "hints": ["capacity"],
     },
-    "fabric.storage_gb": {"service": ["Microsoft Fabric", "Fabric"], "hints": ["onelake"]},
+    "fabric.storage_gb": {"service": "Microsoft Fabric", "hints": ["storage", "data stored"]},
     "monitor.logs_gb": {"service": "Log Analytics", "hints": ["ingestion"]},
     "monitor.alerts": {"service": "Azure Monitor", "hints": ["alert"]},
     "acr.registry": {"service": "Container Registry", "hints": ["basic"]},
@@ -206,7 +215,12 @@ def discover(region: str = "eastus", keys: list[str] | None = None, out=sys.stdo
             items = cache[ident]
             if items:
                 break
-        hits = [i for i in items if all(h in _text(i) for h in spec["hints"])]
+        hits = [
+            i
+            for i in items
+            if all(h in _text(i) for h in spec["hints"])
+            and i.get("productName") == spec.get("product", i.get("productName"))
+        ]
         names = sorted({i.get("serviceName", "") for i in items})
         print(f"## {key} ({len(items)} items in {dict(filters)}, {len(hits)} match)", file=out)
         if not items:
@@ -224,6 +238,238 @@ def discover(region: str = "eastus", keys: list[str] | None = None, out=sys.stdo
                 + (f" | SP {plan}" if plan else ""),
                 file=out,
             )
+
+
+# --- the price book ----------------------------------------------------------------------
+
+HOURS_PER_MONTH = 730
+
+
+@dataclass(frozen=True)
+class Meter:
+    """One price in the API, by name, and how to turn it into the book's unit: the API's
+    price per its own unitOfMeasure, divided by that quantity, times `per`."""
+
+    service: str
+    product: str
+    sku: str
+    meter: str
+    unit: str
+    per: float = 1.0
+    commit: str | None = None  # "savings plan" or "reservation"
+    zoned: bool = False  # priced by zone (Front Door, DNS), not by region
+
+
+METERS: dict[str, Meter] = {
+    "functions.executions": Meter(
+        "Functions", "Functions", "Standard", "Standard Total Executions", "1M executions", 1e6
+    ),
+    "functions.gb_seconds": Meter(
+        "Functions", "Functions", "Standard", "Standard Execution Time", "GB-second"
+    ),
+    "apim.calls": Meter(
+        "API Management", "API Management", "Consumption", "Consumption Calls", "1M calls", 1e6
+    ),
+    "apim.basicv2_hours": Meter(
+        "API Management", "API Management", "Basic v2", "Basic v2 Unit", "Basic v2 unit-hour"
+    ),
+    "blob.archive_gb": Meter(
+        "Storage",
+        "General Block Blob v2",
+        "Archive LRS",
+        "Archive LRS Data Stored",
+        "GB-month (Archive, LRS)",
+    ),
+    "blob.storage_gb": Meter(
+        "Storage", "General Block Blob v2", "Hot LRS", "Hot LRS Data Stored", "GB-month (Hot, LRS)"
+    ),
+    "backup.storage_gb": Meter(
+        "Backup", "Backup", "Standard", "Standard GRS Data Stored", "GB-month (backup storage, GRS)"
+    ),
+    "backup.instances": Meter(
+        "Backup",
+        "Backup",
+        "Azure VM",
+        "Azure VM Protected Instance",
+        "protected instance-month (50 to 500 GB)",
+    ),
+    "keyvault.hsm_keys": Meter(
+        "Key Vault",
+        "Key Vault",
+        "Premium",
+        "Premium HSM-protected RSA 2048-bit key",
+        "HSM-protected key-month (Premium)",
+    ),
+    "keyvault.operations": Meter(
+        "Key Vault", "Key Vault", "Standard", "Operations", "10K operations", 1e4
+    ),
+    "appgw.hours": Meter(
+        "Application Gateway",
+        "Application Gateway Standard v2",
+        "Standard",
+        "Standard Fixed Cost",
+        "gateway-hour",
+    ),
+    "appgw.capacity_units": Meter(
+        "Application Gateway",
+        "Application Gateway Standard v2",
+        "Standard",
+        "Standard Capacity Units",
+        "capacity unit-hour",
+    ),
+    "containerapps.vcpu_hours": Meter(
+        "Azure Container Apps",
+        "Azure Container Apps",
+        "Standard",
+        "Standard vCPU Active Usage",
+        "vCPU-hour",
+        3600,
+        "savings plan",
+    ),
+    "containerapps.gb_hours": Meter(
+        "Azure Container Apps",
+        "Azure Container Apps",
+        "Standard",
+        "Standard Memory Active Usage",
+        "GiB-hour",
+        3600,
+        "savings plan",
+    ),
+    "aks.cluster_hours": Meter(
+        "Azure Kubernetes Service",
+        "Azure Kubernetes Service",
+        "Standard",
+        "Standard Uptime SLA",
+        "cluster-hour (Standard tier)",
+    ),
+    "vm.node_hours": Meter(
+        "Virtual Machines",
+        "Virtual Machines Dsv5 Series",
+        "Standard_D2s_v5",
+        "D2s v5",
+        "D2s v5 node-hour",
+        1,
+        "savings plan",
+    ),
+    "servicebus.base": Meter(
+        "Service Bus",
+        "Service Bus",
+        "Standard",
+        "Standard Base Unit",
+        "namespace-month (Standard)",
+    ),
+    "servicebus.operations": Meter(
+        "Service Bus",
+        "Service Bus",
+        "Standard",
+        "Standard Messaging Operations",
+        "1M operations",
+        1e6,
+    ),
+    "eventgrid.operations": Meter(
+        "Event Grid", "Event Grid", "Standard", "Standard Operations", "1M operations", 1e6
+    ),
+    "eventhubs.tu_hours": Meter(
+        "Event Hubs",
+        "Event Hubs",
+        "Standard",
+        "Standard Throughput Unit",
+        "throughput unit-hour",
+    ),
+    "eventhubs.events": Meter(
+        "Event Hubs", "Event Hubs", "Standard", "Standard Ingress Events", "1M events", 1e6
+    ),
+    "logicapps.actions": Meter(
+        "Logic Apps",
+        "Logic Apps",
+        "Consumption",
+        "Consumption Standard Connector Actions",
+        "1K actions",
+        1e3,
+    ),
+    "datafactory.vcore_hours": Meter(
+        "Azure Data Factory v2",
+        "Azure Data Factory v2 Data Flow - General Purpose",
+        "vCore",
+        "vCore",
+        "vCore-hour (data flow)",
+    ),
+    "datafactory.runs": Meter(
+        "Azure Data Factory v2",
+        "Azure Data Factory v2",
+        "Cloud",
+        "Cloud Orchestration Activity Run",
+        "1K activity runs",
+        1e3,
+    ),
+    "cosmos.request_units": Meter(
+        "Azure Cosmos DB",
+        "Azure Cosmos DB serverless",
+        "RUs",
+        "1M RUs",
+        "1M request units (serverless)",
+        1e6,
+    ),
+    "cosmos.storage_gb": Meter(
+        "Azure Cosmos DB", "Azure Cosmos DB", "RUs", "Data Stored", "GB-month"
+    ),
+    "monitor.logs_gb": Meter(
+        "Log Analytics",
+        "Log Analytics",
+        "Analytics Logs",
+        "Analytics Logs Data Ingestion",
+        "GB ingested",
+    ),
+    "monitor.alerts": Meter(
+        "Azure Monitor", "Azure Monitor", "Alerts", "Alerts Metric Monitored", "alert rule"
+    ),
+    "acr.registry": Meter(
+        "Container Registry",
+        "Container Registry",
+        "Basic",
+        "Basic Registry Unit",
+        "registry-month (Basic)",
+        HOURS_PER_MONTH / 24,
+    ),
+}
+# Prices made of another: a database with a standby in another zone bills both servers.
+DERIVED: dict[str, tuple[str, float, str]] = {}
+
+
+def _first_paid(items: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The first paid tier; later tiers are cheaper and rarely reached."""
+    paid = [i for i in items if float(i.get("retailPrice") or 0) > 0]
+    return min(paid, key=lambda i: float(i.get("tierMinimumUnits") or 0)) if paid else None
+
+
+def _matches(item: dict[str, Any], m: Meter) -> bool:
+    return (
+        item.get("productName") == m.product
+        and item.get("skuName") == m.sku
+        and item.get("meterName") == m.meter
+    )
+
+
+def price_in(items: list[dict[str, Any]], m: Meter) -> dict[str, Any] | None:
+    """A book entry from the region's items for one meter, or None if it isn't sold there."""
+    found = [i for i in items if _matches(i, m)]
+    item = _first_paid([i for i in found if i.get("type") == "Consumption"])
+    if item is None:
+        return None
+    per = m.per / unit_quantity(item.get("unitOfMeasure", "1"))
+    entry: dict[str, Any] = {"price": round(float(item["retailPrice"]) * per, 8)}
+    if m.commit == "savings plan":
+        for plan in item.get("savingsPlan") or []:
+            years = 1 if plan.get("term", "").startswith("1") else 3
+            entry[f"commit_{years}yr"] = round(float(plan["retailPrice"]) * per, 8)
+    elif m.commit == "reservation":
+        for r in found:
+            if r.get("type") == "Reservation" and r.get("reservationTerm"):
+                years = 1 if r["reservationTerm"].startswith("1") else 3
+                hourly = float(r["retailPrice"]) / (years * 8760)
+                entry[f"commit_{years}yr"] = round(hourly * m.per, 8)
+    entry["meter"] = f"{m.product} / {m.sku} / {m.meter}"
+    return entry
 
 
 def main(argv: list[str] | None = None) -> int:

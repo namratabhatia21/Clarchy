@@ -66,3 +66,11 @@ means something.
   faint watermark.
 - **Fonts served with the site** (`static/fonts/`, SIL Open Font License), so pages
   render without a request to Google and nothing about visitors goes to a font service.
+
+## Amendment, 2026-10-02: no grid paper
+
+A faint grid behind a page or a card has become one of the commonest marks of a generated
+or template site. The page-wide grid on the home page and the small grids behind the home
+drawing, example cards, the scroll story and the drafting loader are gone; those sheets
+are plain paper. Only the diagram viewer keeps a faint grid, as the surface a drawing is
+read on. Contour lines behind page headings remain the one background motif.

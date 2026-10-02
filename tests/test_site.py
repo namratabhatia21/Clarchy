@@ -238,6 +238,9 @@ def test_design_rules_that_can_be_checked(built):
     progress = ("pipeline-status", "running", "drafting-loader")
     assert all(any(p in line for p in progress) for line in loops), "only progress loops"
     assert "radial-gradient" not in css, "no orbs or dot grids"
+    # No grid paper behind pages or cards; only the diagram viewer keeps one.
+    grids = re.findall(r"([^{}]+)\{[^}]*linear-gradient\(90deg", css)
+    assert [g.strip() for g in grids] == [".canvas"], grids
     pricing = (out / "pricing" / "index.html").read_text()
     assert pricing.count('<article class="plan-card') == 2, "two plans, not three tiers"
     assert "--bg: #ffffff" not in css and "--bg: #fff;" not in css

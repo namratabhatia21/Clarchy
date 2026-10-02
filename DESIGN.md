@@ -49,9 +49,11 @@ never position or size.
 
 ## Backgrounds
 
-Grid paper on the home page only. Contour lines (`scripts/contours.py`, in the spirit of
-Haikei's generated SVGs) behind page headings, in `--tick`, fading out where the words
-are. Nothing else sits behind text.
+No grid paper. A faint grid behind a page or a card is a template cliché; the only grid
+is inside the diagram viewer, where it is a working surface for reading a drawing.
+Contour lines (`scripts/contours.py`, in the spirit of Haikei's generated SVGs) behind
+page headings, in `--tick`, fading out where the words are. Nothing else sits behind
+text.
 
 ## Never
 
@@ -61,7 +63,7 @@ These make a site look generated. Do not add them:
 - a pure white background, rainbow colouring, neon colours, basic pastels, purple and black;
 - drop shadows on everything (only floating menus and dialogs have one);
 - three feature cards in a row, bento grids, three pricing tiers;
-- liquid glass, frosted glass, radial orbs, glowing blobs, dot grids;
+- liquid glass, frosted glass, radial orbs, glowing blobs, dot grids, grid-paper backgrounds;
 - Inter, Geist or Space Grotesk;
 - em dashes in copy; "It's not X, it's Y" sentences; checkmark bullets;
 - a coloured stripe along the top of a card;

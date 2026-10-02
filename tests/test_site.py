@@ -222,12 +222,25 @@ def test_the_home_page_closes_on_the_examples(built):
         assert f'href="/examples/{p["id"]}/"><span class="no">{i:02d}</span>' in coda
         assert f'<span class="nm">{site._e(p["name"])}</span>' in coda
     assert f"{site._count_word(len(content.patterns))} designs" in coda
-    # The protractor is decoration: hidden from screen readers, its arm drawn at the reading
-    # drafting.js opens it to.
-    svg = re.search(r'<svg class="coda-protractor".*?</svg>', coda, re.S).group(0)
-    assert 'aria-hidden="true"' in svg and f'data-sweep="{site.CODA_SWEEP}"' in svg
-    assert f"rotate({-site.CODA_SWEEP} 270 262)" in svg
+    # The pantograph is decoration, hidden from screen readers and drawn finished: its
+    # tracer back at the start of the sketch, the pencil on the copy, twice as far out.
+    svg = re.search(r'<svg class="coda-pantograph".*?</svg>', coda, re.S).group(0)
+    assert 'aria-hidden="true"' in svg and 'class="cg-copy"' in svg
+    (ox, oy), (tx, ty) = site.PANTOGRAPH_PIVOT, site.PANTOGRAPH_SKETCH[-1]
+    assert f'class="cg-pencil" transform="translate({2 * tx - ox:.1f} {2 * ty - oy:.1f})"' in svg
     assert "proof" not in home, "the example drawing gave way to the examples frame"
+
+
+def test_the_pantograph_keeps_its_bars_and_doubles_every_point():
+    def dist(a, b):
+        return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+
+    for t in site.PANTOGRAPH_SKETCH:
+        j = site.pantograph(t)
+        assert abs(dist(j["O"], j["J"]) - site.PANTOGRAPH_BAR) < 1e-6
+        assert abs(dist(j["J"], j["P"]) - site.PANTOGRAPH_BAR) < 1e-6
+        assert abs(dist(j["C"], j["T"]) - dist(j["J"], j["D"])) < 1e-6, "C-J-D-T: a parallelogram"
+        assert j["J"][1] < min(j["O"][1], j["P"][1]), "the bars stand like an A"
 
 
 def test_about_names_the_founder(built):

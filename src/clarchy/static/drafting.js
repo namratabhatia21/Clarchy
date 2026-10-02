@@ -137,6 +137,54 @@ const Drafting = (() => {
   }
   window.addEventListener("clarchy:page", () => requestAnimationFrame(reveal));
 
+  // ---------- the pantograph (site.py draws it finished; this runs it) ----------
+  // A fixed pivot O and two bars of the same length meeting at the elbow J keep the pencil
+  // P twice as far from O as the tracer T; C and D, halfway along the bars, hold T.
+  function makePantograph(svg) {
+    if (!svg) return null;
+    const pairs = (text) => text.trim().split(/\s+/).map((p) => p.split(",").map(Number));
+    const [[ox, oy]] = pairs(svg.dataset.pivot);
+    const bar = Number(svg.dataset.bar);
+    const sketch = pairs(svg.dataset.sketch);
+    const lengths = [0];
+    for (let i = 1; i < sketch.length; i++) {
+      lengths.push(lengths[i - 1] + Math.hypot(sketch[i][0] - sketch[i - 1][0], sketch[i][1] - sketch[i - 1][1]));
+    }
+    const total = lengths[lengths.length - 1];
+    const copy = svg.querySelector(".cg-copy");
+    const bars = (name) => [...svg.querySelectorAll(`.${name}`)];
+    const lines = { oj: bars("oj"), jp: bars("jp"), ct: bars("ct"), dt: bars("dt") };
+    const parts = { J: svg.querySelector(".cg-j"), C: svg.querySelector(".cg-c"), D: svg.querySelector(".cg-d"), T: svg.querySelector(".cg-tracer"), P: svg.querySelector(".cg-pencil") };
+    const f = (n) => n.toFixed(1);
+    return function (progress) {
+      const at = progress * total;
+      let i = 1;
+      while (i < sketch.length - 1 && lengths[i] < at) i++;
+      const [x0, y0] = sketch[i - 1];
+      const [x1, y1] = sketch[i];
+      const k = lengths[i] > lengths[i - 1] ? (at - lengths[i - 1]) / (lengths[i] - lengths[i - 1]) : 1;
+      const T = [x0 + (x1 - x0) * k, y0 + (y1 - y0) * k];
+      const P = [ox + 2 * (T[0] - ox), oy + 2 * (T[1] - oy)];
+      const dx = P[0] - ox, dy = P[1] - oy, d = Math.hypot(dx, dy);
+      const h = Math.sqrt(Math.max(bar * bar - (d * d) / 4, 0));
+      let nx = -dy / d, ny = dx / d;
+      if (ny > 0) { nx = -nx; ny = -ny; }
+      const J = [(ox + P[0]) / 2 + h * nx, (oy + P[1]) / 2 + h * ny];
+      const C = [(ox + J[0]) / 2, (oy + J[1]) / 2];
+      const D = [(J[0] + P[0]) / 2, (J[1] + P[1]) / 2];
+      const set = (els, a, b) => els.forEach((el) => {
+        el.setAttribute("x1", f(a[0])); el.setAttribute("y1", f(a[1]));
+        el.setAttribute("x2", f(b[0])); el.setAttribute("y2", f(b[1]));
+      });
+      set(lines.oj, [ox, oy], J); set(lines.jp, J, P); set(lines.ct, C, T); set(lines.dt, D, T);
+      for (const [name, point] of Object.entries({ J, C, D, T, P })) {
+        parts[name].setAttribute("transform", `translate(${f(point[0])} ${f(point[1])})`);
+      }
+      copy.style.strokeDasharray = "1";
+      copy.style.strokeDashoffset = String(1 - progress);
+    };
+  }
+
   // ---------- scroll ----------
   // Runs once the home page is on screen: at load, or when it is first opened from another
   // page (app.js).
@@ -155,9 +203,7 @@ const Drafting = (() => {
     const posterReading = poster && poster.querySelector(".pd-reading");
     const topbar = document.querySelector(".topbar");
     const coda = document.getElementById("coda");
-    const codaArm = coda && coda.querySelector(".cp-arm");
-    const codaSweep = coda && coda.querySelector(".cp-sweep");
-    const codaReading = coda && coda.querySelector(".cp-reading");
+    const pantograph = coda && makePantograph(coda.querySelector(".coda-pantograph"));
     let stage = -1;
     let queued = false;
 
@@ -172,20 +218,15 @@ const Drafting = (() => {
       });
     }
 
-    // The closing frame's protractor opens its arm as the frame scrolls into view, from 0
-    // to the reading drawn in the page, and closes again on the way back up.
+    // The closing frame's pantograph copies its sketch as the frame scrolls into view, and
+    // takes the copy back on the way up.
     function openCoda() {
       const box = coda.getBoundingClientRect();
       const shown = box.top < window.innerHeight && box.bottom > 0;
-      if (!codaArm) return shown;
-      const p = reduced.matches ? 1 : Math.min(1, Math.max(0, (window.innerHeight - box.top) / box.height));
-      const sweep = Number(codaArm.ownerSVGElement.dataset.sweep || 120);
-      const deg = sweep * (1 - (1 - p) ** 2);
-      const [cx, cy, r] = [270, 262, 150]; // the pivot and the sweep's radius (site.py)
-      const a = (deg * Math.PI) / 180;
-      codaArm.setAttribute("transform", `rotate(${(-deg).toFixed(2)} ${cx} ${cy})`);
-      codaSweep.setAttribute("d", `M${cx} ${cy}H${cx + r}A${r} ${r} 0 0 0 ${(cx + r * Math.cos(a)).toFixed(1)} ${(cy - r * Math.sin(a)).toFixed(1)}Z`);
-      codaReading.textContent = `${deg.toFixed(0).padStart(3, "0")}°`;
+      if (pantograph) {
+        const p = reduced.matches ? 1 : Math.min(1, Math.max(0, (window.innerHeight - box.top) / box.height));
+        pantograph(1 - (1 - p) ** 2);
+      }
       return shown;
     }
 

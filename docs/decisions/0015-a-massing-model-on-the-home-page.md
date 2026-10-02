@@ -51,8 +51,11 @@ works, as its result.
 The founder asked for something in orange to see the examples, with a protractor, in
 place of the example drawing at the bottom. The last frame takes the poster's orange: "See
 the examples", the first four examples as a drawing register (number, name, services, each
-linking to its page) and a "See examples" button, beside a half-circle protractor whose
-arm opens from 0° to 120° as the frame scrolls into view and closes on the way back
-(drafting.js; with reduced motion it stays open). Both are drawn by site.py with the page,
-so the frame needs no script to read. The massing model above already shows a real
+linking to its page) and a "See examples" button, beside a pantograph: the founder chose
+it from a plate of 18th-century drawing instruments (plate K) over a second protractor.
+As the frame scrolls into view its tracer follows a small sketch of three services while
+its pencil draws the same sketch at twice the size, and the copy is taken back on the way
+up (drafting.js; with reduced motion it is shown finished). site.py solves the linkage
+(two equal bars from a fixed pivot, a parallelogram holding the tracer halfway) and draws
+it finished, so the frame needs no script to read; drafting.js runs the same sums. The massing model above already shows a real
 design, priced, so the drawing no longer needs repeating.

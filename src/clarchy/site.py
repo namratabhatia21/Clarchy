@@ -252,48 +252,94 @@ def _poster_art() -> str:
     )
 
 
-CODA_SWEEP = 120  # the reading the closing protractor's arm opens to (drafting.js)
+# The closing frame's pantograph (plate K of Bion's instruments): a fixed pivot, two long
+# bars and a parallelogram, so the pencil always sits twice as far from the pivot as the
+# tracer. drafting.js moves it with the same sums as the page scrolls.
+PANTOGRAPH_PIVOT = (44.0, 206.0)
+PANTOGRAPH_BAR = 190.0  # each long bar, pivot to elbow and elbow to pencil
+# A small sketch of three services in a row, traced in one stroke (some lines twice).
+_SKETCH = [
+    (0, 6), (14, 6), (14, 11), (24, 11), (24, 0), (38, 0), (38, 11), (49, 11), (49, 6),
+    (63, 6), (63, 17), (49, 17), (49, 11), (38, 11), (38, 22), (24, 22), (24, 11), (14, 11),
+    (14, 17), (0, 17), (0, 6),
+]  # fmt: skip
+PANTOGRAPH_SKETCH = [(136 + 1.3 * x, 186 + 1.3 * y) for x, y in _SKETCH]
 
 
-def _coda_protractor() -> str:
-    """The closing frame's protractor: a half circle in degrees on its base strip, with an
-    arm that opens from 0 as the page scrolls down to it (drafting.js)."""
-    cx, cy, r = 270, 262, 236
+def pantograph(t: tuple[float, float]) -> dict[str, tuple[float, float]]:
+    """The linkage's joints with the tracer at t: the pivot O, the elbow J above the line
+    from O to the pencil P, the bars' midpoints C and D, and the tracer T."""
+    (ox, oy), bar = PANTOGRAPH_PIVOT, PANTOGRAPH_BAR
+    px, py = ox + 2 * (t[0] - ox), oy + 2 * (t[1] - oy)
+    dx, dy = px - ox, py - oy
+    d = math.hypot(dx, dy)
+    h = math.sqrt(max(bar * bar - d * d / 4, 0.0))
+    nx, ny = -dy / d, dx / d
+    if ny > 0:  # take the elbow above the line, so the bars stand like an A
+        nx, ny = -nx, -ny
+    jx, jy = (ox + px) / 2 + h * nx, (oy + py) / 2 + h * ny
+    return {
+        "O": (ox, oy),
+        "J": (jx, jy),
+        "P": (px, py),
+        "C": ((ox + jx) / 2, (oy + jy) / 2),
+        "D": ((jx + px) / 2, (jy + py) / 2),
+        "T": t,
+    }
 
-    def at(radius: float, degrees: float) -> tuple[float, float]:
-        a = math.radians(degrees)
-        return cx + radius * math.cos(a), cy - radius * math.sin(a)
 
-    minor, major, nums = [], [], []
-    for d in range(181):
-        long = 26 if d % 10 == 0 else 17 if d % 5 == 0 else 10
-        (x1, y1), (x2, y2) = at(r - 4, d), at(r - 4 - long, d)
-        (major if d % 10 == 0 else minor).append(f"M{x1:.1f} {y1:.1f}L{x2:.1f} {y2:.1f}")
-    for d in range(0, 181, 10):
-        for radius, value, cls in ((r - 44, 180 - d, "out"), (r - 66, d, "in")):
-            x, y = at(radius, d)
-            turn = f"rotate({90 - d} {x:.1f} {y:.1f})"
-            nums.append(
-                f'<text class="{cls}" x="{x:.1f}" y="{y + 4:.1f}" transform="{turn}">{value}</text>'
-            )
-    sx, sy = at(150, CODA_SWEEP)
-    body = f"M{cx - r} {cy + 18}V{cy}A{r} {r} 0 0 1 {cx + r} {cy}V{cy + 18}Z"
+def _coda_pantograph() -> str:
+    """The closing frame's instrument: a pantograph on a sheet, its tracer on a small
+    sketch and its pencil drawing the same sketch at twice the size. It is drawn finished;
+    drafting.js runs it from the start as the frame scrolls into view."""
+
+    def pts(points) -> str:
+        return " ".join(f"{x:g},{y:g}" for x, y in points)
+
+    def path(points) -> str:
+        return "M" + "L".join(f"{x:g} {y:g}" for x, y in points)
+
+    ox, oy = PANTOGRAPH_PIVOT
+    copy = [(ox + 2 * (x - ox), oy + 2 * (y - oy)) for x, y in PANTOGRAPH_SKETCH]
+    j = pantograph(PANTOGRAPH_SKETCH[-1])
+
+    def bar(name: str, a: str, b: str) -> str:
+        (x1, y1), (x2, y2) = j[a], j[b]
+        line = f'x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}"'
+        return f'<line class="cg-bar {name}" {line}/><line class="cg-bar-in {name}" {line}/>'
+
+    def joint(name: str, r: float) -> str:
+        x, y = j[name]
+        return (
+            f'<g class="cg-joint cg-{name.lower()}" transform="translate({x:.1f} {y:.1f})">'
+            f'<circle r="{r:g}"/><path d="M{-r * 0.55:g} 0H{r * 0.55:g}"/></g>'
+        )
+
+    tx, ty = j["T"]
+    px, py = j["P"]
     return (
-        f'<svg class="coda-protractor" viewBox="0 0 540 290" data-sweep="{CODA_SWEEP}" '
-        'aria-hidden="true">'
-        f'<path class="cp-shadow" transform="translate(10 12)" d="{body}"/>'
-        f'<path class="cp-face" d="{body}"/>'
-        f'<path class="cp-sweep" d="M{cx} {cy}H{cx + 150}A150 150 0 0 0 {sx:.1f} {sy:.1f}Z"/>'
-        f'<path class="cp-ticks" d="{"".join(minor)}"/>'
-        f'<path class="cp-ticks major" d="{"".join(major)}"/><g class="cp-nums">{"".join(nums)}</g>'
-        f'<path class="cp-line" d="M{cx - 92} {cy}A92 92 0 0 1 {cx + 92} {cy}'
-        f'M{cx - r + 6} {cy}H{cx + r - 6}M{cx} {cy - 10}V{cy + 10}"/>'
-        f'<text class="cp-reading" x="{cx - 128}" y="{cy + 13.5}">{CODA_SWEEP:03d}°</text>'
-        f'<g class="cp-arm" transform="rotate({-CODA_SWEEP} {cx} {cy})">'
-        f'<path d="M{cx - 16} {cy - 6}H{cx + r + 8}L{cx + r + 22} {cy}L{cx + r + 8} {cy + 6}'
-        f'H{cx - 16}Z"/><path class="cp-index" d="M{cx + 18} {cy}H{cx + r + 12}"/></g>'
-        f'<circle class="cp-hub" cx="{cx}" cy="{cy}" r="11"/>'
-        f'<circle class="cp-pin" cx="{cx}" cy="{cy}" r="3.5"/></svg>'
+        '<svg class="coda-pantograph" viewBox="0 0 440 300" aria-hidden="true" '
+        f'data-pivot="{pts([PANTOGRAPH_PIVOT])}" data-bar="{PANTOGRAPH_BAR:g}" '
+        f'data-sketch="{pts(PANTOGRAPH_SKETCH)}">'
+        '<rect class="cg-shadow" x="22" y="22" width="410" height="272"/>'
+        '<rect class="cg-sheet" x="12" y="10" width="410" height="272"/>'
+        '<text class="cg-mark" x="398" y="40">K</text>'
+        '<text class="cg-note" x="30" y="262">PANTOGRAPH · COPIES AT 2 : 1</text>'
+        f'<path class="cg-sketch" d="{path(PANTOGRAPH_SKETCH)}"/>'
+        f'<path class="cg-copy" d="{path(copy)}" pathLength="1"/>'
+        + bar("oj", "O", "J")
+        + bar("jp", "J", "P")
+        + bar("ct", "C", "T")
+        + bar("dt", "D", "T")
+        + f'<g class="cg-base"><circle cx="{ox:g}" cy="{oy:g}" r="12"/>'
+        f'<circle cx="{ox:g}" cy="{oy:g}" r="4"/></g>'
+        + joint("J", 7)
+        + joint("C", 5.5)
+        + joint("D", 5.5)
+        + f'<g class="cg-tracer" transform="translate({tx:.1f} {ty:.1f})">'
+        '<circle r="5"/><path d="M0 -5V-26M-4 -26H4"/></g>'
+        f'<g class="cg-pencil" transform="translate({px:.1f} {py:.1f})">'
+        '<path d="M0 0L-4 -12H4Z"/><path d="M-4 -12V-34H4V-12"/></g></svg>'
     )
 
 
@@ -970,7 +1016,7 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "model-facts": c.model["facts"] if c.model else "",
         "poster-dial": _poster_dial(),
         "poster-art": _poster_art(),
-        "coda-protractor": _coda_protractor(),
+        "coda-pantograph": _coda_pantograph(),
         "coda-register": _coda_register(c),
         "example-count": _count_word(len(c.patterns)),
         "example-filters": _example_filters(c),

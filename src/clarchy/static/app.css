@@ -440,8 +440,8 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 @media (max-width: 760px) { :root { --topbar-h: 97px; } .poster { margin-top: -20px; } }
 
 /* ---------- Plan, last frame: the examples, on the poster's orange ----------
-   A drawing register of real examples beside a protractor whose arm opens as the frame
-   scrolls into view (drafting.js). Small text sits on the paper sheet or the navy button,
+   A drawing register of real examples beside a pantograph that copies a sketch at twice
+   its size as the frame scrolls into view (drafting.js). Small text sits on the paper sheet or the navy button,
    never on the orange. */
 .coda { width: 100vw; margin: 40px 0 -24px calc(50% - 50vw); background: var(--poster); color: var(--poster-ink); overflow: hidden; }
 .coda-inner {
@@ -462,24 +462,27 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .coda-btn { text-decoration: none; }
 .coda a:focus-visible { outline: 2px solid var(--poster-ink); outline-offset: 3px; }
 .coda-figure { min-width: 0; }
-.coda-protractor { display: block; width: 100%; max-width: 560px; margin-left: auto; overflow: visible; }
-.coda-protractor .cp-shadow { fill: var(--poster-ink); }
-.coda-protractor .cp-face { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 2.5; }
-.coda-protractor .cp-sweep { fill: rgba(217, 72, 15, .2); stroke: var(--poster); stroke-width: 1.5; }
-.coda-protractor .cp-ticks { fill: none; stroke: var(--poster-ink); stroke-width: .8; }
-.coda-protractor .cp-ticks.major { stroke-width: 1.5; }
-.coda-protractor .cp-nums text { font: 500 11px var(--font-mono); fill: var(--poster-ink); text-anchor: middle; }
-.coda-protractor .cp-nums .in { font-size: 9px; fill: #4b5f80; }
-.coda-protractor .cp-line { fill: none; stroke: var(--poster-ink); stroke-width: 1.2; }
-.coda-protractor .cp-reading { font: 500 11px var(--font-mono); letter-spacing: 2px; fill: var(--poster-ink); text-anchor: middle; }
-.coda-protractor .cp-arm path:first-child { fill: var(--poster-ink); }
-.coda-protractor .cp-index { stroke: var(--poster); stroke-width: 1.5; }
-.coda-protractor .cp-hub { fill: var(--poster); stroke: var(--poster-ink); stroke-width: 3; }
-.coda-protractor .cp-pin { fill: var(--poster-ink); }
+.coda-pantograph { display: block; width: 100%; max-width: 560px; margin-left: auto; overflow: visible; }
+.coda-pantograph .cg-shadow { fill: var(--poster-ink); }
+.coda-pantograph .cg-sheet { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 2; }
+.coda-pantograph .cg-mark { font: 700 26px var(--font-display); font-stretch: 75%; fill: var(--poster-ink); }
+.coda-pantograph .cg-note { font: 500 10px var(--font-mono); letter-spacing: 1.6px; fill: var(--poster-ink); }
+.coda-pantograph .cg-sketch { fill: none; stroke: var(--poster-ink); stroke-width: 1.2; stroke-linejoin: round; }
+.coda-pantograph .cg-copy { fill: none; stroke: var(--poster); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.coda-pantograph .cg-bar { stroke: var(--poster-ink); stroke-width: 9; stroke-linecap: round; }
+.coda-pantograph .cg-bar-in { stroke: var(--poster-paper); stroke-width: 5; stroke-linecap: round; }
+.coda-pantograph .cg-base circle:first-child { fill: var(--poster-ink); }
+.coda-pantograph .cg-base circle + circle { fill: var(--poster); }
+.coda-pantograph .cg-joint circle { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 2; }
+.coda-pantograph .cg-joint path { stroke: var(--poster-ink); stroke-width: 1.4; }
+.coda-pantograph .cg-tracer circle { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 2; }
+.coda-pantograph .cg-tracer path { stroke: var(--poster-ink); stroke-width: 2.4; stroke-linecap: round; fill: none; }
+.coda-pantograph .cg-pencil path:first-child { fill: var(--poster); stroke: var(--poster-ink); stroke-width: 1.5; stroke-linejoin: round; }
+.coda-pantograph .cg-pencil path + path { fill: var(--poster-ink); stroke: var(--poster-ink); stroke-width: 1.5; }
 @media (max-width: 900px) {
   .coda-inner { grid-template-columns: minmax(0, 1fr); }
   .coda-figure { order: -1; }
-  .coda-protractor { margin: 0 auto; max-width: 440px; }
+  .coda-pantograph { margin: 0 auto; max-width: 440px; }
   .coda-sheet { max-width: none; }
 }
 @media (max-width: 700px) { .coda { margin-bottom: -20px; } .coda-list .sv { display: none; } .coda-list a { grid-template-columns: 30px minmax(0, 1fr); } }

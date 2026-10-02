@@ -16,8 +16,9 @@ type on a signal-orange field, round a protractor that turns as the page scrolls
 architect's stamps in place of stickers; the header sits on it until it scrolls away.
 Then the brief beside a model of a real design, then how it works. The page closes on
 the poster's orange again: "See the examples" in the same huge type, a drawing register of
-real examples on a paper sheet, and a half-circle protractor whose arm opens to 120° as
-the frame scrolls into view. Small text there sits on the paper or the navy button, never
+real examples on a paper sheet, and a pantograph (plate K of Bion's book of drawing
+instruments) that traces a small sketch and draws it again at twice the size as the frame
+scrolls into view: one design, copied to every cloud. Small text there sits on the paper or the navy button, never
 on the orange, which is too light for it.
 
 The second frame shows an architect's massing model of a real design (`massing.py`,

@@ -250,7 +250,7 @@ def test_about_credits_the_author_with_links(built):
         "https://github.com/namratabhatia21/Clarchy",
         "https://github.com/namratabhatia21",
         "https://www.linkedin.com/in/namratabhatia21/",
-        "mailto:namrata.bhatia@clarchy.com",
+        "mailto:namratabhatia21@gmail.com",
     ):
         assert f'href="{link}"' in about
     for p in pages:
@@ -398,3 +398,12 @@ def test_feedback_opens_the_visitors_email_app(built):
     assert "goes from your own email app to namratabhatia21@gmail.com" in privacy
     app = resources.files("clarchy").joinpath("static", "app.js").read_text()
     assert 'closest("#feedback-form")' in app and "encodeURIComponent(body)" in app
+
+
+def test_one_contact_address_everywhere(built):
+    """Every page that gives an email address gives the same one."""
+    out, _content, _pages = built
+    found = set()
+    for page in out.rglob("*.html"):
+        found |= set(re.findall(r'href="mailto:([^"?]+)', page.read_text()))
+    assert found == {"namratabhatia21@gmail.com"}, found

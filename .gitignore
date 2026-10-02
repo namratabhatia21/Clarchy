@@ -11,3 +11,6 @@ dist/
 /icons/
 Asset-Package*/
 site/
+
+# Local settings and keys; .env.example lists them.
+.env

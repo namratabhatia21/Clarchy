@@ -7,6 +7,10 @@ name: Prices
 #
 # - AWS: the AWS Price List API (public, no key). About 4 GB of offer files across eight
 #   regions, read as they download; the job takes a few minutes.
+# - Azure: the Azure Retail Prices API (public, no key), by meter name, for eight regions.
+#   Prices the API doesn't carry (Entra ID P2 licences, Azure DevOps parallel jobs, Front
+#   Door WAF rules and requests) keep their hand-compiled value, marked manual.
+# - Google Cloud: not yet; it needs a free API key saved as the secret GCP_API_KEY.
 #
 # Commits are made by github-actions[bot]. Pushes made with the workflow's own token don't
 # start other workflows, so this job runs the tests itself before it commits.
@@ -36,6 +40,8 @@ jobs:
       - run: pip install -e ".[dev]"
       - name: Refresh AWS prices
         run: python -m clarchy.aws_prices --output src/clarchy/data/prices/aws.yaml
+      - name: Refresh Azure prices
+        run: python -m clarchy.azure_prices --output src/clarchy/data/prices/azure.yaml
       - name: Keep the books if only their dates moved
         id: changed
         run: |

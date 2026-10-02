@@ -496,7 +496,7 @@ def _items(comp, model: dict[str, Any], book: dict[str, Any], ctx: Context) -> l
         entry = book["prices"].get(key)
         # Lines priced from the third-party book are flagged; a provider's own book is
         # labelled as a whole (verified or approximate).
-        approximate = False
+        approximate = bool(entry and entry.get("manual"))  # not in the provider's price API
         if entry is None:
             entry = price_book("thirdparty")["prices"][key]
             approximate = True

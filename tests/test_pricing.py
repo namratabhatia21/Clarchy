@@ -52,11 +52,16 @@ def test_aws_prices_come_from_the_price_list_with_skus():
     assert fargate["commit_3yr"] < fargate["commit_1yr"] < fargate["price"]
 
 
-def test_hand_compiled_books_say_so():
+def test_every_price_says_where_it_comes_from():
     for provider in ("azure", "gcp"):
         book = pricing.price_book(provider)
-        assert book["verified"] is False
-        assert all(entry["source"].startswith("https://") for entry in book["prices"].values())
+        for key, entry in book["prices"].items():
+            if book["verified"]:  # read from the provider's price API
+                assert entry.get("meter") or (
+                    entry.get("manual") and entry["source"].startswith("https://")
+                ), key
+            else:  # compiled by hand
+                assert entry["source"].startswith("https://"), key
 
 
 def test_open_source_is_not_priced():

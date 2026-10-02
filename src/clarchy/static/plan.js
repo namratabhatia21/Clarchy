@@ -220,7 +220,18 @@ const Plan = (() => {
     });
   }
 
-  async function start({ text, file, sampleId, label, answers = [], baseLabel = null }) {
+  // A brief typed into the box is saved to the visitor's downloads when they design from it:
+  // Clarchy keeps no copy, so this is how they keep theirs. The file holds exactly the text,
+  // so attaching it again plans the same brief. Hosts that can't download skip it.
+  function saveBrief(text) {
+    if (CA.CLIPBOARD_ONLY) return;
+    const d = new Date();
+    const two = (n) => String(n).padStart(2, "0");
+    const stamp = `${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}-${two(d.getHours())}${two(d.getMinutes())}`;
+    CA.deliver({ filename: `clarchy-brief-${stamp}.txt`, text, type: "text/plain;charset=utf-8" });
+  }
+
+  async function start({ text, file, sampleId, label, answers = [], baseLabel = null, saveCopy = false }) {
     if (run.active) return;
     const mode = $("mode").value;
     const replay = Boolean(sampleId) && CA.hasRecordedRun(sampleId) && mode !== "hf" && !answers.length;
@@ -237,6 +248,7 @@ const Plan = (() => {
       }
     }
     showError("");
+    if (saveCopy && !file && !replay) saveBrief(text);
     run.active = true;
     run.replay = replay;
     run.input = { text, file, label, answers, baseLabel };
@@ -376,7 +388,7 @@ const Plan = (() => {
 
     $("composer").addEventListener("submit", (e) => {
       e.preventDefault();
-      start({ text: $("requirements").value, file: run.file });
+      start({ text: $("requirements").value, file: run.file, saveCopy: true });
     });
     $("requirements").addEventListener("keydown", (e) => {
       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); $("composer").requestSubmit(); }

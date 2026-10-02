@@ -411,6 +411,23 @@ def test_feedback_opens_the_visitors_email_app(built):
     assert 'closest("#feedback-form")' in app and "encodeURIComponent(body)" in app
 
 
+def test_a_typed_brief_is_saved_to_the_visitors_downloads(built):
+    """Clarchy keeps no copy of a brief, so designing from one typed into the box downloads
+    it, as exactly the text typed, so it can be attached again. The page says so."""
+    out, _content, _pages = built
+    js = resources.files("clarchy").joinpath("static", "plan.js").read_text()
+    # Only the composer's own button asks for a copy; samples, re-plans and How to don't.
+    assert js.count("saveCopy: true") == 1
+    assert 'start({ text: $("requirements").value, file: run.file, saveCopy: true })' in js
+    # After the brief is accepted, and never for an attached document or a replayed sample.
+    assert "if (saveCopy && !file && !replay) saveBrief(text);" in js
+    assert "filename: `clarchy-brief-${stamp}.txt`, text," in js
+    home = (out / "index.html").read_text()
+    assert site.SAVED_BRIEF_NOTE in home
+    privacy = (out / "privacy" / "index.html").read_text()
+    assert "your browser saves it to your downloads as a text file" in privacy
+
+
 def test_one_contact_address_everywhere(built):
     """Every page that gives an email address gives the same one."""
     out, _content, _pages = built

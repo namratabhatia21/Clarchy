@@ -376,3 +376,25 @@ def test_no_claim_says_more_than_the_site_does(built):
         assert claim not in text, claim
     home = (out / "index.html").read_text()
     assert "with the rule-based planner nothing leaves your browser" in home
+
+
+def test_feedback_opens_the_visitors_email_app(built):
+    """Feedback goes from the visitor's own email app to Namrata: no form service, no
+    server, nothing stored. Without scripts the form's own mailto submission still works."""
+    out, _content, _pages = built
+    about = (out / "about" / "index.html").read_text()
+    form = re.search(r'<form class="feedback-form".*?</form>', about, re.S).group(0)
+    assert 'action="mailto:namratabhatia21@gmail.com" method="get"' in form
+    assert re.search(r'<select name="subject">', form)
+    assert re.search(r'<textarea name="body"[^>]*required', form)
+    assert ">Open in your email app<" in form, "the button says what it does"
+    assert re.findall(r"<label class=\"field\"><span>([^<]+)</span>", form) == [
+        "About",
+        "Your message",
+    ]
+    for page in out.rglob("index.html"):
+        assert 'href="/about/#feedback"' in page.read_text(), page
+    privacy = (out / "privacy" / "index.html").read_text()
+    assert "goes from your own email app to namratabhatia21@gmail.com" in privacy
+    app = resources.files("clarchy").joinpath("static", "app.js").read_text()
+    assert 'closest("#feedback-form")' in app and "encodeURIComponent(body)" in app

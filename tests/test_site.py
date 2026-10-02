@@ -407,3 +407,17 @@ def test_one_contact_address_everywhere(built):
     for page in out.rglob("*.html"):
         found |= set(re.findall(r'href="mailto:([^"?]+)', page.read_text()))
     assert found == {"namratabhatia21@gmail.com"}, found
+
+
+def test_the_legal_notice_names_publisher_and_host(built):
+    """French law (LCEN) asks every site to say who publishes it and who hosts it, one click
+    from any page."""
+    out, _content, pages = built
+    terms = (out / "terms" / "index.html").read_text()
+    notice = re.search(r'<section id="legal-notice">.*?</section>', terms, re.S).group(0)
+    assert "Namrata Bhatia" in notice and "mailto:namratabhatia21@gmail.com" in notice
+    assert "Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, United States" in notice
+    assert "governed by French law" in terms
+    assert "cnil.fr" in (out / "privacy" / "index.html").read_text()
+    for p in pages:
+        assert 'href="/terms/#legal-notice"' in _file(out, p.path).read_text(), p.path

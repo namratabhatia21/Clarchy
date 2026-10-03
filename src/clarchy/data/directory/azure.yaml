@@ -2,7 +2,7 @@
 # Prices workflow refreshes it. Names, categories and summaries are the provider's.
 provider: azure
 source: https://learn.microsoft.com/en-us/azure/
-as_of: '2026-10-02'
+as_of: '2026-10-03'
 services:
 - name: Azure AI Bot Service
   category: AI + machine learning

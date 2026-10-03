@@ -83,7 +83,7 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 
 ## Estimated cost
 
-About **$693 a month** on demand (Central India list prices as of 2026-10-02; Azure Retail Prices API).
+About **$693 a month** on demand (Central India list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

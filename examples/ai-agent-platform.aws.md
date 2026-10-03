@@ -119,7 +119,7 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$1,071 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$1,071 a month** on demand (US East (N. Virginia) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

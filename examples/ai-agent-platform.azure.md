@@ -118,7 +118,7 @@ Tool-using AI agents behind a chat API, with an LLM gateway for model routing an
 
 ## Estimated cost
 
-About **$1,510 a month** on demand (East US list prices as of 2026-10-02; Azure Retail Prices API).
+About **$1,510 a month** on demand (East US list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

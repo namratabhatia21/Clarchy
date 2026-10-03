@@ -6,7 +6,7 @@ provider: aws
 currency: USD
 price_region: US East (N. Virginia)
 region_code: us-east-1
-as_of: '2026-10-01'
+as_of: '2026-10-03'
 source: AWS Price List API
 verified: true
 calculator: https://calculator.aws/

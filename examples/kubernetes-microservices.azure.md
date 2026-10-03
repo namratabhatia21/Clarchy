@@ -108,7 +108,7 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Estimated cost
 
-About **$2,304 a month** on demand (North Europe list prices as of 2026-10-02; Azure Retail Prices API).
+About **$2,304 a month** on demand (North Europe list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

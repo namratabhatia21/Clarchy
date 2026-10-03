@@ -80,7 +80,7 @@ Uploads and events trigger asynchronous processing through a queue and a workflo
 
 ## Estimated cost
 
-About **$268 a month** on demand (Asia Pacific (Mumbai) list prices as of 2026-10-01; AWS Price List API).
+About **$268 a month** on demand (Asia Pacific (Mumbai) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

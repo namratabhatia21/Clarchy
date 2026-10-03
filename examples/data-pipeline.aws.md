@@ -72,7 +72,7 @@ Streams application events into a data lake, transforms them on a schedule and s
 
 ## Estimated cost
 
-About **$1,469 a month** on demand (Europe (Frankfurt) list prices as of 2026-10-01; AWS Price List API).
+About **$1,469 a month** on demand (Europe (Frankfurt) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

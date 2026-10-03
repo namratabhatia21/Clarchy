@@ -2,7 +2,7 @@
 # Prices workflow refreshes it. Names, categories and summaries are the provider's.
 provider: gcp
 source: https://cloud.google.com/products/
-as_of: '2026-10-02'
+as_of: '2026-10-03'
 services:
 - name: Agent Search
   category: AI and Machine Learning

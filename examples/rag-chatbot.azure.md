@@ -93,7 +93,7 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Estimated cost
 
-About **$537 a month** on demand (West US 2 list prices as of 2026-10-02; Azure Retail Prices API).
+About **$537 a month** on demand (West US 2 list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

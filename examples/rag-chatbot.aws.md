@@ -92,7 +92,7 @@ Chat assistant that answers from your own documents using retrieval-augmented ge
 
 ## Estimated cost
 
-About **$464 a month** on demand (US West (Oregon) list prices as of 2026-10-01; AWS Price List API).
+About **$464 a month** on demand (US West (Oregon) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

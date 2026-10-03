@@ -85,7 +85,7 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Estimated cost
 
-About **$934 a month** on demand (North Europe list prices as of 2026-10-02; Azure Retail Prices API).
+About **$934 a month** on demand (North Europe list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

@@ -79,7 +79,7 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Estimated cost
 
-About **$64.68 a month** on demand (East US list prices as of 2026-10-02; Azure Retail Prices API).
+About **$64.68 a month** on demand (East US list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

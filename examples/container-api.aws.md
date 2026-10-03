@@ -85,7 +85,7 @@ Always-on containerised web API with a relational database and cache, for steady
 
 ## Estimated cost
 
-About **$606 a month** on demand (Europe (Ireland) list prices as of 2026-10-01; AWS Price List API).
+About **$606 a month** on demand (Europe (Ireland) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

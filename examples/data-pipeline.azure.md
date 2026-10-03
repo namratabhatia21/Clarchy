@@ -72,7 +72,7 @@ Streams application events into a data lake, transforms them on a schedule and s
 
 ## Estimated cost
 
-About **$1,535 a month** on demand (Germany West Central list prices as of 2026-10-02; Azure Retail Prices API).
+About **$1,535 a month** on demand (Germany West Central list prices as of 2026-10-03; Azure Retail Prices API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

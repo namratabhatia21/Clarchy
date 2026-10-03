@@ -109,7 +109,7 @@ Containerised microservices on a managed Kubernetes cluster, with queue-driven w
 
 ## Estimated cost
 
-About **$2,309 a month** on demand (Europe (Ireland) list prices as of 2026-10-01; AWS Price List API).
+About **$2,309 a month** on demand (Europe (Ireland) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

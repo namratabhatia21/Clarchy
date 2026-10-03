@@ -78,7 +78,7 @@ Single-page app with a serverless API, for spiky or low traffic where paying per
 
 ## Estimated cost
 
-About **$83.56 a month** on demand (US East (N. Virginia) list prices as of 2026-10-01; AWS Price List API).
+About **$83.56 a month** on demand (US East (N. Virginia) list prices as of 2026-10-03; AWS Price List API).
 
 | Period | On demand | With commitments |
 |---|---:|---:|

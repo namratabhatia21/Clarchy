@@ -550,6 +550,14 @@ body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bot
 .field > span { font: 600 12.5px/1.4 var(--font-body); color: var(--muted); }
 .field input { height: 34px; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 0 10px; font-size: 13.5px; color: var(--text); background: var(--surface); }
 .field input:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 20%, transparent); }
+/* About: the feedback form. */
+.feedback-form { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.feedback-form select, .feedback-form textarea { border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px 10px; font: inherit; font-size: 14.5px; color: var(--text); background: var(--surface); }
+.feedback-form select { height: 38px; padding: 0 10px; }
+.feedback-form textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+.feedback-form select:focus-visible, .feedback-form textarea:focus-visible { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 20%, transparent); }
+.feedback-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.feedback-actions .hint { flex: 1 1 260px; margin: 0; font-size: 13.5px; color: var(--muted); }
 .composer-foot { color: var(--faint); font-size: 12.5px; margin-top: -8px; }
 .drop-hint {
   display: none; position: absolute; inset: 0; background: color-mix(in srgb, var(--surface) 92%, transparent);

@@ -26,7 +26,6 @@ from importlib import resources
 from typing import Any
 
 SITE_URL = "https://clarchy.com"
-EMAIL = "namrata.bhatia@clarchy.com"
 AUTHOR = "Namrata Bhatia"
 REPOSITORY = "https://github.com/namratabhatia21/Clarchy"
 AUTHOR_PROFILES = (

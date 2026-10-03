@@ -209,6 +209,20 @@
     }
   }
 
+  // ---------- feedback (About): opens the visitor's own email app; nothing goes through Clarchy ----------
+  document.addEventListener("submit", (e) => {
+    const form = e.target.closest && e.target.closest("#feedback-form");
+    if (!form) return;
+    e.preventDefault();
+    const body = form.elements.body.value.trim();
+    if (!body) { form.elements.body.focus(); return; }
+    const to = form.getAttribute("action");
+    const subject = form.elements.subject.value;
+    // Encoded by hand: a mailto form's own submission writes spaces as "+".
+    const link = CA.el("a", { href: `${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` });
+    link.click();
+  });
+
   // ---------- start ----------
   const [meta, samples, patterns] = await Promise.all([api.meta(), api.samples(), api.patterns()]);
   CA.store("clarchy.lead", null); // a sign-up kept by browsers before accounts were removed

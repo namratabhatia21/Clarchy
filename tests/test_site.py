@@ -207,6 +207,17 @@ def test_the_home_page_shows_a_priced_massing_model(built):
     poster = home[order[0] : order[1]]
     assert home.count("<h1") == 1 and '<h1 class="poster-title' in poster
     assert 'class="dial-art"' in poster and "data-to-brief" in poster
+    assert 'id="hero-cta" data-to-brief>Design my architecture' in poster
+    assert 'data-sample-run="clinic-booking">See an example<' in poster
+    assert "No sign-up · Runs in your browser · Word, PDF, Excel, Markdown" in poster
+    # The hero's card is a real design at today's prices, and says where it goes.
+    card = re.search(r'<figure class="hero-card">.*?</figure>', poster, re.S).group(0)
+    assert re.search(r"<b>\$[\d,]+/mo</b> · \d+ services", card)
+    assert 'role="img" aria-label="A request goes through Amazon CloudFront' in card
+    assert 'href="/examples/rag-chatbot/"' in card
+    # Two stickers at most; the rest of the hero's decoration is hidden from screen readers.
+    assert poster.count('class="hero-seal"') == 1 and poster.count('class="hero-stamp"') == 1
+    assert "pa-loop" not in poster and "Drop a PDF" not in poster
     assert "<em>priced</em>" in home[order[1] : order[2]]
 
 
@@ -321,9 +332,9 @@ def test_contrast_and_focus_fixes_hold():
     css = static.joinpath("app.css").read_text()
     html = static.joinpath("index.html").read_text()
     js = static.joinpath("workspace.js").read_text()
-    # Small text on the orange poster is black: navy there is 3.8:1, under AA's 4.5:1.
-    assert "--poster-ink-small: #000000" in css
-    assert ".topbar.on-poster .main-link { color: var(--poster-ink-small); }" in css
+    # The hero's orange is dark enough for cream text (5.1:1); navy there would be 2.9:1.
+    assert "--hero-bg: #b83c0c;" in css
+    assert ".topbar.on-poster .main-link { color: var(--poster-paper); }" in css
     # Keyboard focus on Attach shows on the button, not on the hidden file input.
     assert ".attach-btn:has(+ #file-input:focus-visible)" in css
     # Steps of How it works not yet reached stay readable (4.5:1 needs 0.82 or more).

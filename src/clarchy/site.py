@@ -23,7 +23,10 @@ from dataclasses import dataclass
 from datetime import date
 from functools import cache
 from importlib import resources
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from clarchy.mapping import ProviderArchitecture
 
 SITE_URL = "https://clarchy.com"
 AUTHOR = "Namrata Bhatia"
@@ -225,32 +228,23 @@ def _poster_dial() -> str:
 
 
 def _poster_art() -> str:
-    """The poster's stamps, marks and pencil loops (on a 1440 x 820 sheet)."""
+    """The hero's seal and its three pencil crosshairs, drawn in cream on the orange."""
 
-    def mark(x: float, y: float, r: float = 8) -> str:
+    def mark(n: int) -> str:
         return (
-            f'<g class="pa-mark"><circle cx="{x}" cy="{y}" r="{r}"/>'
-            f'<path d="M{x - r - 6} {y}h{2 * r + 12}M{x} {y - r - 6}v{2 * r + 12}"/></g>'
+            f'<svg class="hero-mark hm-{n}" viewBox="-16 -16 32 32" aria-hidden="true">'
+            '<circle r="7"/><path d="M-14 0h28M0 -14v28"/></svg>'
         )
 
-    cx, cy = 1190, 134
     return (
-        '<svg class="poster-art" viewBox="0 0 1440 820" preserveAspectRatio="none" '
-        'aria-hidden="true"><defs>'
-        f'<path id="poster-ring" d="M{cx - 62} {cy}a62 62 0 1 1 124 0a62 62 0 1 1 -124 0"/></defs>'
-        f'<g class="pa-stamp" transform="rotate(-14 {cx} {cy})">'
-        f'<circle cx="{cx}" cy="{cy}" r="78" stroke-width="2.4"/>'
-        f'<circle cx="{cx}" cy="{cy}" r="46" stroke-width="1.2"/>'
+        '<svg class="hero-seal" viewBox="-90 -90 180 180" aria-hidden="true">'
+        '<defs><path id="poster-ring" d="M-62 0a62 62 0 1 1 124 0a62 62 0 1 1 -124 0"/></defs>'
+        '<g transform="rotate(-14)"><circle r="78" stroke-width="2.4"/>'
+        '<circle r="46" stroke-width="1.2"/>'
         '<text><textPath href="#poster-ring" textLength="384" lengthAdjust="spacing">'
         "ONE BRIEF · FOUR DRAWINGS · PRICED ·</textPath></text>"
-        f'<path d="M{cx - 18} {cy}h36M{cx} {cy - 18}v36" stroke-width="2"/></g>'
-        '<path class="pa-loop" d="M812 70 c 26 -40, 54 -40, 40 -6 c -12 30, 30 30, 46 -2 '
-        'c 14 -30, 44 -26, 34 4"/>'
-        + mark(1350, 390, 7)
-        + mark(1010, 480, 9)
-        + mark(110, 440)
-        + mark(150, 560, 7)
-        + "</svg>"
+        '<path d="M-18 0h36M0 -18v36" stroke-width="2"/></g></svg>'
+        + "".join(mark(n) for n in (1, 2, 3))
     )
 
 
@@ -377,6 +371,7 @@ def _model(example: str) -> dict[str, str]:
     )
     return {
         "figure": figure,
+        "card": _hero_card(arch, cost, example, running),
         "kicker": f"Model 01 · {_e(arch.spec.name)} on AWS",
         "facts": (
             f'<p class="model-facts"><i></i>{_e(cost["price_region"])} · '
@@ -384,6 +379,91 @@ def _model(example: str) -> dict[str, str]:
             f"AWS list prices of {_e(as_of)}, refreshed daily</p>"
         ),
     }
+
+
+def _service_lines(name: str) -> list[str]:
+    """A service's name for a small drawing: without its maker or a note in brackets, on
+    lines of at most 14 characters."""
+    name = re.sub(r"\s*\(.*?\)", "", name)
+    name = re.sub(r"^(Amazon|AWS|Azure|Google Cloud)\s+", "", name).replace(" on AWS ", " on ")
+    lines: list[str] = []
+    for word in name.split():
+        if lines and len(lines[-1]) + 1 + len(word) <= 14:
+            lines[-1] += f" {word}"
+        else:
+            lines.append(word)
+    return lines
+
+
+def _hero_card(arch: ProviderArchitecture, cost: dict[str, Any], example: str, running: int) -> str:
+    """The hero's card: a small drawing of how a request travels (the path from the client
+    to the first service that calls several others, then three of those) and what it costs."""
+    by_id = {m.component.id: m for m in arch.components}
+    calls: dict[str, list[str]] = {}
+    for edge in arch.spec.edges:
+        if edge.target in by_id and by_id[edge.target].choice:
+            calls.setdefault(edge.source, []).append(edge.target)
+    node = next((m.component.id for m in arch.components if m.component.tier == "external"), "")
+    path: list[str] = []
+    while len(path) < 3 and calls.get(node):
+        node = calls[node][0]
+        path.append(node)
+        if len(calls.get(node, [])) > 1:
+            break
+    fan = calls.get(path[-1], [])[:3] if path else []
+
+    w, h, gap = 116, 46, 26
+
+    def box(cid: str, x: float, y: float) -> str:
+        lines = _service_lines(by_id[cid].choice.service)
+        top = y + h / 2 - (len(lines) - 1) * 7.5 + 4.5
+        text = "".join(
+            f'<tspan x="{x + w / 2:g}" y="{top + i * 15:g}">{_e(line)}</tspan>'
+            for i, line in enumerate(lines)
+        )
+        return (
+            f'<rect x="{x:g}" y="{y:g}" width="{w}" height="{h}"/>'
+            f'<path class="hc-tag" d="M{x:g} {y + 1.5:g}h22"/><text>{text}</text>'
+        )
+
+    cols = [1 + i * (w + gap) for i in range(3)]
+    arrow = 'marker-end="url(#hc-arrow)"'
+    row1, row2 = 8, 140
+    parts = [box(cid, cols[i], row1) for i, cid in enumerate(path)]
+    lines = [
+        f'<path d="M{cols[i] + w:g} {row1 + h / 2:g}H{cols[i + 1] - 3:g}" {arrow}/>'
+        for i in range(len(path) - 1)
+    ]
+    if fan:
+        hub_x = cols[len(path) - 1] + w / 2
+        drops = [cols[len(cols) - len(fan) + i] + w / 2 for i in range(len(fan))]
+        bus = 100
+        lines.append(f'<path d="M{hub_x:g} {row1 + h:g}V{bus}"/>')
+        ends = [*drops, hub_x]
+        lines.append(f'<path d="M{min(ends):g} {bus}H{max(ends):g}"/>')
+        lines += [f'<path d="M{x:g} {bus}V{row2 - 3:g}" {arrow}/>' for x in drops]
+        parts += [box(cid, cols[len(cols) - len(fan) + i], row2) for i, cid in enumerate(fan)]
+    names = [by_id[c].choice.service for c in path]
+    called = [by_id[c].choice.service for c in fan]
+    label = "A request goes through " + ", then ".join(names)
+    if called:
+        tail = called[-1] if len(called) == 1 else f"{', '.join(called[:-1])} and {called[-1]}"
+        label += f", which calls {tail}"
+    drawing = (
+        f'<svg class="hc-drawing" viewBox="0 0 {3 * w + 2 * gap + 2} 196" role="img" '
+        f'aria-label="{_e(label)}">'
+        '<defs><marker id="hc-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" '
+        'markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z"/></marker></defs>'
+        f'<g class="hc-lines">{"".join(lines)}</g><g class="hc-nodes">{"".join(parts)}</g></svg>'
+    )
+    return (
+        '<figure class="hero-card">'
+        f'<p class="hc-head">Model 01 · {_e(arch.spec.name)} on AWS</p>'
+        f"{drawing}"
+        f'<figcaption><p class="hc-price">{_e(cost["price_region"])} · '
+        f"<b>{_money(cost['monthly'])}/mo</b> · {_plural(running, 'service')}</p>"
+        f'<a href="/examples/{example}/">Open this design on every cloud</a></figcaption></figure>'
+    )
 
 
 @cache
@@ -983,6 +1063,7 @@ def render(page: Page | None, c: Content, shell: Shell) -> str:
         "model-facts": c.model["facts"] if c.model else "",
         "poster-dial": _poster_dial(),
         "poster-art": _poster_art(),
+        "hero-card": c.model["card"] if c.model else "",
         "coda-pantograph": _coda_pantograph(),
         "coda-register": _coda_register(c),
         "example-count": _count_word(len(c.patterns)),

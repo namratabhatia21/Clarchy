@@ -326,86 +326,170 @@ main { flex: 1; }
   display: flex; flex-direction: column; gap: 22px;
 }
 
-/* ---------- Plan, first frame: the poster ----------
-   A brief goes in, a drawing comes out, round a protractor that turns as the page scrolls.
-   The composition is drawn on a 1440 x 820 sheet scaled to fit the screen; type and marks
-   are sized in container units so they keep their places at any size. */
+/* ---------- Plan, first frame: the hero ----------
+   In five seconds: what Clarchy does, that it is free and runs in the browser, and what to
+   click. The copy and buttons hold the left; on the right a card shows a real design from
+   the examples at today's prices, in front of the protractor that turns as the page scrolls.
+   The hero's orange is darker than the closing frame's so that its small cream text passes
+   WCAG AA; the closing frame keeps the brighter orange for its large type. */
 :root { --topbar-h: 61px; --poster: #d9480f; --poster-ink: #0a1f3d; --poster-paper: #f7f1e6;
-  /* Small text on the orange: navy is 3.8:1 there, black 4.9:1 (WCAG AA asks 4.5:1). */
-  --poster-ink-small: #000000; }
+  /* Cream on the hero's orange is 5.1:1, navy 2.9:1: text there is cream. */
+  --hero-bg: #b83c0c; }
 .poster {
-  width: 100vw; margin: -32px 0 0 calc(50% - 50vw); min-height: calc(100svh - var(--topbar-h));
-  display: flex; align-items: center; background: var(--poster); color: var(--poster-ink); overflow: hidden;
+  position: relative; width: 100vw; margin: -32px 0 0 calc(50% - 50vw);
+  min-height: min(calc(100svh - var(--topbar-h)), 860px);
+  display: flex; align-items: center; background: var(--hero-bg); color: var(--poster-paper);
+  padding: clamp(28px, 5svh, 56px) 0 clamp(44px, 7svh, 72px); overflow: clip;
 }
-.poster-canvas {
-  position: relative; container-type: inline-size; aspect-ratio: 1440 / 820; margin: 0 auto;
-  width: min(100%, calc((100svh - var(--topbar-h)) * 1440 / 820));
+/* Its lower edge is a navy scale rule, the drawing's border, where the brief begins. */
+.poster::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='14'%3E%3Cpath d='M.5 0v14M8.5 6v8M16.5 6v8M24.5 6v8M32.5 6v8' stroke='%230a1f3d'/%3E%3Crect y='11' width='40' height='3' fill='%230a1f3d'/%3E%3C/svg%3E") repeat-x left bottom;
 }
-.poster-title { font-family: var(--font-display); font-weight: 700; font-stretch: 62%; text-transform: uppercase; line-height: .8; color: var(--poster-paper); }
-.poster-title .pt-in, .poster-title .pt-out { position: absolute; font-size: 16.1cqw; white-space: nowrap; letter-spacing: -.005em; word-spacing: .12em; z-index: 1; }
-.pt-in { left: 6.7%; top: 3.6%; }
-.pt-out { right: 4.4%; bottom: 11.4%; }
-.poster-dial { position: absolute; left: 33.33%; top: 20.2%; width: 33.33%; z-index: 2; }
+.hero-wrap {
+  --gutter: clamp(24px, 6vw, 96px);
+  width: 100%; max-width: calc(1240px + 2 * var(--gutter)); margin: 0 auto; padding-inline: var(--gutter);
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: clamp(32px, 4vw, 72px);
+}
+.hero-copy { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; container-type: inline-size; }
+.hero-eyebrow { margin: 0 0 18px; font: 500 13px/1.5 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.poster-title {
+  margin: 0; font-family: var(--font-display); font-weight: 700; font-stretch: 62%; text-transform: uppercase;
+  /* Never wider than its column (18cqi), never taller than the screen allows. */
+  font-size: clamp(4.5rem, min(7.6vw, 13.5svh, 18cqi), 9rem); line-height: .84; letter-spacing: -.005em; color: var(--poster-paper);
+}
+.poster-title .pt-in, .poster-title .pt-out { display: block; white-space: nowrap; word-spacing: .12em; }
+.hero-lead { margin: 24px 0 0; max-width: 36ch; font: 400 clamp(20px, 1.6vw, 23px)/1.4 var(--font-body); }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 12px 14px; margin-top: 30px; }
+.hero-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 24px;
+  border: 2px solid transparent; font: 600 17px var(--font-body); cursor: pointer;
+}
+.hero-btn-primary { background: var(--poster-ink); border-color: var(--poster-ink); color: var(--poster-paper); }
+.hero-btn-primary:hover { background: #142f57; border-color: #142f57; }
+.hero-btn-ghost { background: transparent; border-color: var(--poster-paper); color: var(--poster-paper); }
+.hero-btn-ghost:hover { background: rgba(10, 31, 61, .18); }
+.hero-trust { margin: 18px 0 0; font: 500 13px/1.5 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.poster :focus-visible { outline: 3px solid var(--poster-paper); outline-offset: 3px; }
+
+/* The visual: the card is the stage; the dial, seal, stamp and marks are placed round it. */
+.hero-visual { position: relative; justify-self: center; width: min(100%, 440px); margin: 72px 0 84px; }
+.poster-dial {
+  position: absolute; left: 50%; top: 50%; width: 120%; transform: translate(-50%, -50%);
+  opacity: .28; pointer-events: none; z-index: 0;
+}
+.poster-dial .pd-shadow, .poster-dial .pd-nums, .poster-dial .pd-arc, .poster-dial .pd-reading { display: none; }
 .dial-art { display: block; width: 100%; height: auto; overflow: visible; }
 .dial-art .pd-shadow { fill: var(--poster-ink); }
 .dial-art .pd-face { fill: var(--poster-paper); stroke: var(--poster-ink); stroke-width: 3; }
 .dial-art .pd-ring { fill: none; stroke: var(--poster-ink); stroke-width: 1; }
 .dial-art .pd-ticks line { stroke: var(--poster-ink); }
 .dial-art .pd-ticks > line:nth-child(n+181) { stroke-width: 1; }
-.dial-art .pd-nums text { font: 500 12px var(--font-mono); fill: var(--poster-ink); text-anchor: middle; }
 .dial-art .pd-cross { stroke: var(--poster-ink); stroke-width: .8; stroke-dasharray: 3 4; fill: none; }
 .dial-art .pd-dial { transition: transform .35s cubic-bezier(.2, .7, .2, 1); will-change: transform; }
-.dial-art .pd-needle { stroke: var(--poster); stroke-width: 3; }
-.dial-art .pd-needle-tip { fill: var(--poster); }
-.dial-art .pd-hub { fill: var(--poster); stroke: var(--poster-ink); stroke-width: 3; }
+.dial-art .pd-needle { stroke: var(--hero-bg); stroke-width: 3; }
+.dial-art .pd-needle-tip { fill: var(--hero-bg); }
+.dial-art .pd-hub { fill: var(--hero-bg); stroke: var(--poster-ink); stroke-width: 3; }
 .dial-art .pd-pin { fill: var(--poster-ink); }
-.dial-art .pd-reading { font: 500 12px var(--font-mono); letter-spacing: 2px; fill: var(--poster-ink); text-anchor: middle; }
-.dial-art .pd-arc { font: 700 17px var(--font-display); font-stretch: 75%; fill: var(--poster-paper); }
-.poster-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
-.poster-art .pa-stamp circle { fill: none; stroke: var(--poster-ink); }
-.poster-art .pa-stamp path { stroke: var(--poster-ink); }
-.poster-art .pa-stamp text { font: 700 19px var(--font-display); font-stretch: 75%; fill: var(--poster-ink); }
-.poster-art .pa-loop { fill: none; stroke: var(--poster-paper); stroke-width: 2.6; stroke-linecap: round; }
-.poster-art .pa-mark { fill: none; stroke: var(--poster-paper); stroke-width: 1.4; }
-.poster-stamp { position: absolute; left: 6.7%; top: 35.6%; transform: rotate(-8deg); padding: .35cqw; border: .21cqw solid var(--poster-ink); z-index: 2; }
-.poster-stamp div { border: 1.2px solid var(--poster-ink); padding: .7cqw 1.1cqw .6cqw; text-align: center; }
-.poster-stamp b { display: block; font: 700 2.36cqw/1 var(--font-display); font-stretch: 75%; letter-spacing: .08em; text-transform: uppercase; }
-.poster-stamp small { display: block; margin-top: .4cqw; font: 500 max(9px, .76cqw) var(--font-mono); letter-spacing: .16em; text-transform: uppercase; }
-.poster-tag {
-  position: absolute; left: 64.6%; top: 27.6%; transform: rotate(7deg); z-index: 2; cursor: pointer;
-  padding: .75cqw 1.2cqw; border: 0; background: var(--poster-ink); color: var(--poster-paper);
-  font: 700 1.46cqw var(--font-display); font-stretch: 75%; letter-spacing: .1em; text-transform: uppercase;
+.hero-card {
+  position: relative; z-index: 2; margin: 0; padding: 14px 18px; background: var(--poster-paper); color: var(--poster-ink);
+  box-shadow: 8px 10px 0 var(--poster-ink);
 }
-.poster-tag:hover { background: #142f57; }
-.poster-cta { position: absolute; left: 2.8%; bottom: 3.6%; display: flex; align-items: center; gap: 18px; z-index: 2; max-width: 46%; }
+.hc-head {
+  margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--poster-ink);
+  font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+}
+.hc-drawing { display: block; width: 100%; height: auto; overflow: visible; }
+.hc-nodes rect { fill: #fffdf8; stroke: var(--poster-ink); stroke-width: 1.4; }
+.hc-nodes .hc-tag { stroke: var(--hero-bg); stroke-width: 3; }
+.hc-nodes text { font: 600 12.5px var(--font-body); fill: var(--poster-ink); text-anchor: middle; }
+.hc-lines path { fill: none; stroke: var(--poster-ink); stroke-width: 1.4; }
+#hc-arrow path { fill: var(--poster-ink); stroke: none; }
+.hero-card figcaption {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px;
+  margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(10, 31, 61, .3);
+}
+.hc-price { margin: 0; font: 500 13px var(--font-mono); }
+.hc-price b { font-weight: 700; }
+.hero-card a { margin-left: auto; font: 600 14px var(--font-body); color: var(--poster-ink); text-underline-offset: 3px; }
+.poster .hero-card a:focus-visible { outline-color: var(--poster-ink); }
+/* The seal is a navy sticker on the card's corner, so its cream type reads on card or orange. */
+.hero-seal { position: absolute; top: -74px; right: -58px; width: 132px; z-index: 3; pointer-events: none; overflow: visible; }
+.hero-seal circle:first-of-type { fill: var(--poster-ink); }
+.hero-seal circle { fill: none; stroke: var(--poster-paper); }
+.hero-seal path { stroke: var(--poster-paper); }
+.hero-seal text { font: 700 19px var(--font-display); font-stretch: 75%; fill: var(--poster-paper); }
+.hero-stamp {
+  position: absolute; left: -30px; bottom: -66px; z-index: 3; transform: rotate(-6deg); pointer-events: none;
+  padding: 3px; border: 2px solid var(--poster-paper); background: var(--hero-bg);
+}
+.hero-stamp div { border: 1px solid var(--poster-paper); padding: 7px 12px 6px; text-align: center; }
+.hero-stamp b { display: block; font: 700 24px/1 var(--font-display); font-stretch: 75%; letter-spacing: .08em; text-transform: uppercase; }
+.hero-stamp small { display: block; margin-top: 4px; font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.hero-mark { position: absolute; width: 32px; opacity: .38; pointer-events: none; overflow: visible; }
+.hero-mark circle, .hero-mark path { fill: none; stroke: var(--poster-paper); stroke-width: 1.4; }
+.hm-1 { left: -64px; top: -40px; }
+.hm-2 { right: -72px; top: 58%; }
+.hm-3 { right: 18%; bottom: -84px; }
+/* A document dropped anywhere on the hero goes to the brief (plan.js). */
+.hero-drop {
+  position: absolute; inset: 12px 12px 26px; z-index: 6; display: none; place-items: center; pointer-events: none;
+  border: 3px dashed var(--poster-paper); background: rgba(10, 31, 61, .55);
+}
+.poster.dropping .hero-drop { display: grid; }
+.hero-drop span { margin: 0 16px; padding: 12px 20px; background: var(--poster-ink); text-align: center; font: 700 clamp(24px, 3vw, 36px) var(--font-display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; }
+
+/* The header sits on the hero while it is in view, and offers the brief once the hero's
+   button has scrolled away (drafting.js). */
+body[data-page="plan"] .topbar.on-poster { background: var(--hero-bg); border-bottom-color: transparent; }
+.topbar { transition: background-color .3s ease, border-color .3s ease; }
+.topbar.on-poster .main-link { color: var(--poster-paper); }
+.topbar.on-poster .main-link[aria-current="page"] { border-bottom-color: var(--poster-paper); }
+.topbar.on-poster .brand-tag { color: var(--poster-paper); border-left-color: rgba(247, 241, 230, .45); }
+.topbar.on-poster .brand-name, .topbar.on-poster .logo { color: var(--poster-paper); }
+.topbar.on-poster .logo .arch { stroke: var(--poster-ink); }
+.topbar.on-poster :focus-visible { outline-color: var(--poster-paper); }
+.instruments.on-poster { opacity: 0 !important; }
+.nav-cta {
+  display: inline-flex; align-items: center; flex: none; height: 36px; padding: 0 14px;
+  background: var(--chip-on); color: var(--chip-on-ink); font: 600 14px var(--font-body); text-decoration: none;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+.nav-cta:hover { filter: brightness(1.25); }
+.topbar.on-poster .nav-cta { background: var(--poster-ink); color: var(--poster-paper); }
+body[data-page="plan"] .topbar:not(.cta-out) .nav-cta { visibility: hidden; opacity: 0; }
+/* The brief, when a button takes you there, stops below the sticky header. */
+#brief { scroll-margin-top: calc(var(--topbar-h) + 12px); }
+
+/* Tablet: one column, the card under the buttons. */
+@media (max-width: 1023px) {
+  .hero-wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .poster-title { font-size: clamp(4.5rem, 11vw, 6.5rem); }
+  .hero-visual { width: min(70%, 460px); margin: 96px 0 88px; }
+  .poster-dial { width: 100%; }
+}
+/* Phone: 16px gutters, one sticker, buttons the full width. */
+@media (max-width: 767px) {
+  .poster { padding: 24px 0 48px; min-height: 0; }
+  .hero-wrap { --gutter: 16px; }
+  .hero-eyebrow { margin-bottom: 14px; }
+  .poster-title { font-size: clamp(3rem, 13vw, 4rem); }
+  .hero-lead { margin-top: 18px; font-size: 18px; }
+  .hero-ctas { flex-direction: column; align-self: stretch; margin-top: 24px; }
+  .hero-btn { width: 100%; }
+  .hero-trust { margin-top: 14px; font-size: 12.5px; }
+  .hero-visual { width: 100%; margin: 40px 0 88px; }
+  .hc-nodes text { font-size: 14px; }
+  .hc-price { font-size: 12px; }
+  .poster-dial, .hero-seal, .hm-2, .hm-3 { display: none; }
+  .hm-1 { left: auto; right: 4px; top: -36px; }
+  .hero-stamp { left: -4px; bottom: -76px; }
+}
+@media (max-width: 760px) { :root { --topbar-h: 97px; } .poster { margin-top: -20px; } #brief { scroll-margin-top: 12px; } }
+/* The closing frame's button. */
 .poster-btn { flex: none; border: 0; cursor: pointer; background: var(--poster-ink); color: var(--poster-paper); font: 600 15px var(--font-body); padding: 13px 20px; }
 .poster-btn::after { content: " →"; }
 .poster-btn:hover { background: #142f57; }
-.poster-cta p { font: 500 11.5px/1.5 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--poster-ink-small); }
-.poster button:focus-visible { outline: 2px solid var(--poster-paper); outline-offset: 3px; }
-/* The header sits on the poster while it is in view (drafting.js). */
-body[data-page="plan"] .topbar.on-poster { background: var(--poster); border-bottom-color: transparent; }
-.topbar { transition: background-color .3s ease, border-color .3s ease; }
-.topbar.on-poster .main-link { color: var(--poster-ink-small); }
-.topbar.on-poster .main-link[aria-current="page"] { border-bottom-color: var(--poster-paper); }
-.topbar.on-poster .brand-tag { color: var(--poster-ink-small); border-left-color: rgba(10, 31, 61, .35); }
-.topbar.on-poster .brand-name, .topbar.on-poster .logo { color: var(--poster-ink); }
-.topbar.on-poster .logo .arch { stroke: var(--poster-paper); }
-.instruments.on-poster { opacity: 0 !important; }
-@media (max-width: 760px), (max-aspect-ratio: 1/1) {
-  .poster-canvas {
-    aspect-ratio: auto; width: 100%; min-height: calc(100svh - var(--topbar-h)); padding: 20px 16px 22px;
-    display: flex; flex-direction: column;
-  }
-  .poster-title .pt-in, .poster-title .pt-out { position: static; display: block; font-size: 23cqw; white-space: normal; }
-  .pt-out { text-align: right; margin-top: 78cqw; }
-  .poster-dial { left: 14cqw; top: calc(20px + 21cqw); width: 72cqw; }
-  .poster-art, .poster-stamp { display: none; }
-  .poster-tag { left: auto; right: 16px; top: calc(20px + 4cqw); font-size: 13px; padding: 7px 10px; }
-  .poster-cta { position: static; margin-top: auto; padding-top: 22px; max-width: none; flex-wrap: wrap; gap: 10px 14px; }
-  .poster-btn { width: 100%; }
-}
-@media (max-width: 760px) { :root { --topbar-h: 97px; } .poster { margin-top: -20px; } }
 
 /* ---------- Plan, last frame: the examples, on the poster's orange ----------
    A drawing register of real examples beside a pantograph that copies a sketch at twice

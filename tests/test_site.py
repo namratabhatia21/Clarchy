@@ -313,3 +313,24 @@ def test_design_rules_that_can_be_checked(built):
     assert "<!-- render:blog-link -->" in footer and "mailto:" not in footer
     # The Services page is a two-column grid; its breadcrumbs take a row of their own.
     assert ".catalog-layout > .crumbs { grid-column: 1 / -1;" in css
+
+
+def test_contrast_and_focus_fixes_hold():
+    """Fixes from an axe-core audit (WCAG 2.2 AA) that a later change could quietly undo."""
+    static = resources.files("clarchy").joinpath("static")
+    css = static.joinpath("app.css").read_text()
+    html = static.joinpath("index.html").read_text()
+    js = static.joinpath("workspace.js").read_text()
+    # Small text on the orange poster is black: navy there is 3.8:1, under AA's 4.5:1.
+    assert "--poster-ink-small: #000000" in css
+    assert ".topbar.on-poster .main-link { color: var(--poster-ink-small); }" in css
+    # Keyboard focus on Attach shows on the button, not on the hidden file input.
+    assert ".attach-btn:has(+ #file-input:focus-visible)" in css
+    # Steps of How it works not yet reached stay readable (4.5:1 needs 0.82 or more).
+    opacity = float(re.search(r"\.story-step \{[^}]*opacity: ([.\d]+)", css).group(1))
+    assert opacity >= 0.82
+    # A result's title becomes the page's h1 when it fills the plan page; its sections are h2.
+    assert '<h2 class="ws-name"></h2>' in html and 'createElement("h1")' in js
+    assert 'el("h3"' not in js
+    # A diagram whose services are buttons is announced as a group, not a single image.
+    assert 'svg.setAttribute("role", "group")' in js

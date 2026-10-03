@@ -43,6 +43,10 @@ class Workspace {
       head.remove();
       root.append(parts);
     } else {
+      // On the plan page the result replaces the poster, whose h1 is hidden with it, so the
+      // result's title becomes the page's h1.
+      const title = parts.querySelector("h2.ws-name");
+      if (title) title.replaceWith(Object.assign(document.createElement("h1"), { className: title.className }));
       root.replaceChildren(parts);
     }
     this.q = (sel) => root.querySelector(sel);
@@ -234,7 +238,7 @@ class Workspace {
       questions.length && plural(questions.length, "question") + " to confirm"].filter(Boolean);
     this.q(".review-title").textContent = parts.join(" and ");
     const list = (title, items) => items.length
-      ? el("section", {}, el("h3", { text: title }), el("ul", {}, items.map((t) => el("li", { text: t }))))
+      ? el("section", {}, el("h2", { text: title }), el("ul", {}, items.map((t) => el("li", { text: t }))))
       : null;
     fill(this.q(".ws-notes"), list("What was assumed", assumptions), list("Questions to confirm", questions));
 
@@ -318,6 +322,9 @@ class Workspace {
   // ---------- diagram + inspector ----------
   wireNodes(canvas, onSelect) {
     const d = this.state.design;
+    // With its services focusable the drawing is a group of buttons, not a single image.
+    const svg = canvas.querySelector("svg.ca-diagram");
+    if (svg) svg.setAttribute("role", "group");
     for (const node of canvas.querySelectorAll("g.node")) {
       const comp = d.components.find((c) => c.id === node.dataset.id);
       if (!comp) continue;
@@ -373,7 +380,7 @@ class Workspace {
     const stageName = comp.stage && CA.meta.stages[comp.stage];
     const line = this.costOf(comp.id);
     fill(this.q(".inspector-body"),
-      el("h3", { text: comp.service || comp.label }),
+      el("h2", { text: comp.service || comp.label }),
       el("p", { class: "sub", text: comp.service ? comp.label : "Outside the cloud" }),
       el("div", { class: "row" },
         el("span", { class: "tag neutral", text: stageName || TIER_NAMES[comp.tier] }),
@@ -427,7 +434,7 @@ class Workspace {
     const cost = d.cost;
     if (!cost || !cost.available) {
       fill(box, el("div", { class: "cost-empty" },
-        el("h3", { text: "No price estimate for this provider" }),
+        el("h2", { text: "No price estimate for this provider" }),
         el("p", { text: (cost && cost.message) || "Prices are not available yet." })));
       return;
     }
@@ -478,14 +485,14 @@ class Workspace {
         el("td", {}, item.name, item.basis ? el("small", { text: item.basis }) : null),
         el("td", { class: "num", text: `${CA.number(item.quantity)} × ${money(item.unit_price, { cents: true })} / ${item.unit}` }),
         el("td", { class: "num", text: money(item.monthly, { cents: true }) }))))),
-      line.pricing_url && el("a", { class: "price-link", href: line.pricing_url, target: "_blank", rel: "noopener noreferrer", text: "Pricing page ↗" }))));
+      line.pricing_url && el("a", { class: "price-link", href: line.pricing_url, target: "_blank", rel: "noopener noreferrer", text: "Pricing page ↗", "aria-label": `${line.service} pricing page (opens in a new tab)` }))));
 
     fill(box,
       el("div", { class: "cost-head" }, termButtons,
         el("span", { class: `cost-source ${cost.verified ? "verified" : ""}`, text: cost.verified ? "Prices from the provider's price list" : "Approximate list prices" })),
       stats,
       table,
-      el("h3", { class: "cost-subhead", text: "Monthly breakdown" }),
+      el("h2", { class: "cost-subhead", text: "Monthly breakdown" }),
       breakdown,
       el("div", { class: "cost-notes" },
         el("p", { text: `${cost.price_region} list prices in ${cost.currency}, as of ${cost.as_of} (${cost.source}).` }),
@@ -501,7 +508,7 @@ class Workspace {
     const list = d.policies || [];
     if (!list.length) {
       fill(box, el("div", { class: "cost-empty" },
-        el("h3", { text: "No AI or data regulations matched this design" }),
+        el("h2", { text: "No AI or data regulations matched this design" }),
         el("p", { text: "Policies appear when the design uses language models, runs in a regulated region, or states a compliance regime such as GDPR, HIPAA, PCI DSS, SOX or ISO 27001." })));
       return;
     }

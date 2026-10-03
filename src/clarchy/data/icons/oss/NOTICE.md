@@ -41,3 +41,44 @@ guidelines before using a logo elsewhere.
 | `vllm.svg` | vLLM | #30A2FF | not stated | <https://github.com/vllm-project/media-kit/blob/79b2ea5db25b723f2d81dae203a87c5b9a076722/vLLM-Logo.svg> |
 | `langfuse.svg` | Langfuse | as published | MIT (LobeHub icons) | `@lobehub/icons-static-svg` 1.95.1, `langfuse-color.svg` |
 | `litellm.png` | LiteLLM | as published | MIT repository | <https://github.com/BerriAI/litellm>, `litellm/proxy/logo_monogram.png` |
+
+## Logos under open licences
+
+Four of the files above are under licences that ask for attribution:
+
+- `jenkins.svg`: the Jenkins logo, created by Frontside for the Jenkins project
+  (<https://www.jenkins.io/artwork/>), licensed under
+  [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Changed: reduced to a
+  single-colour shape (Simple Icons) and filled with #D24939. This file is shared under
+  CC BY-SA 3.0.
+- `openbao.svg`: the OpenBao logo, from the OpenBao project's artwork
+  (<https://github.com/openbao/artwork>). Simple Icons lists it as CC BY-SA 4.0, and the
+  artwork repository's licence is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+  Changed: reduced to a single-colour shape (Simple Icons) and filled with #336D5C. This
+  file is shared under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/),
+  which meets both.
+- `langfuse.svg`: from LobeHub's icons (`@lobehub/icons-static-svg`), MIT License,
+  Copyright (c) 2023 LobeHub.
+- `litellm.png`: from the LiteLLM repository, MIT License, Copyright (c) 2023 Berri AI.
+
+The MIT License that applies to `langfuse.svg` and `litellm.png`:
+
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this
+> software and associated documentation files (the "Software"), to deal in the Software
+> without restriction, including without limitation the rights to use, copy, modify,
+> merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+> permit persons to whom the Software is furnished to do so, subject to the following
+> conditions:
+>
+> The above copyright notice and this permission notice shall be included in all copies
+> or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+> INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+> PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+> CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+> THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Logos of projects with no licence note are their owners' trademarks, used only to name
+those projects in diagrams.

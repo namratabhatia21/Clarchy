@@ -268,12 +268,27 @@ const Plan = (() => {
     $("requirements").focus();
   }
 
+  // The brief being written is kept for this tab only (session storage): a reload doesn't
+  // lose it, and nothing of it stays on the device once the tab is closed. Drafts kept in
+  // local storage before 2 October 2026 move to the tab on the next visit.
+  function keepDraft(text) {
+    try { sessionStorage.setItem(DRAFT_KEY, text); } catch { /* storage is a convenience only */ }
+  }
+  function savedDraft() {
+    const old = CA.recall(DRAFT_KEY);
+    if (old !== null) CA.store(DRAFT_KEY, null);
+    try {
+      if (typeof old === "string" && sessionStorage.getItem(DRAFT_KEY) === null) keepDraft(old);
+      return sessionStorage.getItem(DRAFT_KEY);
+    } catch { return null; }
+  }
+
   // From the How to page: puts a brief in the composer and, if asked, plans it.
   function useBrief(text, { now = false } = {}) {
     if (run.active || !CA.canPlan()) return;
     setFile(null);
     $("requirements").value = text;
-    CA.store(DRAFT_KEY, text);
+    keepDraft(text);
     showError("");
     backToComposer();
     window.scrollTo({ top: 0 });
@@ -329,7 +344,7 @@ const Plan = (() => {
       document.querySelector(".attach-btn").hidden = true;
       $("composer-foot").hidden = true;
     } else {
-      const draft = CA.recall(DRAFT_KEY);
+      const draft = savedDraft();
       if (typeof draft === "string") $("requirements").value = draft;
     }
 
@@ -361,7 +376,7 @@ const Plan = (() => {
     });
     $("requirements").addEventListener("input", () => {
       showError("");
-      CA.store(DRAFT_KEY, $("requirements").value);
+      keepDraft($("requirements").value);
     });
     $("file-input").addEventListener("change", (e) => setFile(e.target.files[0]));
     $("file-remove").addEventListener("click", () => setFile(null));

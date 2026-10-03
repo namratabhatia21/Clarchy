@@ -243,7 +243,7 @@ def _poster_art() -> str:
         f'<circle cx="{cx}" cy="{cy}" r="78" stroke-width="2.4"/>'
         f'<circle cx="{cx}" cy="{cy}" r="46" stroke-width="1.2"/>'
         '<text><textPath href="#poster-ring" textLength="384" lengthAdjust="spacing">'
-        "FOUR CLOUDS · ONE BRIEF · PRICED ·</textPath></text>"
+        "ONE BRIEF · FOUR DRAWINGS · PRICED ·</textPath></text>"
         f'<path d="M{cx - 18} {cy}h36M{cx} {cy - 18}v36" stroke-width="2"/></g>'
         '<path class="pa-loop" d="M812 70 c 26 -40, 54 -40, 40 -6 c -12 30, 30 30, 46 -2 '
         'c 14 -30, 44 -26, 34 4"/>'
@@ -411,8 +411,8 @@ def pages(c: Content) -> list[Page]:
             "Cloud architecture examples for AWS, Azure and GCP · Clarchy",
             _clip(
                 f"{_count_word(len(c.patterns))} reference architectures, from a RAG chatbot to "
-                "Kubernetes microservices, each drawn and priced on AWS, Azure, Google Cloud "
-                "and open source."
+                "Kubernetes microservices, each drawn for AWS, Azure, Google Cloud and open "
+                "source and priced on the three clouds."
             ),
             examples,
         ),
@@ -424,7 +424,9 @@ def pages(c: Content) -> list[Page]:
                 "example",
                 path,
                 f"{p['name']} on AWS, Azure and GCP · Clarchy",
-                _clip(f"{p['summary']} Drawn and priced on every cloud by Clarchy."),
+                _clip(
+                    f"{p['summary']} Drawn for AWS, Azure, Google Cloud and open source by Clarchy."
+                ),
                 (*examples, (p["name"], path)),
                 sub=p["id"],
             )
@@ -482,8 +484,8 @@ def pages(c: Content) -> list[Page]:
             "privacy",
             PATHS["privacy"],
             "Privacy · Clarchy",
-            "What Clarchy keeps about you, why, where, and how to have it deleted. Your briefs "
-            "and documents are planned in your browser and never uploaded.",
+            "Clarchy has no accounts, no cookies of its own and no analytics. What your browser "
+            "stores, what reaches Cloudflare and model providers, and your rights.",
             (("Privacy", PATHS["privacy"]),),
         ),
         Page(

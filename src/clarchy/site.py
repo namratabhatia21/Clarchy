@@ -694,16 +694,21 @@ def _engine_chip(shell: Shell, meta: dict[str, Any]) -> str:
     return '<span class="engine-chip" id="engine-chip" hidden></span>'
 
 
+# Clarchy keeps no copy of a brief, so the page saves one for its writer (plan.js).
+SAVED_BRIEF_NOTE = "A brief you type is saved to your downloads when you design."
+
+
 def _composer_foot(shell: Shell) -> str:
     if shell.mode == "static":
         text = (
             "Runs in your browser. The first plan downloads the planning engine (about "
-            "15&nbsp;MB). Word, PDF, Excel, Markdown or text, up to 10&nbsp;MB."
+            "15&nbsp;MB). Word, PDF, Excel, Markdown or text, up to 10&nbsp;MB. "
+            f"{SAVED_BRIEF_NOTE}"
         )
     else:
         text = (
             "Word, PDF, Excel, Markdown or text, up to 10&nbsp;MB · <kbd>Ctrl</kbd>+"
-            "<kbd>Enter</kbd> to start"
+            f"<kbd>Enter</kbd> to start. {SAVED_BRIEF_NOTE}"
         )
     hidden = " hidden" if shell.mode == "replay" else ""
     return f'<p class="composer-foot" id="composer-foot"{hidden}>{text}</p>'
